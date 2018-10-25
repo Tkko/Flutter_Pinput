@@ -1,18 +1,36 @@
+
 # PinPut
 100% Dart based PIN input fiels for Flutter
-## Overview
+
+### Contents:
+- [Overview](#overview)
+- [Installation](#installation)
+- [Properties](#properties)
+- [Example](#example) 
+- [Contribute](#contribute)
+
+### Overview
 This widget accepts string os any length and calls the onSubmit method when all fields are filled.
 
 <img src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/pinput_demo.gif" alt="drawing" width="180"/>
 
-### Contents:
-- [Installation](#installation)
-- [Getting Started](#example)
-- [Properties](#properties)
 
 ### Installation
 
 Install the latest version [from pub](https://pub.dartlang.org/packages/pinput).
+
+
+# Properties:
+
+| Property   | Default               |
+|------------|:---------------------:|
+| onSubmit  | Function |
+| fieldsCount  | 4 |
+| isTextObscure  | false |
+| fontSize  | 40.0 |
+| borderRadius  | 5.0 |
+| keybaordType  | number |
+| keyboardAction  | next |
 
 ### Example
 
@@ -57,16 +75,11 @@ class PinPutTest extends StatelessWidget {
 }
 ```
 
-### Properties:
 
-| Property   | Default               |
-|------------|:---------------------:|
-| onSubmit  | Function |
-| fieldsCount  | 4 |
-| isTextObscure  | false |
-| fontSize  | 40.0 |
-| borderRadius  | 5.0 |
-| keybaordType  | number |
-| keyboardAction  | next |
-
-
+# 👍 Support
+### Contribute
+1. Fork it
+2. Create your feature branch (git checkout -b my-new-feature)
+3. Commit your changes (git commit -am 'Add some feature')
+4. Push to the branch (git push origin my-new-feature)
+5. Create new Pull Request
