@@ -7,13 +7,19 @@ class PinPut extends StatefulWidget {
   final int fieldsCount;
   final bool isTextObscure;
   final double fontSize;
+  final double borderRadius;
+  final TextInputType keybaordType;
+  final TextInputAction keyboardAction;
 
-  PinPut({
-    this.onSubmit,
-    this.fieldsCount = 4,
-    this.isTextObscure = false,
-    this.fontSize = 40.0,
-  });
+  PinPut(
+      {this.onSubmit,
+      this.fieldsCount = 4,
+      this.isTextObscure = false,
+      this.fontSize = 40.0,
+      this.borderRadius = 5.0,
+      this.keybaordType = TextInputType.number,
+      this.keyboardAction = TextInputAction.next})
+      : assert(fieldsCount > 0 && borderRadius > 0);
 
   @override
   State<StatefulWidget> createState() => PinPutState();
@@ -62,10 +68,11 @@ class PinPutState extends State<PinPut> {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 8.0),
         child: TextField(
-          keyboardType: TextInputType.number,
+          keyboardType: widget.keybaordType,
           textAlign: TextAlign.center,
           maxLength: 1,
           obscureText: widget.isTextObscure,
+          textInputAction: widget.keyboardAction,
           style: TextStyle(
             fontSize: widget.fontSize,
             fontWeight: FontWeight.bold,
@@ -75,8 +82,8 @@ class PinPutState extends State<PinPut> {
           decoration: InputDecoration(
               contentPadding: EdgeInsets.all(5.0),
               counterStyle: TextStyle(fontSize: 0.0),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(widget.borderRadius))),
           onChanged: (String s) {
             _pin[i] = s;
             _focus(s, i);

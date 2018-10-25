@@ -61,7 +61,12 @@ class PinPutTest extends StatelessWidget {
 
 | Property   | Default               |
 |------------|:---------------------:|
-| onSubmit  | Calls when field is submitted |
-| fieldsCount  | Number of fields |
-| isTextObscure  | true if it's pass |
-| fontSize  | PIN forn size |
+| onSubmit  | Function |
+| fieldsCount  | 4 |
+| isTextObscure  | false |
+| fontSize  | 40.0 |
+| borderRadius  | 5.0 |
+| keybaordType  | number |
+| keyboardAction  | next |
+
+

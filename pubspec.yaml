@@ -1,6 +1,6 @@
 name: pinput
 description: 100% Dart based PIN input field widget for Flutter, this widget accepts string os any length and calls the onSubmit method when all fields are filled.
-version: 0.1.1
+version: 0.1.2
 author: Tornike Qurdadze <qurdadzze@gmail.com>
 homepage: https://github.com/Tkko/Flutter_PinPut
 

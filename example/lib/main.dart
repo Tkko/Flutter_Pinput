@@ -21,7 +21,7 @@ class PinPutTest extends StatelessWidget {
         )));
   }
 
-  void _showSnackBar(String pin,BuildContext context) {
+  void _showSnackBar(String pin, BuildContext context) {
     final snackBar = SnackBar(
       duration: Duration(seconds: 5),
       content: Container(

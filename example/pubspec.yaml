@@ -5,7 +5,7 @@ environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
 
 dependencies:
-  pinput: ^0.0.1 #add latest
+  pinput: ^0.1.1 #add latest
   flutter:
     sdk: flutter
 

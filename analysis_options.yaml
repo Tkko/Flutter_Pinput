@@ -1,5 +1,5 @@
 analyzer:
-  strong-mode:
+  strong-mode: 
     implicit-dynamic: false
   errors:
     missing_required_param: warning
