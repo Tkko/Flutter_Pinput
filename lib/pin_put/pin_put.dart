@@ -13,7 +13,6 @@ class PinPut extends StatefulWidget {
   final IconData clearButtonIcon;
   final Function onSubmit;
 
-
   PinPut(
       {this.onSubmit,
       this.fieldsCount = 4,

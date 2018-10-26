@@ -27,21 +27,13 @@ Install the latest version [from pub](https://pub.dartlang.org/packages/pinput).
 ## Properties
 
 | Property | Default |
-
 |------------|:---------------------:|
-
 | onSubmit | Function |
-
 | fieldsCount | 4 |
-
 | isTextObscure | false |
-
 | fontSize | 40.0 |
-
 | borderRadius | 5.0 |
-
 | keybaordType | number |
-
 | keyboardAction | next |
 
 ## Example
