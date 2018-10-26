@@ -11,8 +11,6 @@ before_script:
 cache: 
   directories: 
     - $HOME/.pub-cache
-dart: 
-  - stable
 dart_task: "-dartfmt -dartanalyzer"
 language: dart
 os: 
