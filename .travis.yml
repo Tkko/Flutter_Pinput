@@ -1,8 +1,20 @@
-language: dart
-dart:
+addons: 
+  apt: 
+    packages: 
+      - libstdc++6
+      - fonts-droid
+    sources: 
+      - ubuntu-toolchain-r-test
+before_script: 
+  - "git clone https://github.com/flutter/flutter.git -b beta"
+  - "./flutter/bin/flutter doctor"
+cache: 
+  directories: 
+    - $HOME/.pub-cache
+dart: 
   - stable
-
-dart_task:
-  - dartfmt
-  - dartanalyzer
-  xvfb: false
+dart_task: "-dartfmt -dartanalyzer"
+language: dart
+os: 
+  - linux
+sudo: false
