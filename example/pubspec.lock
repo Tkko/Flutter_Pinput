@@ -217,10 +217,10 @@ packages:
   pinput:
     dependency: "direct main"
     description:
-      name: pinput
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.1"
+      path: ".."
+      relative: true
+    source: path
+    version: "0.1.2"
   plugin:
     dependency: transitive
     description:

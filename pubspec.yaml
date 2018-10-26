@@ -14,17 +14,3 @@ dependencies:
 # dev_dependencies:
 #   flutter_test:
 #     sdk: flutter
-
-analyzer:
-  strong-mode: true
-
-linter:
-  rules:
-    - avoid_empty_else
-    - cancel_subscriptions
-    - close_sinks
-    - unnecessary_const
-    - unnecessary_new
-    - prefer_single_quotes
-    - camel_case_types
-

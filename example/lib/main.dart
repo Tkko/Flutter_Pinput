@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pinput/pinput.dart';
+import 'package:pinput/pin_put/pin_put.dart';
 
 void main() => runApp(PinPutTest());
 
@@ -14,6 +14,7 @@ class PinPutTest extends StatelessWidget {
                 padding: const EdgeInsets.all(40.0),
                 child: Center(
                   child: PinPut(
+                    fieldsCount: 4,
                     onSubmit: (String pin) => _showSnackBar(pin, context),
                   ),
                 ),
