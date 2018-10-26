@@ -1,5 +1,5 @@
 name: pinput
-description: This widget keeps whole width of parent widget and layouts textfields in a way to create PIN code input field look it accepts string of any length and calls the onSubmit method when all fields are filled.
+description: This widget keeps whole space of parent's width and lay outs text fields in a way that creats look of PIN CODE input field.
 version: 0.1.3
 author: Tornike Qurdadze <qurdadzze@gmail.com>
 homepage: https://github.com/Tkko/Flutter_PinPut

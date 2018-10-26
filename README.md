@@ -35,6 +35,9 @@ Install the latest version [from pub](https://pub.dartlang.org/packages/pinput).
 | borderRadius | 5.0 |
 | keybaordType | number |
 | keyboardAction | next |
+| clearButtonIcon  | Icons.backspace |
+| clearButtonEnabled  | true |
+| clearButtonColor  | 0xFF66BB6A |
 
 ## Example
 
