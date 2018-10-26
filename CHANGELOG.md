@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.1.3 - 11/24/2018
+## 0.1.3+1 - 11/26/2018
+
+* Minor fixes
+
+## 0.1.3 - 11/26/2018
 
 * Transformed plugin to MVVM pattern
 * Fixed onSubmit call when all fieds aren't filled
