@@ -2,12 +2,15 @@
 
 ## 0.1.3 - 11/24/2018
 
-*Added
+* Transformed plugin to MVVM pattern
+* Fixed onSubmit call when all fieds aren't filled
+* Updated Demo
+* Added
     | Property   | Default |
     |------------|:-------:|
-    | bclearButton  | 5.0 |
-    | keybaordType  | number |
-    | keyboardAction  | next |
+    | clearButtonIcon  | Icons.backspace |
+    | clearButtonEnabled  | true |
+    | clearButtonColor  | 0xFF66BB6A |
 
 ## 0.1.2 - 11/24/2018
 
