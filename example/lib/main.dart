@@ -7,7 +7,10 @@ class PinPutTest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        theme: ThemeData(primaryColor: Colors.green, hintColor: Colors.green),
+        theme: ThemeData(
+          primaryColor: Colors.green,
+          hintColor: Colors.green,
+        ),
         home: Scaffold(
             body: Builder(
           builder: (context) => Padding(

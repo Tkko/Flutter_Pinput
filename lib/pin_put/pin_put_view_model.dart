@@ -46,21 +46,21 @@ abstract class PinPutViewModel extends State<PinPut> {
                   borderRadius: BorderRadius.circular(widget.borderRadius))),
           onChanged: (String s) {
             _pin[i] = s;
-            _focus(s.length, i, context);
+            _focusNext(context, s, i);
           },
         ),
       ),
     );
   }
 
-  void _focus(int len, int i, BuildContext context) {
-    if (len > 0) {
-      if ((i + 1) != widget.fieldsCount) {
-        FocusScope.of(context).requestFocus(_nodes[i + 1]);
-      } else {
+  void _focusNext(BuildContext context, String s, int i) {
+    if (s.isNotEmpty) {
+      if (i + 1 == widget.fieldsCount) {
         _nodes[i].unfocus();
-        widget.onSubmit(_pin.join());
-      }
+        String pin = _pin.join();
+        if (pin.length == widget.fieldsCount) widget.onSubmit(pin);
+      } else
+        FocusScope.of(context).requestFocus(_nodes[i + 1]);
     } else {
       if (i > 0) FocusScope.of(context).requestFocus(_nodes[i - 1]);
     }
