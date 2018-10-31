@@ -1,10 +1,18 @@
 # Changelog
 
-## 0.1.3+1 - 11/26/2018
+## 0.1.4 - 10/31/2018
+
+* Added
+
+| Property  | Default |
+| ------------- | ------------- |
+| autoFocus  | true |
+
+## 0.1.3+1 - 11026/2018
 
 * Minor fixes
 
-## 0.1.3 - 11/26/2018
+## 0.1.3 - 10/26/2018
 
 * Transformed plugin to MVVM pattern
 * Fixed onSubmit call when all fieds aren't filled
@@ -17,7 +25,7 @@
 | clearButtonEnabled  | true |
 | clearButtonColor  | 0xFF66BB6A |
 
-## 0.1.2 - 11/24/2018
+## 0.1.2 - 10/24/2018
 
 * Added
 
@@ -27,7 +35,7 @@
 | keybaordType  | number |
 | keyboardAction  | next |
 
-## 0.1.1 - 11/24/2018
+## 0.1.1 - 10/24/2018
 
 * Added
 
