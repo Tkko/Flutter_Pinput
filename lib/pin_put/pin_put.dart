@@ -12,6 +12,7 @@ class PinPut extends StatefulWidget {
   final TextInputAction keyboardAction;
   final IconData clearButtonIcon;
   final Function onSubmit;
+  final bool autoFocus;
 
   PinPut(
       {this.onSubmit,
@@ -23,7 +24,8 @@ class PinPut extends StatefulWidget {
       this.keyboardAction = TextInputAction.next,
       this.clearButtonIcon = Icons.backspace,
       this.clearButtonEnabled = true,
-      this.clearButtonColor = 0xFF66BB6A})
+      this.clearButtonColor = 0xFF66BB6A,
+      this.autoFocus = true})
       : assert(fieldsCount > 0 && borderRadius > 0);
 
   @override

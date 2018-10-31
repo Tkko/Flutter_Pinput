@@ -23,12 +23,14 @@ abstract class PinPutViewModel extends State<PinPut> {
   Widget buildTextField(int i, BuildContext context) {
     _nodes[i] = FocusNode();
     _textCtrls[i] = TextEditingController(text: '');
+    //if(i == 0) FocusScope.of(context).requestFocus(_nodes[0]); 
     return Expanded(
       child: Padding(
         padding: EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
         child: TextField(
           keyboardType: widget.keybaordType,
           textAlign: TextAlign.center,
+          autofocus: i == 0 && widget.autoFocus,
           maxLength: 1,
           controller: _textCtrls[i],
           obscureText: widget.isTextObscure,
