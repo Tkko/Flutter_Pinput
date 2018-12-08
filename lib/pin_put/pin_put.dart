@@ -13,6 +13,10 @@ class PinPut extends StatefulWidget {
   final IconData clearButtonIcon;
   final Function onSubmit;
   final bool autoFocus;
+  final bool collapsed;
+  final Color color;
+  // final double contentPadding;
+  final String hintText;
 
   PinPut(
       {this.onSubmit,
@@ -25,6 +29,10 @@ class PinPut extends StatefulWidget {
       this.clearButtonIcon = Icons.backspace,
       this.clearButtonEnabled = true,
       this.clearButtonColor = 0xFF66BB6A,
+      this.collapsed = false,
+      this.hintText = '-',
+      this.color = Colors.black,
+      // this.contentPadding = 3.0,
       this.autoFocus = true})
       : assert(fieldsCount > 0 && borderRadius > 0);
 

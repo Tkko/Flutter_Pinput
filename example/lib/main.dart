@@ -12,17 +12,25 @@ class PinPutTest extends StatelessWidget {
           hintColor: Colors.green,
         ),
         home: Scaffold(
-            body: Builder(
-          builder: (context) => Padding(
-                padding: const EdgeInsets.all(40.0),
-                child: Center(
+          body: Builder(
+            builder: (context) => Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Center(
+                child: Container (
+                  width: 150.0,
                   child: PinPut(
-                    fieldsCount: 4,
+                    fieldsCount: 5,
+                    collapsed: true,
+                    fontSize: 18.0,
+                    // contentPadding: 10.0,
                     onSubmit: (String pin) => _showSnackBar(pin, context),
                   ),
                 ),
               ),
-        )));
+            ),
+          )
+      )
+    );
   }
 
   void _showSnackBar(String pin, BuildContext context) {
