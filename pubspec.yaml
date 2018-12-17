@@ -1,6 +1,6 @@
 name: pinput
 description: This widget keeps whole space of parent's width and lay outs text fields in a way that creats look of PIN CODE input field.
-version: 0.1.4
+version: 0.1.5
 author: Tornike Qurdadze <qurdadzze@gmail.com>
 homepage: https://github.com/Tkko/Flutter_PinPut
 

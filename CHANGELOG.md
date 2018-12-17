@@ -1,4 +1,16 @@
 # Changelog
+## 0.1.5 - 12/17/2018
+
+* Added
+ Copy From Clipboard fnctionality if copied text length is equal to fields count
+
+| Property  | Default |
+| ------------- | ------------- |
+| pasteButtonIcon  | Icons.content_paste |
+
+*Note that
+
+	clearButtonEnabled will change with actionButtonEnabled in next release, right now if it is true both clear and paste functinality works
 
 ## 0.1.4 - 10/31/2018
 
