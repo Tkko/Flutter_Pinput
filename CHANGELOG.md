@@ -1,4 +1,18 @@
 # Changelog
+## 0.1.6 -01/17/2019
+
+* Added
+ Properties ability to hide keyboard & custumize more
+
+| Property  | Default/Meaning |
+| ------------- | ------------- |
+| clearButtonIcon  | Icon(Icons.backspace, size: 30) |
+| pasteButtonIcon  | Icon(Icons.content_paste, size: 30) |
+| unFocusWhen  | Default is False, True to hide keyboard|
+| textStyle  | TextStyle(fontSize: 30) |
+| inputDecoration  | Ability to style field's border, padding etc... |
+
+
 ## 0.1.5 - 12/17/2018
 
 * Added
