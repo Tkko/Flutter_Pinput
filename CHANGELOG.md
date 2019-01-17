@@ -1,109 +1,78 @@
-# PinPut
+# Changelog
+## 0.1.6 -01/17/2019
 
-100% Dart based and lightweight PIN input field widget for Flutter
+* Added
+ Properties ability to hide keyboard & custumize more
 
-## Contents
-
-- [Overview](#overview)
-
-- [Installation](#installation)
-
-- [Properties](#properties)
-
-- [Example](#example)
-
-- [Contribute](#contribute)
-
-## Overview
-
-This widget keeps whole width of parent widget and layouts textfields in a way to create PIN code input field look it accepts string of any length and calls the onSubmit method when all fields are filled.
-
-<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/pinput_demo.gif"  alt="drawing"  width="180"/>
-
-### Installation
-
-Install the latest version [from pub](https://pub.dartlang.org/packages/pinput).
-
-## Properties
-
-
-| Property | Default/Meaning |
-|------------|:---------------------:|
-| onSubmit | @required Function |
-| fieldsCount | @required number |
-| isTextObscure | false |
-| textStyle | TextStyle(fontSize: 30) |
-| spaceBetween | space between fields Default: 10.0|
+| Property  | Default/Meaning |
+| ------------- | ------------- |
 | clearButtonIcon  | Icon(Icons.backspace, size: 30) |
 | pasteButtonIcon  | Icon(Icons.content_paste, size: 30) |
 | unFocusWhen  | Default is False, True to hide keyboard|
+| textStyle  | TextStyle(fontSize: 30) |
+| spaceBetween | space between fields Default: 10.0|
 | inputDecoration  | Ability to style field's border, padding etc... |
-| keybaordType | number |
-| keyboardAction | next |
-| actionButtonEnabled  | true |
+
+
+## 0.1.5 - 12/17/2018
+
+* Added
+ Copy From Clipboard fnctionality if copied text length is equal to fields count
+
+| Property  | Default |
+| ------------- | ------------- |
+| pasteButtonIcon  | Icons.content_paste |
+
+*Note that
+
+	clearButtonEnabled will change with actionButtonEnabled in next release, right now if it is true both clear and paste functinality works
+
+## 0.1.4 - 10/31/2018
+
+* Added
+
+| Property  | Default |
+| ------------- | ------------- |
 | autoFocus  | true |
 
-## Example
+## 0.1.3+1 - 11026/2018
 
-Import the package:
+* Minor fixes
 
-```dart
+## 0.1.3 - 10/26/2018
 
-import 'package:flutter/material.dart';
-import 'package:pinput/pin_put/pin_put.dart';
+* Transformed plugin to MVVM pattern
+* Fixed onSubmit call when all fieds aren't filled
+* Updated Demo
+* Added
 
-void main() => runApp(PinPutTest());
+| Property  | Default |
+| ------------- | ------------- |
+| clearButtonIcon  | Icons.backspace |
+| clearButtonEnabled  | true |
+| clearButtonColor  | 0xFF66BB6A |
 
-class PinPutTest extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: ThemeData(
-          primaryColor: Colors.green,
-          hintColor: Colors.green,
-        ),
-        home: Scaffold(
-            body: Builder(
-          builder: (context) => Padding(
-                padding: const EdgeInsets.all(40.0),
-                child: Center(
-                  child: PinPut(
-                    fieldsCount: 4,
-                    onSubmit: (String pin) => _showSnackBar(pin, context),
-                  ),
-                ),
-              ),
-        )));
-  }
+## 0.1.2 - 10/24/2018
 
-  void _showSnackBar(String pin, BuildContext context) {
-    final snackBar = SnackBar(
-      duration: Duration(seconds: 5),
-      content: Container(
-          height: 80.0,
-          child: Center(
-            child: Text(
-              'Pin Submitted. Value: $pin',
-              style: TextStyle(fontSize: 25.0),
-            ),
-          )),
-      backgroundColor: Colors.greenAccent,
-    );
-    Scaffold.of(context).showSnackBar(snackBar);
-  }
-}
-```
+* Added
 
-## 👍 Support
+| Property   | Default |
+|------------|:-------:|
+| borderRadius  | 5.0 |
+| keybaordType  | number |
+| keyboardAction  | next |
 
-## Contribute
+## 0.1.1 - 10/24/2018
 
-1. Fork it
+* Added
 
-2. Create your feature branch (git checkout -b my-new-feature)
+| Property   | Default |
+|------------|:-------:|
+| onSubmit  | Function |
+| fieldsCount  | 4 |
+| isTextObscure  | false |
+| fontSize  | 40.0 |
 
-3. Commit your changes (git commit -am 'Add some feature')
+## 0.0.1 - 10/24/2018
 
-4. Push to the branch (git push origin my-new-feature)
-
-5. Create new Pull Request
+* Initial release, working base functionality

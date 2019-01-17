@@ -26,18 +26,21 @@ Install the latest version [from pub](https://pub.dartlang.org/packages/pinput).
 
 ## Properties
 
-| Property | Default |
+
+| Property | Default/Meaning |
 |------------|:---------------------:|
-| onSubmit | Function |
-| fieldsCount | 4 |
+| onSubmit | @required Function |
+| fieldsCount | @required number |
 | isTextObscure | false |
-| fontSize | 40.0 |
-| borderRadius | 5.0 |
+| textStyle | TextStyle(fontSize: 30) |
+| spaceBetween | space between fields Default: 10.0|
+| clearButtonIcon  | Icon(Icons.backspace, size: 30) |
+| pasteButtonIcon  | Icon(Icons.content_paste, size: 30) |
+| unFocusWhen  | Default is False, True to hide keyboard|
+| inputDecoration  | Ability to style field's border, padding etc... |
 | keybaordType | number |
 | keyboardAction | next |
-| clearButtonIcon  | Icons.backspace |
-| clearButtonEnabled  | true |
-| clearButtonColor  | 0xFF66BB6A |
+| actionButtonEnabled  | true |
 | autoFocus  | true |
 
 ## Example
