@@ -31,7 +31,6 @@ class PinPutState extends State<PinPut> {
       _bloc.focusFirst();
 
     return Container(
-      color: Colors.red,
       height: 100,
       child: _generateTextFields(context),
     );
