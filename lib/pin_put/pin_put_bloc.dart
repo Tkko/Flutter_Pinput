@@ -10,7 +10,7 @@ class PinPutBloc {
   List<FocusNode> nodes;
   List<TextEditingController> textCtrls;
   String _clp;
-  ActionButtonState _actionButtonState = ActionButtonState.delete;
+  ActionButtonState _actionButtonState = ActionButtonState.paste;
 
   final _onchangeSinkCtrl = StreamController<FieldModel>();
 
@@ -43,16 +43,16 @@ class PinPutBloc {
   }
 
   void _onTextChanged(FieldModel m) {
-    _setButtonState();
     _pin[m.index] = m.text;
     _focusNext(m.text, m.index);
+    _setButtonState();
   }
 
-  void _checkClipboard() {
-    Clipboard.getData('text/plain').then((ClipboardData cl) {
-      _clp = cl.text;
-      _setButtonState();
-    });
+  void _checkClipboard() async {
+    ClipboardData clipboardData = await Clipboard.getData('text/plain');
+
+    _clp = clipboardData.text;
+    _setButtonState();
   }
 
   void _focusNext(String s, int i) {
@@ -61,8 +61,6 @@ class PinPutBloc {
         _submit();
       } else
         FocusScope.of(context).requestFocus(nodes[i + 1]);
-    } else {
-      if (i > 0) FocusScope.of(context).requestFocus(nodes[i - 1]);
     }
   }
 
@@ -80,6 +78,7 @@ class PinPutBloc {
 
   void _setButtonState() {
     print(_isFilled());
+
     ActionButtonState a = ActionButtonState.paste;
     if (_clp == null || _clp.length != fieldsCount || _isFilled())
       a = ActionButtonState.delete;
@@ -100,8 +99,9 @@ class PinPutBloc {
     }
   }
 
-  void onAction() {
+  void onAction() async {
     if (_actionButtonState == ActionButtonState.paste) {
+      await _checkClipboard();
       _copyFromClipboard(context);
     } else {
       for (int i = 0; i < fieldsCount; ++i) {

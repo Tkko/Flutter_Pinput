@@ -14,9 +14,11 @@ class PinPut extends StatefulWidget {
     this.keyboardAction = TextInputAction.next,
     this.actionButtonsEnabled = true,
     this.unFocusWhen = false,
+    this.clearInput = false,
     this.autoFocus = true,
     this.inputDecoration = const InputDecoration(
-        contentPadding: EdgeInsets.all(8),
+        contentPadding:
+            EdgeInsets.only(left: 10, right: 10, top: 8.0, bottom: 8.0),
         border: OutlineInputBorder(),
         counterText: ''),
   }) : assert(fieldsCount > 0);
@@ -24,6 +26,8 @@ class PinPut extends StatefulWidget {
   final Function onSubmit;
   final int fieldsCount;
   final TextStyle textStyle;
+
+  final bool clearInput;
 
   /// Space between fields
   final double spaceBetween;
