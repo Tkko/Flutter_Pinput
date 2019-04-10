@@ -77,8 +77,6 @@ class PinPutBloc {
   }
 
   void _setButtonState() {
-    print(_isFilled());
-
     ActionButtonState a = ActionButtonState.paste;
     if (_clp == null || _clp.length != fieldsCount || _isFilled())
       a = ActionButtonState.delete;
