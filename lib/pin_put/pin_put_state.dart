@@ -13,7 +13,7 @@ class PinPutState extends State<PinPut> {
             context: context,
             fieldsCount: widget.fieldsCount,
             onSubmit: (String p) => widget.onSubmit(p));
-    _actionButton = _actionButton ?? _buildActionButton();
+    _actionButton = _buildActionButton();
     super.initState();
   }
 
@@ -24,13 +24,18 @@ class PinPutState extends State<PinPut> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (widget.unFocusWhen)
-      _bloc.unFocusAll();
-    else
-      _bloc.focusFirst();
+  void didUpdateWidget(PinPut oldWidget) {
+    if (widget.clearInput != oldWidget.clearInput &&
+        widget.clearInput == true) {
+      _bloc.onAction();
+    }
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    if (widget.unFocusWhen) _bloc.unFocusAll();
     return Container(
+      color: Colors.transparent,
       height: 100,
       child: _generateTextFields(context),
     );
@@ -55,13 +60,16 @@ class PinPutState extends State<PinPut> {
   Widget _buildActionButton() {
     return StreamBuilder<ActionButtonState>(
         stream: _bloc.buttonState,
-        initialData: ActionButtonState.delete,
+        initialData: ActionButtonState.paste,
         builder: (BuildContext context, AsyncSnapshot<ActionButtonState> snap) {
+          Widget button = Container();
+          if (snap.data == ActionButtonState.paste)
+            button = widget.pasteButtonIcon;
+          if (snap.data == ActionButtonState.delete)
+            button = widget.clearButtonIcon;
           return IconButton(
             onPressed: () => _bloc.onAction(),
-            icon: snap.data == ActionButtonState.paste
-                ? widget.pasteButtonIcon
-                : widget.clearButtonIcon,
+            icon: button,
           );
         });
   }
@@ -69,18 +77,19 @@ class PinPutState extends State<PinPut> {
   Widget _buildTextField(int i, BuildContext context) {
     return Expanded(
       child: TextField(
-        keyboardType: widget.keyboardType,
-        textInputAction: widget.keyboardAction,
-        style: widget.textStyle,
-        obscureText: widget.isTextObscure,
-        decoration: widget.inputDecoration,
-        textAlign: TextAlign.center,
-        maxLength: 1,
-        controller: _bloc.textCtrls[i],
-        focusNode: _bloc.nodes[i],
-        onChanged: (String s) =>
-            _bloc.onTextChange.add(FieldModel(index: i, text: s)),
-      ),
+          keyboardType: widget.keyboardType,
+          textInputAction: widget.keyboardAction,
+          style: widget.textStyle,
+          obscureText: widget.isTextObscure,
+          decoration: widget.inputDecoration,
+          textAlign: TextAlign.center,
+          maxLength: 1,
+          controller: _bloc.textCtrls[i],
+          focusNode: _bloc.nodes[i],
+          onChanged: (String s) {
+            _bloc.textCtrls[i].text = s;
+            _bloc.onTextChange.add(FieldModel(index: i, text: s));
+          }),
     );
   }
 }
