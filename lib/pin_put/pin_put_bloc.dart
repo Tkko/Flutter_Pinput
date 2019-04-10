@@ -43,9 +43,9 @@ class PinPutBloc {
   }
 
   void _onTextChanged(FieldModel m) {
-    _setButtonState();
     _pin[m.index] = m.text;
     _focusNext(m.text, m.index);
+    _setButtonState();
   }
 
   void _checkClipboard() async {
@@ -120,7 +120,6 @@ class PinPutBloc {
   void focusFirst() => FocusScope.of(context).requestFocus(nodes[0]);
 
   bool _isFilled() => _pin.join().length == fieldsCount;
-  bool _isEmpty() => _pin.join().length == 1;
 }
 
 class FieldModel {
