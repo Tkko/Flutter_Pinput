@@ -25,6 +25,7 @@ class PinPutState extends State<PinPut> {
 
   @override
   void didUpdateWidget(PinPut oldWidget) {
+    super.didUpdateWidget(oldWidget);
     if (widget.clearInput != oldWidget.clearInput &&
         widget.clearInput == true) {
       _bloc.onAction();
@@ -87,7 +88,6 @@ class PinPutState extends State<PinPut> {
           controller: _bloc.textCtrls[i],
           focusNode: _bloc.nodes[i],
           onChanged: (String s) {
-            _bloc.textCtrls[i].text = s;
             _bloc.onTextChange.add(FieldModel(index: i, text: s));
           }),
     );
