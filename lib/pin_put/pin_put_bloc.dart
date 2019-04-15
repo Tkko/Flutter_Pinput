@@ -51,7 +51,7 @@ class PinPutBloc {
   void _checkClipboard() async {
     ClipboardData clipboardData = await Clipboard.getData('text/plain');
 
-    _clp = clipboardData.text;
+    _clp = clipboardData?.text;
     _setButtonState();
   }
 
