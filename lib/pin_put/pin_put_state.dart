@@ -80,6 +80,7 @@ class PinPutState extends State<PinPut> {
       child: TextField(
           keyboardType: widget.keyboardType,
           textInputAction: widget.keyboardAction,
+          textCapitalization: widget.textCapitalization,
           style: widget.textStyle,
           obscureText: widget.isTextObscure,
           decoration: widget.inputDecoration,
