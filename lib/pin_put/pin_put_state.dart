@@ -37,7 +37,6 @@ class PinPutState extends State<PinPut> {
     if (widget.unFocusWhen) _bloc.unFocusAll();
     return Container(
       color: Colors.transparent,
-      height: 100,
       child: _generateTextFields(context),
     );
   }
