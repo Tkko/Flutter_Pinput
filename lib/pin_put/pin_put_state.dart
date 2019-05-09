@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 import 'package:pinput/pin_put/pin_put_bloc.dart';
 
-class PinPutState extends State<PinPut> {
+class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   PinPutBloc _bloc;
   Widget _actionButton;
-
+  AppLifecycleState _appLifecycleState;
   @override
   void initState() {
     _bloc = _bloc ??
@@ -29,6 +29,16 @@ class PinPutState extends State<PinPut> {
     if (widget.clearInput != oldWidget.clearInput &&
         widget.clearInput == true) {
       _bloc.onAction();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
+    if (_appLifecycleState != appLifecycleState) {
+      if (appLifecycleState == AppLifecycleState.resumed) {
+        _bloc.checkClipboard();
+      }
+      _appLifecycleState = appLifecycleState;
     }
   }
 
