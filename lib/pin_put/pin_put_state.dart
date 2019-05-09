@@ -14,12 +14,14 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
             fieldsCount: widget.fieldsCount,
             onSubmit: (String p) => widget.onSubmit(p));
     _actionButton = _buildActionButton();
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
   void dispose() {
     _bloc.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
