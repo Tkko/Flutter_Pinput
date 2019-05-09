@@ -50,7 +50,7 @@ class PinPutBloc {
 
   void checkClipboard() async {
     ClipboardData clipboardData = await Clipboard.getData('text/plain');
-    if (clipboardData != null) _clp = clipboardData.text;
+    _clp = clipboardData?.text;
     _setButtonState();
   }
 
@@ -76,8 +76,6 @@ class PinPutBloc {
   }
 
   void _setButtonState() {
-    print(_isFilled());
-
     ActionButtonState a = ActionButtonState.paste;
     if (_clp == null || _clp.length != fieldsCount || _isFilled())
       a = ActionButtonState.delete;

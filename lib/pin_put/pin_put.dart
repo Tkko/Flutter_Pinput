@@ -16,6 +16,7 @@ class PinPut extends StatefulWidget {
     this.unFocusWhen = false,
     this.clearInput = false,
     this.autoFocus = true,
+    this.textCapitalization = TextCapitalization.none,
     this.inputDecoration = const InputDecoration(
         contentPadding:
             EdgeInsets.only(left: 10, right: 10, top: 8.0, bottom: 8.0),
@@ -36,6 +37,7 @@ class PinPut extends StatefulWidget {
   /// Set counterText value '' in order to remove extra space from bottom of TextFields
   /// Use contentPadding property to manipulate on height
   /// For example: if contentPadding = 0 height will bee minimum. Note tah width will be always max
+  final TextCapitalization textCapitalization;
   final InputDecoration inputDecoration;
   final bool isTextObscure;
   final bool actionButtonsEnabled;
