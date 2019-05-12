@@ -32,7 +32,7 @@ class PinPutBloc {
     _onchangeSinkCtrl.stream
         .distinct()
         .listen((FieldModel m) => _onTextChanged(m));
-    _checkClipboard();
+    checkClipboard();
   }
 
   void dispose() {
@@ -48,9 +48,8 @@ class PinPutBloc {
     _setButtonState();
   }
 
-  void _checkClipboard() async {
+  void checkClipboard() async {
     ClipboardData clipboardData = await Clipboard.getData('text/plain');
-
     _clp = clipboardData?.text;
     _setButtonState();
   }
@@ -99,7 +98,7 @@ class PinPutBloc {
 
   void onAction() async {
     if (_actionButtonState == ActionButtonState.paste) {
-      await _checkClipboard();
+      await checkClipboard();
       _copyFromClipboard(context);
     } else {
       for (int i = 0; i < fieldsCount; ++i) {
