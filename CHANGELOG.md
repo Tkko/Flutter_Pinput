@@ -1,4 +1,16 @@
 # Changelog
+## 0.1.7 -05/12/2019
+👍 With the help of community: @datvo0110, @mwgriffiths88, @inromualdo
+* Fixed minor bugs, check clipboard when app is resumed...
+* Added
+ Properties ability to hide keyboard & custumize more
+
+| Property  | Default/Meaning |
+| ------------- | ------------- |
+| textCapitalization  | TextCapitalization.none |
+
+
+
 ## 0.1.6 -01/17/2019
 
 * Added

@@ -48,10 +48,11 @@ class PinPutBloc {
     _setButtonState();
   }
 
-  void checkClipboard() async {
+  Future<bool> checkClipboard() async {
     ClipboardData clipboardData = await Clipboard.getData('text/plain');
     _clp = clipboardData?.text;
     _setButtonState();
+    return _clp.isNotEmpty;
   }
 
   void _focusNext(String s, int i) {
