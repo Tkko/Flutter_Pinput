@@ -66,7 +66,7 @@ class PinPutBloc {
 
   void _submit() {
     for (int i = 0; i < fieldsCount; ++i) {
-      if (_pin[i].isEmpty) {
+      if (_pin[i] == null || _pin[i].isEmpty) {
         FocusScope.of(context).requestFocus(nodes[i]);
         return;
       }
