@@ -47,6 +47,10 @@ class PinPutBloc {
     _pin[m.index] = m.text;
     _focusNext(m.text, m.index);
     _setButtonState();
+    _triggerOnChange();
+  }
+
+  void _triggerOnChange() {
     if (onChange != null) {
       onChange(_pin);
     }
@@ -112,6 +116,7 @@ class PinPutBloc {
         _setButtonState();
       }
       FocusScope.of(context).requestFocus(nodes[0]);
+      _triggerOnChange();
     }
   }
 
