@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 class PinPutBloc {
   final BuildContext context;
   final int fieldsCount;
-  final Function(String) onSubmit;
-  final Function(List<String>) onChange;
+  final Function onSubmit;
+  final Function onChange;
   List<String> _pin;
   List<FocusNode> nodes;
   List<TextEditingController> textCtrls;

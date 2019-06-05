@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put_state.dart';
 
+typedef OnSubmitCallback = void Function(String pin);
+typedef OnChangeCallback = void Function(List<String> charList);
+
 class PinPut extends StatefulWidget {
   PinPut({
     @required this.onSubmit,
@@ -26,7 +29,7 @@ class PinPut extends StatefulWidget {
     this.onChange,
   }) : assert(fieldsCount > 0);
 
-  final Function(String) onSubmit;
+  final OnSubmitCallback onSubmit;
   final int fieldsCount;
   final TextStyle textStyle;
 
@@ -50,7 +53,7 @@ class PinPut extends StatefulWidget {
   final Icon clearButtonIcon;
   final Icon pasteButtonIcon;
   final double containerHeight;
-  final Function(List<String>) onChange;
+  final OnChangeCallback onChange;
 
   @override
   PinPutState createState() => PinPutState();
