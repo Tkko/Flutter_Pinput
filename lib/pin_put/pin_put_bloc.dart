@@ -6,6 +6,7 @@ class PinPutBloc {
   final BuildContext context;
   final int fieldsCount;
   final Function onSubmit;
+  final Function onChange;
   List<String> _pin;
   List<FocusNode> nodes;
   List<TextEditingController> textCtrls;
@@ -20,7 +21,7 @@ class PinPutBloc {
 
   Stream<ActionButtonState> get buttonState => _buttonStateStreamCtrl.stream;
 
-  PinPutBloc({this.context, this.fieldsCount, this.onSubmit}) {
+  PinPutBloc({this.context, this.fieldsCount, this.onSubmit, this.onChange}) {
     _init();
   }
 
@@ -46,6 +47,9 @@ class PinPutBloc {
     _pin[m.index] = m.text;
     _focusNext(m.text, m.index);
     _setButtonState();
+    if (onChange != null) {
+      onChange(_pin.join());
+    }
   }
 
   Future<bool> checkClipboard() async {
