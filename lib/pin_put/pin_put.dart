@@ -22,6 +22,7 @@ class PinPut extends StatefulWidget {
             EdgeInsets.only(left: 10, right: 10, top: 8.0, bottom: 8.0),
         border: OutlineInputBorder(),
         counterText: ''),
+    this.containerHeight = 100.0,
   }) : assert(fieldsCount > 0);
 
   final Function onSubmit;
@@ -47,6 +48,7 @@ class PinPut extends StatefulWidget {
   final bool unFocusWhen;
   final Icon clearButtonIcon;
   final Icon pasteButtonIcon;
+  final double containerHeight;
 
   @override
   PinPutState createState() => PinPutState();

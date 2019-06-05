@@ -49,7 +49,7 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
     if (widget.unFocusWhen) _bloc.unFocusAll();
     return Container(
       color: Colors.transparent,
-      height: 100,
+      height: widget.containerHeight,
       child: _generateTextFields(context),
     );
   }
