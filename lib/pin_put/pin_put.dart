@@ -26,7 +26,7 @@ class PinPut extends StatefulWidget {
     this.onChange,
   }) : assert(fieldsCount > 0);
 
-  final Function onSubmit;
+  final Function(String) onSubmit;
   final int fieldsCount;
   final TextStyle textStyle;
 
@@ -50,7 +50,7 @@ class PinPut extends StatefulWidget {
   final Icon clearButtonIcon;
   final Icon pasteButtonIcon;
   final double containerHeight;
-  final Function onChange;
+  final Function(List<String>) onChange;
 
   @override
   PinPutState createState() => PinPutState();

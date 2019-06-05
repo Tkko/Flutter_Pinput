@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 class PinPutBloc {
   final BuildContext context;
   final int fieldsCount;
-  final Function onSubmit;
-  final Function onChange;
+  final Function(String) onSubmit;
+  final Function(List<String>) onChange;
   List<String> _pin;
   List<FocusNode> nodes;
   List<TextEditingController> textCtrls;
@@ -48,7 +48,7 @@ class PinPutBloc {
     _focusNext(m.text, m.index);
     _setButtonState();
     if (onChange != null) {
-      onChange(_pin.join());
+      onChange(_pin);
     }
   }
 
