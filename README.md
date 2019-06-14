@@ -1,6 +1,6 @@
 # PinPut
 
-100% Dart based and lightweight PIN input field widget for Flutter
+PIN input field widget for Flutter with paste from clipboard functionality
 
 ## Contents
 
@@ -42,6 +42,7 @@ Install the latest version [from pub](https://pub.dartlang.org/packages/pinput).
 | keyboardAction | next |
 | actionButtonEnabled  | true |
 | autoFocus  | true |
+| textCapitalization  | TextCapitalization.none |
 
 ## Example
 

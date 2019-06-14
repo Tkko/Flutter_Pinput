@@ -1,4 +1,16 @@
 # Changelog
+
+## 0.1.8 -06/14/2019
+👍 With the help of community: @datvo0110, @almeynman
+* Fixed minor bugs
+* Added
+
+| Property  | Default/Meaning |
+| ------------- | ------------- |
+| containerHeight  | 100.0 |
+
+
+
 ## 0.1.7 -05/12/2019
 👍 With the help of community: @datvo0110, @mwgriffiths88, @inromualdo
 * Fixed minor bugs, check clipboard when app is resumed...
