@@ -50,7 +50,7 @@ class PinPutBloc {
 
   Future<bool> checkClipboard() async {
     ClipboardData clipboardData = await Clipboard.getData('text/plain');
-    _clp = clipboardData?.text;
+    _clp = clipboardData?.text ?? '';
     _setButtonState();
     return _clp.isNotEmpty;
   }
