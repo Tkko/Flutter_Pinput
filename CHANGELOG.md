@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.9 -07/02/2019
+* Added
+
+| Property  | Default/Meaning |
+| ------------- | ------------- |
+| onClear  | Clear button callback |
+
+
 ## 0.1.8 -06/14/2019
 👍 With the help of community: @datvo0110, @almeynman
 * Fixed minor bugs
