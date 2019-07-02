@@ -5,6 +5,7 @@ class PinPut extends StatefulWidget {
   PinPut({
     @required this.onSubmit,
     @required this.fieldsCount,
+    this.onClear,
     this.spaceBetween = 10.0,
     this.textStyle = const TextStyle(fontSize: 30),
     this.clearButtonIcon = const Icon(Icons.backspace, size: 30),
@@ -26,6 +27,7 @@ class PinPut extends StatefulWidget {
   }) : assert(fieldsCount > 0);
 
   final Function onSubmit;
+  final Function onClear;
   final int fieldsCount;
   final TextStyle textStyle;
 

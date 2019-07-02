@@ -10,9 +10,11 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   void initState() {
     _bloc = _bloc ??
         PinPutBloc(
-            context: context,
-            fieldsCount: widget.fieldsCount,
-            onSubmit: (String p) => widget.onSubmit(p));
+          context: context,
+          fieldsCount: widget.fieldsCount,
+          onSubmit: (String p) => widget.onSubmit(p),
+          onClear: (String cl) => widget.onClear(cl),
+        );
     _actionButton = _buildActionButton();
     WidgetsBinding.instance.addObserver(this);
     super.initState();

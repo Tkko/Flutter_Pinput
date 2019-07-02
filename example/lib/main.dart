@@ -29,15 +29,17 @@ class PinPutTestState extends State<PinPutTest> {
         home: Scaffold(
             body: Builder(
           builder: (context) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                child: Center(
-                  child: PinPut(
-                    fieldsCount: 5,
-                    unFocusWhen: _unFocus,
-                    onSubmit: (String pin) => _showSnackBar(pin, context),
-                  ),
-                ),
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            child: Center(
+              child: PinPut(
+                fieldsCount: 5,
+                unFocusWhen: _unFocus,
+                onSubmit: (String pin) => _showSnackBar(pin, context),
+                onClear: (String s) => _showSnackBar('Cleared $s', context),
+
               ),
+            ),
+          ),
         )));
   }
 

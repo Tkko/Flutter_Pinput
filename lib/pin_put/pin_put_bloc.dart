@@ -6,6 +6,7 @@ class PinPutBloc {
   final BuildContext context;
   final int fieldsCount;
   final Function onSubmit;
+  final Function onClear;
   List<String> _pin;
   List<FocusNode> nodes;
   List<TextEditingController> textCtrls;
@@ -20,12 +21,12 @@ class PinPutBloc {
 
   Stream<ActionButtonState> get buttonState => _buttonStateStreamCtrl.stream;
 
-  PinPutBloc({this.context, this.fieldsCount, this.onSubmit}) {
+  PinPutBloc({this.context, this.fieldsCount, this.onSubmit, this.onClear}) {
     _init();
   }
 
   void _init() {
-    _pin = List<String>(fieldsCount);
+    _pin = List<String>.filled(fieldsCount,'');
     nodes = List.generate(fieldsCount, (int i) => FocusNode());
     textCtrls =
         List.generate(fieldsCount, (int i) => TextEditingController(text: ''));
@@ -102,11 +103,13 @@ class PinPutBloc {
       await checkClipboard();
       _copyFromClipboard(context);
     } else {
+      onClear(_pin.join());
       for (int i = 0; i < fieldsCount; ++i) {
         textCtrls[i].clear();
         _pin[i] = '';
         _setButtonState();
       }
+
       FocusScope.of(context).requestFocus(nodes[0]);
     }
   }
