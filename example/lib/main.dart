@@ -36,7 +36,6 @@ class PinPutTestState extends State<PinPutTest> {
                 unFocusWhen: _unFocus,
                 onSubmit: (String pin) => _showSnackBar(pin, context),
                 onClear: (String s) => _showSnackBar('Cleared $s', context),
-
               ),
             ),
           ),

@@ -26,7 +26,7 @@ class PinPutBloc {
   }
 
   void _init() {
-    _pin = List<String>.filled(fieldsCount,'');
+    _pin = List<String>.filled(fieldsCount, '');
     nodes = List.generate(fieldsCount, (int i) => FocusNode());
     textCtrls =
         List.generate(fieldsCount, (int i) => TextEditingController(text: ''));
