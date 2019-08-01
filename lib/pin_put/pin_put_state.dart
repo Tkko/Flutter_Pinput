@@ -92,6 +92,7 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   Widget _buildTextField(int i, BuildContext context) {
     return Expanded(
       child: TextField(
+          autofocus: i == 0 ? widget.autoFocus : false,
           keyboardType: widget.keyboardType,
           textInputAction: widget.keyboardAction,
           textCapitalization: widget.textCapitalization,
