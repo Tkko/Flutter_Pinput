@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.10 -02/08/2019
+👍 With the help of community: @xportation
+* Added Set autofocus on the first field when the attribute is defined|
+
+
 ## 0.1.9 -07/02/2019
 * Added
 
