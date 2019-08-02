@@ -33,6 +33,7 @@ class PinPutTestState extends State<PinPutTest> {
             child: Center(
               child: PinPut(
                 fieldsCount: 5,
+                autoFocus: false,
                 unFocusWhen: _unFocus,
                 onSubmit: (String pin) => _showSnackBar(pin, context),
                 onClear: (String s) => _showSnackBar('Cleared $s', context),
