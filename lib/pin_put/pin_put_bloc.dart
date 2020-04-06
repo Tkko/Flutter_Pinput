@@ -2,11 +2,26 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+class FieldModel {
+  final int index;
+  final String text;
+
+  FieldModel({this.index, this.text});
+}
+
+enum ActionButtonState {
+  delete,
+  paste,
+}
+
 class PinPutBloc {
   final BuildContext context;
   final int fieldsCount;
   final Function onSubmit;
   final Function onClear;
+  final actionButtonState =
+      ValueNotifier<ActionButtonState>(ActionButtonState.delete);
+
   List<String> _pin;
   List<FocusNode> nodes;
   List<TextEditingController> textCtrls;
@@ -15,11 +30,7 @@ class PinPutBloc {
 
   final _onchangeSinkCtrl = StreamController<FieldModel>();
 
-  final _buttonStateStreamCtrl = StreamController<ActionButtonState>();
-
   Sink<FieldModel> get onTextChange => _onchangeSinkCtrl.sink;
-
-  Stream<ActionButtonState> get buttonState => _buttonStateStreamCtrl.stream;
 
   PinPutBloc({this.context, this.fieldsCount, this.onSubmit, this.onClear}) {
     _init();
@@ -40,7 +51,7 @@ class PinPutBloc {
     nodes.forEach((FocusNode f) => f.dispose());
     textCtrls.forEach((TextEditingController t) => t.dispose());
     _onchangeSinkCtrl.close();
-    _buttonStateStreamCtrl.close();
+    actionButtonState.dispose();
   }
 
   void _onTextChanged(FieldModel m) {
@@ -83,7 +94,7 @@ class PinPutBloc {
       a = ActionButtonState.delete;
     if (_actionButtonState != a) {
       _actionButtonState = a;
-      _buttonStateStreamCtrl.add(_actionButtonState);
+      actionButtonState.value = a;
     }
   }
 
@@ -121,16 +132,4 @@ class PinPutBloc {
   void focusFirst() => FocusScope.of(context).requestFocus(nodes[0]);
 
   bool _isFilled() => _pin.join().length == fieldsCount;
-}
-
-class FieldModel {
-  final int index;
-  final String text;
-
-  FieldModel({this.index, this.text});
-}
-
-enum ActionButtonState {
-  delete,
-  paste,
 }

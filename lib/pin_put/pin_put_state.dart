@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 import 'package:pinput/pin_put/pin_put_bloc.dart';
+import 'package:pinput/pin_put/pin_put_controller.dart';
 
 class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   PinPutBloc _bloc;
   Widget _actionButton;
   AppLifecycleState _appLifecycleState;
+  PinPutController _controller;
+
   @override
   void initState() {
+    _controller = widget.controller ?? PinPutController();
+    widget.controller.addListener(() {
+      print('controller ${_controller.toString()}');
+      _bloc.unFocusAll();
+    });
+
     _bloc = _bloc ??
         PinPutBloc(
           context: context,
@@ -30,6 +39,10 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   @override
   void didUpdateWidget(PinPut oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.controller == null && oldWidget.controller != null)
+      _controller = PinPutController.fromValue(oldWidget.controller.value);
+    else if (widget.controller != null && oldWidget.controller == null)
+      _controller = null;
     if (widget.clearInput != oldWidget.clearInput &&
         widget.clearInput == true) {
       _bloc.onAction();
@@ -48,7 +61,6 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.unFocusWhen) _bloc.unFocusAll();
     return Container(
       color: Colors.transparent,
       height: widget.containerHeight,
@@ -73,20 +85,20 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   }
 
   Widget _buildActionButton() {
-    return StreamBuilder<ActionButtonState>(
-        stream: _bloc.buttonState,
-        initialData: ActionButtonState.paste,
-        builder: (BuildContext context, AsyncSnapshot<ActionButtonState> snap) {
-          Widget button = Container();
-          if (snap.data == ActionButtonState.paste)
-            button = widget.pasteButtonIcon;
-          if (snap.data == ActionButtonState.delete)
-            button = widget.clearButtonIcon;
-          return IconButton(
-            onPressed: () => _bloc.onAction(),
-            icon: button,
-          );
-        });
+    return ValueListenableBuilder<ActionButtonState>(
+      valueListenable: _bloc.actionButtonState,
+      builder: (BuildContext context, buttonState, Widget child) {
+        final icons = {
+          ActionButtonState.delete: widget.clearButtonIcon,
+          ActionButtonState.paste: widget.pasteButtonIcon,
+        };
+
+        return IconButton(
+          onPressed: () => _bloc.onAction(),
+          icon: icons[buttonState],
+        );
+      },
+    );
   }
 
   Widget _buildTextField(int i, BuildContext context) {
