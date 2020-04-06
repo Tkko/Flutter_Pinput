@@ -1,58 +1,78 @@
 import 'package:flutter/material.dart';
-import 'package:pinput/pin_put/pin_put_controller.dart';
+import 'package:flutter/services.dart';
 import 'package:pinput/pin_put/pin_put_state.dart';
 
 class PinPut extends StatefulWidget {
   PinPut({
-    @required this.onSubmit,
+    Key key,
     @required this.fieldsCount,
-    this.onClear,
-    this.spaceBetween = 10.0,
+    @required this.onSubmit,
+    this.animationCurve = Curves.linear,
+    this.fieldMargin,
+    this.fieldPadding,
+    this.fieldConstraints = const BoxConstraints(minHeight: 40, minWidth: 40),
+    this.animationDuration = const Duration(milliseconds: 160),
+    this.autoFocus = false,
     this.controller,
-    this.textStyle = const TextStyle(fontSize: 30),
-    this.clearButtonIcon = const Icon(Icons.backspace, size: 30),
-    this.pasteButtonIcon = const Icon(Icons.content_paste, size: 30),
-    this.isTextObscure = false,
-    this.keyboardType = TextInputType.number,
-    this.keyboardAction = TextInputAction.next,
-    this.actionButtonsEnabled = true,
-    this.clearInput = false,
-    this.autoFocus = true,
-    this.textCapitalization = TextCapitalization.none,
+    this.enabled = true,
+    this.submittedFieldDecoration,
+    this.selectedFieldDecoration,
+    this.pinAnimationType = PinAnimationType.slide,
+    this.followingFieldDecoration,
+    this.disabledDecoration,
+    this.focusNode,
     this.inputDecoration = const InputDecoration(
-      contentPadding:
-          EdgeInsets.only(left: 10, right: 10, top: 8.0, bottom: 8.0),
-      border: OutlineInputBorder(),
+      contentPadding: EdgeInsets.all(0),
+      border: InputBorder.none,
       counterText: '',
     ),
-    this.containerHeight = 100.0,
+    this.inputFormatters,
+    this.keyboardAppearance,
+    this.keyboardType = TextInputType.number,
+    this.obscureText,
+    this.onChanged,
+    this.onTap,
+    this.slideTransitionBeginOffset,
+    this.onClipboardFound,
+    this.textCapitalization = TextCapitalization.none,
+    this.textInputAction,
+    this.textStyle = const TextStyle(fontSize: 30),
+    this.fieldsAlignment = MainAxisAlignment.spaceBetween,
+    this.toolbarOptions,
   }) : assert(fieldsCount > 0);
 
-  final PinPutController controller;
-  final Function onSubmit;
-  final Function onClear;
-  final int fieldsCount;
-  final TextStyle textStyle;
-
-  final bool clearInput;
-
-  /// Space between fields
-  final double spaceBetween;
-
-  /// Creates a bundle of the border, labels, icons, and styles
-  /// Set counterText value '' in order to remove extra space from bottom of TextFields
-  /// Use contentPadding property to manipulate on height
-  /// For example: if contentPadding = 0 height will bee minimum. Note that width will be always max
-  final TextCapitalization textCapitalization;
+  final Offset slideTransitionBeginOffset;
+  final PinAnimationType pinAnimationType;
+  final MainAxisAlignment fieldsAlignment;
+  final EdgeInsetsGeometry fieldPadding;
+  final EdgeInsetsGeometry fieldMargin;
+  final BoxConstraints fieldConstraints;
+  final Curve animationCurve;
+  final BoxDecoration submittedFieldDecoration;
+  final BoxDecoration selectedFieldDecoration;
+  final BoxDecoration followingFieldDecoration;
+  final BoxDecoration disabledDecoration;
+  final Brightness keyboardAppearance;
+  final Duration animationDuration;
+  final FocusNode focusNode;
   final InputDecoration inputDecoration;
-  final bool isTextObscure;
-  final bool actionButtonsEnabled;
+  final List<TextInputFormatter> inputFormatters;
+  final TextCapitalization textCapitalization;
+  final TextEditingController controller;
+  final TextInputAction textInputAction;
   final TextInputType keyboardType;
-  final TextInputAction keyboardAction;
+  final TextStyle textStyle;
+  final ToolbarOptions toolbarOptions;
+  final ValueChanged<String> onChanged;
+  final ValueChanged<String> onSubmit;
+  final ValueChanged<String> onClipboardFound;
+  final VoidCallback onTap;
   final bool autoFocus;
-  final Icon clearButtonIcon;
-  final Icon pasteButtonIcon;
-  final double containerHeight;
+  final bool enabled;
+
+  //Recommended ●
+  final String obscureText;
+  final int fieldsCount;
 
   @override
   PinPutState createState() => PinPutState();

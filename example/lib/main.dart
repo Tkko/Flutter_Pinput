@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
-import 'package:pinput/pin_put/pin_put_controller.dart';
 
 void main() => runApp(PinPutTest());
 
@@ -10,7 +9,8 @@ class PinPutTest extends StatefulWidget {
 }
 
 class PinPutTestState extends State<PinPutTest> {
-  final PinPutController _pinPutController = PinPutController();
+  final TextEditingController _pinPutController = TextEditingController();
+  final FocusNode _pinPutFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -41,21 +41,22 @@ class PinPutTestState extends State<PinPutTest> {
                           autoFocus: false,
                           controller: _pinPutController,
                           onSubmit: (String pin) => _showSnackBar(pin, context),
-                          onClear: (String s) =>
-                              _showSnackBar('Cleared $s', context),
                         ),
                       ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        FlatButton(
+                        RaisedButton(
                           child: Text('Unfocus'),
-                          onPressed: () => _pinPutController.unFocus(),
+                          onPressed: () => FocusScope.of(context).unfocus(),
                         ),
-                        FlatButton(
+                        RaisedButton(
                           child: Text('Focus'),
-                          onPressed: () => _pinPutController.focus(3),
+                          onPressed: () {
+                            FocusScope.of(context)
+                                .requestFocus(_pinPutFocusNode);
+                          },
                         ),
                       ],
                     ),
