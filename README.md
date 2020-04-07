@@ -30,10 +30,9 @@ Use `submittedFieldDecoration`, `selectedFieldDecoration`, `followingFieldDecora
 properties to add field decoration, border, fill color, shape, radius etc.  
 provide different values to them in order to achieve nice implicit animations
 
-<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_1.gif"  alt="drawing"  width="180"/>
+<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_1.gif"  alt="drawing"  width="220"/>
 First example configuration
-```dart
-
+```
 BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
       border: Border.all(color: Colors.deepPurpleAccent),
@@ -57,6 +56,7 @@ PinPut(
     ),
   )
 ```
+
 
 
 ### Installation
