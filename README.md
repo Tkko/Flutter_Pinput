@@ -26,13 +26,14 @@ Flutter package to create Pin code input text field with every pixel customizati
 
 ## Overview
 
-Use `submittedFieldDecoration`, `selectedFieldDecoration`, `followingFieldDecoration`,
-properties to add field decoration, border, fill color, shape, radius etc.  
+Use `submittedFieldDecoration`, `selectedFieldDecoration`, `followingFieldDecoration`
+properties to add field decoration, border, fill color, shape, radius etc.
 provide different values to them in order to achieve nice implicit animations
 
-<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_1.gif"  alt="drawing"  width="220"/>
+<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_1.gif"  alt="drawing"  width="250"/>
+
 First example configuration
-```
+```dart
 BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
       border: Border.all(color: Colors.deepPurpleAccent),
@@ -57,7 +58,45 @@ PinPut(
   )
 ```
 
+<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_2.gif"  alt="drawing"  width="250"/>
 
+Second example configuration
+
+```dart
+
+BoxDecoration get _pinPutDecoration {
+  return BoxDecoration(
+      border: Border(
+    bottom: BorderSide(color: Colors.deepPurpleAccent),
+  ));
+}
+  
+PinPut(
+  fieldsCount: 5,
+  onSubmit: (String pin) => _showSnackBar(pin, context),
+  focusNode: _pinPutFocusNode,
+  controller: _pinPutController,
+  pinAnimationType: PinAnimationType.scale,
+  inputDecoration: InputDecoration(
+    border: InputBorder.none,
+    helperText: 'Pin code sent to your phone',
+  ),
+  submittedFieldDecoration: _pinPutDecoration.copyWith(
+    border: Border(
+      bottom: BorderSide(
+          width: 2,
+          color: Colors.deepPurpleAccent.withOpacity(1)),
+    ),
+  ),
+  selectedFieldDecoration: _pinPutDecoration,
+  followingFieldDecoration: _pinPutDecoration.copyWith(
+    border: Border(
+      bottom: BorderSide(
+          color: Colors.deepPurpleAccent.withOpacity(.5)),
+    ),
+  ),
+)
+```
 
 ### Installation
 

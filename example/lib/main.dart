@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
+import 'package:pinput/pin_put/pin_put_state.dart';
 
 void main() => runApp(PinPutTest());
 
@@ -14,9 +15,9 @@ class PinPutTestState extends State<PinPutTest> {
 
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
-      border: Border.all(color: Colors.deepPurpleAccent),
-      borderRadius: BorderRadius.circular(15),
-    );
+        border: Border(
+      bottom: BorderSide(color: Colors.deepPurpleAccent),
+    ));
   }
 
   @override
@@ -45,13 +46,23 @@ class PinPutTestState extends State<PinPutTest> {
                         onSubmit: (String pin) => _showSnackBar(pin, context),
                         focusNode: _pinPutFocusNode,
                         controller: _pinPutController,
+                        pinAnimationType: PinAnimationType.scale,
+                        inputDecoration: InputDecoration(
+                          border: InputBorder.none,
+                          helperText: 'Pin code sent to your phone',
+                        ),
                         submittedFieldDecoration: _pinPutDecoration.copyWith(
-                            borderRadius: BorderRadius.circular(20)),
+                          border: Border(
+                            bottom: BorderSide(
+                                width: 2,
+                                color: Colors.deepPurpleAccent.withOpacity(1)),
+                          ),
+                        ),
                         selectedFieldDecoration: _pinPutDecoration,
                         followingFieldDecoration: _pinPutDecoration.copyWith(
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(
-                            color: Colors.deepPurpleAccent.withOpacity(.5),
+                          border: Border(
+                            bottom: BorderSide(
+                                color: Colors.deepPurpleAccent.withOpacity(.5)),
                           ),
                         ),
                       ),
@@ -102,4 +113,3 @@ class PinPutTestState extends State<PinPutTest> {
     Scaffold.of(context).showSnackBar(snackBar);
   }
 }
-
