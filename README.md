@@ -5,7 +5,7 @@ Flutter package to create Pin code input text field with every pixel customizati
 
 ## Enhanced Documentation coming soon 🔥
 
-## Breaking changes in version 0.2.0 changed widget building logic so now it supports:
+## Breaking changes in version 0.2.0-dev.1 changed widget building logic so now it supports:
 -    Backspace on keyboard
 -    Every pixel customization
 -    Nice animations
