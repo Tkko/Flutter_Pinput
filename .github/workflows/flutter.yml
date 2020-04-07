@@ -1,4 +1,4 @@
-name: Dart CI
+name: PinPut build
 
 on:
   push:
@@ -8,12 +8,17 @@ on:
 
 jobs:
   build:
-
+    name: Build APK
     runs-on: ubuntu-latest
-
     container:
       image:  google/dart:latest
-
     steps:
-    - name: Flutter action
-      uses: subosito/flutter-action@v1.2.0
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v1.2.0
+        with:
+          flutter-version: '1.7.8+hotfix.4'
+      - run: cd example && flutter pub get
+      - run: flutter build apk
