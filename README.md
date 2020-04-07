@@ -26,9 +26,38 @@ Flutter package to create Pin code input text field with every pixel customizati
 
 ## Overview
 
-This widget keeps whole width of parent widget and layouts textfields in a way to create PIN code input field look it accepts string of any length and calls the onSubmit method when all fields are filled.
+Use `submittedFieldDecoration`, `selectedFieldDecoration`, `followingFieldDecoration`,
+properties to add field decoration, border, fill color, shape, radius etc.  
+provide different values to them in order to achieve nice implicit animations
 
-<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo.gif"  alt="drawing"  width="180"/>
+<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_1.gif"  alt="drawing"  width="180"/>
+First example configuration
+```dart
+
+BoxDecoration get _pinPutDecoration {
+    return BoxDecoration(
+      border: Border.all(color: Colors.deepPurpleAccent),
+      borderRadius: BorderRadius.circular(15),
+    );
+}
+
+PinPut(
+    fieldsCount: 5,
+    onSubmit: (String pin) => print(pin),
+    focusNode: _pinPutFocusNode,
+    controller: _pinPutController,
+    submittedFieldDecoration: _pinPutDecoration.copyWith(
+        borderRadius: BorderRadius.circular(20)),
+    selectedFieldDecoration: _pinPutDecoration,
+    followingFieldDecoration: _pinPutDecoration.copyWith(
+      borderRadius: BorderRadius.circular(5),
+      border: Border.all(
+        color: Colors.deepPurpleAccent.withOpacity(.5),
+      ),
+    ),
+  )
+```
+
 
 ### Installation
 
@@ -37,42 +66,45 @@ Install the latest version [from pub](https://pub.dartlang.org/packages/pinput).
 ## Properties
 
     @required this.fieldsCount,
-    @required this.onSubmit,
-    this.animationCurve = Curves.linear,
-    this.fieldMargin,
-    this.fieldPadding,
-    this.fieldConstraints = const BoxConstraints(minHeight: 40, minWidth: 40),
-    this.animationDuration = const Duration(milliseconds: 160),
-    this.autoFocus = false,
+    this.onSubmit,
+    this.onSaved,
+    this.onChanged,
+    this.onTap,
+    this.onClipboardFound,
     this.controller,
-    this.enabled = true,
+    this.focusNode,
+    this.textStyle,
     this.submittedFieldDecoration,
     this.selectedFieldDecoration,
-    this.pinAnimationType = PinAnimationType.slide,
     this.followingFieldDecoration,
     this.disabledDecoration,
-    this.focusNode,
+    this.eachFieldWidth,
+    this.eachFieldHeight,
+    this.fieldsAlignment = MainAxisAlignment.spaceBetween,
+    this.eachFieldMargin,
+    this.eachFieldPadding,
+    this.eachFieldConstraints =
+        const BoxConstraints(minHeight: 40, minWidth: 40),
     this.inputDecoration = const InputDecoration(
       contentPadding: EdgeInsets.all(0),
       border: InputBorder.none,
       counterText: '',
     ),
-    this.inputFormatters,
+    this.animationCurve = Curves.linear,
+    this.animationDuration = const Duration(milliseconds: 160),
+    this.pinAnimationType = PinAnimationType.slide,
+    this.slideTransitionBeginOffset,
+    this.enabled = true,
+    this.autofocus = false,
+    this.autoValidate = false,
     this.keyboardAppearance,
+    this.inputFormatters,
+    this.validator,
     this.keyboardType = TextInputType.number,
     this.obscureText,
-    this.onChanged,
-    this.onTap,
-    this.slideTransitionBeginOffset,
-    this.onClipboardFound,
     this.textCapitalization = TextCapitalization.none,
     this.textInputAction,
-    this.textStyle = const TextStyle(fontSize: 30),
-    this.fieldsAlignment = MainAxisAlignment.spaceBetween,
     this.toolbarOptions,
-    this.onSaved,
-    this.validator,
-    this.autoValidate = false,
 
 ## Example
 
