@@ -7,11 +7,11 @@ final defaultSubmittedFieldDecoration = BoxDecoration(
   borderRadius: BorderRadius.circular(20),
 );
 final defaultSelectedFieldDecoration = BoxDecoration(
-  border: Border.all(color: Colors.yellow),
-  borderRadius: BorderRadius.circular(10),
+  border: Border.all(color: Colors.deepPurpleAccent),
+  borderRadius: BorderRadius.circular(15),
 );
 final defaultFollowingFieldDecoration = BoxDecoration(
-  border: Border.all(color: Colors.deepOrange),
+  border: Border.all(color: Colors.deepPurpleAccent.withOpacity(.4)),
   borderRadius: BorderRadius.circular(5),
 );
 final defaultDisabledFieldDecoration = BoxDecoration(
@@ -89,7 +89,7 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
 
   void _checkClipboard() async {
     ClipboardData clipboardData = await Clipboard.getData('text/plain');
-    if (clipboardData.text.length == widget.fieldsCount) {
+    if (clipboardData?.text?.length == widget.fieldsCount) {
       widget.onClipboardFound(clipboardData.text);
     }
   }
@@ -110,14 +110,18 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   }
 
   Widget get _hiddenTextField {
-    return TextField(
+    return TextFormField(
       controller: _controller,
       onTap: widget.onTap,
-      onSubmitted: widget.onSubmit,
+      onFieldSubmitted: widget.onSubmit,
+      onSaved: widget.onSaved,
       onChanged: widget.onChanged,
+      validator: widget.validator,
+      autovalidate: widget.autoValidate,
       textInputAction: widget.textInputAction,
       focusNode: _focusNode,
       enabled: widget.enabled,
+      enableSuggestions: false,
       maxLengthEnforced: true,
       autofocus: widget.autoFocus,
       autocorrect: false,

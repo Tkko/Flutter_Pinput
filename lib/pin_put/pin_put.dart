@@ -39,6 +39,9 @@ class PinPut extends StatefulWidget {
     this.textStyle = const TextStyle(fontSize: 30),
     this.fieldsAlignment = MainAxisAlignment.spaceBetween,
     this.toolbarOptions,
+    this.onSaved,
+    this.validator,
+    this.autoValidate = false,
   }) : assert(fieldsCount > 0);
 
   final Offset slideTransitionBeginOffset;
@@ -69,6 +72,9 @@ class PinPut extends StatefulWidget {
   final VoidCallback onTap;
   final bool autoFocus;
   final bool enabled;
+  final bool autoValidate;
+  final FormFieldSetter<String> onSaved;
+  final FormFieldValidator<String> validator;
 
   //Recommended ●
   final String obscureText;

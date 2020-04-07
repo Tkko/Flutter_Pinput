@@ -20,7 +20,7 @@ class PinPutTestState extends State<PinPutTest> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      showSemanticsDebugger: false,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.green,
         hintColor: Colors.green,
@@ -44,14 +44,15 @@ class PinPutTestState extends State<PinPutTest> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 50),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        RaisedButton(
+                        FlatButton(
                           child: Text('Unfocus'),
                           onPressed: () => FocusScope.of(context).unfocus(),
                         ),
-                        RaisedButton(
+                        FlatButton(
                           child: Text('Focus'),
                           onPressed: () {
                             FocusScope.of(context)

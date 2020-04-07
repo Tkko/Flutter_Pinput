@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 -04/07/2020
+🔥🚀
+Breaking changes, changed widget building logic so now it supports:
+-    Backspace on keyboard
+-    Every pixel customization
+-    Nice animations
+-    Form validation
+-    Ios auto fill - testing needed
+
+
 ## 0.1.10 -02/08/2019
 👍 With the help of community: @xportation
 * Added Set autofocus on the first field when the attribute is defined|
