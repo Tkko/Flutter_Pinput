@@ -1,6 +1,6 @@
 name: pinput
 description: Flutter package to create Pin code input text field with every pixel customization possibility and beautiful animations
-version: 0.2.0-dev.1
+version: 0.2.0
 homepage: https://tkko.github.io/Flutter_PinPut
 repository: https://github.com/Tkko/Flutter_PinPut
 

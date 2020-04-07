@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0 -05/07/2020
+🔥🚀
+Added some useful Documentation
+
+
 ## 0.2.0-dev.1 -04/07/2020
 🔥🚀
 Breaking changes, changed widget building logic so now it supports:
