@@ -2,23 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
-final defaultSubmittedFieldDecoration = BoxDecoration(
-  border: Border.all(color: Colors.green),
-  borderRadius: BorderRadius.circular(20),
-);
-final defaultSelectedFieldDecoration = BoxDecoration(
-  border: Border.all(color: Colors.deepPurpleAccent),
-  borderRadius: BorderRadius.circular(15),
-);
-final defaultFollowingFieldDecoration = BoxDecoration(
-  border: Border.all(color: Colors.deepPurpleAccent.withOpacity(.4)),
-  borderRadius: BorderRadius.circular(5),
-);
-final defaultDisabledFieldDecoration = BoxDecoration(
-  border: Border.all(color: Colors.blueGrey),
-  borderRadius: BorderRadius.circular(10),
-);
-
 enum PinAnimationType {
   none,
   scale,
@@ -32,12 +15,6 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   FocusNode _focusNode;
   ValueNotifier<String> _textControllerValue;
 
-  // UI
-  BoxDecoration _submittedFieldDecoration;
-  BoxDecoration _selectedFieldDecoration;
-  BoxDecoration _followingFieldDecoration;
-  BoxDecoration _disabledDecoration;
-
   int get selectedIndex => _controller.value.text.length;
 
   @override
@@ -45,14 +22,6 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
     _controller = widget.controller ?? TextEditingController();
     _focusNode = widget.focusNode ?? FocusNode();
     _textControllerValue = ValueNotifier<String>(_controller.value.text);
-    _submittedFieldDecoration =
-        widget.submittedFieldDecoration ?? defaultSubmittedFieldDecoration;
-    _selectedFieldDecoration =
-        widget.selectedFieldDecoration ?? defaultSelectedFieldDecoration;
-    _followingFieldDecoration =
-        widget.followingFieldDecoration ?? defaultFollowingFieldDecoration;
-    _disabledDecoration =
-        widget.disabledDecoration ?? defaultDisabledFieldDecoration;
     _controller.addListener(_textChangeListener);
     _focusNode.addListener(() {
       setState(() {});
@@ -113,7 +82,6 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
     return TextFormField(
       controller: _controller,
       onTap: widget.onTap,
-      onFieldSubmitted: widget.onSubmit,
       onSaved: widget.onSaved,
       onChanged: widget.onChanged,
       validator: widget.validator,
@@ -123,7 +91,8 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
       enabled: widget.enabled,
       enableSuggestions: false,
       maxLengthEnforced: true,
-      autofocus: widget.autoFocus,
+      autofocus: widget.autofocus,
+      obscureText: widget.obscureText != null,
       autocorrect: false,
       keyboardAppearance: widget.keyboardAppearance,
       keyboardType: widget.keyboardType,
@@ -134,7 +103,9 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
       showCursor: false,
       scrollPadding: EdgeInsets.all(0),
       decoration: widget.inputDecoration,
-      style: widget.textStyle.copyWith(color: Colors.transparent),
+      style: widget.textStyle != null
+          ? widget.textStyle.copyWith(color: Colors.transparent)
+          : TextStyle(color: Colors.transparent),
     );
   }
 
@@ -159,12 +130,14 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   Widget _getField(int index) {
     final String pin = _controller.value.text;
     return AnimatedContainer(
+      width: widget.eachFieldWidth,
+      height: widget.eachFieldHeight,
       alignment: Alignment.center,
       duration: widget.animationDuration,
       curve: widget.animationCurve,
-      padding: widget.fieldPadding,
-      margin: widget.fieldMargin,
-      constraints: widget.fieldConstraints,
+      padding: widget.eachFieldPadding,
+      margin: widget.eachFieldMargin,
+      constraints: widget.eachFieldConstraints,
       decoration: _fieldDecoration(index),
       child: AnimatedSwitcher(
         switchInCurve: widget.animationCurve,
@@ -183,12 +156,12 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   }
 
   BoxDecoration _fieldDecoration(int index) {
-    if (!widget.enabled) return _disabledDecoration;
+    if (!widget.enabled) return widget.disabledDecoration;
     if (index < selectedIndex && _focusNode.hasFocus)
-      return _submittedFieldDecoration;
+      return widget.submittedFieldDecoration;
     if (index == selectedIndex && _focusNode.hasFocus)
-      return _selectedFieldDecoration;
-    return _followingFieldDecoration;
+      return widget.selectedFieldDecoration;
+    return widget.followingFieldDecoration;
   }
 
   Widget _getTransition(Widget child, Animation animation) {

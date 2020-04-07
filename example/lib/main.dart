@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
+import 'package:pinput/pin_put/pin_put_state.dart';
 
 void main() => runApp(PinPutTest());
 
@@ -12,9 +13,11 @@ class PinPutTestState extends State<PinPutTest> {
   final TextEditingController _pinPutController = TextEditingController();
   final FocusNode _pinPutFocusNode = FocusNode();
 
-  @override
-  void initState() {
-    super.initState();
+  BoxDecoration get _pinPutDecoration {
+    return BoxDecoration(
+      shape: BoxShape.circle,
+      color: Colors.greenAccent,
+    );
   }
 
   @override
@@ -26,6 +29,7 @@ class PinPutTestState extends State<PinPutTest> {
         hintColor: Colors.green,
       ),
       home: Scaffold(
+        backgroundColor: Colors.white,
         body: Builder(
           builder: (context) {
             return Center(
@@ -34,30 +38,41 @@ class PinPutTestState extends State<PinPutTest> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                      child: Center(
-                        child: PinPut(
-                          fieldsCount: 5,
-                          autoFocus: false,
-                          controller: _pinPutController,
-                          onSubmit: (String pin) => _showSnackBar(pin, context),
-                        ),
+                      color: Colors.white,
+                      margin: EdgeInsets.all(20),
+                      padding: EdgeInsets.all(20),
+                      child: PinPut(
+                        fieldsCount: 5,
+                        onSubmit: (String pin) => _showSnackBar(pin, context),
+                        focusNode: _pinPutFocusNode,
+                        controller: _pinPutController,
+                        textStyle: TextStyle(color: Colors.white, fontSize: 20),
+                        pinAnimationType: PinAnimationType.scale,
+                        submittedFieldDecoration: _pinPutDecoration.copyWith(),
+                        selectedFieldDecoration: _pinPutDecoration.copyWith(
+                            border: Border.all(
+                          color: Colors.blueAccent,
+                        )),
+                        followingFieldDecoration: _pinPutDecoration.copyWith(
+                            color: Colors.greenAccent.withOpacity(.6)),
                       ),
                     ),
-                    SizedBox(height: 50),
+                    SizedBox(height: 30),
+                    Divider(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         FlatButton(
-                          child: Text('Unfocus'),
-                          onPressed: () => FocusScope.of(context).unfocus(),
+                          child: Text('Focus'),
+                          onPressed: () => _pinPutFocusNode.requestFocus(),
                         ),
                         FlatButton(
-                          child: Text('Focus'),
-                          onPressed: () {
-                            FocusScope.of(context)
-                                .requestFocus(_pinPutFocusNode);
-                          },
+                          child: Text('Unfocus'),
+                          onPressed: () => _pinPutFocusNode.unfocus(),
+                        ),
+                        FlatButton(
+                          child: Text('Clear All'),
+                          onPressed: () => _pinPutController.text = '',
                         ),
                       ],
                     ),
@@ -82,7 +97,7 @@ class PinPutTestState extends State<PinPutTest> {
               style: TextStyle(fontSize: 25.0),
             ),
           )),
-      backgroundColor: Colors.greenAccent,
+      backgroundColor: Colors.deepPurpleAccent,
     );
     Scaffold.of(context).hideCurrentSnackBar();
     Scaffold.of(context).showSnackBar(snackBar);
