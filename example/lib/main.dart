@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
-import 'package:pinput/pin_put/pin_put_state.dart';
 
 void main() => runApp(PinPutTest());
 
@@ -15,8 +14,8 @@ class PinPutTestState extends State<PinPutTest> {
 
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
-      shape: BoxShape.circle,
-      color: Colors.greenAccent,
+      border: Border.all(color: Colors.deepPurpleAccent),
+      borderRadius: BorderRadius.circular(15),
     );
   }
 
@@ -46,15 +45,15 @@ class PinPutTestState extends State<PinPutTest> {
                         onSubmit: (String pin) => _showSnackBar(pin, context),
                         focusNode: _pinPutFocusNode,
                         controller: _pinPutController,
-                        textStyle: TextStyle(color: Colors.white, fontSize: 20),
-                        pinAnimationType: PinAnimationType.scale,
-                        submittedFieldDecoration: _pinPutDecoration.copyWith(),
-                        selectedFieldDecoration: _pinPutDecoration.copyWith(
-                            border: Border.all(
-                          color: Colors.blueAccent,
-                        )),
+                        submittedFieldDecoration: _pinPutDecoration.copyWith(
+                            borderRadius: BorderRadius.circular(20)),
+                        selectedFieldDecoration: _pinPutDecoration,
                         followingFieldDecoration: _pinPutDecoration.copyWith(
-                            color: Colors.greenAccent.withOpacity(.6)),
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: Colors.deepPurpleAccent.withOpacity(.5),
+                          ),
+                        ),
                       ),
                     ),
                     SizedBox(height: 30),
@@ -103,3 +102,4 @@ class PinPutTestState extends State<PinPutTest> {
     Scaffold.of(context).showSnackBar(snackBar);
   }
 }
+

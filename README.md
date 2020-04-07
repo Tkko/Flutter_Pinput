@@ -3,9 +3,7 @@
 🔥🚀
 Flutter package to create Pin code input text field with every pixel customization possibility 🎨 with beautiful animations
 
-## Enhanced Documentation coming soon 🔥
-
-## Breaking changes in version 0.2.0-dev.1 changed widget building logic so now it supports:
+## Breaking changes in version 0.2.0 changed widget building logic so now it supports:
 -    Backspace on keyboard
 -    Every pixel customization
 -    Nice animations
@@ -13,6 +11,10 @@ Flutter package to create Pin code input text field with every pixel customizati
 -    Ios auto fill - testing needed
 
 ## Contents
+
+- [Support](#support)
+
+- [Contribute](#contribute)
 
 - [Overview](#overview)
 
@@ -22,7 +24,18 @@ Flutter package to create Pin code input text field with every pixel customizati
 
 - [Example](#example)
 
-- [Contribute](#contribute)
+
+## Support
+First thing first give it a star ⭐
+
+
+## Contribute
+
+1. Fork it
+2. Create your feature branch (git checkout -b my-new-feature)
+3. Commit your changes (git commit -am 'Add some feature')
+4. Push to the branch (git push origin my-new-feature)
+5. Create new Pull Request
 
 ## Overview
 
@@ -41,7 +54,7 @@ BoxDecoration get _pinPutDecoration {
     );
 }
 
-PinPut(
+PinPit _pinPut = PinPut(
     fieldsCount: 5,
     onSubmit: (String pin) => print(pin),
     focusNode: _pinPutFocusNode,
@@ -55,7 +68,7 @@ PinPut(
         color: Colors.deepPurpleAccent.withOpacity(.5),
       ),
     ),
-  )
+  );
 ```
 
 <img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_2.gif"  alt="drawing"  width="250"/>
@@ -71,7 +84,7 @@ BoxDecoration get _pinPutDecoration {
   ));
 }
   
-PinPut(
+PinPit _pinPut = PinPut(
   fieldsCount: 5,
   onSubmit: (String pin) => print(pin),
   focusNode: _pinPutFocusNode,
@@ -95,7 +108,7 @@ PinPut(
           color: Colors.deepPurpleAccent.withOpacity(.5)),
     ),
   ),
-)
+);
 ```
 
 <img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_3.gif"  alt="drawing"  width="250"/>
@@ -111,7 +124,7 @@ BoxDecoration get _pinPutDecoration {
   );
 }
   
-PinPut(
+PinPit _pinPut = PinPut(
   fieldsCount: 5,
   onSubmit: (String pin) => print(pin),
   focusNode: _pinPutFocusNode,
@@ -125,12 +138,45 @@ PinPut(
   )),
   followingFieldDecoration: _pinPutDecoration.copyWith(
       color: Colors.greenAccent.withOpacity(.6)),
-)
+);
 ```
 
-### Installation
+## Installation
 
-Install the latest version [from pub](https://pub.dartlang.org/packages/pinput).
+
+### 1. Depend on it
+Add this to your package's `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  pinput: ^0.2.0
+```
+
+### 2. Install it
+
+You can install packages from the command line:
+
+with `pub`:
+
+```css
+$ pub get
+```
+
+with `Flutter`:
+
+```css
+$ flutter packages get
+```
+
+### 3. Import it
+
+Now in your `Dart` code, you can use:
+
+```dart
+import 'package:pinput/pin_put/pin_put.dart';
+```
+
+
 
 ## Properties
 
@@ -194,20 +240,23 @@ class PinPutTestState extends State<PinPutTest> {
   final TextEditingController _pinPutController = TextEditingController();
   final FocusNode _pinPutFocusNode = FocusNode();
 
-  @override
-  void initState() {
-    super.initState();
+  BoxDecoration get _pinPutDecoration {
+    return BoxDecoration(
+      border: Border.all(color: Colors.deepPurpleAccent),
+      borderRadius: BorderRadius.circular(15),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      showSemanticsDebugger: false,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: Colors.green,
         hintColor: Colors.green,
       ),
       home: Scaffold(
+        backgroundColor: Colors.white,
         body: Builder(
           builder: (context) {
             return Center(
@@ -216,29 +265,41 @@ class PinPutTestState extends State<PinPutTest> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                      child: Center(
-                        child: PinPut(
-                          fieldsCount: 5,
-                          autoFocus: false,
-                          controller: _pinPutController,
-                          onSubmit: (String pin) => _showSnackBar(pin, context),
+                      color: Colors.white,
+                      margin: EdgeInsets.all(20),
+                      padding: EdgeInsets.all(20),
+                      child: PinPut(
+                        fieldsCount: 5,
+                        onSubmit: (String pin) => _showSnackBar(pin, context),
+                        focusNode: _pinPutFocusNode,
+                        controller: _pinPutController,
+                        submittedFieldDecoration: _pinPutDecoration.copyWith(
+                            borderRadius: BorderRadius.circular(20)),
+                        selectedFieldDecoration: _pinPutDecoration,
+                        followingFieldDecoration: _pinPutDecoration.copyWith(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: Colors.deepPurpleAccent.withOpacity(.5),
+                          ),
                         ),
                       ),
                     ),
+                    SizedBox(height: 30),
+                    Divider(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        RaisedButton(
-                          child: Text('Unfocus'),
-                          onPressed: () => FocusScope.of(context).unfocus(),
-                        ),
-                        RaisedButton(
+                        FlatButton(
                           child: Text('Focus'),
-                          onPressed: () {
-                            FocusScope.of(context)
-                                .requestFocus(_pinPutFocusNode);
-                          },
+                          onPressed: () => _pinPutFocusNode.requestFocus(),
+                        ),
+                        FlatButton(
+                          child: Text('Unfocus'),
+                          onPressed: () => _pinPutFocusNode.unfocus(),
+                        ),
+                        FlatButton(
+                          child: Text('Clear All'),
+                          onPressed: () => _pinPutController.text = '',
                         ),
                       ],
                     ),
@@ -263,7 +324,7 @@ class PinPutTestState extends State<PinPutTest> {
               style: TextStyle(fontSize: 25.0),
             ),
           )),
-      backgroundColor: Colors.greenAccent,
+      backgroundColor: Colors.deepPurpleAccent,
     );
     Scaffold.of(context).hideCurrentSnackBar();
     Scaffold.of(context).showSnackBar(snackBar);
@@ -272,16 +333,3 @@ class PinPutTestState extends State<PinPutTest> {
 
 ```
 
-## 👍 Support
-
-## Contribute
-
-1. Fork it
-
-2. Create your feature branch (git checkout -b my-new-feature)
-
-3. Commit your changes (git commit -am 'Add some feature')
-
-4. Push to the branch (git push origin my-new-feature)
-
-5. Create new Pull Request
