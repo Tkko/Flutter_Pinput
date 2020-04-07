@@ -73,7 +73,7 @@ BoxDecoration get _pinPutDecoration {
   
 PinPut(
   fieldsCount: 5,
-  onSubmit: (String pin) => _showSnackBar(pin, context),
+  onSubmit: (String pin) => print(pin),
   focusNode: _pinPutFocusNode,
   controller: _pinPutController,
   pinAnimationType: PinAnimationType.scale,
@@ -95,6 +95,36 @@ PinPut(
           color: Colors.deepPurpleAccent.withOpacity(.5)),
     ),
   ),
+)
+```
+
+<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_3.gif"  alt="drawing"  width="250"/>
+
+Third example configuration
+
+```dart
+
+BoxDecoration get _pinPutDecoration {
+  return BoxDecoration(
+    shape: BoxShape.circle,
+    color: Colors.greenAccent,
+  );
+}
+  
+PinPut(
+  fieldsCount: 5,
+  onSubmit: (String pin) => print(pin),
+  focusNode: _pinPutFocusNode,
+  controller: _pinPutController,
+  textStyle: TextStyle(color: Colors.white, fontSize: 20),
+  pinAnimationType: PinAnimationType.scale,
+  submittedFieldDecoration: _pinPutDecoration.copyWith(),
+  selectedFieldDecoration: _pinPutDecoration.copyWith(
+      border: Border.all(
+    color: Colors.blueAccent,
+  )),
+  followingFieldDecoration: _pinPutDecoration.copyWith(
+      color: Colors.greenAccent.withOpacity(.6)),
 )
 ```
 

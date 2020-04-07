@@ -15,9 +15,9 @@ class PinPutTestState extends State<PinPutTest> {
 
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
-        border: Border(
-      bottom: BorderSide(color: Colors.deepPurpleAccent),
-    ));
+      shape: BoxShape.circle,
+      color: Colors.greenAccent,
+    );
   }
 
   @override
@@ -46,25 +46,15 @@ class PinPutTestState extends State<PinPutTest> {
                         onSubmit: (String pin) => _showSnackBar(pin, context),
                         focusNode: _pinPutFocusNode,
                         controller: _pinPutController,
+                        textStyle: TextStyle(color: Colors.white, fontSize: 20),
                         pinAnimationType: PinAnimationType.scale,
-                        inputDecoration: InputDecoration(
-                          border: InputBorder.none,
-                          helperText: 'Pin code sent to your phone',
-                        ),
-                        submittedFieldDecoration: _pinPutDecoration.copyWith(
-                          border: Border(
-                            bottom: BorderSide(
-                                width: 2,
-                                color: Colors.deepPurpleAccent.withOpacity(1)),
-                          ),
-                        ),
-                        selectedFieldDecoration: _pinPutDecoration,
+                        submittedFieldDecoration: _pinPutDecoration.copyWith(),
+                        selectedFieldDecoration: _pinPutDecoration.copyWith(
+                            border: Border.all(
+                          color: Colors.blueAccent,
+                        )),
                         followingFieldDecoration: _pinPutDecoration.copyWith(
-                          border: Border(
-                            bottom: BorderSide(
-                                color: Colors.deepPurpleAccent.withOpacity(.5)),
-                          ),
-                        ),
+                            color: Colors.greenAccent.withOpacity(.6)),
                       ),
                     ),
                     SizedBox(height: 30),
