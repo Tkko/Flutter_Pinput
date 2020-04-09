@@ -1,5 +1,11 @@
 # Changelog
 
+
+## 0.2.1 -09/07/2020
+🔥🚀
+Minor fixes and demos
+
+
 ## 0.2.0 -05/07/2020
 🔥🚀
 Added some useful Documentation
