@@ -1,6 +1,11 @@
 # Changelog
 
 
+## 0.2.2 -09/07/2020
+🔥🚀
+Fixed Demo urls
+
+
 ## 0.2.1 -09/07/2020
 🔥🚀
 Minor fixes and demos
