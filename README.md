@@ -44,9 +44,7 @@ Use `submittedFieldDecoration`, `selectedFieldDecoration`, `followingFieldDecora
 properties to add field decoration, border, fill color, shape, radius etc.
 provide different values to them in order to achieve nice implicit animations
 
-<img src="example/media/all_pin_put_demo.gif" width="300em" />
-<img src="example/media/pin_put_demo_1.gif" width="300em" />
-<img src="example/media/pin_put_demo_2.gif" width="300em" />
+<img src="example/media/all_pin_put_demo.gif" width="300em" /><img src="example/media/pin_put_demo_1.gif" width="300em" /><img src="example/media/pin_put_demo_2.gif" width="300em" />
 <img src="example/media/pin_put_demo_3.gif" width="300em" />
 <img src="example/media/pin_put_demo_4.gif" width="300em" />
 
