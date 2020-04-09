@@ -44,7 +44,7 @@ Use `submittedFieldDecoration`, `selectedFieldDecoration`, `followingFieldDecora
 properties to add field decoration, border, fill color, shape, radius etc.
 provide different values to them in order to achieve nice implicit animations
 
-<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/all_pinput_demo.gif"  alt="drawing"  width="410"/>
+<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/all_pin_put_demo.gif"  alt="drawing"  width="410"/>
 
 
 ## Installation
