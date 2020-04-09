@@ -2,14 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
-enum PinAnimationType {
-  none,
-  scale,
-  fade,
-  slide,
-  rotation,
-}
-
 class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   TextEditingController _controller;
   FocusNode _focusNode;
@@ -22,9 +14,9 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
     _controller = widget.controller ?? TextEditingController();
     _focusNode = widget.focusNode ?? FocusNode();
     _textControllerValue = ValueNotifier<String>(_controller.value.text);
-    _controller.addListener(_textChangeListener);
-    _focusNode.addListener(() {
-      setState(() {});
+    _controller?.addListener(_textChangeListener);
+    _focusNode?.addListener(() {
+      if (mounted) setState(() {});
     });
 
     WidgetsBinding.instance.addObserver(this);
@@ -35,15 +27,22 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
     final String pin = _controller.value.text;
     if (widget.onChanged != null) widget.onChanged(pin);
     if (pin != _textControllerValue.value) {
-      _textControllerValue.value = pin;
-      if (pin.length == widget.fieldsCount) widget.onSubmit(pin);
+      try {
+        _textControllerValue.value = pin;
+      } catch (e) {
+        _textControllerValue = ValueNotifier(_controller.value.text);
+      }
+      if (pin.length == widget.fieldsCount && widget.onSubmit != null)
+        widget.onSubmit(pin);
     }
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
-    _controller.dispose();
+    if (widget.controller == null) _controller.dispose();
+
+    if (widget.focusNode == null) _focusNode.dispose();
+
     _textControllerValue.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -146,11 +145,17 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
         transitionBuilder: (child, animation) {
           return _getTransition(child, animation);
         },
-        child: Text(
-          index < pin.length ? widget.obscureText ?? pin[index] : '',
-          key: ValueKey<String>(index < pin.length ? pin[index] : ''),
-          style: widget.textStyle,
-        ),
+        child: index < pin.length
+            ? Text(
+                widget.obscureText ?? pin[index],
+                key: ValueKey<String>(index < pin.length ? pin[index] : ''),
+                style: widget.textStyle,
+              )
+            : Text(
+                widget.preFilledChar ?? '',
+                key: ValueKey<String>(index < pin.length ? pin[index] : ''),
+                style: widget.preFilledCharStyle ?? widget.textStyle,
+              ),
       ),
     );
   }

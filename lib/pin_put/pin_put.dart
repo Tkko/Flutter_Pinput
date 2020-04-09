@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:pinput/pin_put/pin_put_state.dart';
 
 class PinPut extends StatefulWidget {
-
   PinPut({
     Key key,
     @required this.fieldsCount,
@@ -14,6 +13,8 @@ class PinPut extends StatefulWidget {
     this.onClipboardFound,
     this.controller,
     this.focusNode,
+    this.preFilledChar,
+    this.preFilledCharStyle,
     this.textStyle,
     this.submittedFieldDecoration,
     this.selectedFieldDecoration,
@@ -74,6 +75,13 @@ class PinPut extends StatefulWidget {
   /// To give the keyboard focus to this widget, provide a [focusNode] and then
   /// use the current [FocusScope] to request the focus:
   final FocusNode focusNode;
+
+  /// Symbol that is displayed before field submitted.
+  final String preFilledChar;
+
+  /// The style to use for PinPut
+  /// If null, defaults to the `subhead` text style from the current [Theme].
+  final TextStyle preFilledCharStyle;
 
   /// The style to use for PinPut
   /// If null, defaults to the `subhead` text style from the current [Theme].
@@ -214,4 +222,12 @@ class PinPut extends StatefulWidget {
 
   @override
   PinPutState createState() => PinPutState();
+}
+
+enum PinAnimationType {
+  none,
+  scale,
+  fade,
+  slide,
+  rotation,
 }

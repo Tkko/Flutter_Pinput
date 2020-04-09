@@ -9,6 +9,7 @@ Flutter package to create Pin code input text field with every pixel customizati
 -    Nice animations
 -    Form validation
 -    Ios auto fill - testing needed
+-    PreFilledSymbol
 
 ## Contents
 
@@ -43,103 +44,8 @@ Use `submittedFieldDecoration`, `selectedFieldDecoration`, `followingFieldDecora
 properties to add field decoration, border, fill color, shape, radius etc.
 provide different values to them in order to achieve nice implicit animations
 
-<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_1.gif"  alt="drawing"  width="250"/>
+<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/all_pinput_demo.gif"  alt="drawing"  width="410"/>
 
-First example configuration
-```dart
-BoxDecoration get _pinPutDecoration {
-    return BoxDecoration(
-      border: Border.all(color: Colors.deepPurpleAccent),
-      borderRadius: BorderRadius.circular(15),
-    );
-}
-
-PinPit _pinPut = PinPut(
-    fieldsCount: 5,
-    onSubmit: (String pin) => print(pin),
-    focusNode: _pinPutFocusNode,
-    controller: _pinPutController,
-    submittedFieldDecoration: _pinPutDecoration.copyWith(
-        borderRadius: BorderRadius.circular(20)),
-    selectedFieldDecoration: _pinPutDecoration,
-    followingFieldDecoration: _pinPutDecoration.copyWith(
-      borderRadius: BorderRadius.circular(5),
-      border: Border.all(
-        color: Colors.deepPurpleAccent.withOpacity(.5),
-      ),
-    ),
-  );
-```
-
-<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_2.gif"  alt="drawing"  width="250"/>
-
-Second example configuration
-
-```dart
-
-BoxDecoration get _pinPutDecoration {
-  return BoxDecoration(
-      border: Border(
-    bottom: BorderSide(color: Colors.deepPurpleAccent),
-  ));
-}
-  
-PinPit _pinPut = PinPut(
-  fieldsCount: 5,
-  onSubmit: (String pin) => print(pin),
-  focusNode: _pinPutFocusNode,
-  controller: _pinPutController,
-  pinAnimationType: PinAnimationType.scale,
-  inputDecoration: InputDecoration(
-    border: InputBorder.none,
-    helperText: 'Pin code sent to your phone',
-  ),
-  submittedFieldDecoration: _pinPutDecoration.copyWith(
-    border: Border(
-      bottom: BorderSide(
-          width: 2,
-          color: Colors.deepPurpleAccent.withOpacity(1)),
-    ),
-  ),
-  selectedFieldDecoration: _pinPutDecoration,
-  followingFieldDecoration: _pinPutDecoration.copyWith(
-    border: Border(
-      bottom: BorderSide(
-          color: Colors.deepPurpleAccent.withOpacity(.5)),
-    ),
-  ),
-);
-```
-
-<img  src="https://raw.githubusercontent.com/Tkko/Flutter_PinPut/master/example/media/new_pinput_demo_3.gif"  alt="drawing"  width="250"/>
-
-Third example configuration
-
-```dart
-
-BoxDecoration get _pinPutDecoration {
-  return BoxDecoration(
-    shape: BoxShape.circle,
-    color: Colors.greenAccent,
-  );
-}
-  
-PinPit _pinPut = PinPut(
-  fieldsCount: 5,
-  onSubmit: (String pin) => print(pin),
-  focusNode: _pinPutFocusNode,
-  controller: _pinPutController,
-  textStyle: TextStyle(color: Colors.white, fontSize: 20),
-  pinAnimationType: PinAnimationType.scale,
-  submittedFieldDecoration: _pinPutDecoration.copyWith(),
-  selectedFieldDecoration: _pinPutDecoration.copyWith(
-      border: Border.all(
-    color: Colors.blueAccent,
-  )),
-  followingFieldDecoration: _pinPutDecoration.copyWith(
-      color: Colors.greenAccent.withOpacity(.6)),
-);
-```
 
 ## Installation
 
@@ -180,7 +86,7 @@ import 'package:pinput/pin_put/pin_put.dart';
 
 ## Properties
 
-    @required this.fieldsCount,
+     @required this.fieldsCount,
     this.onSubmit,
     this.onSaved,
     this.onChanged,
@@ -188,6 +94,8 @@ import 'package:pinput/pin_put/pin_put.dart';
     this.onClipboardFound,
     this.controller,
     this.focusNode,
+    this.preFilledChar,
+    this.preFilledCharStyle,
     this.textStyle,
     this.submittedFieldDecoration,
     this.selectedFieldDecoration,
