@@ -73,6 +73,7 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
   }
 
   void _handleTap() {
+    if (_focusNode.hasFocus) _focusNode.unfocus();
     _focusNode.requestFocus();
     if (widget.onTap != null) widget.onTap();
   }
