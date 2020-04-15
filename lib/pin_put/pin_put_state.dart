@@ -81,6 +81,7 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
     return TextFormField(
       controller: _controller,
       onTap: widget.onTap,
+      onFieldSubmitted: widget.onSubmit,
       onSaved: widget.onSaved,
       onChanged: widget.onChanged,
       validator: widget.validator,
