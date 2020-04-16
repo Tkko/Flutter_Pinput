@@ -1,17 +1,22 @@
 # Changelog
 
 
-## 0.2.2 -09/07/2020
+## 0.2.3 -04/12/2020
+🔥🚀
+Fixed Focus on click after back button click
+
+
+## 0.2.2 -04/09/2020
 🔥🚀
 Fixed Demo urls
 
 
-## 0.2.1 -09/07/2020
+## 0.2.1 -04/09/2020
 🔥🚀
 Minor fixes and demos
 
 
-## 0.2.0 -05/07/2020
+## 0.2.0 -04/07/2020
 🔥🚀
 Added some useful Documentation
 

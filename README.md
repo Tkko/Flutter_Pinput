@@ -28,6 +28,7 @@ Flutter package to create Pin code input text field with every pixel customizati
 
 ## Support
 First thing first give it a star ⭐
+Discord [Channel](https://discord.gg/ssE8eh)
 
 
 ## Contribute
