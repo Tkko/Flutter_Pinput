@@ -1,6 +1,12 @@
 # Changelog
 
 
+## 0.2.4 -05/19/2020
+🔥🚀
+Fixed Focus problems.
+Updated readme.
+
+
 ## 0.2.3 -04/12/2020
 🔥🚀
 Fixed Focus on click after back button click
