@@ -92,7 +92,7 @@ import 'package:pinput/pin_put/pin_put.dart';
 
 
 ```dart
- /// Displayed fields count. PIN code length.
+  /// Displayed fields count. PIN code length.
   final int fieldsCount;
 
   /// Same as FormField onFieldSubmitted, called when PinPut submitted.
@@ -124,6 +124,12 @@ import 'package:pinput/pin_put/pin_put.dart';
   /// The style to use for PinPut
   /// If null, defaults to the `subhead` text style from the current [Theme].
   final TextStyle preFilledCharStyle;
+
+  /// Sets the positions where the separator should be shown
+  final List<int> separatorPositions;
+
+  /// Builds a PinPut separator
+  final Widget separator;
 
   /// The style to use for PinPut
   /// If null, defaults to the `subhead` text style from the current [Theme].
@@ -164,6 +170,9 @@ import 'package:pinput/pin_put/pin_put.dart';
 
   /// Defines how [PinPut] fields are being placed inside [Row]
   final MainAxisAlignment fieldsAlignment;
+
+  /// Defines how [PinPut] fields are being placed within the [PinPut] field container
+  final AlignmentGeometry eachFieldAlignment;
 
   /// Empty space to surround the [PinPut] field container.
   final EdgeInsetsGeometry eachFieldMargin;
@@ -285,7 +294,7 @@ class PinPutTestState extends State<PinPutTest> {
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
       border: Border.all(color: Colors.deepPurpleAccent),
-      borderRadius: BorderRadius.circular(15),
+      borderRadius: BorderRadius.circular(15.0),
     );
   }
 
@@ -308,40 +317,41 @@ class PinPutTestState extends State<PinPutTest> {
                   children: <Widget>[
                     Container(
                       color: Colors.white,
-                      margin: EdgeInsets.all(20),
-                      padding: EdgeInsets.all(20),
+                      margin: const EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: PinPut(
                         fieldsCount: 5,
                         onSubmit: (String pin) => _showSnackBar(pin, context),
                         focusNode: _pinPutFocusNode,
                         controller: _pinPutController,
                         submittedFieldDecoration: _pinPutDecoration.copyWith(
-                            borderRadius: BorderRadius.circular(20)),
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
                         selectedFieldDecoration: _pinPutDecoration,
                         followingFieldDecoration: _pinPutDecoration.copyWith(
-                          borderRadius: BorderRadius.circular(5),
+                          borderRadius: BorderRadius.circular(5.0),
                           border: Border.all(
                             color: Colors.deepPurpleAccent.withOpacity(.5),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 30),
-                    Divider(),
+                    const SizedBox(height: 30.0),
+                    const Divider(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         FlatButton(
-                          child: Text('Focus'),
                           onPressed: () => _pinPutFocusNode.requestFocus(),
+                          child: const Text('Focus'),
                         ),
                         FlatButton(
-                          child: Text('Unfocus'),
                           onPressed: () => _pinPutFocusNode.unfocus(),
+                          child: const Text('Unfocus'),
                         ),
                         FlatButton(
-                          child: Text('Clear All'),
                           onPressed: () => _pinPutController.text = '',
+                          child: const Text('Clear All'),
                         ),
                       ],
                     ),
@@ -357,21 +367,22 @@ class PinPutTestState extends State<PinPutTest> {
 
   void _showSnackBar(String pin, BuildContext context) {
     final snackBar = SnackBar(
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
       content: Container(
-          height: 80.0,
-          child: Center(
-            child: Text(
-              'Pin Submitted. Value: $pin',
-              style: TextStyle(fontSize: 25.0),
-            ),
-          )),
+        height: 80.0,
+        child: Center(
+          child: Text(
+            'Pin Submitted. Value: $pin',
+            style: const TextStyle(fontSize: 25.0),
+          ),
+        ),
+      ),
       backgroundColor: Colors.deepPurpleAccent,
     );
-    Scaffold.of(context).hideCurrentSnackBar();
-    Scaffold.of(context).showSnackBar(snackBar);
+    Scaffold.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(snackBar);
   }
 }
-
 ```
 
