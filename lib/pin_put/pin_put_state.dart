@@ -132,34 +132,36 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
 
   Widget _getField(int index) {
     final String pin = _controller.value.text;
-    return AnimatedContainer(
-      width: widget.eachFieldWidth,
-      height: widget.eachFieldHeight,
-      alignment: Alignment.center,
-      duration: widget.animationDuration,
-      curve: widget.animationCurve,
-      padding: widget.eachFieldPadding,
-      margin: widget.eachFieldMargin,
-      constraints: widget.eachFieldConstraints,
-      decoration: _fieldDecoration(index),
-      child: AnimatedSwitcher(
-        switchInCurve: widget.animationCurve,
-        switchOutCurve: widget.animationCurve,
+    return Flexible(
+      child: AnimatedContainer(
+        width: widget.eachFieldWidth,
+        height: widget.eachFieldHeight,
+        alignment: Alignment.center,
         duration: widget.animationDuration,
-        transitionBuilder: (child, animation) {
-          return _getTransition(child, animation);
-        },
-        child: index < pin.length
-            ? Text(
-                widget.obscureText ?? pin[index],
-                key: ValueKey<String>(index < pin.length ? pin[index] : ''),
-                style: widget.textStyle,
-              )
-            : Text(
-                widget.preFilledChar ?? '',
-                key: ValueKey<String>(index < pin.length ? pin[index] : ''),
-                style: widget.preFilledCharStyle ?? widget.textStyle,
-              ),
+        curve: widget.animationCurve,
+        padding: widget.eachFieldPadding,
+        margin: widget.eachFieldMargin,
+        constraints: widget.eachFieldConstraints,
+        decoration: _fieldDecoration(index),
+        child: AnimatedSwitcher(
+          switchInCurve: widget.animationCurve,
+          switchOutCurve: widget.animationCurve,
+          duration: widget.animationDuration,
+          transitionBuilder: (child, animation) {
+            return _getTransition(child, animation);
+          },
+          child: index < pin.length
+              ? Text(
+                  widget.obscureText ?? pin[index],
+                  key: ValueKey<String>(index < pin.length ? pin[index] : ''),
+                  style: widget.textStyle,
+                )
+              : Text(
+                  widget.preFilledChar ?? '',
+                  key: ValueKey<String>(index < pin.length ? pin[index] : ''),
+                  style: widget.preFilledCharStyle ?? widget.textStyle,
+                ),
+        ),
       ),
     );
   }
