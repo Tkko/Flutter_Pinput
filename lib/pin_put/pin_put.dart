@@ -39,6 +39,7 @@ class PinPut extends StatefulWidget {
     this.enabled = true,
     this.autofocus = false,
     this.autoValidate = false,
+    this.withCursor = false,
     this.keyboardAppearance,
     this.inputFormatters,
     this.validator,
@@ -173,6 +174,9 @@ class PinPut extends StatefulWidget {
   ///   _formKey.currentState.validate()
   /// ```
   final bool autoValidate;
+
+  /// If true the focused field includes fake cursor
+  final bool withCursor;
 
   /// The appearance of the keyboard.
   /// This setting is only honored on iOS devices.
