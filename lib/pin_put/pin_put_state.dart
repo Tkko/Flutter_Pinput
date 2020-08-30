@@ -50,8 +50,9 @@ class PinPutState extends State<PinPut>
       } catch (e) {
         _textControllerValue = ValueNotifier(_controller.value.text);
       }
-      if (pin.length == widget.fieldsCount && widget.onSubmit != null)
+      if (pin.length == widget.fieldsCount && widget.onSubmit != null) {
         widget.onSubmit(pin);
+      }
     }
   }
 
@@ -74,8 +75,8 @@ class PinPutState extends State<PinPut>
     }
   }
 
-  void _checkClipboard() async {
-    ClipboardData clipboardData = await Clipboard.getData('text/plain');
+  Future<void> _checkClipboard() async {
+    final ClipboardData clipboardData = await Clipboard.getData('text/plain');
     if (clipboardData?.text?.length == widget.fieldsCount) {
       widget.onClipboardFound(clipboardData.text);
     }
@@ -112,7 +113,6 @@ class PinPutState extends State<PinPut>
       focusNode: _focusNode,
       enabled: widget.enabled,
       enableSuggestions: false,
-      maxLengthEnforced: true,
       autofocus: widget.autofocus,
       obscureText: widget.obscureText != null,
       autocorrect: false,
@@ -123,11 +123,11 @@ class PinPutState extends State<PinPut>
       enableInteractiveSelection: false,
       maxLength: widget.fieldsCount,
       showCursor: false,
-      scrollPadding: EdgeInsets.all(0),
+      scrollPadding: EdgeInsets.zero,
       decoration: widget.inputDecoration,
       style: widget.textStyle != null
           ? widget.textStyle.copyWith(color: Colors.transparent)
-          : TextStyle(color: Colors.transparent),
+          : const TextStyle(color: Colors.transparent),
     );
   }
 
@@ -139,14 +139,27 @@ class PinPutState extends State<PinPut>
           onTap: _handleTap,
           child: Row(
             mainAxisAlignment: widget.fieldsAlignment,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: Iterable<int>.generate(widget.fieldsCount).map((index) {
-              return _getField(index);
-            }).toList(),
+            children: _buildFieldsWithSeparator(),
           ),
         );
       },
     );
+  }
+
+  List<Widget> _buildFieldsWithSeparator() {
+    final fields = Iterable<int>.generate(widget.fieldsCount).map((index) {
+      return _getField(index);
+    }).toList();
+
+    for (final int i in widget.separatorPositions) {
+      if (i <= widget.fieldsCount) {
+        final List<int> smaller =
+            widget.separatorPositions.where((int d) => d < i).toList();
+        fields.insert(i + smaller.length, widget.separator);
+      }
+    }
+
+    return fields;
   }
 
   Widget _getField(int index) {
@@ -154,7 +167,7 @@ class PinPutState extends State<PinPut>
     return AnimatedContainer(
       width: widget.eachFieldWidth,
       height: widget.eachFieldHeight,
-      alignment: Alignment.center,
+      alignment: widget.eachFieldAlignment,
       duration: widget.animationDuration,
       curve: widget.animationCurve,
       padding: widget.eachFieldPadding,
@@ -195,10 +208,12 @@ class PinPutState extends State<PinPut>
 
   BoxDecoration _fieldDecoration(int index) {
     if (!widget.enabled) return widget.disabledDecoration;
-    if (index < selectedIndex && _focusNode.hasFocus)
+    if (index < selectedIndex && _focusNode.hasFocus) {
       return widget.submittedFieldDecoration;
-    if (index == selectedIndex && _focusNode.hasFocus)
+    }
+    if (index == selectedIndex && _focusNode.hasFocus) {
       return widget.selectedFieldDecoration;
+    }
     return widget.followingFieldDecoration;
   }
 

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:pinput/pin_put/pin_put_state.dart';
 
 class PinPut extends StatefulWidget {
-  PinPut({
+  const PinPut({
     Key key,
     @required this.fieldsCount,
     this.onSubmit,
@@ -15,6 +15,8 @@ class PinPut extends StatefulWidget {
     this.focusNode,
     this.preFilledChar,
     this.preFilledCharStyle,
+    this.separatorPositions = const [],
+    this.separator = const SizedBox(width: 15.0),
     this.textStyle,
     this.submittedFieldDecoration,
     this.selectedFieldDecoration,
@@ -23,12 +25,13 @@ class PinPut extends StatefulWidget {
     this.eachFieldWidth,
     this.eachFieldHeight,
     this.fieldsAlignment = MainAxisAlignment.spaceBetween,
+    this.eachFieldAlignment = Alignment.center,
     this.eachFieldMargin,
     this.eachFieldPadding,
     this.eachFieldConstraints =
-        const BoxConstraints(minHeight: 40, minWidth: 40),
+        const BoxConstraints(minHeight: 40.0, minWidth: 40.0),
     this.inputDecoration = const InputDecoration(
-      contentPadding: EdgeInsets.all(0),
+      contentPadding: EdgeInsets.zero,
       border: InputBorder.none,
       counterText: '',
     ),
@@ -84,6 +87,12 @@ class PinPut extends StatefulWidget {
   /// If null, defaults to the `subhead` text style from the current [Theme].
   final TextStyle preFilledCharStyle;
 
+  /// Sets the positions where the separator should be shown
+  final List<int> separatorPositions;
+
+  /// Builds a PinPut separator
+  final Widget separator;
+
   /// The style to use for PinPut
   /// If null, defaults to the `subhead` text style from the current [Theme].
   final TextStyle textStyle;
@@ -123,6 +132,9 @@ class PinPut extends StatefulWidget {
 
   /// Defines how [PinPut] fields are being placed inside [Row]
   final MainAxisAlignment fieldsAlignment;
+
+  /// Defines how each [PinPut] field are being placed within the container
+  final AlignmentGeometry eachFieldAlignment;
 
   /// Empty space to surround the [PinPut] field container.
   final EdgeInsetsGeometry eachFieldMargin;
