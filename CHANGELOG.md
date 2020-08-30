@@ -1,8 +1,9 @@
+
 # Changelog
 
 ## 0.2.5 -08/30/2020
 🔥🚀
-Added fake cursor, separatorPositions
+Added fake `cursor`, `separatorPositions`, `separator` and optimized project with the help of community. credits to @furaiev, @Holofox,
 
 ## 0.2.4 -05/19/2020
 🔥🚀
@@ -102,7 +103,7 @@ Breaking changes, changed widget building logic so now it supports:
 
 *Note that
 
-	clearButtonEnabled will change with actionButtonEnabled in next release, right now if it is true both clear and paste functinality works
+   clearButtonEnabled will change with actionButtonEnabled in next release, right now if it is true both clear and paste functinality works
 
 ## 0.1.4 - 10/31/2018
 
