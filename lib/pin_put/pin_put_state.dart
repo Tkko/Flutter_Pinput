@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
-class PinPutState extends State<PinPut> with WidgetsBindingObserver {
+class PinPutState extends State<PinPut>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   TextEditingController _controller;
   FocusNode _focusNode;
   ValueNotifier<String> _textControllerValue;
 
   int get selectedIndex => _controller.value.text.length;
+
+  Animation _cursorAnimation;
+  AnimationController _cursorAnimationController;
 
   @override
   void initState() {
@@ -18,6 +22,20 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
     _focusNode?.addListener(() {
       if (mounted) setState(() {});
     });
+
+    if (widget.withCursor) {
+      _cursorAnimationController = AnimationController(
+          vsync: this, duration: Duration(milliseconds: 500));
+      _cursorAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+          curve: Curves.linear, parent: _cursorAnimationController));
+
+      _cursorAnimationController.addStatusListener((AnimationStatus status) {
+        if (status == AnimationStatus.completed) {
+          _cursorAnimationController.repeat(reverse: true);
+        }
+      });
+      _cursorAnimationController.forward();
+    }
 
     WidgetsBinding.instance.addObserver(this);
     super.initState();
@@ -43,6 +61,7 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
 
     if (widget.focusNode == null) _focusNode.dispose();
 
+    _cursorAnimationController?.dispose();
     _textControllerValue.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -149,18 +168,28 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
         transitionBuilder: (child, animation) {
           return _getTransition(child, animation);
         },
-        child: index < pin.length
-            ? Text(
-                widget.obscureText ?? pin[index],
-                key: ValueKey<String>(index < pin.length ? pin[index] : ''),
-                style: widget.textStyle,
-              )
-            : Text(
-                widget.preFilledChar ?? '',
-                key: ValueKey<String>(index < pin.length ? pin[index] : ''),
-                style: widget.preFilledCharStyle ?? widget.textStyle,
-              ),
+        child: _buildFieldContent(index, pin),
       ),
+    );
+  }
+
+  Widget _buildFieldContent(int index, String pin) {
+    if (index < pin.length) {
+      return Text(
+        widget.obscureText ?? pin[index],
+        key: ValueKey<String>(index < pin.length ? pin[index] : ''),
+        style: widget.textStyle,
+      );
+    }
+
+    if (widget.withCursor && _focusNode.hasFocus && index == pin.length) {
+      return _buildCursor();
+    }
+
+    return Text(
+      widget.preFilledChar ?? '',
+      key: ValueKey<String>(index < pin.length ? pin[index] : ''),
+      style: widget.preFilledCharStyle ?? widget.textStyle,
     );
   }
 
@@ -202,5 +231,22 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver {
         );
     }
     return child;
+  }
+
+  Widget _buildCursor() {
+    return AnimatedBuilder(
+      animation: _cursorAnimationController,
+      builder: (context, child) {
+        return Center(
+          child: Opacity(
+            opacity: _cursorAnimation.value,
+            child: Text(
+              '|',
+              style: widget.textStyle,
+            ),
+          ),
+        );
+      },
+    );
   }
 }
