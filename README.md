@@ -10,6 +10,7 @@ Flutter package to create Pin code input text field with every pixel customizati
 -    Form validation
 -    Ios auto fill - testing needed
 -    PreFilledSymbol
+-    Fake cursor
 
 ## Contents
 

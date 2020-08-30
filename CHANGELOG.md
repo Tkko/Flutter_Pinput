@@ -3,7 +3,7 @@
 
 ## 0.2.5 -08/30/2020
 🔥🚀
-Added fake `cursor`, `separatorPositions`, `separator` and optimized project with the help of community. credits to @furaiev, @Holofox,
+Added fake `cursor`, `separatorPositions`, `separator` and optimized project with the help of community. credits to @[furaiev](https://github.com/furaiev), @[Holofox](https://github.com/Holofox),
 
 ## 0.2.4 -05/19/2020
 🔥🚀
