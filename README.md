@@ -92,184 +92,187 @@ import 'package:pinput/pin_put/pin_put.dart';
 
 
 ```dart
-  /// Displayed fields count. PIN code length.
-  final int fieldsCount;
+   /// Displayed fields count. PIN code length.
+    final int fieldsCount;
 
-  /// Same as FormField onFieldSubmitted, called when PinPut submitted.
-  final ValueChanged<String> onSubmit;
+    /// Same as FormField onFieldSubmitted, called when PinPut submitted.
+    final ValueChanged<String> onSubmit;
 
-  /// Signature for being notified when a form field changes value.
-  final FormFieldSetter<String> onSaved;
+    /// Signature for being notified when a form field changes value.
+    final FormFieldSetter<String> onSaved;
 
-  /// Called every time input value changes.
-  final ValueChanged<String> onChanged;
+    /// Called every time input value changes.
+    final ValueChanged<String> onChanged;
 
-  /// Called when user clicks on PinPut
-  final VoidCallback onTap;
+    /// Called when user clicks on PinPut
+    final VoidCallback onTap;
 
-  /// Called when Clipboard has value of length fieldsCount.
-  final ValueChanged<String> onClipboardFound;
+    /// Called when Clipboard has value of length fieldsCount.
+    final ValueChanged<String> onClipboardFound;
 
-  /// Used to get, modify PinPut value and more.
-  final TextEditingController controller;
+    /// Used to get, modify PinPut value and more.
+    final TextEditingController controller;
 
-  /// Defines the keyboard focus for this widget.
-  /// To give the keyboard focus to this widget, provide a [focusNode] and then
-  /// use the current [FocusScope] to request the focus:
-  final FocusNode focusNode;
+    /// Defines the keyboard focus for this widget.
+    /// To give the keyboard focus to this widget, provide a [focusNode] and then
+    /// use the current [FocusScope] to request the focus:
+    final FocusNode focusNode;
 
-  /// Symbol that is displayed before field submitted.
-  final String preFilledChar;
+    /// Symbol that is displayed before field submitted.
+    final String preFilledChar;
 
-  /// The style to use for PinPut
-  /// If null, defaults to the `subhead` text style from the current [Theme].
-  final TextStyle preFilledCharStyle;
+    /// The style to use for PinPut
+    /// If null, defaults to the `subhead` text style from the current [Theme].
+    final TextStyle preFilledCharStyle;
 
-  /// Sets the positions where the separator should be shown
-  final List<int> separatorPositions;
+    /// Sets the positions where the separator should be shown
+    final List<int> separatorPositions;
 
-  /// Builds a PinPut separator
-  final Widget separator;
+    /// Builds a PinPut separator
+    final Widget separator;
 
-  /// The style to use for PinPut
-  /// If null, defaults to the `subhead` text style from the current [Theme].
-  final TextStyle textStyle;
+    /// The style to use for PinPut
+    /// If null, defaults to the `subhead` text style from the current [Theme].
+    final TextStyle textStyle;
 
-  ///  Box decoration of following properties of [PinPut]
-  ///  [submittedFieldDecoration] [selectedFieldDecoration] [followingFieldDecoration] [disabledDecoration]
-  ///  You can customize every pixel with it
-  ///  properties are being animated implicitly when value changes
-  ///  ```dart
-  ///  this.color,
-  ///  this.image,
-  ///  this.border,
-  ///  this.borderRadius,
-  ///  this.boxShadow,
-  ///  this.gradient,
-  ///  this.backgroundBlendMode,
-  ///  this.shape = BoxShape.rectangle,
-  ///  ```
+    ///  Box decoration of following properties of [PinPut]
+    ///  [submittedFieldDecoration] [selectedFieldDecoration] [followingFieldDecoration] [disabledDecoration]
+    ///  You can customize every pixel with it
+    ///  properties are being animated implicitly when value changes
+    ///  ```dart
+    ///  this.color,
+    ///  this.image,
+    ///  this.border,
+    ///  this.borderRadius,
+    ///  this.boxShadow,
+    ///  this.gradient,
+    ///  this.backgroundBlendMode,
+    ///  this.shape = BoxShape.rectangle,
+    ///  ```
 
-  /// The decoration of each [PinPut] submitted field
-  final BoxDecoration submittedFieldDecoration;
+    /// The decoration of each [PinPut] submitted field
+    final BoxDecoration submittedFieldDecoration;
 
-  /// The decoration of [PinPut] currently selected field
-  final BoxDecoration selectedFieldDecoration;
+    /// The decoration of [PinPut] currently selected field
+    final BoxDecoration selectedFieldDecoration;
 
-  /// The decoration of each [PinPut] following field
-  final BoxDecoration followingFieldDecoration;
+    /// The decoration of each [PinPut] following field
+    final BoxDecoration followingFieldDecoration;
 
-  /// The decoration of each [PinPut] field when [PinPut] ise disabled
-  final BoxDecoration disabledDecoration;
+    /// The decoration of each [PinPut] field when [PinPut] ise disabled
+    final BoxDecoration disabledDecoration;
 
-  /// width of each [PinPut] field
-  final double eachFieldWidth;
+    /// width of each [PinPut] field
+    final double eachFieldWidth;
 
-  /// height of each [PinPut] field
-  final double eachFieldHeight;
+    /// height of each [PinPut] field
+    final double eachFieldHeight;
 
-  /// Defines how [PinPut] fields are being placed inside [Row]
-  final MainAxisAlignment fieldsAlignment;
+    /// Defines how [PinPut] fields are being placed inside [Row]
+    final MainAxisAlignment fieldsAlignment;
 
-  /// Defines how [PinPut] fields are being placed within the [PinPut] field container
-  final AlignmentGeometry eachFieldAlignment;
+    /// Defines how each [PinPut] field are being placed within the container
+    final AlignmentGeometry eachFieldAlignment;
 
-  /// Empty space to surround the [PinPut] field container.
-  final EdgeInsetsGeometry eachFieldMargin;
+    /// Empty space to surround the [PinPut] field container.
+    final EdgeInsetsGeometry eachFieldMargin;
 
-  /// Empty space to inscribe the [PinPut] field container.
-  /// For example space between border and text
-  final EdgeInsetsGeometry eachFieldPadding;
+    /// Empty space to inscribe the [PinPut] field container.
+    /// For example space between border and text
+    final EdgeInsetsGeometry eachFieldPadding;
 
-  /// Additional constraints to apply to the each field container.
-  /// properties
-  /// ```dart
-  ///  this.minWidth = 0.0,
-  ///  this.maxWidth = double.infinity,
-  ///  this.minHeight = 0.0,
-  ///  this.maxHeight = double.infinity,
-  ///  ```
-  final BoxConstraints eachFieldConstraints;
+    /// Additional constraints to apply to the each field container.
+    /// properties
+    /// ```dart
+    ///  this.minWidth = 0.0,
+    ///  this.maxWidth = double.infinity,
+    ///  this.minHeight = 0.0,
+    ///  this.maxHeight = double.infinity,
+    ///  ```
+    final BoxConstraints eachFieldConstraints;
 
-  /// The decoration to show around the text [PinPut].
-  ///
-  /// can be configured to show an icon, border,counter, label, hint text, and error text.
-  /// set counterText to '' to remove bottom padding entirely
-  final InputDecoration inputDecoration;
+    /// The decoration to show around the text [PinPut].
+    ///
+    /// can be configured to show an icon, border,counter, label, hint text, and error text.
+    /// set counterText to '' to remove bottom padding entirely
+    final InputDecoration inputDecoration;
 
-  /// curve of every [PinPut] Animation
-  final Curve animationCurve;
+    /// curve of every [PinPut] Animation
+    final Curve animationCurve;
 
-  /// Duration of every [PinPut] Animation
-  final Duration animationDuration;
+    /// Duration of every [PinPut] Animation
+    final Duration animationDuration;
 
-  /// Animation Type of each [PinPut] field
-  /// options:
-  /// none, scale, fade, slide, rotation
-  final PinAnimationType pinAnimationType;
+    /// Animation Type of each [PinPut] field
+    /// options:
+    /// none, scale, fade, slide, rotation
+    final PinAnimationType pinAnimationType;
 
-  /// Begin Offset of ever [PinPut] field when [pinAnimationType] is slide
-  final Offset slideTransitionBeginOffset;
+    /// Begin Offset of ever [PinPut] field when [pinAnimationType] is slide
+    final Offset slideTransitionBeginOffset;
 
-  /// Defines [PinPut] state
-  final bool enabled;
+    /// Defines [PinPut] state
+    final bool enabled;
 
-  /// {@macro flutter.widgets.editableText.autofocus}
-  final bool autofocus;
+    /// {@macro flutter.widgets.editableText.autofocus}
+    final bool autofocus;
 
-  /// If true [validator] function is called when [PinPut] value changes
-  /// alternatively you can use [GlobalKey]
-  /// ```dart
-  ///   final _formKey = GlobalKey<FormState>();
-  ///   _formKey.currentState.validate()
-  /// ```
-  final bool autoValidate;
+    /// If true [validator] function is called when [PinPut] value changes
+    /// alternatively you can use [GlobalKey]
+    /// ```dart
+    ///   final _formKey = GlobalKey<FormState>();
+    ///   _formKey.currentState.validate()
+    /// ```
+    final bool autoValidate;
 
-  /// The appearance of the keyboard.
-  /// This setting is only honored on iOS devices.
-  /// If unset, defaults to the brightness of [ThemeData.primaryColorBrightness].
-  final Brightness keyboardAppearance;
+    /// If true the focused field includes fake cursor
+    final bool withCursor;
 
-  /// {@macro flutter.widgets.editableText.inputFormatters}
-  final List<TextInputFormatter> inputFormatters;
+    /// The appearance of the keyboard.
+    /// This setting is only honored on iOS devices.
+    /// If unset, defaults to the brightness of [ThemeData.primaryColorBrightness].
+    final Brightness keyboardAppearance;
 
-  /// An optional method that validates an input. Returns an error string to
-  /// display if the input is invalid, or null otherwise.
-  ///
-  /// The returned value is exposed by the [FormFieldState.errorText] property.
-  /// The [TextFormField] uses this to override the [InputDecoration.errorText]
-  /// value.
-  ///
-  /// Alternating between error and normal state can cause the height of the
-  /// [TextFormField] to change if no other subtext decoration is set on the
-  /// field. To create a field whose height is fixed regardless of whether or
-  /// not an error is displayed, either wrap the  [TextFormField] in a fixed
-  /// height parent like [SizedBox], or set the [TextFormField.helperText]
-  /// parameter to a space.
-  final FormFieldValidator<String> validator;
+    /// {@macro flutter.widgets.editableText.inputFormatters}
+    final List<TextInputFormatter> inputFormatters;
 
-  /// {@macro flutter.widgets.editableText.keyboardType}
-  final TextInputType keyboardType;
+    /// An optional method that validates an input. Returns an error string to
+    /// display if the input is invalid, or null otherwise.
+    ///
+    /// The returned value is exposed by the [FormFieldState.errorText] property.
+    /// The [TextFormField] uses this to override the [InputDecoration.errorText]
+    /// value.
+    ///
+    /// Alternating between error and normal state can cause the height of the
+    /// [TextFormField] to change if no other subtext decoration is set on the
+    /// field. To create a field whose height is fixed regardless of whether or
+    /// not an error is displayed, either wrap the  [TextFormField] in a fixed
+    /// height parent like [SizedBox], or set the [TextFormField.helperText]
+    /// parameter to a space.
+    final FormFieldValidator<String> validator;
 
-  /// Provide any symbol to obscure each [PinPut] field
-  /// Recommended ●
-  final String obscureText;
+    /// {@macro flutter.widgets.editableText.keyboardType}
+    final TextInputType keyboardType;
 
-  /// {@macro flutter.widgets.editableText.textCapitalization}
-  final TextCapitalization textCapitalization;
+    /// Provide any symbol to obscure each [PinPut] field
+    /// Recommended ●
+    final String obscureText;
 
-  /// The type of action button to use for the keyboard.
-  ///
-  /// Defaults to [TextInputAction.newline] if [keyboardType] is
-  /// [TextInputType.multiline] and [TextInputAction.done] otherwise.
-  final TextInputAction textInputAction;
+    /// {@macro flutter.widgets.editableText.textCapitalization}
+    final TextCapitalization textCapitalization;
 
-  /// Configuration of toolbar options.
-  ///
-  /// If not set, select all and paste will default to be enabled. Copy and cut
-  /// will be disabled if [obscureText] is true. If [readOnly] is true,
-  /// paste and cut will be disabled regardless.
-  final ToolbarOptions toolbarOptions;
+    /// The type of action button to use for the keyboard.
+    ///
+    /// Defaults to [TextInputAction.newline] if [keyboardType] is
+    /// [TextInputType.multiline] and [TextInputAction.done] otherwise.
+    final TextInputAction textInputAction;
+
+    /// Configuration of toolbar options.
+    ///
+    /// If not set, select all and paste will default to be enabled. Copy and cut
+    /// will be disabled if [obscureText] is true. If [readOnly] is true,
+    /// paste and cut will be disabled regardless.
+    final ToolbarOptions toolbarOptions;
 ```
 
 ## Example

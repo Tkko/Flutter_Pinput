@@ -96,6 +96,7 @@ class PinPutTestState extends State<PinPutTest> {
     );
 
     return PinPut(
+      withCursor: true,
       fieldsCount: 5,
       textStyle: const TextStyle(fontSize: 25.0, color: Colors.black),
       eachFieldWidth: 45.0,
@@ -222,6 +223,10 @@ class PinPutTestState extends State<PinPutTest> {
           FlatButton(
             onPressed: () => _pinPutController.text = '',
             child: const Text('Clear All'),
+          ),
+          FlatButton(
+            child: Text('Paste'),
+            onPressed: () => _pinPutController.text = '234',
           ),
         ],
       ),

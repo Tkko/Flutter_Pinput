@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.5 -08/30/2020
+🔥🚀
+Added fake cursor, separatorPositions
 
 ## 0.2.4 -05/19/2020
 🔥🚀
