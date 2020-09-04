@@ -78,7 +78,7 @@ class PinPutState extends State<PinPut>
   Future<void> _checkClipboard() async {
     final ClipboardData clipboardData = await Clipboard.getData('text/plain');
     if (clipboardData?.text?.length == widget.fieldsCount) {
-      widget.onClipboardFound(clipboardData.text);
+      widget.onClipboardFound?.call(clipboardData.text);
     }
   }
 
