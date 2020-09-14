@@ -42,28 +42,25 @@ class PinPutState extends State<PinPut>
   }
 
   void _textChangeListener() {
-    final String pin = _controller.value.text;
-    if (widget.onChanged != null) widget.onChanged(pin);
+    final pin = _controller.value.text;
+    widget.onChanged?.call(pin);
     if (pin != _textControllerValue.value) {
       try {
         _textControllerValue.value = pin;
       } catch (e) {
         _textControllerValue = ValueNotifier(_controller.value.text);
       }
-      if (pin.length == widget.fieldsCount && widget.onSubmit != null) {
-        widget.onSubmit(pin);
-      }
+      if (pin.length == widget.fieldsCount) widget.onSubmit?.call(pin);
     }
   }
 
   @override
   void dispose() {
     if (widget.controller == null) _controller.dispose();
-
     if (widget.focusNode == null) _focusNode.dispose();
 
     _cursorAnimationController?.dispose();
-    _textControllerValue.dispose();
+    _textControllerValue?.dispose();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

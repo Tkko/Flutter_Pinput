@@ -9,11 +9,52 @@ class PinPutTest extends StatefulWidget {
 }
 
 class PinPutTestState extends State<PinPutTest> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _pinPutController = TextEditingController();
   final FocusNode _pinPutFocusNode = FocusNode();
   BuildContext _context;
   final PageController _pageController = PageController(initialPage: 1);
   int _pageIndex = 0;
+
+  Widget onlySelectedBorderPinPut() {
+    final BoxDecoration pinPutDecoration = BoxDecoration(
+      color: const Color.fromRGBO(235, 236, 237, 1),
+      borderRadius: BorderRadius.circular(5.0),
+    );
+    return Form(
+      key: _formKey,
+      child: GestureDetector(
+        onLongPress: () {
+          print(_formKey.currentState.validate());
+        },
+        child: PinPut(
+          validator: (s) {
+            if (s.contains('1')) return null;
+            return 'NOT VALID';
+          },
+          autoValidate: true,
+          withCursor: true,
+          fieldsCount: 5,
+          textStyle: const TextStyle(fontSize: 25.0, color: Colors.black),
+          eachFieldWidth: 45.0,
+          eachFieldHeight: 55.0,
+          onSubmit: (String pin) => _showSnackBar(pin),
+          focusNode: _pinPutFocusNode,
+          controller: _pinPutController,
+          submittedFieldDecoration: pinPutDecoration,
+          selectedFieldDecoration: pinPutDecoration.copyWith(
+            color: Colors.white,
+            border: Border.all(
+              width: 2,
+              color: const Color.fromRGBO(160, 215, 220, 1),
+            ),
+          ),
+          followingFieldDecoration: pinPutDecoration,
+          pinAnimationType: PinAnimationType.scale,
+        ),
+      ),
+    );
+  }
 
   Widget darkRoundedPinPut() {
     final BoxDecoration pinPutDecoration = BoxDecoration(
@@ -89,34 +130,6 @@ class PinPutTestState extends State<PinPutTest> {
     );
   }
 
-  Widget onlySelectedBorderPinPut() {
-    final BoxDecoration pinPutDecoration = BoxDecoration(
-      color: const Color.fromRGBO(235, 236, 237, 1),
-      borderRadius: BorderRadius.circular(5.0),
-    );
-
-    return PinPut(
-      withCursor: true,
-      fieldsCount: 5,
-      textStyle: const TextStyle(fontSize: 25.0, color: Colors.black),
-      eachFieldWidth: 45.0,
-      eachFieldHeight: 55.0,
-      onSubmit: (String pin) => _showSnackBar(pin),
-      focusNode: _pinPutFocusNode,
-      controller: _pinPutController,
-      submittedFieldDecoration: pinPutDecoration,
-      selectedFieldDecoration: pinPutDecoration.copyWith(
-        color: Colors.white,
-        border: Border.all(
-          width: 2,
-          color: const Color.fromRGBO(160, 215, 220, 1),
-        ),
-      ),
-      followingFieldDecoration: pinPutDecoration,
-      pinAnimationType: PinAnimationType.scale,
-    );
-  }
-
   Widget justRoundedCornersPinPut() {
     final BoxDecoration pinPutDecoration = BoxDecoration(
       color: const Color.fromRGBO(43, 46, 66, 1),
@@ -183,9 +196,7 @@ class PinPutTestState extends State<PinPutTest> {
                     scrollDirection: Axis.vertical,
                     controller: _pageController,
                     onPageChanged: (index) {
-                      setState(() {
-                        _pageIndex = index;
-                      });
+                      setState(() => _pageIndex = index);
                     },
                     children: _pinPuts.map((p) {
                       return FractionallySizedBox(
