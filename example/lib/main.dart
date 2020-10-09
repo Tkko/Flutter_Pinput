@@ -32,10 +32,12 @@ class PinPutTestState extends State<PinPutTest> {
             if (s.contains('1')) return null;
             return 'NOT VALID';
           },
-          autoValidate: true,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           withCursor: true,
           fieldsCount: 5,
+          fieldsAlignment: MainAxisAlignment.spaceAround,
           textStyle: const TextStyle(fontSize: 25.0, color: Colors.black),
+          eachFieldMargin: EdgeInsets.all(0),
           eachFieldWidth: 45.0,
           eachFieldHeight: 55.0,
           onSubmit: (String pin) => _showSnackBar(pin),
@@ -114,9 +116,7 @@ class PinPutTestState extends State<PinPutTest> {
       padding: const EdgeInsets.all(20.0),
       child: PinPut(
         fieldsCount: 5,
-        preFilledChar: '-',
-        preFilledCharStyle:
-            const TextStyle(fontSize: 35.0, color: Colors.white),
+        preFilledWidget: FlutterLogo(),
         textStyle: const TextStyle(fontSize: 25.0, color: Colors.white),
         eachFieldWidth: 50.0,
         eachFieldHeight: 50.0,

@@ -13,8 +13,7 @@ class PinPut extends StatefulWidget {
     this.onClipboardFound,
     this.controller,
     this.focusNode,
-    this.preFilledChar,
-    this.preFilledCharStyle,
+    this.preFilledWidget,
     this.separatorPositions = const [],
     this.separator = const SizedBox(width: 15.0),
     this.textStyle,
@@ -41,8 +40,9 @@ class PinPut extends StatefulWidget {
     this.slideTransitionBeginOffset,
     this.enabled = true,
     this.autofocus = false,
-    this.autoValidate = false,
+    this.autovalidateMode = AutovalidateMode.disabled,
     this.withCursor = false,
+    this.cursor,
     this.keyboardAppearance,
     this.inputFormatters,
     this.validator,
@@ -51,6 +51,7 @@ class PinPut extends StatefulWidget {
     this.textCapitalization = TextCapitalization.none,
     this.textInputAction,
     this.toolbarOptions,
+    this.mainAxisSize = MainAxisSize.max,
   })  : assert(fieldsCount > 0),
         super(key: key);
 
@@ -80,12 +81,8 @@ class PinPut extends StatefulWidget {
   /// use the current [FocusScope] to request the focus:
   final FocusNode focusNode;
 
-  /// Symbol that is displayed before field submitted.
-  final String preFilledChar;
-
-  /// The style to use for PinPut
-  /// If null, defaults to the `subhead` text style from the current [Theme].
-  final TextStyle preFilledCharStyle;
+  /// Widget that is displayed before field submitted.
+  final Widget preFilledWidget;
 
   /// Sets the positions where the separator should be shown
   final List<int> separatorPositions;
@@ -185,10 +182,13 @@ class PinPut extends StatefulWidget {
   ///   final _formKey = GlobalKey<FormState>();
   ///   _formKey.currentState.validate()
   /// ```
-  final bool autoValidate;
+  final AutovalidateMode autovalidateMode;
 
   /// If true the focused field includes fake cursor
   final bool withCursor;
+
+  /// If [withCursor] true the focused field includes cursor widget or '|'
+  final Widget cursor;
 
   /// The appearance of the keyboard.
   /// This setting is only honored on iOS devices.
@@ -235,6 +235,9 @@ class PinPut extends StatefulWidget {
   /// will be disabled if [obscureText] is true. If [readOnly] is true,
   /// paste and cut will be disabled regardless.
   final ToolbarOptions toolbarOptions;
+
+  /// Maximize the amount of free space along the main axis.
+  final MainAxisSize mainAxisSize;
 
   @override
   PinPutState createState() => PinPutState();

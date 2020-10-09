@@ -105,7 +105,7 @@ class PinPutState extends State<PinPut>
       onSaved: widget.onSaved,
       onChanged: widget.onChanged,
       validator: widget.validator,
-      autovalidate: widget.autoValidate,
+      autovalidateMode: widget.autovalidateMode,
       textInputAction: widget.textInputAction,
       focusNode: _focusNode,
       enabled: widget.enabled,
@@ -135,6 +135,7 @@ class PinPutState extends State<PinPut>
         return GestureDetector(
           onTap: _handleTap,
           child: Row(
+            mainAxisSize: widget.mainAxisSize,
             mainAxisAlignment: widget.fieldsAlignment,
             children: _buildFieldsWithSeparator(),
           ),
@@ -195,11 +196,15 @@ class PinPutState extends State<PinPut>
     if (widget.withCursor && _focusNode.hasFocus && index == pin.length) {
       return _buildCursor();
     }
-
+    if (widget.preFilledWidget != null)
+      return SizedBox(
+        key: ValueKey<String>(index < pin.length ? pin[index] : ''),
+        child: widget.preFilledWidget,
+      );
     return Text(
-      widget.preFilledChar ?? '',
+      '',
       key: ValueKey<String>(index < pin.length ? pin[index] : ''),
-      style: widget.preFilledCharStyle ?? widget.textStyle,
+      style: widget.textStyle,
     );
   }
 
@@ -252,10 +257,7 @@ class PinPutState extends State<PinPut>
         return Center(
           child: Opacity(
             opacity: _cursorAnimation.value,
-            child: Text(
-              '|',
-              style: widget.textStyle,
-            ),
+            child: widget.cursor ?? Text('|', style: widget.textStyle),
           ),
         );
       },

@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 0.2.6 -10/09/2020
+🔥🚀
+Added `cursor`, `preFilledWidget`, `mainAxisSize` and `autovalidateMode` properties.
+
 ## 0.2.5 -08/30/2020
 🔥🚀
 Added fake `cursor`, `separatorPositions`, `separator` and optimized project with the help of community. credits to @[furaiev](https://github.com/furaiev), @[Holofox](https://github.com/Holofox),
