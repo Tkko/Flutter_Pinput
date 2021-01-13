@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.0.0 -01/14/2021
+🔥🚀
+Updated Example, Increased package version to `1.0.0` in order to make it more trustful
+
 ## 0.2.6 -10/09/2020
 🔥🚀
 Added `cursor`, `preFilledWidget`, `mainAxisSize` and `autovalidateMode` properties.
