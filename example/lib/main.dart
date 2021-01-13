@@ -1,20 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
-void main() => runApp(PinPutTest());
+void main() => runApp(PinPutApp());
 
-class PinPutTest extends StatefulWidget {
+class PinPutApp extends StatelessWidget {
   @override
-  PinPutTestState createState() => PinPutTestState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(body: PinPutView()),
+    );
+  }
 }
 
-class PinPutTestState extends State<PinPutTest> {
+class PinPutView extends StatefulWidget {
+  @override
+  PinPutViewState createState() => PinPutViewState();
+}
+
+class PinPutViewState extends State<PinPutView> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _pinPutController = TextEditingController();
-  final FocusNode _pinPutFocusNode = FocusNode();
-  BuildContext _context;
-  final PageController _pageController = PageController(initialPage: 1);
+  final _pinPutController = TextEditingController();
+  final _pinPutFocusNode = FocusNode();
+  final _pageController = PageController();
+
   int _pageIndex = 0;
+
+  final List<Widget> _pinPuts = [];
+
+  final List<Color> _bgColors = [
+    Colors.white,
+    const Color.fromRGBO(43, 36, 198, 1),
+    Colors.white,
+    const Color.fromRGBO(75, 83, 214, 1),
+    const Color.fromRGBO(43, 46, 66, 1),
+  ];
+
+  @override
+  void initState() {
+    _pinPuts.addAll([
+      onlySelectedBorderPinPut(),
+      darkRoundedPinPut(),
+      animatingBorders(),
+      boxedPinPutWithPreFilledSymbol(),
+      justRoundedCornersPinPut(),
+    ]);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.passthrough,
+      children: <Widget>[
+        AnimatedContainer(
+          color: _bgColors[_pageIndex],
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(40.0),
+          child: PageView(
+            scrollDirection: Axis.vertical,
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() => _pageIndex = index);
+            },
+            children: _pinPuts.map((p) {
+              return FractionallySizedBox(
+                heightFactor: 1.0,
+                child: Center(child: p),
+              );
+            }).toList(),
+          ),
+        ),
+        _bottomAppBar,
+      ],
+    );
+  }
 
   Widget onlySelectedBorderPinPut() {
     final BoxDecoration pinPutDecoration = BoxDecoration(
@@ -66,6 +126,7 @@ class PinPutTestState extends State<PinPutTest> {
     return PinPut(
       eachFieldWidth: 65.0,
       eachFieldHeight: 65.0,
+      withCursor: true,
       fieldsCount: 4,
       focusNode: _pinPutFocusNode,
       controller: _pinPutController,
@@ -86,6 +147,7 @@ class PinPutTestState extends State<PinPutTest> {
     return PinPut(
       fieldsCount: 5,
       eachFieldHeight: 40.0,
+      withCursor: true,
       onSubmit: (String pin) => _showSnackBar(pin),
       focusNode: _pinPutFocusNode,
       controller: _pinPutController,
@@ -115,6 +177,7 @@ class PinPutTestState extends State<PinPutTest> {
       ),
       padding: const EdgeInsets.all(20.0),
       child: PinPut(
+        withCursor: true,
         fieldsCount: 5,
         preFilledWidget: FlutterLogo(),
         textStyle: const TextStyle(fontSize: 25.0, color: Colors.white),
@@ -143,6 +206,7 @@ class PinPutTestState extends State<PinPutTest> {
       padding: const EdgeInsets.all(30.0),
       child: PinPut(
         fieldsCount: 4,
+        withCursor: true,
         textStyle: const TextStyle(fontSize: 25.0, color: Colors.white),
         eachFieldWidth: 40.0,
         eachFieldHeight: 55.0,
@@ -153,64 +217,6 @@ class PinPutTestState extends State<PinPutTest> {
         selectedFieldDecoration: pinPutDecoration,
         followingFieldDecoration: pinPutDecoration,
         pinAnimationType: PinAnimationType.fade,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final List<Widget> _pinPuts = [
-      onlySelectedBorderPinPut(),
-      darkRoundedPinPut(),
-      animatingBorders(),
-      boxedPinPutWithPreFilledSymbol(),
-      justRoundedCornersPinPut(),
-    ];
-
-    final List<Color> _bgColors = [
-      Colors.white,
-      const Color.fromRGBO(43, 36, 198, 1),
-      Colors.white,
-      const Color.fromRGBO(75, 83, 214, 1),
-      const Color.fromRGBO(43, 46, 66, 1),
-    ];
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        platform: TargetPlatform.iOS,
-      ),
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(
-          fit: StackFit.passthrough,
-          children: <Widget>[
-            Builder(
-              builder: (context) {
-                _context = context;
-                return AnimatedContainer(
-                  color: _bgColors[_pageIndex],
-                  duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.all(40.0),
-                  child: PageView(
-                    scrollDirection: Axis.vertical,
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      setState(() => _pageIndex = index);
-                    },
-                    children: _pinPuts.map((p) {
-                      return FractionallySizedBox(
-                        heightFactor: 1.0,
-                        child: Center(child: p),
-                      );
-                    }).toList(),
-                  ),
-                );
-              },
-            ),
-            _bottomAppBar,
-          ],
-        ),
       ),
     );
   }
@@ -258,7 +264,7 @@ class PinPutTestState extends State<PinPutTest> {
       ),
       backgroundColor: Colors.deepPurpleAccent,
     );
-    Scaffold.of(_context)
+    Scaffold.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);
   }
