@@ -4,20 +4,20 @@ import 'package:pinput/pin_put/pin_put.dart';
 
 class PinPutState extends State<PinPut>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
-  TextEditingController _controller;
-  FocusNode _focusNode;
-  ValueNotifier<String> _textControllerValue;
+  TextEditingController? _controller;
+  FocusNode? _focusNode;
+  ValueNotifier<String>? _textControllerValue;
 
-  int get selectedIndex => _controller.value.text.length;
+  int get selectedIndex => _controller!.value.text.length;
 
-  Animation _cursorAnimation;
-  AnimationController _cursorAnimationController;
+  late Animation _cursorAnimation;
+  AnimationController? _cursorAnimationController;
 
   @override
   void initState() {
     _controller = widget.controller ?? TextEditingController();
     _focusNode = widget.focusNode ?? FocusNode();
-    _textControllerValue = ValueNotifier<String>(_controller.value.text);
+    _textControllerValue = ValueNotifier<String>(_controller!.value.text);
     _controller?.addListener(_textChangeListener);
     _focusNode?.addListener(() {
       if (mounted) setState(() {});
@@ -27,28 +27,28 @@ class PinPutState extends State<PinPut>
       _cursorAnimationController = AnimationController(
           vsync: this, duration: Duration(milliseconds: 500));
       _cursorAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-          curve: Curves.linear, parent: _cursorAnimationController));
+          curve: Curves.linear, parent: _cursorAnimationController!));
 
-      _cursorAnimationController.addStatusListener((AnimationStatus status) {
+      _cursorAnimationController!.addStatusListener((AnimationStatus status) {
         if (status == AnimationStatus.completed) {
-          _cursorAnimationController.repeat(reverse: true);
+          _cursorAnimationController!.repeat(reverse: true);
         }
       });
-      _cursorAnimationController.forward();
+      _cursorAnimationController!.forward();
     }
 
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     super.initState();
   }
 
   void _textChangeListener() {
-    final pin = _controller.value.text;
+    final pin = _controller!.value.text;
     widget.onChanged?.call(pin);
-    if (pin != _textControllerValue.value) {
+    if (pin != _textControllerValue!.value) {
       try {
-        _textControllerValue.value = pin;
+        _textControllerValue!.value = pin;
       } catch (e) {
-        _textControllerValue = ValueNotifier(_controller.value.text);
+        _textControllerValue = ValueNotifier(_controller!.value.text);
       }
       if (pin.length == widget.fieldsCount) widget.onSubmit?.call(pin);
     }
@@ -56,12 +56,12 @@ class PinPutState extends State<PinPut>
 
   @override
   void dispose() {
-    if (widget.controller == null) _controller.dispose();
-    if (widget.focusNode == null) _focusNode.dispose();
+    if (widget.controller == null) _controller!.dispose();
+    if (widget.focusNode == null) _focusNode!.dispose();
 
     _cursorAnimationController?.dispose();
     _textControllerValue?.dispose();
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
@@ -73,9 +73,9 @@ class PinPutState extends State<PinPut>
   }
 
   Future<void> _checkClipboard() async {
-    final ClipboardData clipboardData = await Clipboard.getData('text/plain');
+    final ClipboardData? clipboardData = await Clipboard.getData('text/plain');
     if (clipboardData?.text?.length == widget.fieldsCount) {
-      widget.onClipboardFound?.call(clipboardData.text);
+      widget.onClipboardFound?.call(clipboardData!.text);
     }
   }
 
@@ -91,11 +91,11 @@ class PinPutState extends State<PinPut>
 
   void _handleTap() {
     final focus = FocusScope.of(context);
-    if (_focusNode.hasFocus) _focusNode.unfocus();
+    if (_focusNode!.hasFocus) _focusNode!.unfocus();
     if (focus.hasFocus) focus.unfocus();
     focus.requestFocus(FocusNode());
     Future.delayed(Duration.zero, () => focus.requestFocus(_focusNode));
-    if (widget.onTap != null) widget.onTap();
+    if (widget.onTap != null) widget.onTap!();
   }
 
   Widget get _hiddenTextField {
@@ -123,15 +123,15 @@ class PinPutState extends State<PinPut>
       scrollPadding: EdgeInsets.zero,
       decoration: widget.inputDecoration,
       style: widget.textStyle != null
-          ? widget.textStyle.copyWith(color: Colors.transparent)
+          ? widget.textStyle!.copyWith(color: Colors.transparent)
           : const TextStyle(color: Colors.transparent),
     );
   }
 
   Widget get _fields {
     return ValueListenableBuilder<String>(
-      valueListenable: _textControllerValue,
-      builder: (BuildContext context, value, Widget child) {
+      valueListenable: _textControllerValue!,
+      builder: (BuildContext context, value, Widget? child) {
         return GestureDetector(
           onTap: _handleTap,
           child: Row(
@@ -161,7 +161,7 @@ class PinPutState extends State<PinPut>
   }
 
   Widget _getField(int index) {
-    final String pin = _controller.value.text;
+    final String pin = _controller!.value.text;
     return AnimatedContainer(
       width: widget.eachFieldWidth,
       height: widget.eachFieldHeight,
@@ -193,7 +193,7 @@ class PinPutState extends State<PinPut>
       );
     }
 
-    if (widget.withCursor && _focusNode.hasFocus && index == pin.length) {
+    if (widget.withCursor && _focusNode!.hasFocus && index == pin.length) {
       return _buildCursor();
     }
     if (widget.preFilledWidget != null)
@@ -208,12 +208,12 @@ class PinPutState extends State<PinPut>
     );
   }
 
-  BoxDecoration _fieldDecoration(int index) {
+  BoxDecoration? _fieldDecoration(int index) {
     if (!widget.enabled) return widget.disabledDecoration;
-    if (index < selectedIndex && _focusNode.hasFocus) {
+    if (index < selectedIndex && _focusNode!.hasFocus) {
       return widget.submittedFieldDecoration;
     }
-    if (index == selectedIndex && _focusNode.hasFocus) {
+    if (index == selectedIndex && _focusNode!.hasFocus) {
       return widget.selectedFieldDecoration;
     }
     return widget.followingFieldDecoration;
@@ -225,12 +225,12 @@ class PinPutState extends State<PinPut>
         return child;
       case PinAnimationType.fade:
         return FadeTransition(
-          opacity: animation,
+          opacity: animation as Animation<double>,
           child: child,
         );
       case PinAnimationType.scale:
         return ScaleTransition(
-          scale: animation,
+          scale: animation as Animation<double>,
           child: child,
         );
       case PinAnimationType.slide:
@@ -238,21 +238,20 @@ class PinPutState extends State<PinPut>
           position: Tween<Offset>(
             begin: widget.slideTransitionBeginOffset ?? Offset(0.8, 0),
             end: Offset.zero,
-          ).animate(animation),
+          ).animate(animation as Animation<double>),
           child: child,
         );
       case PinAnimationType.rotation:
         return RotationTransition(
-          turns: animation,
+          turns: animation as Animation<double>,
           child: child,
         );
     }
-    return child;
   }
 
   Widget _buildCursor() {
     return AnimatedBuilder(
-      animation: _cursorAnimationController,
+      animation: _cursorAnimationController!,
       builder: (context, child) {
         return Center(
           child: Opacity(

@@ -5,8 +5,8 @@ import 'package:pinput/pin_put/pin_put_state.dart';
 
 class PinPut extends StatefulWidget {
   const PinPut({
-    Key key,
-    @required this.fieldsCount,
+    Key? key,
+    required this.fieldsCount,
     this.onSubmit,
     this.onSaved,
     this.onChanged,
@@ -60,30 +60,30 @@ class PinPut extends StatefulWidget {
   final int fieldsCount;
 
   /// Same as FormField onFieldSubmitted, called when PinPut submitted.
-  final ValueChanged<String> onSubmit;
+  final ValueChanged<String>? onSubmit;
 
   /// Signature for being notified when a form field changes value.
-  final FormFieldSetter<String> onSaved;
+  final FormFieldSetter<String>? onSaved;
 
   /// Called every time input value changes.
-  final ValueChanged<String> onChanged;
+  final ValueChanged<String>? onChanged;
 
   /// Called when user clicks on PinPut
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   /// Called when Clipboard has value of length fieldsCount.
-  final ValueChanged<String> onClipboardFound;
+  final ValueChanged<String?>? onClipboardFound;
 
   /// Used to get, modify PinPut value and more.
-  final TextEditingController controller;
+  final TextEditingController? controller;
 
   /// Defines the keyboard focus for this widget.
   /// To give the keyboard focus to this widget, provide a [focusNode] and then
   /// use the current [FocusScope] to request the focus:
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
 
   /// Widget that is displayed before field submitted.
-  final Widget preFilledWidget;
+  final Widget? preFilledWidget;
 
   /// Sets the positions where the separator should be shown
   final List<int> separatorPositions;
@@ -93,7 +93,7 @@ class PinPut extends StatefulWidget {
 
   /// The style to use for PinPut
   /// If null, defaults to the `subhead` text style from the current [Theme].
-  final TextStyle textStyle;
+  final TextStyle? textStyle;
 
   ///  Box decoration of following properties of [PinPut]
   ///  [submittedFieldDecoration] [selectedFieldDecoration] [followingFieldDecoration] [disabledDecoration]
@@ -111,22 +111,22 @@ class PinPut extends StatefulWidget {
   ///  ```
 
   /// The decoration of each [PinPut] submitted field
-  final BoxDecoration submittedFieldDecoration;
+  final BoxDecoration? submittedFieldDecoration;
 
   /// The decoration of [PinPut] currently selected field
-  final BoxDecoration selectedFieldDecoration;
+  final BoxDecoration? selectedFieldDecoration;
 
   /// The decoration of each [PinPut] following field
-  final BoxDecoration followingFieldDecoration;
+  final BoxDecoration? followingFieldDecoration;
 
   /// The decoration of each [PinPut] field when [PinPut] ise disabled
-  final BoxDecoration disabledDecoration;
+  final BoxDecoration? disabledDecoration;
 
   /// width of each [PinPut] field
-  final double eachFieldWidth;
+  final double? eachFieldWidth;
 
   /// height of each [PinPut] field
-  final double eachFieldHeight;
+  final double? eachFieldHeight;
 
   /// Defines how [PinPut] fields are being placed inside [Row]
   final MainAxisAlignment fieldsAlignment;
@@ -135,11 +135,11 @@ class PinPut extends StatefulWidget {
   final AlignmentGeometry eachFieldAlignment;
 
   /// Empty space to surround the [PinPut] field container.
-  final EdgeInsetsGeometry eachFieldMargin;
+  final EdgeInsetsGeometry? eachFieldMargin;
 
   /// Empty space to inscribe the [PinPut] field container.
   /// For example space between border and text
-  final EdgeInsetsGeometry eachFieldPadding;
+  final EdgeInsetsGeometry? eachFieldPadding;
 
   /// Additional constraints to apply to the each field container.
   /// properties
@@ -169,7 +169,7 @@ class PinPut extends StatefulWidget {
   final PinAnimationType pinAnimationType;
 
   /// Begin Offset of ever [PinPut] field when [pinAnimationType] is slide
-  final Offset slideTransitionBeginOffset;
+  final Offset? slideTransitionBeginOffset;
 
   /// Defines [PinPut] state
   final bool enabled;
@@ -189,15 +189,15 @@ class PinPut extends StatefulWidget {
   final bool withCursor;
 
   /// If [withCursor] true the focused field includes cursor widget or '|'
-  final Widget cursor;
+  final Widget? cursor;
 
   /// The appearance of the keyboard.
   /// This setting is only honored on iOS devices.
   /// If unset, defaults to the brightness of [ThemeData.primaryColorBrightness].
-  final Brightness keyboardAppearance;
+  final Brightness? keyboardAppearance;
 
   /// {@macro flutter.widgets.editableText.inputFormatters}
-  final List<TextInputFormatter> inputFormatters;
+  final List<TextInputFormatter>? inputFormatters;
 
   /// An optional method that validates an input. Returns an error string to
   /// display if the input is invalid, or null otherwise.
@@ -212,14 +212,14 @@ class PinPut extends StatefulWidget {
   /// not an error is displayed, either wrap the  [TextFormField] in a fixed
   /// height parent like [SizedBox], or set the [TextFormField.helperText]
   /// parameter to a space.
-  final FormFieldValidator<String> validator;
+  final FormFieldValidator<String>? validator;
 
   /// {@macro flutter.widgets.editableText.keyboardType}
   final TextInputType keyboardType;
 
   /// Provide any symbol to obscure each [PinPut] field
   /// Recommended ●
-  final String obscureText;
+  final String? obscureText;
 
   /// {@macro flutter.widgets.editableText.textCapitalization}
   final TextCapitalization textCapitalization;
@@ -228,14 +228,14 @@ class PinPut extends StatefulWidget {
   ///
   /// Defaults to [TextInputAction.newline] if [keyboardType] is
   /// [TextInputType.multiline] and [TextInputAction.done] otherwise.
-  final TextInputAction textInputAction;
+  final TextInputAction? textInputAction;
 
   /// Configuration of toolbar options.
   ///
   /// If not set, select all and paste will default to be enabled. Copy and cut
   /// will be disabled if [obscureText] is true. If [readOnly] is true,
   /// paste and cut will be disabled regardless.
-  final ToolbarOptions toolbarOptions;
+  final ToolbarOptions? toolbarOptions;
 
   /// Maximize the amount of free space along the main axis.
   final MainAxisSize mainAxisSize;

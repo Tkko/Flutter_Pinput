@@ -229,19 +229,19 @@ class PinPutViewState extends State<PinPutView> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          FlatButton(
+          TextButton(
             onPressed: () => _pinPutFocusNode.requestFocus(),
             child: const Text('Focus'),
           ),
-          FlatButton(
+          TextButton(
             onPressed: () => _pinPutFocusNode.unfocus(),
             child: const Text('Unfocus'),
           ),
-          FlatButton(
+          TextButton(
             onPressed: () => _pinPutController.text = '',
             child: const Text('Clear All'),
           ),
-          FlatButton(
+          TextButton(
             child: Text('Paste'),
             onPressed: () => _pinPutController.text = '234',
           ),
@@ -264,7 +264,7 @@ class PinPutViewState extends State<PinPutView> {
       ),
       backgroundColor: Colors.deepPurpleAccent,
     );
-    Scaffold.of(context)
+    ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(snackBar);
   }
