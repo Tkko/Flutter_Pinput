@@ -60,7 +60,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  pinput: ^0.2.0
+  pinput: ^1.1.0
 ```
 
 ### 2. Install it
