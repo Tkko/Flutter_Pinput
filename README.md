@@ -1,7 +1,7 @@
 # PinPut
 
 🔥🚀
-Flutter package to create Pin code input text field with every pixel customization possibility 🎨 with beautiful animations
+description: Flutter package to create Pin code input (OTP) text field with every pixel customization possibility 🎨 and beautiful animations, Supports custom numpad.
 
 ## Breaking changes in version 0.2.0+ changed widget building logic so now it supports:
 -    Backspace on keyboard
@@ -60,7 +60,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  pinput: ^1.1.0
+  pinput: ^1.2.0
 ```
 
 ### 2. Install it
