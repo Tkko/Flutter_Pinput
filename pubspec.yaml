@@ -1,5 +1,5 @@
 name: pinput
-description: Flutter package to create Pin code input (OTP) text field with every pixel customization possibility and beautiful animations. (Password, Passcode, Captcha, Security, Coupon, Wowcher, 2FA, Two step verification, two-factor authentication)
+description: Flutter package to create Pin code input (OTP) text field with every pixel customization possibility and beautiful animations, Supports custom numpad. (Password, Passcode, Captcha, Security, Coupon, Wowcher, 2FA, Two step verification, two-factor authentication)
 version: 1.1.1
 homepage: https://tkko.github.io/Flutter_PinPut
 repository: https://github.com/Tkko/Flutter_PinPut
