@@ -40,6 +40,8 @@ class PinPut extends StatefulWidget {
     this.pinAnimationType = PinAnimationType.slide,
     this.slideTransitionBeginOffset,
     this.enabled = true,
+    this.checkClipboard = false,
+    this.useNativeKeyboard = true,
     this.autofocus = false,
     this.autovalidateMode = AutovalidateMode.disabled,
     this.withCursor = false,
@@ -176,6 +178,14 @@ class PinPut extends StatefulWidget {
 
   /// {@macro flutter.widgets.editableText.autofocus}
   final bool autofocus;
+
+  /// Whether we should check [Clipboard] data
+  final bool checkClipboard;
+
+  /// Whether we use Native keyboard or custom `Numpad`
+  /// when flag is set to false [PinPut] wont be focusable anymore
+  /// so you should set value of [PinPut]'s [TextEditingController] programmatically
+  final bool useNativeKeyboard;
 
   /// If true [validator] function is called when [PinPut] value changes
   /// alternatively you can use [GlobalKey]

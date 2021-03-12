@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
+class AlwaysDisabledFocusNode extends FocusNode {
+  @override
+  bool get hasFocus => false;
+}
+
 class PinPutState extends State<PinPut>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   TextEditingController? _controller;
@@ -16,7 +21,11 @@ class PinPutState extends State<PinPut>
   @override
   void initState() {
     _controller = widget.controller ?? TextEditingController();
-    _focusNode = widget.focusNode ?? FocusNode();
+    if (!widget.useNativeKeyboard) {
+      _focusNode = AlwaysDisabledFocusNode();
+    } else {
+      _focusNode = widget.focusNode ?? FocusNode();
+    }
     _textControllerValue = ValueNotifier<String>(_controller!.value.text);
     _controller?.addListener(_textChangeListener);
     _focusNode?.addListener(() {
@@ -67,7 +76,8 @@ class PinPutState extends State<PinPut>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
-    if (appLifecycleState == AppLifecycleState.resumed) {
+    if (appLifecycleState == AppLifecycleState.resumed ||
+        widget.checkClipboard) {
       _checkClipboard();
     }
   }
@@ -193,9 +203,13 @@ class PinPutState extends State<PinPut>
       );
     }
 
-    if (widget.withCursor && _focusNode!.hasFocus && index == pin.length) {
+    final isActiveField = index == pin.length;
+    final focused = _focusNode!.hasFocus || !widget.useNativeKeyboard;
+
+    if (widget.withCursor && isActiveField && focused) {
       return _buildCursor();
     }
+
     if (widget.preFilledWidget != null)
       return SizedBox(
         key: ValueKey<String>(index < pin.length ? pin[index] : ''),
