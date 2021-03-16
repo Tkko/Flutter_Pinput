@@ -1,5 +1,5 @@
 <div>
-  <h1 align="center">PinPut</h1>
+  <h1 align="center" style="font-size: 70px;">PinPut</h1>
   <p align="center" >
     <a title="PRs are welcome">
       <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" />
