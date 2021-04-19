@@ -144,6 +144,7 @@ class PinPutState extends State<PinPut>
       builder: (BuildContext context, value, Widget? child) {
         return GestureDetector(
           onTap: _handleTap,
+          behavior: HitTestBehavior.translucent,
           child: Row(
             mainAxisSize: widget.mainAxisSize,
             mainAxisAlignment: widget.fieldsAlignment,
