@@ -52,7 +52,6 @@ class PinPutState extends State<PinPut>
 
   void _textChangeListener() {
     final pin = _controller!.value.text;
-    widget.onChanged?.call(pin);
     if (pin != _textControllerValue!.value) {
       try {
         _textControllerValue!.value = pin;
