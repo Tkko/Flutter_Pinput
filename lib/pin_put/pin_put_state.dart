@@ -120,6 +120,7 @@ class PinPutState extends State<PinPut>
       readOnly: !widget.useNativeKeyboard,
       obscureText: widget.obscureText != null,
       autocorrect: false,
+      autofillHints: widget.autofillHints,
       keyboardAppearance: widget.keyboardAppearance,
       keyboardType: widget.keyboardType,
       textCapitalization: widget.textCapitalization,
