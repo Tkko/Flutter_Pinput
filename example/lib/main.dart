@@ -133,6 +133,8 @@ class PinPutViewState extends State<PinPutView> {
                 return RoundedButton(
                   title: '$e',
                   onTap: () {
+                    if (_pinPutController.text.length >= 5) return;
+
                     _pinPutController.text = '${_pinPutController.text}$e';
                   },
                 );
