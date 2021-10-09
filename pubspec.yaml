@@ -1,6 +1,6 @@
 name: pinput
 description: Pin code input (OTP) text field, Supports custom numpad. Password,Passcode,Captcha,Security,Coupon,Wowcher,2FA,Two step verification,two-factor authentication
-version: 1.2.0
+version: 1.2.1
 homepage: https://tkko.github.io/Flutter_PinPut
 repository: https://github.com/Tkko/Flutter_PinPut
 

@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.1 -10/09/2021
+🔥🚀
+Merged PRs and Fixed common issues
+
 ## 1.2.0 -03/13/2021
 🔥🚀
 Now PinPut supports custom numpad.(See demos)
