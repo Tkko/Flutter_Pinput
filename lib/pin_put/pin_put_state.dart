@@ -21,11 +21,7 @@ class PinPutState extends State<PinPut>
   @override
   void initState() {
     _controller = widget.controller ?? TextEditingController();
-    if (!widget.useNativeKeyboard) {
-      _focusNode = AlwaysDisabledFocusNode();
-    } else {
-      _focusNode = widget.focusNode ?? FocusNode();
-    }
+    _focusNode = widget.focusNode ?? FocusNode();
     _textControllerValue = ValueNotifier<String>(_controller!.value.text);
     _controller?.addListener(_textChangeListener);
     _focusNode?.addListener(() {
@@ -121,8 +117,10 @@ class PinPutState extends State<PinPut>
       enabled: widget.enabled,
       enableSuggestions: false,
       autofocus: widget.autofocus,
+      readOnly: !widget.useNativeKeyboard,
       obscureText: widget.obscureText != null,
       autocorrect: false,
+      autofillHints: widget.autofillHints,
       keyboardAppearance: widget.keyboardAppearance,
       keyboardType: widget.keyboardType,
       textCapitalization: widget.textCapitalization,
