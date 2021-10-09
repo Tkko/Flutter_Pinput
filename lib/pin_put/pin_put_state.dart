@@ -222,10 +222,12 @@ class PinPutState extends State<PinPut>
 
   BoxDecoration? _fieldDecoration(int index) {
     if (!widget.enabled) return widget.disabledDecoration;
-    if (index < selectedIndex && _focusNode!.hasFocus) {
+    if (index < selectedIndex &&
+        (_focusNode!.hasFocus || !widget.useNativeKeyboard)) {
       return widget.submittedFieldDecoration;
     }
-    if (index == selectedIndex && _focusNode!.hasFocus) {
+    if (index == selectedIndex &&
+        (_focusNode!.hasFocus || !widget.useNativeKeyboard)) {
       return widget.selectedFieldDecoration;
     }
     return widget.followingFieldDecoration;
