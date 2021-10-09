@@ -4,58 +4,59 @@ import 'package:flutter/services.dart';
 import 'package:pinput/pin_put/pin_put_state.dart';
 
 class PinPut extends StatefulWidget {
-  const PinPut({
-    Key? key,
-    required this.fieldsCount,
-    this.onSubmit,
-    this.onSaved,
-    this.onChanged,
-    this.onTap,
-    this.onClipboardFound,
-    this.controller,
-    this.focusNode,
-    this.preFilledWidget,
-    this.separatorPositions = const [],
-    this.separator = const SizedBox(width: 15.0),
-    this.textStyle,
-    this.submittedFieldDecoration,
-    this.selectedFieldDecoration,
-    this.followingFieldDecoration,
-    this.disabledDecoration,
-    this.eachFieldWidth,
-    this.eachFieldHeight,
-    this.fieldsAlignment = MainAxisAlignment.spaceBetween,
-    this.eachFieldAlignment = Alignment.center,
-    this.eachFieldMargin,
-    this.eachFieldPadding,
-    this.eachFieldConstraints =
-        const BoxConstraints(minHeight: 40.0, minWidth: 40.0),
-    this.inputDecoration = const InputDecoration(
-      contentPadding: EdgeInsets.zero,
-      border: InputBorder.none,
-      counterText: '',
-    ),
-    this.animationCurve = Curves.linear,
-    this.animationDuration = const Duration(milliseconds: 160),
-    this.pinAnimationType = PinAnimationType.slide,
-    this.slideTransitionBeginOffset,
-    this.enabled = true,
-    this.checkClipboard = false,
-    this.useNativeKeyboard = true,
-    this.autofocus = false,
-    this.autovalidateMode = AutovalidateMode.disabled,
-    this.withCursor = false,
-    this.cursor,
-    this.keyboardAppearance,
-    this.inputFormatters,
-    this.validator,
-    this.keyboardType = TextInputType.number,
-    this.obscureText,
-    this.textCapitalization = TextCapitalization.none,
-    this.textInputAction,
-    this.toolbarOptions,
-    this.mainAxisSize = MainAxisSize.max,
-  })  : assert(fieldsCount > 0),
+  const PinPut(
+      {Key? key,
+      required this.fieldsCount,
+      this.onSubmit,
+      this.onSaved,
+      this.onChanged,
+      this.onTap,
+      this.onClipboardFound,
+      this.controller,
+      this.focusNode,
+      this.preFilledWidget,
+      this.separatorPositions = const [],
+      this.separator = const SizedBox(width: 15.0),
+      this.textStyle,
+      this.submittedFieldDecoration,
+      this.selectedFieldDecoration,
+      this.followingFieldDecoration,
+      this.disabledDecoration,
+      this.eachFieldWidth,
+      this.eachFieldHeight,
+      this.fieldsAlignment = MainAxisAlignment.spaceBetween,
+      this.eachFieldAlignment = Alignment.center,
+      this.eachFieldMargin,
+      this.eachFieldPadding,
+      this.eachFieldConstraints =
+          const BoxConstraints(minHeight: 40.0, minWidth: 40.0),
+      this.inputDecoration = const InputDecoration(
+        contentPadding: EdgeInsets.zero,
+        border: InputBorder.none,
+        counterText: '',
+      ),
+      this.animationCurve = Curves.linear,
+      this.animationDuration = const Duration(milliseconds: 160),
+      this.pinAnimationType = PinAnimationType.slide,
+      this.slideTransitionBeginOffset,
+      this.enabled = true,
+      this.checkClipboard = false,
+      this.useNativeKeyboard = true,
+      this.autofocus = false,
+      this.autovalidateMode = AutovalidateMode.disabled,
+      this.withCursor = false,
+      this.cursor,
+      this.keyboardAppearance,
+      this.inputFormatters,
+      this.validator,
+      this.keyboardType = TextInputType.number,
+      this.obscureText,
+      this.textCapitalization = TextCapitalization.none,
+      this.textInputAction,
+      this.toolbarOptions,
+      this.mainAxisSize = MainAxisSize.max,
+      this.autofillHints})
+      : assert(fieldsCount > 0),
         super(key: key);
 
   /// Displayed fields count. PIN code length.
@@ -249,6 +250,9 @@ class PinPut extends StatefulWidget {
 
   /// Maximize the amount of free space along the main axis.
   final MainAxisSize mainAxisSize;
+
+  /// lists of auto fill hints
+  final Iterable<String>? autofillHints;
 
   @override
   PinPutState createState() => PinPutState();
