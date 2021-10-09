@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
@@ -137,7 +138,7 @@ class PinPutViewState extends State<PinPutView> {
                 );
               }),
               RoundedButton(
-                title: '<-',
+                title: '⌫',
                 onTap: () {
                   if (_pinPutController.text.isNotEmpty) {
                     _pinPutController.text = _pinPutController.text
@@ -242,7 +243,7 @@ class PinPutViewState extends State<PinPutView> {
         fieldsCount: 4,
         withCursor: true,
         textStyle: const TextStyle(fontSize: 25.0, color: Colors.white),
-        eachFieldWidth: 40.0,
+        eachFieldWidth: 55.0,
         eachFieldHeight: 55.0,
         onSubmit: (String pin) => _showSnackBar(pin),
         focusNode: _pinPutFocusNode,
@@ -257,7 +258,7 @@ class PinPutViewState extends State<PinPutView> {
 
   Widget get _bottomAppBar {
     return Positioned(
-      bottom: 0,
+      bottom: MediaQuery.of(context).padding.bottom,
       left: 0,
       right: 0,
       child: Row(
