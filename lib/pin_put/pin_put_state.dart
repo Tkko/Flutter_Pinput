@@ -124,7 +124,7 @@ class PinPutState extends State<PinPut>
       keyboardType: widget.keyboardType,
       textCapitalization: widget.textCapitalization,
       inputFormatters: widget.inputFormatters,
-      enableInteractiveSelection: false,
+      enableInteractiveSelection: widget.enableInteractiveSelection,
       maxLength: widget.fieldsCount,
       showCursor: false,
       scrollPadding: EdgeInsets.zero,
