@@ -55,7 +55,8 @@ class PinPut extends StatefulWidget {
       this.textInputAction,
       this.toolbarOptions,
       this.mainAxisSize = MainAxisSize.max,
-      this.autofillHints})
+      this.autofillHints,
+      this.enableInteractiveSelection = false})
       : assert(fieldsCount > 0),
         super(key: key);
 
@@ -253,6 +254,9 @@ class PinPut extends StatefulWidget {
 
   /// lists of auto fill hints
   final Iterable<String>? autofillHints;
+  
+  /// Allows iteration with field
+  final bool enableInteractiveSelection;
 
   @override
   PinPutState createState() => PinPutState();
