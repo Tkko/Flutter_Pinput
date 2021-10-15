@@ -88,8 +88,8 @@ class PinPutState extends State<PinPut>
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        _hiddenTextField,
         _fields,
+        _hiddenTextField,
       ],
     );
   }
