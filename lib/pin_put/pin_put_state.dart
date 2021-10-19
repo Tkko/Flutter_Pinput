@@ -104,34 +104,37 @@ class PinPutState extends State<PinPut>
   }
 
   Widget get _hiddenTextField {
-    return TextFormField(
-      controller: _controller,
-      onTap: widget.onTap,
-      onSaved: widget.onSaved,
-      onChanged: widget.onChanged,
-      validator: widget.validator,
-      autovalidateMode: widget.autovalidateMode,
-      textInputAction: widget.textInputAction,
-      focusNode: _focusNode,
-      enabled: widget.enabled,
-      enableSuggestions: false,
-      autofocus: widget.autofocus,
-      readOnly: !widget.useNativeKeyboard,
-      obscureText: widget.obscureText != null,
-      autocorrect: false,
-      autofillHints: widget.autofillHints,
-      keyboardAppearance: widget.keyboardAppearance,
-      keyboardType: widget.keyboardType,
-      textCapitalization: widget.textCapitalization,
-      inputFormatters: widget.inputFormatters,
-      enableInteractiveSelection: widget.enableInteractiveSelection,
-      maxLength: widget.fieldsCount,
-      showCursor: false,
-      scrollPadding: EdgeInsets.zero,
-      decoration: widget.inputDecoration,
-      style: widget.textStyle != null
-          ? widget.textStyle!.copyWith(color: Colors.transparent)
-          : const TextStyle(color: Colors.transparent),
+    return SizedBox(
+      width: widget.enableInteractiveSelection ? widget.eachFieldWidth : null,
+      child:TextFormField(
+        controller: _controller,
+        onTap: widget.onTap,
+        onSaved: widget.onSaved,
+        onChanged: widget.onChanged,
+        validator: widget.validator,
+        autovalidateMode: widget.autovalidateMode,
+        textInputAction: widget.textInputAction,
+        focusNode: _focusNode,
+        enabled: widget.enabled,
+        enableSuggestions: false,
+        autofocus: widget.autofocus,
+        readOnly: !widget.useNativeKeyboard,
+        obscureText: widget.obscureText != null,
+        autocorrect: false,
+        autofillHints: widget.autofillHints,
+        keyboardAppearance: widget.keyboardAppearance,
+        keyboardType: widget.keyboardType,
+        textCapitalization: widget.textCapitalization,
+        inputFormatters: widget.inputFormatters,
+        enableInteractiveSelection: widget.enableInteractiveSelection,
+        maxLength: widget.fieldsCount,
+        showCursor: false,
+        scrollPadding: EdgeInsets.zero,
+        decoration: widget.inputDecoration,
+        style: widget.textStyle != null
+            ? widget.textStyle!.copyWith(color: Colors.transparent)
+            : const TextStyle(color: Colors.transparent),
+        ),
     );
   }
 
