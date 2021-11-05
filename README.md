@@ -1,7 +1,7 @@
 <div align="center">
-  <h1 align="center" style="font-size: 70px;">Flutter PinPut From <a href="https://www.linkedin.com/in/thornike/" target="blank">Tornike</a> </h1>
+  <h1 align="center" style="font-size: 70px;">Flutter PinPut From <a href="https://www.linkedin.com/in/thornike/" target="_blank">Tornike</a> </h1>
   
-<a href="https://www.buymeacoffee.com/fman" target="blank"><img src="https://img.buymeacoffee.com/button-api/?text=Thank me with a coffee&emoji=&slug=fman&button_colour=40DCA5&font_colour=ffffff&font_family=Poppins&outline_colour=000000&coffee_colour=FFDD00"></a>
+<a href="https://www.buymeacoffee.com/fman" target="_blank"><img src="https://img.buymeacoffee.com/button-api/?text=Thank me with a coffee&emoji=&slug=fman&button_colour=40DCA5&font_colour=ffffff&font_family=Poppins&outline_colour=000000&coffee_colour=FFDD00"></a>
   
 </div>
 
