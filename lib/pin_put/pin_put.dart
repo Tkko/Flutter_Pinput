@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pinput/pin_put/pin_put_state.dart';
@@ -28,8 +27,7 @@ class PinPut extends StatefulWidget {
       this.eachFieldAlignment = Alignment.center,
       this.eachFieldMargin,
       this.eachFieldPadding,
-      this.eachFieldConstraints =
-          const BoxConstraints(minHeight: 40.0, minWidth: 40.0),
+      this.eachFieldConstraints = const BoxConstraints(minHeight: 40.0, minWidth: 40.0),
       this.inputDecoration = const InputDecoration(
         contentPadding: EdgeInsets.zero,
         border: InputBorder.none,

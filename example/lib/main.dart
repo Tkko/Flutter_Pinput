@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
@@ -97,7 +96,7 @@ class PinPutViewState extends State<PinPutView> {
                 return 'NOT VALID';
               },
               useNativeKeyboard: false,
-              // autovalidateMode: AutovalidateMode.onUserInteraction,
+              checkClipboard: false,
               withCursor: true,
               fieldsCount: 5,
               fieldsAlignment: MainAxisAlignment.spaceAround,
@@ -143,8 +142,7 @@ class PinPutViewState extends State<PinPutView> {
                 title: '⌫',
                 onTap: () {
                   if (_pinPutController.text.isNotEmpty) {
-                    _pinPutController.text = _pinPutController.text
-                        .substring(0, _pinPutController.text.length - 1);
+                    _pinPutController.text = _pinPutController.text.substring(0, _pinPutController.text.length - 1);
                   }
                 },
               ),
