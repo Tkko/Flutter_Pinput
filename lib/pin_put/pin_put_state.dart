@@ -7,7 +7,8 @@ class AlwaysDisabledFocusNode extends FocusNode {
   bool get hasFocus => false;
 }
 
-class PinPutState extends State<PinPut> with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+class PinPutState extends State<PinPut>
+    with WidgetsBindingObserver, SingleTickerProviderStateMixin {
   TextEditingController? _controller;
   FocusNode? _focusNode;
   ValueNotifier<String>? _textControllerValue;
@@ -28,9 +29,10 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver, SingleTicke
     });
 
     if (widget.withCursor) {
-      _cursorAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-      _cursorAnimation = Tween(begin: 0.0, end: 1.0)
-          .animate(CurvedAnimation(curve: Curves.linear, parent: _cursorAnimationController!));
+      _cursorAnimationController = AnimationController(
+          vsync: this, duration: Duration(milliseconds: 500));
+      _cursorAnimation = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+          curve: Curves.linear, parent: _cursorAnimationController!));
 
       _cursorAnimationController!.addStatusListener((AnimationStatus status) {
         if (status == AnimationStatus.completed) {
@@ -69,7 +71,8 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver, SingleTicke
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
-    if (appLifecycleState == AppLifecycleState.resumed || widget.checkClipboard) {
+    if (appLifecycleState == AppLifecycleState.resumed &&
+        widget.checkClipboard) {
       _checkClipboard();
     }
   }
@@ -155,7 +158,8 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver, SingleTicke
 
     for (final int i in widget.separatorPositions) {
       if (i <= widget.fieldsCount) {
-        final List<int> smaller = widget.separatorPositions.where((int d) => d < i).toList();
+        final List<int> smaller =
+            widget.separatorPositions.where((int d) => d < i).toList();
         fields.insert(i + smaller.length, widget.separator);
       }
     }
@@ -217,10 +221,12 @@ class PinPutState extends State<PinPut> with WidgetsBindingObserver, SingleTicke
 
   BoxDecoration? _fieldDecoration(int index) {
     if (!widget.enabled) return widget.disabledDecoration;
-    if (index < selectedIndex && (_focusNode!.hasFocus || !widget.useNativeKeyboard)) {
+    if (index < selectedIndex &&
+        (_focusNode!.hasFocus || !widget.useNativeKeyboard)) {
       return widget.submittedFieldDecoration;
     }
-    if (index == selectedIndex && (_focusNode!.hasFocus || !widget.useNativeKeyboard)) {
+    if (index == selectedIndex &&
+        (_focusNode!.hasFocus || !widget.useNativeKeyboard)) {
       return widget.selectedFieldDecoration;
     }
     return widget.followingFieldDecoration;

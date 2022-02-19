@@ -202,7 +202,7 @@ class PinPut extends StatefulWidget {
 
   /// The appearance of the keyboard.
   /// This setting is only honored on iOS devices.
-  /// If unset, defaults to the brightness of [ThemeData.primaryColorBrightness].
+  /// If unset, defaults to [ThemeData.brightness].
   final Brightness? keyboardAppearance;
 
   /// {@macro flutter.widgets.editableText.inputFormatters}
