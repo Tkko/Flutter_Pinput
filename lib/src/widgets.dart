@@ -1,0 +1,97 @@
+part of 'pin_put.dart';
+
+class _SeparatedRaw extends StatelessWidget {
+  final List<Widget> children;
+  final MainAxisAlignment mainAxisAlignment;
+  final List<int>? separatorPositions;
+  final Widget? separator;
+
+  _SeparatedRaw({
+    required this.children,
+    required this.mainAxisAlignment,
+    this.separator,
+    this.separatorPositions,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (separator != null) {
+      final _separatorPositions = separatorPositions ??
+          List.generate(children.length - 1, (index) => index + 1)
+              .toList(growable: false);
+
+      final separatorsCount = _separatorPositions.length;
+
+      for (int i = 0; i < separatorsCount; ++i) {
+        final index = i + _separatorPositions[i];
+        if (index <= children.length) {
+          children.insert(index, separator!);
+        }
+      }
+    }
+
+    return Row(
+      mainAxisAlignment: mainAxisAlignment,
+      children: children,
+    );
+  }
+}
+
+class _PinPutCursor extends StatefulWidget {
+  final Widget? cursor;
+  final TextStyle? textStyle;
+
+  _PinPutCursor({
+    this.textStyle,
+    this.cursor,
+  });
+
+  @override
+  State<_PinPutCursor> createState() => _PinPutCursorState();
+}
+
+class _PinPutCursorState extends State<_PinPutCursor>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _startCursorAnimation();
+  }
+
+  void _startCursorAnimation() {
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _animationController.addStatusListener((AnimationStatus status) {
+      if (status == AnimationStatus.completed) {
+        _animationController.repeat(reverse: true);
+      }
+    });
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animationController,
+      builder: (_, __) {
+        return Center(
+          child: Opacity(
+            opacity: _animationController.value,
+            child: widget.cursor ?? Text('|', style: widget.textStyle),
+          ),
+        );
+      },
+    );
+  }
+}

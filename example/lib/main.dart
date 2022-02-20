@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pinput/pin_put/pin_put.dart';
+import 'package:pinput/pin_put.dart';
 
 void main() => runApp(PinPutApp());
 
@@ -39,9 +39,9 @@ class PinPutViewState extends State<PinPutView> {
   @override
   void initState() {
     _pinPuts.addAll([
+      animatingBorders(),
       onlySelectedBorderPinPut(),
       darkRoundedPinPut(),
-      animatingBorders(),
       boxedPinPutWithPreFilledSymbol(),
       justRoundedCornersPinPut(),
     ]);
@@ -65,7 +65,7 @@ class PinPutViewState extends State<PinPutView> {
             },
             children: _pinPuts.map((p) {
               return FractionallySizedBox(
-                heightFactor: 1.0,
+                heightFactor: 1,
                 child: Center(child: p),
               );
             }).toList(),
@@ -86,38 +86,35 @@ class PinPutViewState extends State<PinPutView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          GestureDetector(
-            onLongPress: () {
-              print(_formKey.currentState.validate());
+          PinPut(
+            validator: (s) {
+              if (s.contains('1')) return null;
+              return 'NOT VALID';
             },
-            child: PinPut(
-              validator: (s) {
-                if (s.contains('1')) return null;
-                return 'NOT VALID';
-              },
-              useNativeKeyboard: false,
-              checkClipboard: false,
-              withCursor: true,
-              fieldsCount: 5,
-              fieldsAlignment: MainAxisAlignment.spaceAround,
-              textStyle: const TextStyle(fontSize: 25.0, color: Colors.black),
-              eachFieldMargin: EdgeInsets.all(0),
-              eachFieldWidth: 45.0,
-              eachFieldHeight: 55.0,
-              onSubmit: (String pin) => _showSnackBar(pin),
-              focusNode: _pinPutFocusNode,
-              controller: _pinPutController,
-              submittedFieldDecoration: pinPutDecoration,
-              selectedFieldDecoration: pinPutDecoration.copyWith(
-                color: Colors.white,
-                border: Border.all(
-                  width: 2,
-                  color: const Color.fromRGBO(160, 215, 220, 1),
-                ),
+            autovalidateMode: AutovalidateMode.always,
+            useNativeKeyboard: false,
+            showCursor: true,
+            fieldsCount: 5,
+            fieldsAlignment: MainAxisAlignment.spaceBetween,
+            textStyle: const TextStyle(fontSize: 25.0, color: Colors.black),
+            eachFieldWidth: 45.0,
+            eachFieldHeight: 55.0,
+            onSubmit: (String pin) => _showSnackBar(pin),
+            onClipboardFound: (s) {
+              print('onClipboardFound $s');
+            },
+            focusNode: _pinPutFocusNode,
+            controller: _pinPutController,
+            submittedFieldDecoration: pinPutDecoration,
+            selectedFieldDecoration: pinPutDecoration.copyWith(
+              color: Colors.white,
+              border: Border.all(
+                width: 2,
+                color: const Color.fromRGBO(160, 215, 220, 1),
               ),
-              followingFieldDecoration: pinPutDecoration,
-              pinAnimationType: PinAnimationType.scale,
             ),
+            followingFieldDecoration: pinPutDecoration,
+            pinAnimationType: PinAnimationType.scale,
           ),
           SizedBox(height: 30),
           GridView.count(
@@ -142,7 +139,8 @@ class PinPutViewState extends State<PinPutView> {
                 title: '⌫',
                 onTap: () {
                   if (_pinPutController.text.isNotEmpty) {
-                    _pinPutController.text = _pinPutController.text.substring(0, _pinPutController.text.length - 1);
+                    _pinPutController.text = _pinPutController.text
+                        .substring(0, _pinPutController.text.length - 1);
                   }
                 },
               ),
@@ -161,7 +159,7 @@ class PinPutViewState extends State<PinPutView> {
     return PinPut(
       eachFieldWidth: 65.0,
       eachFieldHeight: 65.0,
-      withCursor: true,
+      showCursor: true,
       fieldsCount: 4,
       focusNode: _pinPutFocusNode,
       controller: _pinPutController,
@@ -179,16 +177,22 @@ class PinPutViewState extends State<PinPutView> {
       border: Border.all(color: Colors.deepPurpleAccent),
       borderRadius: BorderRadius.circular(15.0),
     );
+
     return PinPut(
       fieldsCount: 5,
-      eachFieldHeight: 40.0,
-      withCursor: true,
+      eachFieldHeight: 40,
+      eachFieldWidth: 40,
+      showCursor: true,
       onSubmit: (String pin) => _showSnackBar(pin),
       focusNode: _pinPutFocusNode,
       controller: _pinPutController,
       submittedFieldDecoration: pinPutDecoration.copyWith(
         borderRadius: BorderRadius.circular(20.0),
       ),
+      validator: (s) {
+        if (s == '11') return null;
+        return 'HEH';
+      },
       selectedFieldDecoration: pinPutDecoration,
       followingFieldDecoration: pinPutDecoration.copyWith(
         borderRadius: BorderRadius.circular(5.0),
@@ -212,7 +216,7 @@ class PinPutViewState extends State<PinPutView> {
       ),
       padding: const EdgeInsets.all(20.0),
       child: PinPut(
-        withCursor: true,
+        showCursor: true,
         fieldsCount: 5,
         preFilledWidget: FlutterLogo(),
         textStyle: const TextStyle(fontSize: 25.0, color: Colors.white),
@@ -241,7 +245,7 @@ class PinPutViewState extends State<PinPutView> {
       padding: const EdgeInsets.all(30.0),
       child: PinPut(
         fieldsCount: 4,
-        withCursor: true,
+        showCursor: true,
         textStyle: const TextStyle(fontSize: 25.0, color: Colors.white),
         eachFieldWidth: 55.0,
         eachFieldHeight: 55.0,
