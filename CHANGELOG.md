@@ -1,6 +1,32 @@
 
 # Changelog
 
+## 0.1.9 -07/02/2019
+* Added
+
+| Property  | Default/Meaning |
+| ------------- | ------------- |
+| obscureText  | false |
+| enableInteractiveSelection  | true |
+| toolbarOptions  | ToolbarOptions(paste: true) |
+| useHapticFeedback  | false |
+
+
+* Changed
+
+| Before  | After |
+| ------------- | ------------- |
+| fieldsCount  | length |
+| eachFieldWidth  | pinWidth |
+| eachFieldHeight  | pinHeight |
+| eachFieldAlignment  | pinContentAlignment |
+| eachFieldMargin  | pinMargin |
+| eachFieldPadding  | pinPadding |
+| eachFieldConstraints  | pinConstraints |
+| withCursor  | showCursor |
+| cursorWidget  | cursor |
+| obscureText  | obscuringCharacter |
+
 ## 1.2.1 -10/09/2021
 🔥🚀
 Merged PRs and Fixed common issues
