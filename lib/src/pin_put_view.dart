@@ -1,118 +1,51 @@
 part of 'pin_put.dart';
 
-typedef PinPutErrorBuilder<T> = Widget Function(String? errorText);
-
-const _hiddenTextStyle = TextStyle(fontSize: 0, height: 0, color: Colors.transparent);
-const _hiddenInputDecoration = InputDecoration(
-  contentPadding: EdgeInsets.zero,
-  border: InputBorder.none,
-  focusedBorder: InputBorder.none,
-  enabledBorder: InputBorder.none,
-  disabledBorder: InputBorder.none,
-  errorBorder: InputBorder.none,
-  focusedErrorBorder: InputBorder.none,
-  errorText: '',
-  counter: SizedBox.shrink(),
-  counterStyle: _hiddenTextStyle,
-  helperStyle: _hiddenTextStyle,
-  errorStyle: _hiddenTextStyle,
-  floatingLabelStyle: _hiddenTextStyle,
-  suffixStyle: _hiddenTextStyle,
-  hintStyle: _hiddenTextStyle,
-  labelStyle: _hiddenTextStyle,
-  prefixStyle: _hiddenTextStyle,
-  filled: true,
-  counterText: '',
-);
-
-const _defaultPinFillColor = Color.fromRGBO(222, 231, 240, .57);
-
-const _defaultPinPutDecoration = BoxDecoration(
-  color: _defaultPinFillColor,
-  borderRadius: BorderRadius.all(Radius.circular(8)),
-);
-
-const _defaultPinTheme = PinTheme(
-  width: 56,
-  height: 60,
-  textStyle: TextStyle(),
-  decoration: _defaultPinPutDecoration,
-);
-
 class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
   late final FocusNode _focusNode;
   late final TextEditingController _controller;
+  late TextEditingValue _recentControllerValue;
 
-  String get pin => _controller.value.text;
+  int get selectedIndex => _recentControllerValue.selection.baseOffset.clamp(0, widget.length - 1);
 
-  int get selectedIndex => pin.length - 1;
+  String get pin => _controller.text;
+
+  bool get _completed => pin.length == widget.length;
 
   @override
   void initState() {
     super.initState();
     _controller = widget.controller ?? TextEditingController();
+    _recentControllerValue = _controller.value;
     _focusNode = widget.focusNode ?? FocusNode();
+    _controller.addListener(_onTextChangedListener);
     _focusNode.addListener(_focusListener);
     WidgetsBinding.instance!.addObserver(this);
   }
 
-  void _focusListener() {
-    if (mounted) setState(() {});
-  }
-
   @override
-  void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
-    if (widget.onClipboardFound != null && appLifecycleState == AppLifecycleState.resumed) {
-      _checkClipboard();
-    }
+  void dispose() {
+    _focusNode.removeListener(_focusListener);
+    _controller.removeListener(_onTextChangedListener);
+    if (widget.controller == null) _controller.dispose();
+    if (widget.focusNode == null) _focusNode.dispose();
+    super.dispose();
   }
 
-  Future<void> _checkClipboard() async {
-    final ClipboardData? clipboardData = await Clipboard.getData('text/plain');
-    final String text = clipboardData?.text ?? '';
-    if (text.length == widget.length) {
-      widget.onClipboardFound!.call(text);
-    }
-  }
+  void _onTextChangedListener() {
+    final textChanged = _recentControllerValue.text != _controller.value.text;
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _handleTap,
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          _fields(),
-          _hiddenTextField(),
-        ],
-      ),
-    );
-  }
-
-  void _handleTap() {
-    // final focus = FocusScope.of(context);
-    // if (_focusNode.hasFocus) _focusNode.unfocus();
-    // if (focus.hasFocus) focus.unfocus();
-    // focus.requestFocus(FocusNode());
-    // Future.delayed(Duration.zero, () => focus.requestFocus(_focusNode));
-    _controller.selection = TextSelection.fromPosition(
-      TextPosition(offset: _controller.text.length),
-    );
-    widget.onTap?.call();
-  }
-
-  bool get _completed => pin.length == widget.length;
-
-  void _handleTextChange(String s) {
-    setState(() {});
-    if (_completed) {
-      widget.onCompleted?.call(s);
-      if (widget.closeKeyboardWhenCompleted) {
-        _focusNode.unfocus();
+    _recentControllerValue = _controller.value;
+    if (textChanged) {
+      if (_completed) {
+        widget.onCompleted?.call(pin);
+        if (widget.closeKeyboardWhenCompleted) {
+          _focusNode.unfocus();
+        }
       }
+      _maybeUseHaptic();
+      widget.onChanged?.call(pin);
+      setState(() {});
     }
-    _maybeUseHaptic();
-    widget.onChanged?.call(s);
   }
 
   void _maybeUseHaptic() {
@@ -137,13 +70,57 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
     }
   }
 
+  void _focusListener() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
+    if (widget.onClipboardFound != null && appLifecycleState == AppLifecycleState.resumed) {
+      _checkClipboard();
+    }
+  }
+
+  Future<void> _checkClipboard() async {
+    final ClipboardData? clipboardData = await Clipboard.getData('text/plain');
+    final String text = clipboardData?.text ?? '';
+    if (text.length == widget.length) {
+      widget.onClipboardFound!.call(text);
+    }
+  }
+
+  void _handleTap() {
+    final isKeyboardHidden = MediaQueryData.fromWindow(window).viewInsets.bottom == 0;
+
+    if (_focusNode.hasFocus && isKeyboardHidden) {
+      _focusNode.unfocus();
+      Future.delayed(const Duration(microseconds: 1), () => _focusNode.requestFocus());
+    } else {
+      _focusNode.requestFocus();
+    }
+    widget.onTap?.call();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _handleTap,
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          _fields(),
+          _hiddenTextField(),
+        ],
+      ),
+    );
+  }
+
   Widget _hiddenTextField() {
-    return TextField(
+    return TextFormField(
       controller: _controller,
       onTap: widget.onTap,
-      onChanged: _handleTextChange,
       onEditingComplete: widget.onEditingComplete,
-      onSubmitted: widget.onSubmitted,
+      onFieldSubmitted: widget.onSubmitted,
       textInputAction: widget.textInputAction,
       focusNode: _focusNode,
       enabled: widget.enabled,
@@ -159,18 +136,15 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
       enableInteractiveSelection: widget.enableInteractiveSelection,
       toolbarOptions: widget.toolbarOptions,
       maxLength: widget.length,
-      showCursor: true,
+      maxLengthEnforcement: MaxLengthEnforcement.enforced,
       autocorrect: false,
+      showCursor: false,
+      style: _hiddenTextStyle,
       scrollPadding: EdgeInsets.zero,
       decoration: _hiddenInputDecoration,
-      style: _hiddenTextStyle,
       restorationId: widget.restorationId,
       textDirection: widget.textDirection,
       obscuringCharacter: widget.obscuringCharacter,
-      smartDashesType:
-          widget.smartDashesType ?? (widget.obscureText ? SmartDashesType.disabled : SmartDashesType.enabled),
-      smartQuotesType:
-          widget.smartQuotesType ?? (widget.obscureText ? SmartQuotesType.disabled : SmartQuotesType.enabled),
       selectionControls: widget.selectionControls,
       enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
     );
@@ -190,8 +164,8 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
 
     return Flexible(
       child: AnimatedContainer(
-        height: pinTheme.width,
-        width: pinTheme.height,
+        height: pinTheme.height,
+        width: pinTheme.width,
         constraints: pinTheme.constraints,
         padding: pinTheme.padding,
         margin: pinTheme.margin,
@@ -212,14 +186,18 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
     );
   }
 
-  PinTheme _getDefaultPinTheme() => widget.pinTheme ?? _defaultPinTheme;
+  PinTheme _getDefaultPinTheme() => widget.defaultTheme ?? _defaultPinTheme;
 
   PinTheme _pinThemeOrDefault(PinTheme? theme) => theme ?? _getDefaultPinTheme();
 
   Widget _buildFieldContent(int index, PinTheme pinTheme) {
     final key = ValueKey<String>(index < pin.length ? pin[index] : '');
+    final isSubmittedPin = index < pin.length;
+    if (isSubmittedPin) {
+      if (widget.obscureText && widget.obscuringWidget != null) {
+        return SizedBox(key: key, child: widget.obscuringWidget);
+      }
 
-    if (index < pin.length) {
       return Text(
         widget.obscureText ? widget.obscuringCharacter : pin[index],
         key: key,
@@ -242,15 +220,24 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
   }
 
   PinTheme _pinTheme(int index) {
-    if (!widget.enabled) return _pinThemeOrDefault(widget.disabledPinTheme);
-    if (index < selectedIndex && (_focusNode.hasFocus || !widget.useNativeKeyboard)) {
-      return _pinThemeOrDefault(widget.submittedPinTheme);
+    /// Disabled pin or default
+    if (!widget.enabled) {
+      return _pinThemeOrDefault(widget.disabledPinTheme);
     }
 
-    if (index == selectedIndex && (_focusNode.hasFocus || !widget.useNativeKeyboard)) {
+    final hasFocus = _focusNode.hasFocus || !widget.useNativeKeyboard;
+
+    /// Focused pin or default
+    if (hasFocus && index == selectedIndex) {
       return _pinThemeOrDefault(widget.focusedPinTheme);
     }
 
+    /// Submitted pin or default
+    if (index <= selectedIndex || (!hasFocus && index == selectedIndex)) {
+      return _pinThemeOrDefault(widget.submittedPinTheme);
+    }
+
+    /// Following pin or default
     return _pinThemeOrDefault(widget.followingPinTheme);
   }
 

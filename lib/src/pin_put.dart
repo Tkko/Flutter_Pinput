@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -11,11 +12,13 @@ part 'always_disabled_focus_node.dart';
 
 part 'pin_theme.dart';
 
+part 'constants.dart';
+
 class PinPut extends StatefulWidget {
   const PinPut({
     Key? key,
     this.length = 4,
-    this.pinTheme,
+    this.defaultTheme,
     this.focusedPinTheme,
     this.submittedPinTheme,
     this.followingPinTheme,
@@ -31,8 +34,8 @@ class PinPut extends StatefulWidget {
     this.focusNode,
     this.preFilledWidget,
     this.separatorPositions,
-    this.separator,
-    this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
+    this.separator = const SizedBox(width: 8),
+    this.mainAxisAlignment = MainAxisAlignment.center,
     this.pinContentAlignment = Alignment.center,
     this.animationCurve = Curves.linear,
     this.animationDuration = const Duration(milliseconds: 160),
@@ -58,19 +61,20 @@ class PinPut extends StatefulWidget {
     this.autofillHints,
     this.textDirection,
     this.obscuringCharacter = '•',
-    this.smartDashesType,
-    this.smartQuotesType,
+    this.obscuringWidget,
     this.selectionControls,
     this.restorationId,
     this.onClipboardFound,
   }) : super(key: key);
 
-  final PinTheme? pinTheme;
+
+  final PinTheme? defaultTheme;
   final PinTheme? focusedPinTheme;
   final PinTheme? submittedPinTheme;
   final PinTheme? followingPinTheme;
   final PinTheme? disabledPinTheme;
   final PinTheme? errorPinTheme;
+
   final bool closeKeyboardWhenCompleted;
 
   final TextDirection? textDirection;
@@ -161,6 +165,8 @@ class PinPut extends StatefulWidget {
   /// Recommended ●
   final String obscuringCharacter;
 
+  final Widget? obscuringWidget;
+
   final bool obscureText;
 
   /// {@macro flutter.widgets.editableText.textCapitalization}
@@ -182,8 +188,6 @@ class PinPut extends StatefulWidget {
   /// lists of auto fill hints
   final Iterable<String>? autofillHints;
 
-  final SmartDashesType? smartDashesType;
-  final SmartQuotesType? smartQuotesType;
   final bool enableSuggestions;
   final VoidCallback? onEditingComplete;
   final ValueChanged<String>? onSubmitted;

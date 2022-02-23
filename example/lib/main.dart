@@ -1,19 +1,65 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:pinput_example/otp_page.dart';
 
-void main() => runApp(PinPutApp());
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods and getters like dragDevices
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
+}
 
-class PinPutApp extends StatelessWidget {
+void main() => runApp(AppView());
+
+class AppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        tabBarTheme: TabBarTheme(
-          indicatorSize: TabBarIndicatorSize.label,
-        ),
-      ),
-      home: PinPutGallery(),
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final app = MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorSchemeSeed: Color.fromRGBO(30, 60, 87, 1),
+            tabBarTheme: TabBarTheme(
+              indicatorSize: TabBarIndicatorSize.label,
+              unselectedLabelStyle: GoogleFonts.poppins(fontSize: 16),
+              labelStyle: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
+              labelColor: Color.fromRGBO(30, 60, 87, 1),
+              unselectedLabelColor: Color.fromRGBO(107, 137, 165, 1),
+            ),
+            chipTheme: ChipThemeData(
+              selectedColor: Color.fromRGBO(30, 60, 87, 1),
+            ),
+          ),
+          home: PinPutGallery(),
+        );
+        if (constraints.maxWidth > 600 && constraints.maxHeight > 600) {
+          return Container(
+            color: Colors.white,
+            alignment: Alignment.center,
+            child: AspectRatio(
+              aspectRatio: .5,
+              child: Container(
+                margin: EdgeInsets.all(20),
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 20,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: app,
+              ),
+            ),
+          );
+        }
+        return app;
+      },
     );
   }
 }
@@ -26,30 +72,247 @@ class PinPutGallery extends StatefulWidget {
 class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderStateMixin {
   TabController _tabController;
 
-  final List<Color> _bgColors = [
-    Colors.white,
-    Colors.white,
-    const Color.fromRGBO(43, 36, 198, 1),
-    Colors.white,
-    const Color.fromRGBO(75, 83, 214, 1),
-    const Color.fromRGBO(43, 46, 66, 1),
+  final backgroundColors = [
+    [Color.fromRGBO(228, 217, 236, 1), Color.fromRGBO(255, 255, 255, 1)],
+    [Color.fromRGBO(200, 255, 221, 1), Color.fromRGBO(255, 255, 255, 1)],
+    [Colors.white, Colors.white],
+  ];
+
+  final pinPuts = [
+    OptPage(OnlyBottomCursor()),
+    OptPage(RoundedWithCustomCursor()),
+    OptPage(FilledRoundedPinPut()),
   ];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: _bgColors.length, vsync: this);
+    _tabController = TabController(length: pinPuts.length, vsync: this);
     _tabController.addListener(() {
       FocusScope.of(context).unfocus();
       setState(() {});
     });
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return ScrollConfiguration(
+      behavior: MyCustomScrollBehavior(),
+      child: AnimatedBuilder(
+        animation: _tabController.animation,
+        builder: (BuildContext context, Widget child) {
+          final anim = _tabController.animation.value;
+          final Color fromColor = Color.lerp(
+            backgroundColors[anim.floor()].first,
+            backgroundColors[anim.ceil()].first,
+            anim - anim.floor(),
+          );
+
+          final Color toColor = Color.lerp(
+            backgroundColors[anim.floor()].last,
+            backgroundColors[anim.ceil()].last,
+            anim - anim.floor(),
+          );
+
+          return Scaffold(
+            body: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [fromColor, toColor],
+                ),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: MediaQuery.of(context).viewPadding.top),
+                  TabBar(
+                    controller: _tabController,
+                    tabs: pinPuts.map((item) {
+                      return Tab(text: '$item');
+                    }).toList(),
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: pinPuts,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // void _showSnackBar(String pin) {
+  //   final snackBar = SnackBar(
+  //     duration: const Duration(seconds: 3),
+  //     content: Container(
+  //       height: 80.0,
+  //       child: Center(
+  //         child: Text(
+  //           'Pin Submitted. Value: $pin',
+  //           style: const TextStyle(fontSize: 25.0),
+  //         ),
+  //       ),
+  //     ),
+  //     backgroundColor: Colors.deepPurpleAccent,
+  //   );
+  //   ScaffoldMessenger.of(context)
+  //     ..hideCurrentSnackBar()
+  //     ..showSnackBar(snackBar);
+  // }
+}
+
+class OnlyBottomCursor extends StatefulWidget {
+  @override
+  _OnlyBottomCursorState createState() => _OnlyBottomCursorState();
+}
+
+class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
+  final controller = TextEditingController();
   final focusNode = FocusNode();
 
-  final controller = TextEditingController();
+  @override
+  void dispose() {
+    controller.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
 
-  bool b = false;
+  @override
+  Widget build(BuildContext context) {
+    const borderColor = Color.fromRGBO(30, 60, 87, 1);
+
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 56,
+      textStyle: GoogleFonts.poppins(fontSize: 22, color: Color.fromRGBO(30, 60, 87, 1)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+
+    final cursor = Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          width: 56,
+          height: 3,
+          decoration: BoxDecoration(
+            color: borderColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ],
+    );
+
+    return SizedBox(
+      height: 68,
+      child: PinPut(
+        length: 5,
+        pinAnimationType: PinAnimationType.none,
+        controller: controller,
+        focusNode: focusNode,
+        defaultTheme: defaultPinTheme,
+        showCursor: true,
+        cursor: cursor,
+      ),
+    );
+  }
+}
+
+class RoundedWithCustomCursor extends StatefulWidget {
+  @override
+  _RoundedWithCustomCursorState createState() => _RoundedWithCustomCursorState();
+}
+
+class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
+  final controller = TextEditingController();
+  final focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const focusedBorderColor = Color.fromRGBO(137, 169, 162, 1);
+    const fillColor = Color.fromRGBO(243, 246, 249, 0);
+    const borderColor = Color.fromRGBO(208, 212, 204, 1);
+
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 56,
+      textStyle: GoogleFonts.poppins(fontSize: 22, color: Color.fromRGBO(30, 60, 87, 1)),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(19),
+        border: Border.all(color: borderColor),
+      ),
+    );
+
+    return SizedBox(
+      height: 68,
+      child: PinPut(
+        controller: controller,
+        focusNode: focusNode,
+        defaultTheme: defaultPinTheme,
+        showCursor: true,
+        cursor: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              margin: EdgeInsets.only(bottom: 9),
+              width: 22,
+              height: 1,
+              color: focusedBorderColor,
+            ),
+          ],
+        ),
+        focusedPinTheme: defaultPinTheme.copyWith(
+          height: 56,
+          width: 56,
+          decoration: defaultPinTheme.decoration.copyWith(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: focusedBorderColor),
+          ),
+        ),
+        submittedPinTheme: defaultPinTheme.copyWith(
+          height: 56,
+          width: 56,
+          decoration: defaultPinTheme.decoration.copyWith(
+            color: fillColor,
+            borderRadius: BorderRadius.circular(19),
+            border: Border.all(color: focusedBorderColor),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FilledRoundedPinPut extends StatefulWidget {
+  @override
+  _FilledRoundedPinPutState createState() => _FilledRoundedPinPutState();
+}
+
+class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
+  final controller = TextEditingController();
+  final focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +321,10 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 60,
+      textStyle: GoogleFonts.poppins(
+        fontSize: 22,
+        color: Color.fromRGBO(30, 60, 87, 1),
+      ),
       decoration: BoxDecoration(
         color: fillColor,
         borderRadius: BorderRadius.circular(8),
@@ -65,128 +332,22 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
       ),
     );
 
-    return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(30),
-          child: PinPut(
-            // textDirection: TextDirection.rtl,
-            separator: SizedBox(width: 8),
-            mainAxisAlignment: MainAxisAlignment.center,
-            pinTheme: defaultPinTheme,
-            focusedPinTheme: defaultPinTheme.copyWith(
-              height: 68,
-              width: 64,
-              decoration: defaultPinTheme.decoration.copyWith(
-                border: Border.all(color: borderColor),
-              ),
-            ),
+    return SizedBox(
+      height: 68,
+      child: PinPut(
+        controller: controller,
+        focusNode: focusNode,
+        defaultTheme: defaultPinTheme,
+        focusedPinTheme: defaultPinTheme.copyWith(
+          height: 68,
+          width: 64,
+          decoration: defaultPinTheme.decoration.copyWith(
+            border: Border.all(color: borderColor),
           ),
         ),
+        submittedPinTheme: defaultPinTheme.copyWith(),
       ),
     );
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     titleSpacing: 0,
-    //     title: TabBar(
-    //       isScrollable: true,
-    //       controller: _tabController,
-    //       tabs: _pinPuts.map((e) {
-    //         return Tab(
-    //           text: e.runtimeType.toString(),
-    //         );
-    //       }).toList(),
-    //     ),
-    //   ),
-    //   body: AnimatedBuilder(
-    //     animation: _tabController.animation,
-    //     builder: (BuildContext context, Widget child) {
-    //       final anim = _tabController.animation.value;
-    //       final Color color = Color.lerp(
-    //         _bgColors[anim.floor()],
-    //         _bgColors[anim.ceil()],
-    //         anim - anim.floor(),
-    //       );
-    //       return Container(
-    //         color: color,
-    //         child: TabBarView(
-    //           controller: _tabController,
-    //           children: [
-    //             Column(
-    //               children: [
-    //                 Padding(
-    //                   padding: const EdgeInsets.all(30.0),
-    //                   child: PinPut(),
-    //                 ),
-    //                 TextButton(
-    //                   onPressed: () {
-    //                     setState(() => b = !b);
-    //                   },
-    //                   child: Text('$b'),
-    //                 ),
-    //               ],
-    //             ),
-    //
-    //             // PurePinPut(_showSnackBar),
-    //             SelectedBorder(_showSnackBar),
-    //             DarkRounded(_showSnackBar),
-    //             AnimatedBorders(_showSnackBar),
-    //             Boxed(_showSnackBar),
-    //             RoundedCorners(_showSnackBar),
-    //           ],
-    //         ),
-    //       );
-    //     },
-    //   ),
-    // );
-  }
-
-  Widget get _bottomAppBar {
-    return Positioned(
-      bottom: MediaQuery.of(context).padding.bottom,
-      left: 0,
-      right: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          // TextButton(
-          //   onPressed: () => _pinPutFocusNode.requestFocus(),
-          //   child: const Text('Focus'),
-          // ),
-          // TextButton(
-          //   onPressed: () => _pinPutFocusNode.unfocus(),
-          //   child: const Text('Unfocus'),
-          // ),
-          // TextButton(
-          //   onPressed: () => _pinPutController.text = '',
-          //   child: const Text('Clear All'),
-          // ),
-          // TextButton(
-          //   child: Text('Paste'),
-          //   onPressed: () => _pinPutController.text = '234',
-          // ),
-        ],
-      ),
-    );
-  }
-
-  void _showSnackBar(String pin) {
-    final snackBar = SnackBar(
-      duration: const Duration(seconds: 3),
-      content: Container(
-        height: 80.0,
-        child: Center(
-          child: Text(
-            'Pin Submitted. Value: $pin',
-            style: const TextStyle(fontSize: 25.0),
-          ),
-        ),
-      ),
-      backgroundColor: Colors.deepPurpleAccent,
-    );
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(snackBar);
   }
 }
 

@@ -32,6 +32,7 @@ class _SeparatedRaw extends StatelessWidget {
 
     return Row(
       mainAxisAlignment: mainAxisAlignment,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: children,
     );
   }
