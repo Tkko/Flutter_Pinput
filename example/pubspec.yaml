@@ -25,7 +25,7 @@ dependencies:
 
   pinput:
     path: ../
-  google_fonts: ^2.3.1
+  google_fonts:
 
 
   # The following adds the Cupertino Icons font to your application.
