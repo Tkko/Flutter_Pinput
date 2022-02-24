@@ -8,6 +8,9 @@
 
 🔥🚀
 Flutter package to create Pin code input (OTP) text field with every pixel customization possibility 🎨 and beautiful animations, Supports custom numpad.
+### <a href="https://rebrand.ly/6390b8" target="_blank">Live Demo</a>
+
+
 
 ## Supported:
 -    Backspace on keyboard
