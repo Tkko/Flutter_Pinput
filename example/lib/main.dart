@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pinput_example/all_pinputs.dart';
 import 'package:pinput_example/otp_page.dart';
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
@@ -27,6 +27,11 @@ class AppView extends StatelessWidget {
             colorSchemeSeed: Color.fromRGBO(30, 60, 87, 1),
             tabBarTheme: TabBarTheme(
               indicatorSize: TabBarIndicatorSize.label,
+              indicator: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: Color.fromRGBO(30, 60, 87, 1), width: 2.0),
+                ),
+              ),
               unselectedLabelStyle: GoogleFonts.poppins(fontSize: 16),
               labelStyle: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
               labelColor: Color.fromRGBO(30, 60, 87, 1),
@@ -75,22 +80,31 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
 
   final backgroundColors = [
     [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)],
+    [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)],
     [Color.fromRGBO(200, 255, 221, 1), Color.fromRGBO(255, 255, 255, 1)],
     [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)],
     [Color.fromRGBO(228, 217, 236, 1), Color.fromRGBO(255, 255, 255, 1)],
+    [Color.fromRGBO(228, 217, 236, 1), Color.fromRGBO(255, 255, 255, 1)],
   ];
 
-  final pinPuts = [
-    OptPage(RoundedWithShadow()),
-    OptPage(RoundedWithCustomCursor()),
-    OptPage(FilledRoundedPinPut()),
-    OptPage(OnlyBottomCursor()),
-  ];
+  final List<Widget> pinPuts = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: pinPuts.length, vsync: this);
+    final otpPages = [
+      OptPage(RoundedWithShadow()),
+      OptPage(RoundedWithCustomCursor()),
+      OptPage(FilledRoundedPinPut()),
+      OptPage(OnlyBottomCursor()),
+      OptPage(Filled()),
+    ];
+    pinPuts.addAll([
+      AllPinPuts(otpPages.map((e) => e.pinPut).toList(), backgroundColors),
+      ...otpPages,
+    ]);
+
+    _tabController = TabController(length: pinPuts.length, vsync: this, initialIndex: 1);
     _tabController.animation.addListener(() {
       final focusScope = FocusScope.of(context);
       if (focusScope.hasFocus) {
@@ -101,6 +115,20 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
 
   @override
   Widget build(BuildContext context) {
+    // final defaultTheme = PinTheme(
+    //   width: 40,
+    //   height: 40,
+    //   decoration: BoxDecoration(color: Colors.greenAccent),
+    // );
+    // return Scaffold(
+    //   body: Center(
+    //     child: PinPut(
+    //       defaultTheme: defaultTheme,
+    //       focusedPinTheme: defaultTheme.copyWith(decoration: BoxDecoration(color: Colors.black)),
+    //       submittedPinTheme: defaultTheme.copyWith(decoration: BoxDecoration(color: Colors.redAccent)),
+    //     ),
+    //   ),
+    // );
     return ScrollConfiguration(
       behavior: MyCustomScrollBehavior(),
       child: AnimatedBuilder(
@@ -135,7 +163,7 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
                     controller: _tabController,
                     isScrollable: true,
                     tabs: pinPuts.map((item) {
-                      return Tab(text: '${item.pinPut}');
+                      return Tab(text: '$item');
                     }).toList(),
                   ),
                   Expanded(
@@ -171,6 +199,62 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
 //     ..hideCurrentSnackBar()
 //     ..showSnackBar(snackBar);
 // }
+}
+
+class Filled extends StatefulWidget {
+  @override
+  _FilledState createState() => _FilledState();
+
+  @override
+  String toStringShort() => 'Filled';
+}
+
+class _FilledState extends State<Filled> {
+  final controller = TextEditingController();
+  final focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 60,
+      height: 64,
+      textStyle: GoogleFonts.poppins(fontSize: 20, color: Colors.white),
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(159, 132, 193, 0.8),
+      ),
+    );
+
+    return Container(
+      width: 243,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: PinPut(
+        length: 4,
+        controller: controller,
+        focusNode: focusNode,
+        separator: Container(
+          height: 64,
+          width: 1,
+          color: Colors.white,
+        ),
+        defaultTheme: defaultPinTheme,
+        showCursor: true,
+        focusedPinTheme: defaultPinTheme.copyWith(
+          decoration: BoxDecoration(color: Color.fromRGBO(124, 102, 152, 1)),
+        ),
+      ),
+    );
+  }
 }
 
 class RoundedWithShadow extends StatefulWidget {
@@ -339,9 +423,9 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
 
   @override
   Widget build(BuildContext context) {
-    const focusedBorderColor = Color.fromRGBO(137, 169, 162, 1);
+    const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
     const fillColor = Color.fromRGBO(243, 246, 249, 0);
-    const borderColor = Color.fromRGBO(208, 212, 204, 1);
+    const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
 
     final defaultPinTheme = PinTheme(
       width: 56,
@@ -448,354 +532,3 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
     );
   }
 }
-
-// class PurePinPut extends StatefulWidget {
-//   final ValueChanged<String> onSubmit;
-//
-//   PurePinPut(this.onSubmit);
-//
-//   @override
-//   _PurePinPutState createState() => _PurePinPutState();
-// }
-//
-// class _PurePinPutState extends State<PurePinPut> {
-//   final _pinPutController = TextEditingController();
-//   final _pinPutFocusNode = FocusNode();
-//
-//   @override
-//   void dispose() {
-//     _pinPutController.dispose();
-//     _pinPutFocusNode.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.all(30.0),
-//       child: PinPut(),
-//     );
-//   }
-// }
-//
-// class RoundedCorners extends StatefulWidget {
-//   final ValueChanged<String> onSubmit;
-//
-//   RoundedCorners(this.onSubmit);
-//
-//   @override
-//   _RoundedCornersState createState() => _RoundedCornersState();
-// }
-//
-// class _RoundedCornersState extends State<RoundedCorners> {
-//   final _pinPutController = TextEditingController();
-//   final _pinPutFocusNode = FocusNode();
-//
-//   @override
-//   void dispose() {
-//     _pinPutController.dispose();
-//     _pinPutFocusNode.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final BoxDecoration pinPutDecoration = BoxDecoration(
-//       color: const Color.fromRGBO(43, 46, 66, 1),
-//       borderRadius: BorderRadius.circular(10.0),
-//       border: Border.all(
-//         color: const Color.fromRGBO(126, 203, 224, 1),
-//       ),
-//     );
-//
-//     return Padding(
-//       padding: const EdgeInsets.all(30.0),
-//       child: PinPut(
-//         length: 4,
-//         showCursor: true,
-//         textStyle: const TextStyle(fontSize: 25.0, color: Colors.white),
-//         pinWidth: 55.0,
-//         pinHeight: 55.0,
-//         onSubmit: widget.onSubmit,
-//         focusNode: _pinPutFocusNode,
-//         controller: _pinPutController,
-//         submittedFieldDecoration: pinPutDecoration,
-//         selectedFieldDecoration: pinPutDecoration,
-//         followingFieldDecoration: pinPutDecoration,
-//         pinAnimationType: PinAnimationType.fade,
-//       ),
-//     );
-//   }
-// }
-//
-// class Boxed extends StatefulWidget {
-//   final ValueChanged<String> onSubmit;
-//
-//   Boxed(this.onSubmit);
-//
-//   @override
-//   _BoxedState createState() => _BoxedState();
-// }
-//
-// class _BoxedState extends State<Boxed> {
-//   final _pinPutController = TextEditingController();
-//   final _pinPutFocusNode = FocusNode();
-//
-//   @override
-//   void initState() {
-//     print('HEHE');
-//     super.initState();
-//   }
-//
-//   @override
-//   void dispose() {
-//     _pinPutController.dispose();
-//     _pinPutFocusNode.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final BoxDecoration pinPutDecoration = BoxDecoration(
-//       color: const Color.fromRGBO(119, 125, 226, 1),
-//       borderRadius: BorderRadius.circular(5.0),
-//     );
-//
-//     return Center(
-//       child: Container(
-//         decoration: BoxDecoration(
-//           borderRadius: BorderRadius.circular(3.0),
-//           border: Border.all(color: Colors.white),
-//         ),
-//         margin: const EdgeInsets.all(20.0),
-//         padding: const EdgeInsets.all(20.0),
-//         child: PinPut(
-//           showCursor: true,
-//           length: 5,
-//           preFilledWidget: FlutterLogo(),
-//           textStyle: const TextStyle(fontSize: 25.0, color: Colors.white),
-//           pinWidth: 50.0,
-//           pinHeight: 50.0,
-//           onSubmit: widget.onSubmit,
-//           focusNode: _pinPutFocusNode,
-//           controller: _pinPutController,
-//           submittedFieldDecoration: pinPutDecoration,
-//           selectedFieldDecoration: pinPutDecoration.copyWith(color: Colors.white),
-//           followingFieldDecoration: pinPutDecoration,
-//         ),
-//       ),
-//     );
-//   }
-// }
-//
-// class DarkRounded extends StatefulWidget {
-//   final ValueChanged<String> onSubmit;
-//
-//   DarkRounded(this.onSubmit);
-//
-//   @override
-//   _DarkRoundedState createState() => _DarkRoundedState();
-// }
-//
-// class _DarkRoundedState extends State<DarkRounded> {
-//   final _pinPutController = TextEditingController();
-//   final _pinPutFocusNode = FocusNode();
-//
-//   @override
-//   void dispose() {
-//     _pinPutController.dispose();
-//     _pinPutFocusNode.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final BoxDecoration pinPutDecoration = BoxDecoration(
-//       color: const Color.fromRGBO(25, 21, 99, 1),
-//       borderRadius: BorderRadius.circular(20.0),
-//     );
-//     return Padding(
-//       padding: const EdgeInsets.all(30.0),
-//       child: PinPut(
-//         pinWidth: 65.0,
-//         pinHeight: 65.0,
-//         showCursor: true,
-//         length: 4,
-//         focusNode: _pinPutFocusNode,
-//         controller: _pinPutController,
-//         onSubmit: widget.onSubmit,
-//         submittedFieldDecoration: pinPutDecoration,
-//         selectedFieldDecoration: pinPutDecoration,
-//         followingFieldDecoration: pinPutDecoration,
-//         pinAnimationType: PinAnimationType.scale,
-//         textStyle: const TextStyle(color: Colors.white, fontSize: 20.0),
-//       ),
-//     );
-//   }
-// }
-//
-// class SelectedBorder extends StatefulWidget {
-//   final ValueChanged<String> onSubmit;
-//
-//   SelectedBorder(this.onSubmit);
-//
-//   @override
-//   _SelectedBorderState createState() => _SelectedBorderState();
-// }
-//
-// class _SelectedBorderState extends State<SelectedBorder> {
-//   final _pinPutController = TextEditingController();
-//   final _pinPutFocusNode = FocusNode();
-//
-//   @override
-//   void dispose() {
-//     _pinPutController.dispose();
-//     _pinPutFocusNode.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final BoxDecoration pinPutDecoration = BoxDecoration(
-//       color: const Color.fromRGBO(235, 236, 237, 1),
-//       borderRadius: BorderRadius.circular(5.0),
-//     );
-//
-//     return SingleChildScrollView(
-//       padding: const EdgeInsets.all(30.0),
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//         children: [
-//           PinPut(
-//             useNativeKeyboard: false,
-//             showCursor: true,
-//             length: 5,
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             textStyle: const TextStyle(fontSize: 25.0, color: Colors.black),
-//             pinWidth: 45.0,
-//             pinHeight: 55.0,
-//             onSubmit: widget.onSubmit,
-//             focusNode: _pinPutFocusNode,
-//             controller: _pinPutController,
-//             submittedFieldDecoration: pinPutDecoration,
-//             selectedFieldDecoration: pinPutDecoration.copyWith(
-//               color: Colors.white,
-//               border: Border.all(
-//                 width: 2,
-//                 color: const Color.fromRGBO(160, 215, 220, 1),
-//               ),
-//             ),
-//             followingFieldDecoration: pinPutDecoration,
-//             pinAnimationType: PinAnimationType.scale,
-//           ),
-//           SizedBox(height: 30),
-//           GridView.count(
-//             crossAxisCount: 3,
-//             shrinkWrap: true,
-//             crossAxisSpacing: 10,
-//             mainAxisSpacing: 10,
-//             padding: const EdgeInsets.all(30),
-//             physics: NeverScrollableScrollPhysics(),
-//             children: [
-//               ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((e) {
-//                 return RoundedButton(
-//                   title: '$e',
-//                   onTap: () {
-//                     if (_pinPutController.text.length >= 5) return;
-//
-//                     _pinPutController.text = '${_pinPutController.text}$e';
-//                   },
-//                 );
-//               }),
-//               RoundedButton(
-//                 title: '⌫',
-//                 onTap: () {
-//                   if (_pinPutController.text.isNotEmpty) {
-//                     _pinPutController.text = _pinPutController.text.substring(0, _pinPutController.text.length - 1);
-//                   }
-//                 },
-//               ),
-//             ],
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-//
-// class AnimatedBorders extends StatefulWidget {
-//   final ValueChanged<String> onSubmit;
-//
-//   AnimatedBorders(this.onSubmit);
-//
-//   @override
-//   _AnimatedBordersState createState() => _AnimatedBordersState();
-// }
-//
-// class _AnimatedBordersState extends State<AnimatedBorders> {
-//   final _pinPutController = TextEditingController();
-//   final _pinPutFocusNode = FocusNode();
-//
-//   @override
-//   void dispose() {
-//     _pinPutController.dispose();
-//     _pinPutFocusNode.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final BoxDecoration pinPutDecoration = BoxDecoration(
-//       border: Border.all(color: Colors.deepPurpleAccent),
-//       borderRadius: BorderRadius.circular(15.0),
-//     );
-//
-//     return Padding(
-//       padding: const EdgeInsets.all(30.0),
-//       child: PinPut(
-//         length: 5,
-//         pinHeight: 40,
-//         pinWidth: 40,
-//         showCursor: true,
-//         onSubmit: widget.onSubmit,
-//         focusNode: _pinPutFocusNode,
-//         controller: _pinPutController,
-//         submittedFieldDecoration: pinPutDecoration.copyWith(
-//           borderRadius: BorderRadius.circular(20.0),
-//         ),
-//         selectedFieldDecoration: pinPutDecoration,
-//         followingFieldDecoration: pinPutDecoration.copyWith(
-//           borderRadius: BorderRadius.circular(5.0),
-//           border: Border.all(
-//             color: Colors.deepPurpleAccent.withOpacity(.5),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-//
-// class RoundedButton extends StatelessWidget {
-//   final String title;
-//   final VoidCallback onTap;
-//
-//   RoundedButton({this.title, this.onTap});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return InkWell(
-//       onTap: onTap,
-//       child: Container(
-//         decoration: BoxDecoration(
-//           shape: BoxShape.circle,
-//           color: const Color.fromRGBO(25, 21, 99, 1),
-//         ),
-//         alignment: Alignment.center,
-//         child: Text(
-//           '$title',
-//           style: TextStyle(fontSize: 20, color: Colors.white),
-//         ),
-//       ),
-//     );
-//   }
-// }

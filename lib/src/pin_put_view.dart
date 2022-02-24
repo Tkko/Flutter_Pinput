@@ -5,7 +5,7 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
   late final TextEditingController _controller;
   late TextEditingValue _recentControllerValue;
 
-  int get selectedIndex => _recentControllerValue.selection.baseOffset.clamp(0, widget.length - 1);
+  int get selectedIndex => _recentControllerValue.selection.baseOffset;
 
   String get pin => _controller.text;
 
@@ -228,13 +228,15 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
 
     final hasFocus = _focusNode.hasFocus || !widget.useNativeKeyboard;
 
+    print('$hasFocus  $index  $selectedIndex');
+
     /// Focused pin or default
-    if (hasFocus && index == selectedIndex) {
+    if (hasFocus && index == selectedIndex.clamp(0, widget.length - 1)) {
       return _pinThemeOrDefault(widget.focusedPinTheme);
     }
 
     /// Submitted pin or default
-    if (index <= selectedIndex || (!hasFocus && index == selectedIndex)) {
+    if (index < selectedIndex) {
       return _pinThemeOrDefault(widget.submittedPinTheme);
     }
 

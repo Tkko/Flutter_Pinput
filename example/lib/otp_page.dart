@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class OptPage extends StatelessWidget {
+class OptPage extends StatefulWidget {
   final Widget pinPut;
 
   OptPage(this.pinPut);
 
   @override
+  State<OptPage> createState() => _OptPageState();
+
+  @override
+  String toStringShort() => pinPut.toStringShort();
+}
+
+class _OptPageState extends State<OptPage> with AutomaticKeepAliveClientMixin {
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SingleChildScrollView(
-      padding: EdgeInsets.all(24),
+      padding: EdgeInsets.fromLTRB(24, 64, 24, 24),
       child: Column(
         children: [
           Text(
@@ -37,7 +46,7 @@ class OptPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 64),
-          pinPut,
+          widget.pinPut,
           const SizedBox(height: 44),
           Text(
             'Didn’t receive code?',
@@ -58,4 +67,7 @@ class OptPage extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

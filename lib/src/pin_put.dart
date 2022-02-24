@@ -67,7 +67,6 @@ class PinPut extends StatefulWidget {
     this.onClipboardFound,
   }) : super(key: key);
 
-
   final PinTheme? defaultTheme;
   final PinTheme? focusedPinTheme;
   final PinTheme? submittedPinTheme;

@@ -30,8 +30,8 @@ class _SeparatedRaw extends StatelessWidget {
     }
 
     return Row(
-      mainAxisAlignment: mainAxisAlignment,
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: mainAxisAlignment,
       children: children,
     );
   }
