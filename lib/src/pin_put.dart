@@ -38,7 +38,7 @@ class PinPut extends StatefulWidget {
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.pinContentAlignment = Alignment.center,
     this.animationCurve = Curves.linear,
-    this.animationDuration = const Duration(milliseconds: 160),
+    this.animationDuration = const Duration(milliseconds: 180),
     this.pinAnimationType = PinAnimationType.scale,
     this.enabled = true,
     this.useNativeKeyboard = true,

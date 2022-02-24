@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put.dart';
@@ -73,24 +74,28 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
   TabController _tabController;
 
   final backgroundColors = [
-    [Color.fromRGBO(228, 217, 236, 1), Color.fromRGBO(255, 255, 255, 1)],
+    [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)],
     [Color.fromRGBO(200, 255, 221, 1), Color.fromRGBO(255, 255, 255, 1)],
-    [Colors.white, Colors.white],
+    [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)],
+    [Color.fromRGBO(228, 217, 236, 1), Color.fromRGBO(255, 255, 255, 1)],
   ];
 
   final pinPuts = [
-    OptPage(OnlyBottomCursor()),
+    OptPage(RoundedWithShadow()),
     OptPage(RoundedWithCustomCursor()),
     OptPage(FilledRoundedPinPut()),
+    OptPage(OnlyBottomCursor()),
   ];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: pinPuts.length, vsync: this);
-    _tabController.addListener(() {
-      FocusScope.of(context).unfocus();
-      setState(() {});
+    _tabController.animation.addListener(() {
+      final focusScope = FocusScope.of(context);
+      if (focusScope.hasFocus) {
+        focusScope.unfocus();
+      }
     });
   }
 
@@ -128,8 +133,9 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
                   SizedBox(height: MediaQuery.of(context).viewPadding.top),
                   TabBar(
                     controller: _tabController,
+                    isScrollable: true,
                     tabs: pinPuts.map((item) {
-                      return Tab(text: '$item');
+                      return Tab(text: '${item.pinPut}');
                     }).toList(),
                   ),
                   Expanded(
@@ -147,29 +153,104 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
     );
   }
 
-  // void _showSnackBar(String pin) {
-  //   final snackBar = SnackBar(
-  //     duration: const Duration(seconds: 3),
-  //     content: Container(
-  //       height: 80.0,
-  //       child: Center(
-  //         child: Text(
-  //           'Pin Submitted. Value: $pin',
-  //           style: const TextStyle(fontSize: 25.0),
-  //         ),
-  //       ),
-  //     ),
-  //     backgroundColor: Colors.deepPurpleAccent,
-  //   );
-  //   ScaffoldMessenger.of(context)
-  //     ..hideCurrentSnackBar()
-  //     ..showSnackBar(snackBar);
-  // }
+// void _showSnackBar(String pin) {
+//   final snackBar = SnackBar(
+//     duration: const Duration(seconds: 3),
+//     content: Container(
+//       height: 80.0,
+//       child: Center(
+//         child: Text(
+//           'Pin Submitted. Value: $pin',
+//           style: const TextStyle(fontSize: 25.0),
+//         ),
+//       ),
+//     ),
+//     backgroundColor: Colors.deepPurpleAccent,
+//   );
+//   ScaffoldMessenger.of(context)
+//     ..hideCurrentSnackBar()
+//     ..showSnackBar(snackBar);
+// }
+}
+
+class RoundedWithShadow extends StatefulWidget {
+  @override
+  _RoundedWithShadowState createState() => _RoundedWithShadowState();
+
+  @override
+  String toStringShort() => 'Rounded With Shadow';
+}
+
+class _RoundedWithShadowState extends State<RoundedWithShadow> {
+  final controller = TextEditingController();
+  final focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    controller.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 60,
+      height: 64,
+      textStyle: GoogleFonts.poppins(fontSize: 20, color: Color.fromRGBO(70, 69, 66, 1)),
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(232, 235, 241, 0.37),
+        borderRadius: BorderRadius.circular(24),
+      ),
+    );
+
+    final cursor = Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        width: 21,
+        height: 1,
+        margin: EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(137, 146, 160, 1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+
+    return SizedBox(
+      height: 68,
+      child: PinPut(
+        length: 4,
+        controller: controller,
+        focusNode: focusNode,
+        defaultTheme: defaultPinTheme,
+        separator: SizedBox(width: 16),
+        focusedPinTheme: defaultPinTheme.copyWith(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.05999999865889549),
+                offset: Offset(0, 3),
+                blurRadius: 16,
+              )
+            ],
+          ),
+        ),
+        showCursor: true,
+        cursor: cursor,
+      ),
+    );
+  }
 }
 
 class OnlyBottomCursor extends StatefulWidget {
   @override
   _OnlyBottomCursorState createState() => _OnlyBottomCursorState();
+
+  @override
+  String toStringShort() => 'With Bottom Cursor';
 }
 
 class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
@@ -191,10 +272,7 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
       width: 56,
       height: 56,
       textStyle: GoogleFonts.poppins(fontSize: 22, color: Color.fromRGBO(30, 60, 87, 1)),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
+      decoration: BoxDecoration(),
     );
 
     final cursor = Column(
@@ -210,17 +288,31 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
         ),
       ],
     );
+    final preFilledWidget = Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          width: 56,
+          height: 3,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ],
+    );
 
     return SizedBox(
       height: 68,
       child: PinPut(
         length: 5,
-        pinAnimationType: PinAnimationType.none,
+        pinAnimationType: PinAnimationType.slide,
         controller: controller,
         focusNode: focusNode,
         defaultTheme: defaultPinTheme,
         showCursor: true,
         cursor: cursor,
+        preFilledWidget: preFilledWidget,
       ),
     );
   }
@@ -229,6 +321,9 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
 class RoundedWithCustomCursor extends StatefulWidget {
   @override
   _RoundedWithCustomCursorState createState() => _RoundedWithCustomCursorState();
+
+  @override
+  String toStringShort() => 'Rounded With Cursor';
 }
 
 class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
@@ -301,6 +396,9 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
 class FilledRoundedPinPut extends StatefulWidget {
   @override
   _FilledRoundedPinPutState createState() => _FilledRoundedPinPutState();
+
+  @override
+  String toStringShort() => 'Rounded Filled';
 }
 
 class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {

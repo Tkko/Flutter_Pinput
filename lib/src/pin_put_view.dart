@@ -193,6 +193,7 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
   Widget _buildFieldContent(int index, PinTheme pinTheme) {
     final key = ValueKey<String>(index < pin.length ? pin[index] : '');
     final isSubmittedPin = index < pin.length;
+
     if (isSubmittedPin) {
       if (widget.obscureText && widget.obscuringWidget != null) {
         return SizedBox(key: key, child: widget.obscuringWidget);
@@ -242,6 +243,10 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
   }
 
   Widget _getTransition(Widget child, Animation animation) {
+    if (child is _PinPutCursor) {
+      return child;
+    }
+
     switch (widget.pinAnimationType) {
       case PinAnimationType.none:
         return child;
