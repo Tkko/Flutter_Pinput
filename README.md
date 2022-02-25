@@ -53,6 +53,7 @@ Don't forget to give it a star ⭐
 Pin has 6 state `default` `focused`, `submitted`, `following`, `disabled`, `error`, you can customize each state by specifying theme parameter.
 Pin smoothly animates from one state to another automatically.
 `PinTheme Class`
+
 | Property  | Default/Type |
 | ------------- | :-------------: |
 | width  | 56.0 |
@@ -136,7 +137,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  pinput: ^2.0.0
+  pinput: ^2.0.2
 ```
 
 You can install packages from the command line:
