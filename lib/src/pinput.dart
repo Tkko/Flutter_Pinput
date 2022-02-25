@@ -61,7 +61,7 @@ class Pinput extends StatefulWidget {
     this.keyboardAppearance,
     this.inputFormatters,
     this.textInputAction,
-    this.autofillHints,
+    this.autofillHints = const [AutofillHints.oneTimeCode],
     this.textDirection,
     this.obscuringCharacter = '•',
     this.obscuringWidget,
@@ -97,7 +97,7 @@ class Pinput extends StatefulWidget {
   /// Displayed fields count. PIN code length.
   final int length;
 
-  /// Same as FormField onFieldSubmitted, called when PinPut submitted.
+  /// Fires when user completes pin input
   final ValueChanged<String>? onCompleted;
 
   /// Signature for being notified when a form field changes value.

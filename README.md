@@ -10,8 +10,10 @@ Flutter package to create easily customizable Pin code input field (OTP) with sl
 
 
 ## Features:
--    Animated Decortion Switching
+-    Animated Decoration Switching
 -    Form validation
+-    iOS SMS Autofill
+-    Android Autofill - [Package](https://pub.dev/packages/sms_autofill)
 -    Standard Cursor
 -    Custom Cursor
 -    Cursor Animation
@@ -30,7 +32,7 @@ PRs Welcome
 
 Discord [Channel](https://discord.gg/ssE8eh)
 
-Example app on github has multiple tempates to choose from
+[Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib) app on github has multiple templates to choose from
 
 Don't forget to give it a star ⭐
 
@@ -63,7 +65,9 @@ Pin smoothly animates from one state to another automatically.
 You can use standard Pinput like so
 ```dart
   Widget buildPinPut() {
-    return PinPut();
+    return Pinput(
+      onCompleted: (pin) => print(pin),
+    );
   }
 ```
 If you want to customize it, start creating `defaultPinTheme` first.
@@ -93,7 +97,7 @@ If not, create `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `err
       ),
     );
 ```
-Put everuthing togather
+Put everything together
 ```dart
     final defaultPinTheme = PinTheme(
       width: 56,
@@ -121,6 +125,7 @@ Put everuthing togather
       focusedPinTheme: focusedPinTheme,
       submittedPinTheme: submittedPinTheme,
       showCursor: true,
+      onCompleted: (pin) => print(pin),
     );
 ```
 ## See Example app for more Pinput examples  [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)

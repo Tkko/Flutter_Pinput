@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
-
 class OnlyBottomCursor extends StatefulWidget {
   @override
   _OnlyBottomCursorState createState() => _OnlyBottomCursorState();
@@ -29,7 +28,8 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
-      textStyle: GoogleFonts.poppins(fontSize: 22, color: Color.fromRGBO(30, 60, 87, 1)),
+      textStyle: GoogleFonts.poppins(
+          fontSize: 22, color: Color.fromRGBO(30, 60, 87, 1)),
       decoration: BoxDecoration(),
     );
 

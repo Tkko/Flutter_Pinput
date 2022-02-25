@@ -1,6 +1,7 @@
 part of 'pinput.dart';
 
-const _hiddenTextStyle = TextStyle(fontSize: 1, height: 1, color: Colors.transparent);
+const _hiddenTextStyle =
+    TextStyle(fontSize: 1, height: 1, color: Colors.transparent);
 const _hiddenInputDecoration = InputDecoration(
   contentPadding: EdgeInsets.zero,
   border: InputBorder.none,

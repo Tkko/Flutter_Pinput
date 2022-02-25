@@ -1,31 +1,13 @@
 
 # Changelog
 
-## 0.1.9 -07/02/2019
-* Added
+## 1.3.0 -25/02/2022
+Sorry guys this version will break your code 💙
+Introduced PinTheme class to control state of the individual pin easily, see readme for more information.
 
-| Property  | Default/Meaning |
-| ------------- | ------------- |
-| obscureText  | false |
-| enableInteractiveSelection  | true |
-| toolbarOptions  | ToolbarOptions(paste: true) |
-| useHapticFeedback  | false |
-
-
-* Changed
-
-| Before  | After |
-| ------------- | ------------- |
-| fieldsCount  | length |
-| eachFieldWidth  | pinWidth |
-| eachFieldHeight  | pinHeight |
-| eachFieldAlignment  | pinContentAlignment |
-| eachFieldMargin  | pinMargin |
-| eachFieldPadding  | pinPadding |
-| eachFieldConstraints  | pinConstraints |
-| withCursor  | showCursor |
-| cursorWidget  | cursor |
-| obscureText  | obscuringCharacter |
+- Refactored, renamed some properties.
+- Added new Pinput examples
+- With long press user can paste from clipboard
 
 ## 1.2.1 -10/09/2021
 🔥🚀
