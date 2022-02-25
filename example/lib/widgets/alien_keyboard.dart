@@ -5,7 +5,7 @@ import 'package:pinput/pinput.dart';
 class AlienKeyboard extends StatelessWidget {
   final TextEditingController controller;
 
-  AlienKeyboard({this.controller});
+  AlienKeyboard({required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -90,9 +90,9 @@ class AlienKeyboard extends StatelessWidget {
 }
 
 class CircularButton extends StatelessWidget {
-  final VoidCallback onTap;
-  final String text;
-  final double size;
+  final VoidCallback? onTap;
+  final String? text;
+  final double? size;
 
   CircularButton({this.onTap, this.text, this.size});
 
@@ -110,7 +110,7 @@ class CircularButton extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            text,
+            text!,
             style: GoogleFonts.poppins(fontSize: 20, color: Colors.white),
           ),
         ),

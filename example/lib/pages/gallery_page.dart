@@ -14,7 +14,7 @@ class GalleryPage extends StatefulWidget {
 }
 
 class GalleryPageState extends State<GalleryPage> with SingleTickerProviderStateMixin {
-  TabController _tabController;
+  TabController? _tabController;
 
   final backgroundColors = [
     [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)], // All
@@ -43,7 +43,7 @@ class GalleryPageState extends State<GalleryPage> with SingleTickerProviderState
     ]);
 
     _tabController = TabController(length: pinPuts.length, vsync: this, initialIndex: 1);
-    _tabController.animation.addListener(() {
+    _tabController!.animation!.addListener(() {
       final focusScope = FocusScope.of(context);
       if (focusScope.hasFocus) {
         focusScope.unfocus();
@@ -56,20 +56,20 @@ class GalleryPageState extends State<GalleryPage> with SingleTickerProviderState
     return ScrollConfiguration(
       behavior: MyCustomScrollBehavior(),
       child: AnimatedBuilder(
-        animation: _tabController.animation,
-        builder: (BuildContext context, Widget child) {
-          final anim = _tabController.animation.value;
+        animation: _tabController!.animation!,
+        builder: (BuildContext context, Widget? child) {
+          final anim = _tabController!.animation!.value;
           final Color fromColor = Color.lerp(
             backgroundColors[anim.floor()].first,
             backgroundColors[anim.ceil()].first,
             anim - anim.floor(),
-          );
+          )!;
 
           final Color toColor = Color.lerp(
             backgroundColors[anim.floor()].last,
             backgroundColors[anim.ceil()].last,
             anim - anim.floor(),
-          );
+          )!;
 
           return Scaffold(
             body: Container(

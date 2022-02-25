@@ -22,7 +22,7 @@ Flutter package to create easily customizable Pin code input field (OTP) with sl
 -    Obscuring Widget
 -    Haptic Feedback
 -    Close Keyboard After Completion
--    Beautiful Examples
+-    Beautiful [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)
 
 
 ## Support
@@ -123,6 +123,7 @@ Put everuthing togather
       showCursor: true,
     );
 ```
+## See Example app for more Pinput examples  [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)
 
 
 ## Installation

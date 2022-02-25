@@ -23,7 +23,6 @@ class AppView extends StatelessWidget {
         final app = MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            colorSchemeSeed: Color.fromRGBO(30, 60, 87, 1),
             tabBarTheme: TabBarTheme(
               indicatorSize: TabBarIndicatorSize.label,
               indicator: BoxDecoration(
@@ -35,9 +34,6 @@ class AppView extends StatelessWidget {
               labelStyle: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
               labelColor: Color.fromRGBO(30, 60, 87, 1),
               unselectedLabelColor: Color.fromRGBO(107, 137, 165, 1),
-            ),
-            chipTheme: ChipThemeData(
-              selectedColor: Color.fromRGBO(30, 60, 87, 1),
             ),
           ),
           home: GalleryPage(),

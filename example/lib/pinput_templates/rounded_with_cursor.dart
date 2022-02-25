@@ -58,7 +58,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
         focusedPinTheme: defaultPinTheme.copyWith(
           height: 56,
           width: 56,
-          decoration: defaultPinTheme.decoration.copyWith(
+          decoration: defaultPinTheme.decoration!.copyWith(
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: focusedBorderColor),
           ),
@@ -66,7 +66,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
         submittedPinTheme: defaultPinTheme.copyWith(
           height: 56,
           width: 56,
-          decoration: defaultPinTheme.decoration.copyWith(
+          decoration: defaultPinTheme.decoration!.copyWith(
             color: fillColor,
             borderRadius: BorderRadius.circular(19),
             border: Border.all(color: focusedBorderColor),
