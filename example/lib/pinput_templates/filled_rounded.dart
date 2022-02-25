@@ -43,58 +43,31 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
       ),
     );
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        SizedBox(
+    return SizedBox(
+      height: 68,
+      child: Pinput(
+        length: length,
+        controller: controller,
+        focusNode: focusNode,
+        defaultPinTheme: defaultPinTheme,
+        showError: showError,
+        onCompleted: (pin) {
+          setState(() => showError = pin != '5555');
+        },
+        focusedPinTheme: defaultPinTheme.copyWith(
           height: 68,
-          child: Pinput(
-            length: length,
-            controller: controller,
-            focusNode: focusNode,
-            defaultPinTheme: defaultPinTheme,
-            useNativeKeyboard: false,
-            showError: showError,
-            onCompleted: (pin) {
-              setState(() => showError = pin != '5555');
-            },
-            focusedPinTheme: defaultPinTheme.copyWith(
-              height: 68,
-              width: 64,
-              decoration: defaultPinTheme.decoration.copyWith(
-                border: Border.all(color: borderColor),
-              ),
-            ),
-            errorPinTheme: defaultPinTheme.copyWith(
-              decoration: BoxDecoration(
-                color: errorColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
+          width: 64,
+          decoration: defaultPinTheme.decoration.copyWith(
+            border: Border.all(color: borderColor),
           ),
         ),
-        GridView.count(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          crossAxisCount: 6,
-          children: [
-            ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(
-              (e) => TextButton(
-                child: Text('$e'),
-                onPressed: () {
-                  controller.append('$e', length);
-                },
-              ),
-            ),
-            TextButton(
-              child: Text('Del'),
-              onPressed: () {
-                controller.delete();
-              },
-            )
-          ],
+        errorPinTheme: defaultPinTheme.copyWith(
+          decoration: BoxDecoration(
+            color: errorColor,
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
-      ],
+      ),
     );
   }
 }

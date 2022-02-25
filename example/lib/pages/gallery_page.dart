@@ -31,11 +31,11 @@ class GalleryPageState extends State<GalleryPage> with SingleTickerProviderState
   void initState() {
     super.initState();
     final otpPages = [
-      OptPage(RoundedWithCustomCursor()),
-      OptPage(RoundedWithShadow()),
-      OptPage(OnlyBottomCursor()),
-      OptPage(FilledRoundedPinPut()),
-      OptPage(Filled()),
+      OtpPage(RoundedWithCustomCursor()),
+      OtpPage(RoundedWithShadow()),
+      OtpPage(OnlyBottomCursor()),
+      OtpPage(FilledRoundedPinPut()),
+      OtpPage(Filled()),
     ];
     pinPuts.addAll([
       AllPinputs(otpPages.map((e) => e.pinPut).toList(), backgroundColors),
