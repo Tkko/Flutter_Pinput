@@ -228,8 +228,6 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
 
     final hasFocus = _focusNode.hasFocus || !widget.useNativeKeyboard;
 
-    print('$hasFocus  $index  $selectedIndex');
-
     /// Focused pin or default
     if (hasFocus && index == selectedIndex.clamp(0, widget.length - 1)) {
       return _pinThemeOrDefault(widget.focusedPinTheme);

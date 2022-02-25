@@ -1,3 +1,6 @@
+import 'dart:math';
+import 'dart:ui';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put.dart';
@@ -43,24 +46,27 @@ class AppView extends StatelessWidget {
           ),
           home: PinPutGallery(),
         );
-        if (constraints.maxWidth > 600 && constraints.maxHeight > 600) {
+
+        final shortestSide = min(constraints.maxWidth.abs(), constraints.maxHeight.abs());
+
+        if (shortestSide > 600) {
           return Container(
             color: Colors.white,
             alignment: Alignment.center,
-            child: AspectRatio(
-              aspectRatio: .5,
-              child: Container(
-                margin: EdgeInsets.all(20),
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 20,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: app,
+            child: Container(
+              width: 375,
+              height: 812,
+              margin: EdgeInsets.all(20),
+              clipBehavior: Clip.antiAlias,
+              foregroundDecoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.black, width: 15),
               ),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black, width: 15),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: app,
             ),
           );
         }
@@ -226,9 +232,7 @@ class _FilledState extends State<Filled> {
       width: 60,
       height: 64,
       textStyle: GoogleFonts.poppins(fontSize: 20, color: Colors.white),
-      decoration: BoxDecoration(
-        color: Color.fromRGBO(159, 132, 193, 0.8),
-      ),
+      decoration: BoxDecoration(color: Color.fromRGBO(159, 132, 193, 0.8)),
     );
 
     return Container(
@@ -301,30 +305,27 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
       ),
     );
 
-    return SizedBox(
-      height: 68,
-      child: PinPut(
-        length: 4,
-        controller: controller,
-        focusNode: focusNode,
-        defaultTheme: defaultPinTheme,
-        separator: SizedBox(width: 16),
-        focusedPinTheme: defaultPinTheme.copyWith(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromRGBO(0, 0, 0, 0.05999999865889549),
-                offset: Offset(0, 3),
-                blurRadius: 16,
-              )
-            ],
-          ),
+    return PinPut(
+      length: 4,
+      controller: controller,
+      focusNode: focusNode,
+      defaultTheme: defaultPinTheme,
+      separator: SizedBox(width: 16),
+      focusedPinTheme: defaultPinTheme.copyWith(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.05999999865889549),
+              offset: Offset(0, 3),
+              blurRadius: 16,
+            )
+          ],
         ),
-        showCursor: true,
-        cursor: cursor,
       ),
+      showCursor: true,
+      cursor: cursor,
     );
   }
 }
