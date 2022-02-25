@@ -87,6 +87,31 @@ class PinTheme {
     );
   }
 
+  PinTheme copyDecorationWith({
+    Color? color,
+    DecorationImage? image,
+    BoxBorder? border,
+    BorderRadiusGeometry? borderRadius,
+    List<BoxShadow>? boxShadow,
+    Gradient? gradient,
+    BlendMode? backgroundBlendMode,
+    BoxShape? shape,
+  }) {
+    assert(decoration != null);
+    return copyWith(
+      decoration: decoration?.copyWith(
+        color: color,
+        image: image,
+        border: border,
+        borderRadius: borderRadius,
+        boxShadow: boxShadow,
+        gradient: gradient,
+        backgroundBlendMode: backgroundBlendMode,
+        shape: shape,
+      ),
+    );
+  }
+
   PinTheme copyBorderWith({required Border border}) {
     assert(decoration != null);
     return copyWith(

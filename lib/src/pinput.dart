@@ -20,7 +20,7 @@ class Pinput extends StatefulWidget {
   const Pinput({
     Key? key,
     this.length = 4,
-    this.defaultTheme,
+    this.defaultPinTheme,
     this.focusedPinTheme,
     this.submittedPinTheme,
     this.followingPinTheme,
@@ -70,15 +70,28 @@ class Pinput extends StatefulWidget {
     this.onClipboardFound,
   }) : super(key: key);
 
-  final PinTheme? defaultTheme;
+  /// Theme of the pin in default state
+  final PinTheme? defaultPinTheme;
+
+  /// Theme of the pin in focused state
   final PinTheme? focusedPinTheme;
+
+  /// Theme of the pin in submitted state
   final PinTheme? submittedPinTheme;
+
+  /// Theme of the pin in following state
   final PinTheme? followingPinTheme;
+
+  /// Theme of the pin in disabled state
   final PinTheme? disabledPinTheme;
+
+  /// Theme of the pin in error state
   final PinTheme? errorPinTheme;
 
+  ///
   final bool closeKeyboardWhenCompleted;
 
+  /// See [TextField.textDirection]
   final TextDirection? textDirection;
 
   /// Displayed fields count. PIN code length.
@@ -110,7 +123,7 @@ class Pinput extends StatefulWidget {
   /// Sets the positions where the separator should be shown
   final List<int>? separatorPositions;
 
-  /// Builds a PinPut separator
+  /// Builds a Pinput separator
   final Widget? separator;
 
   /// Defines how [Pinput] fields are being placed inside [Row]
@@ -144,15 +157,17 @@ class Pinput extends StatefulWidget {
   /// so you should set value of [Pinput]'s [TextEditingController] programmatically
   final bool useNativeKeyboard;
 
+  /// See [TextField.enableInteractiveSelection]
   final bool enableInteractiveSelection;
 
   /// If true the [errorPinTheme] will be applied
   final bool showError;
 
-  /// If true the focused field includes fake cursor
+  /// Whether show cursor or not
+  /// Default cursor '|' or [cursor]
   final bool showCursor;
 
-  /// If [showCursor] true the focused field includes cursor widget or '|'
+  /// If [showCursor] true the focused field will show passed Widget
   final Widget? cursor;
 
   /// The appearance of the keyboard.
@@ -160,21 +175,23 @@ class Pinput extends StatefulWidget {
   /// If unset, defaults to [ThemeData.brightness].
   final Brightness? keyboardAppearance;
 
-  /// {@macro flutter.widgets.editableText.inputFormatters}
+  /// See [TextField.inputFormatters]
   final List<TextInputFormatter>? inputFormatters;
 
-  /// {@macro flutter.widgets.editableText.keyboardType}
+  /// See [TextField.keyboardType]
   final TextInputType keyboardType;
 
-  /// Provide any symbol to obscure each [Pinput] field
+  /// Provide any symbol to obscure each [Pinput] pin
   /// Recommended ●
   final String obscuringCharacter;
 
+  /// IF [obscureText] is true typed text will be replaced with passed Widget
   final Widget? obscuringWidget;
 
+  /// Whether hide typed pin or not
   final bool obscureText;
 
-  /// {@macro flutter.widgets.editableText.textCapitalization}
+  /// See [TextField.textCapitalization]
   final TextCapitalization textCapitalization;
 
   /// The type of action button to use for the keyboard.
@@ -190,15 +207,28 @@ class Pinput extends StatefulWidget {
   /// paste and cut will be disabled regardless.
   final ToolbarOptions? toolbarOptions;
 
-  /// lists of auto fill hints
+  /// See [TextField.autofillHints]
   final Iterable<String>? autofillHints;
 
+  /// See [TextField.enableSuggestions]
   final bool enableSuggestions;
+
+  /// See [TextField.onEditingComplete]
   final VoidCallback? onEditingComplete;
+
+  /// See [TextField.onSubmitted]
   final ValueChanged<String>? onSubmitted;
+
+  /// See [TextField.selectionControls]
   final TextSelectionControls? selectionControls;
+
+  /// See [TextField.restorationId]
   final String? restorationId;
+
+  /// See [TextField.enableIMEPersonalizedLearning]
   final bool enableIMEPersonalizedLearning;
+
+  /// Fires when clipboard has text of Pinput's length
   final ValueChanged<String>? onClipboardFound;
 
   /// Use haptic feedback everytime user types on keyboard

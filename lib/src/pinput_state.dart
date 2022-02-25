@@ -186,7 +186,7 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
     );
   }
 
-  PinTheme _getDefaultPinTheme() => widget.defaultTheme ?? _defaultPinTheme;
+  PinTheme _getDefaultPinTheme() => widget.defaultPinTheme ?? _defaultPinTheme;
 
   PinTheme _pinThemeOrDefault(PinTheme? theme) => theme ?? _getDefaultPinTheme();
 
