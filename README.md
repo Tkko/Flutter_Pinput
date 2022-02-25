@@ -54,7 +54,7 @@ Pin has 6 state `default` `focused`, `submitted`, `following`, `disabled`, `erro
 Pin smoothly animates from one state to another automatically.
 `PinTheme Class`
 | Property  | Default/Type |
-| ------------- | ------------- |
+| ------------- | :-------------: |
 | width  | 56.0 |
 | height  | 60.0 |
 | textStyle  |  TextStyle() |
