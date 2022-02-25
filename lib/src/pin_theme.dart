@@ -1,20 +1,20 @@
-part of 'pin_put.dart';
+part of 'pinput.dart';
 
 class PinTheme {
-  /// width of each [PinPut] field
+  /// width of each [Pinput] field
   final double? width;
 
-  /// height of each [PinPut] field
+  /// height of each [Pinput] field
   final double? height;
 
   /// The style to use for PinPut
   /// If null, defaults to the `subhead` text style from the current [Theme].
   final TextStyle? textStyle;
 
-  /// Empty space to surround the [PinPut] field container.
+  /// Empty space to surround the [Pinput] field container.
   final EdgeInsetsGeometry? margin;
 
-  /// Empty space to inscribe the [PinPut] field container.
+  /// Empty space to inscribe the [Pinput] field container.
   /// For example space between border and text
   final EdgeInsetsGeometry? padding;
 
@@ -28,7 +28,7 @@ class PinTheme {
   ///  ```
   final BoxConstraints? constraints;
 
-  ///  Box decoration of following properties of [PinPut]
+  ///  Box decoration of following properties of [Pinput]
   ///  [submittedFieldDecoration] [selectedFieldDecoration] [followingFieldDecoration] [disabledDecoration]
   ///  You can customize every pixel with it
   ///  properties are being animated implicitly when value changes
@@ -42,7 +42,7 @@ class PinTheme {
   ///  this.backgroundBlendMode,
   ///  this.shape = BoxShape.rectangle,
   ///  ```
-  /// The decoration of each [PinPut] submitted field
+  /// The decoration of each [Pinput] submitted field
   final BoxDecoration? decoration;
 
   const PinTheme({

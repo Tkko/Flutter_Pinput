@@ -1,4 +1,4 @@
-part of 'pin_put.dart';
+part of 'pinput.dart';
 
 class AlwaysDisabledFocusNode extends FocusNode {
   @override

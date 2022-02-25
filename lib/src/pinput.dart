@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-part 'pin_put_view.dart';
+part 'pinput_state.dart';
 
 part 'widgets.dart';
 
@@ -14,8 +14,10 @@ part 'pin_theme.dart';
 
 part 'constants.dart';
 
-class PinPut extends StatefulWidget {
-  const PinPut({
+part 'extensions.dart';
+
+class Pinput extends StatefulWidget {
+  const Pinput({
     Key? key,
     this.length = 4,
     this.defaultTheme,
@@ -41,6 +43,7 @@ class PinPut extends StatefulWidget {
     this.animationDuration = const Duration(milliseconds: 180),
     this.pinAnimationType = PinAnimationType.scale,
     this.enabled = true,
+    this.showError = false,
     this.useNativeKeyboard = true,
     this.enableInteractiveSelection = true,
     this.autofocus = false,
@@ -110,38 +113,41 @@ class PinPut extends StatefulWidget {
   /// Builds a PinPut separator
   final Widget? separator;
 
-  /// Defines how [PinPut] fields are being placed inside [Row]
+  /// Defines how [Pinput] fields are being placed inside [Row]
   final MainAxisAlignment mainAxisAlignment;
 
-  /// Defines how each [PinPut] field are being placed within the container
+  /// Defines how each [Pinput] field are being placed within the container
   final AlignmentGeometry pinContentAlignment;
 
-  /// curve of every [PinPut] Animation
+  /// curve of every [Pinput] Animation
   final Curve animationCurve;
 
-  /// Duration of every [PinPut] Animation
+  /// Duration of every [Pinput] Animation
   final Duration animationDuration;
 
-  /// Animation Type of each [PinPut] field
+  /// Animation Type of each [Pinput] field
   /// options:
   /// none, scale, fade, slide, rotation
   final PinAnimationType pinAnimationType;
 
-  /// Begin Offset of ever [PinPut] field when [pinAnimationType] is slide
+  /// Begin Offset of ever [Pinput] field when [pinAnimationType] is slide
   final Offset? slideTransitionBeginOffset;
 
-  /// Defines [PinPut] state
+  /// Defines [Pinput] state
   final bool enabled;
 
   /// {@macro flutter.widgets.editableText.autofocus}
   final bool autofocus;
 
   /// Whether we use Native keyboard or custom `Numpad`
-  /// when flag is set to false [PinPut] wont be focusable anymore
-  /// so you should set value of [PinPut]'s [TextEditingController] programmatically
+  /// when flag is set to false [Pinput] wont be focusable anymore
+  /// so you should set value of [Pinput]'s [TextEditingController] programmatically
   final bool useNativeKeyboard;
 
   final bool enableInteractiveSelection;
+
+  /// If true the [errorPinTheme] will be applied
+  final bool showError;
 
   /// If true the focused field includes fake cursor
   final bool showCursor;
@@ -160,7 +166,7 @@ class PinPut extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.keyboardType}
   final TextInputType keyboardType;
 
-  /// Provide any symbol to obscure each [PinPut] field
+  /// Provide any symbol to obscure each [Pinput] field
   /// Recommended ●
   final String obscuringCharacter;
 
@@ -200,5 +206,5 @@ class PinPut extends StatefulWidget {
   final HapticFeedbackType hapticFeedbackType;
 
   @override
-  _PinPutState createState() => _PinPutState();
+  _PinputState createState() => _PinputState();
 }

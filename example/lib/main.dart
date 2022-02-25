@@ -1,9 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
-
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:pinput/pin_put.dart';
+import 'package:pinput/pinput.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput_example/all_pinputs.dart';
 import 'package:pinput_example/otp_page.dart';
@@ -85,11 +83,11 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
   TabController _tabController;
 
   final backgroundColors = [
-    [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)],
-    [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)],
+    [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)], // All
     [Color.fromRGBO(200, 255, 221, 1), Color.fromRGBO(255, 255, 255, 1)],
     [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)],
     [Color.fromRGBO(228, 217, 236, 1), Color.fromRGBO(255, 255, 255, 1)],
+    [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)],
     [Color.fromRGBO(228, 217, 236, 1), Color.fromRGBO(255, 255, 255, 1)],
   ];
 
@@ -99,10 +97,10 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
   void initState() {
     super.initState();
     final otpPages = [
-      OptPage(RoundedWithShadow()),
       OptPage(RoundedWithCustomCursor()),
-      OptPage(FilledRoundedPinPut()),
+      OptPage(RoundedWithShadow()),
       OptPage(OnlyBottomCursor()),
+      OptPage(FilledRoundedPinPut()),
       OptPage(Filled()),
     ];
     pinPuts.addAll([
@@ -121,20 +119,12 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
 
   @override
   Widget build(BuildContext context) {
-    // final defaultTheme = PinTheme(
-    //   width: 40,
-    //   height: 40,
-    //   decoration: BoxDecoration(color: Colors.greenAccent),
-    // );
     // return Scaffold(
     //   body: Center(
-    //     child: PinPut(
-    //       defaultTheme: defaultTheme,
-    //       focusedPinTheme: defaultTheme.copyWith(decoration: BoxDecoration(color: Colors.black)),
-    //       submittedPinTheme: defaultTheme.copyWith(decoration: BoxDecoration(color: Colors.redAccent)),
-    //     ),
+    //     child: FilledRoundedPinPut(),
     //   ),
     // );
+
     return ScrollConfiguration(
       behavior: MyCustomScrollBehavior(),
       child: AnimatedBuilder(
@@ -186,25 +176,6 @@ class PinPutGalleryState extends State<PinPutGallery> with SingleTickerProviderS
       ),
     );
   }
-
-// void _showSnackBar(String pin) {
-//   final snackBar = SnackBar(
-//     duration: const Duration(seconds: 3),
-//     content: Container(
-//       height: 80.0,
-//       child: Center(
-//         child: Text(
-//           'Pin Submitted. Value: $pin',
-//           style: const TextStyle(fontSize: 25.0),
-//         ),
-//       ),
-//     ),
-//     backgroundColor: Colors.deepPurpleAccent,
-//   );
-//   ScaffoldMessenger.of(context)
-//     ..hideCurrentSnackBar()
-//     ..showSnackBar(snackBar);
-// }
 }
 
 class Filled extends StatefulWidget {
@@ -242,7 +213,7 @@ class _FilledState extends State<Filled> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: PinPut(
+      child: Pinput(
         length: 4,
         controller: controller,
         focusNode: focusNode,
@@ -305,7 +276,7 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
       ),
     );
 
-    return PinPut(
+    return Pinput(
       length: 4,
       controller: controller,
       focusNode: focusNode,
@@ -389,7 +360,7 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
 
     return SizedBox(
       height: 68,
-      child: PinPut(
+      child: Pinput(
         length: 5,
         pinAnimationType: PinAnimationType.slide,
         controller: controller,
@@ -440,7 +411,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
 
     return SizedBox(
       height: 68,
-      child: PinPut(
+      child: Pinput(
         controller: controller,
         focusNode: focusNode,
         defaultTheme: defaultPinTheme,
@@ -497,9 +468,13 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
     super.dispose();
   }
 
+  bool showError = false;
+
   @override
   Widget build(BuildContext context) {
+    final length = 4;
     const borderColor = Color.fromRGBO(114, 178, 238, 1);
+    const errorColor = Color.fromRGBO(255, 234, 238, 1);
     const fillColor = Color.fromRGBO(222, 231, 240, .57);
     final defaultPinTheme = PinTheme(
       width: 56,
@@ -515,21 +490,60 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
       ),
     );
 
-    return SizedBox(
-      height: 68,
-      child: PinPut(
-        controller: controller,
-        focusNode: focusNode,
-        defaultTheme: defaultPinTheme,
-        focusedPinTheme: defaultPinTheme.copyWith(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(
           height: 68,
-          width: 64,
-          decoration: defaultPinTheme.decoration.copyWith(
-            border: Border.all(color: borderColor),
+          child: Pinput(
+            length: length,
+            controller: controller,
+            focusNode: focusNode,
+            defaultTheme: defaultPinTheme,
+            useNativeKeyboard: false,
+            showError: showError,
+            onCompleted: (pin) {
+              setState(() => showError = pin != '5555');
+            },
+            focusedPinTheme: defaultPinTheme.copyWith(
+              height: 68,
+              width: 64,
+              decoration: defaultPinTheme.decoration.copyWith(
+                border: Border.all(color: borderColor),
+              ),
+            ),
+            errorPinTheme: defaultPinTheme.copyWith(
+              decoration: BoxDecoration(
+                color: errorColor,
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
           ),
         ),
-        submittedPinTheme: defaultPinTheme.copyWith(),
-      ),
+        GridView.count(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          crossAxisCount: 5,
+          mainAxisSpacing: 0,
+          crossAxisSpacing: 0,
+          children: [
+            ...[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(
+              (e) => TextButton(
+                child: Text('$e'),
+                onPressed: () {
+                  controller.append('$e', length);
+                },
+              ),
+            ),
+            TextButton(
+              child: Text('Del'),
+              onPressed: () {
+                controller.delete();
+              },
+            )
+          ],
+        ),
+      ],
     );
   }
 }

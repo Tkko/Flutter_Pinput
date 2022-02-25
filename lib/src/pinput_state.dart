@@ -1,6 +1,6 @@
-part of 'pin_put.dart';
+part of 'pinput.dart';
 
-class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
+class _PinputState extends State<Pinput> with WidgetsBindingObserver {
   late final FocusNode _focusNode;
   late final TextEditingController _controller;
   late TextEditingValue _recentControllerValue;
@@ -123,7 +123,7 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
       onFieldSubmitted: widget.onSubmitted,
       textInputAction: widget.textInputAction,
       focusNode: _focusNode,
-      enabled: widget.enabled,
+      enabled: widget.useNativeKeyboard,
       enableSuggestions: widget.enableSuggestions,
       autofocus: widget.autofocus,
       readOnly: !widget.useNativeKeyboard,
@@ -210,7 +210,7 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
     final focused = _focusNode.hasFocus || !widget.useNativeKeyboard;
 
     if (widget.showCursor && isActiveField && focused) {
-      return _PinPutCursor(textStyle: pinTheme.textStyle, cursor: widget.cursor);
+      return _PinputCursor(textStyle: pinTheme.textStyle, cursor: widget.cursor);
     }
 
     if (widget.preFilledWidget != null) {
@@ -226,7 +226,12 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
       return _pinThemeOrDefault(widget.disabledPinTheme);
     }
 
-    final hasFocus = _focusNode.hasFocus || !widget.useNativeKeyboard;
+    final isLastPin = selectedIndex == widget.length;
+    final hasFocus = _focusNode.hasFocus || (!widget.useNativeKeyboard && !isLastPin);
+
+    if (!hasFocus && widget.showError) {
+      return _pinThemeOrDefault(widget.errorPinTheme);
+    }
 
     /// Focused pin or default
     if (hasFocus && index == selectedIndex.clamp(0, widget.length - 1)) {
@@ -243,7 +248,7 @@ class _PinPutState extends State<PinPut> with WidgetsBindingObserver {
   }
 
   Widget _getTransition(Widget child, Animation animation) {
-    if (child is _PinPutCursor) {
+    if (child is _PinputCursor) {
       return child;
     }
 

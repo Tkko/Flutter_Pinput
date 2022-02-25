@@ -1,4 +1,4 @@
-part of 'pin_put.dart';
+part of 'pinput.dart';
 
 class _SeparatedRaw extends StatelessWidget {
   final List<Widget> children;
@@ -37,20 +37,20 @@ class _SeparatedRaw extends StatelessWidget {
   }
 }
 
-class _PinPutCursor extends StatefulWidget {
+class _PinputCursor extends StatefulWidget {
   final Widget? cursor;
   final TextStyle? textStyle;
 
-  _PinPutCursor({
+  _PinputCursor({
     this.textStyle,
     this.cursor,
   });
 
   @override
-  State<_PinPutCursor> createState() => _PinPutCursorState();
+  State<_PinputCursor> createState() => _PinputCursorState();
 }
 
-class _PinPutCursorState extends State<_PinPutCursor> with SingleTickerProviderStateMixin {
+class _PinputCursorState extends State<_PinputCursor> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
 
   @override
