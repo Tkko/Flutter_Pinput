@@ -27,11 +27,13 @@ class AppView extends StatelessWidget {
               indicatorSize: TabBarIndicatorSize.label,
               indicator: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(color: Color.fromRGBO(30, 60, 87, 1), width: 2.0),
+                  bottom: BorderSide(
+                      color: Color.fromRGBO(30, 60, 87, 1), width: 2.0),
                 ),
               ),
               unselectedLabelStyle: GoogleFonts.poppins(fontSize: 16),
-              labelStyle: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
+              labelStyle: GoogleFonts.poppins(
+                  fontSize: 16, fontWeight: FontWeight.w600),
               labelColor: Color.fromRGBO(30, 60, 87, 1),
               unselectedLabelColor: Color.fromRGBO(107, 137, 165, 1),
             ),
@@ -39,7 +41,8 @@ class AppView extends StatelessWidget {
           home: GalleryPage(),
         );
 
-        final shortestSide = min(constraints.maxWidth.abs(), constraints.maxHeight.abs());
+        final shortestSide =
+            min(constraints.maxWidth.abs(), constraints.maxHeight.abs());
 
         if (shortestSide > 600) {
           return Container(

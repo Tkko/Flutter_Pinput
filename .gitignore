@@ -1,3 +1,7 @@
+
+ios
+android
+
 *.class
 *.lock
 *.log

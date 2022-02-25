@@ -136,7 +136,7 @@ Add this to your package's `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  pinput: ^1.3.0
+  pinput: ^2.0.0
 ```
 
 You can install packages from the command line:

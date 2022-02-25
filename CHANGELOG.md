@@ -1,7 +1,6 @@
-
 # Changelog
 
-## 1.3.0 -25/02/2022
+## 2.0.0 -25/02/2022
 Sorry guys this version will break your code 💙
 Introduced PinTheme class to control state of the individual pin easily, see readme for more information.
 

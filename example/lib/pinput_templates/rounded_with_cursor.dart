@@ -4,7 +4,8 @@ import 'package:pinput/pinput.dart';
 
 class RoundedWithCustomCursor extends StatefulWidget {
   @override
-  _RoundedWithCustomCursorState createState() => _RoundedWithCustomCursorState();
+  _RoundedWithCustomCursorState createState() =>
+      _RoundedWithCustomCursorState();
 
   @override
   String toStringShort() => 'Rounded With Cursor';
@@ -30,7 +31,10 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
-      textStyle: GoogleFonts.poppins(fontSize: 22, color: Color.fromRGBO(30, 60, 87, 1)),
+      textStyle: GoogleFonts.poppins(
+        fontSize: 22,
+        color: Color.fromRGBO(30, 60, 87, 1),
+      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(19),
         border: Border.all(color: borderColor),
@@ -44,6 +48,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
         focusNode: focusNode,
         defaultPinTheme: defaultPinTheme,
         showCursor: true,
+        hapticFeedbackType: HapticFeedbackType.lightImpact,
         onCompleted: (pin) => print(pin),
         cursor: Column(
           mainAxisAlignment: MainAxisAlignment.end,
