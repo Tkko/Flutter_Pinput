@@ -7,8 +7,6 @@
 
 
 Flutter package to create Pin code input (OTP) text field.
-### [**Live Demo**](https://rebrand.ly/6390b8)
-
 
 
 ## Features:
@@ -30,15 +28,23 @@ Flutter package to create Pin code input (OTP) text field.
 
 ## Support
 PRs Welcome
+
 Discord [Channel](https://discord.gg/ssE8eh)
+
 Example app on github has multiple tempates to choose from
+
 Don't forget to give it a star ⭐
 
-
-
 ## Demo
-<img src="https://user-images.githubusercontent.com/26390946/155599527-fe934f2c-5124-4754-bbf6-bb97d55a77c0.gif" width="300em" /><img src="https://user-images.githubusercontent.com/26390946/155599870-03387689-7be2-4a30-8e6f-90136a0515be.gif" width="300em" /><img src="https://user-images.githubusercontent.com/26390946/155600099-d0a02f55-09e6-4142-92de-066cd71cf211.gif" width="300em" /><img src="https://user-images.githubusercontent.com/26390946/155600276-0380b3b4-3d9c-4ea8-87d0-4f7ebd86e460.gif" width="300em" />
-<img src="https://user-images.githubusercontent.com/26390946/155600427-901c1eae-e565-4cf8-a338-8ac40eb1149c.gif" width="300em" />
+
+
+| [Live Demo](https://rebrand.ly/6390b8) | Rounded With Shadows | Rounded With Cursor |
+|--|--|--|
+| <a href="https://rebrand.ly/6390b8"> ![Live Demo](https://user-images.githubusercontent.com/26390946/155666045-aa93bf48-f8e7-407c-bb19-bc247d9e12bd.png) <a/> | ![Rounded With Shadows](https://user-images.githubusercontent.com/26390946/155599527-fe934f2c-5124-4754-bbf6-bb97d55a77c0.gif) | ![Rounded With Cursor](https://user-images.githubusercontent.com/26390946/155599870-03387689-7be2-4a30-8e6f-90136a0515be.gif) |
+
+| Rounded Filled | With Bottom Cursor | Filled |
+|--|--|--|
+| ![Rounded Filled](https://user-images.githubusercontent.com/26390946/155600099-d0a02f55-09e6-4142-92de-066cd71cf211.gif) | ![With Bottom Cursor](https://user-images.githubusercontent.com/26390946/155600276-0380b3b4-3d9c-4ea8-87d0-4f7ebd86e460.gif) | ![Filled](https://user-images.githubusercontent.com/26390946/155600427-901c1eae-e565-4cf8-a338-8ac40eb1149c.gif) |
 
 
 ## Overview
