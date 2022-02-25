@@ -1,6 +1,7 @@
 
 ios
 android
+/flutter_pinput.iml
 
 *.class
 *.lock
