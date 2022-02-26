@@ -48,20 +48,35 @@ class AppView extends StatelessWidget {
           return Container(
             color: Colors.white,
             alignment: Alignment.center,
-            child: Container(
-              width: 375,
-              height: 812,
-              margin: EdgeInsets.all(20),
-              clipBehavior: Clip.antiAlias,
-              foregroundDecoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.black, width: 15),
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 15),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: app,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Text(
+                    'Pinput Examples',
+                    style: GoogleFonts.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 375,
+                  height: 812,
+                  margin: EdgeInsets.all(20),
+                  clipBehavior: Clip.antiAlias,
+                  foregroundDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: Colors.black, width: 15),
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 15),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: app,
+                ),
+              ],
             ),
           );
         }

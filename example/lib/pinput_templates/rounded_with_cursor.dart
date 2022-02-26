@@ -48,6 +48,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
         focusNode: focusNode,
         defaultPinTheme: defaultPinTheme,
         showCursor: true,
+        obscureText: true,
         hapticFeedbackType: HapticFeedbackType.lightImpact,
         onCompleted: (pin) => print(pin),
         cursor: Column(
