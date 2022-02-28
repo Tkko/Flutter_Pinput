@@ -48,7 +48,7 @@ Don't forget to give it a star ⭐
 | ![Rounded Filled](https://user-images.githubusercontent.com/26390946/155600099-d0a02f55-09e6-4142-92de-066cd71cf211.gif) | ![With Bottom Cursor](https://user-images.githubusercontent.com/26390946/155600276-0380b3b4-3d9c-4ea8-87d0-4f7ebd86e460.gif) | ![Filled](https://user-images.githubusercontent.com/26390946/155600427-901c1eae-e565-4cf8-a338-8ac40eb1149c.gif) |
 
 
-## Overview
+## Getting Started
 
 Pin has 6 state `default` `focused`, `submitted`, `following`, `disabled`, `error`, you can customize each state by specifying theme parameter.
 Pin smoothly animates from one state to another automatically.
