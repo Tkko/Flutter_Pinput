@@ -132,36 +132,6 @@ Put everything together
 ```
 ## See Example app for more Pinput examples  [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)
 
-
-## Installation
-Add this to your package's `pubspec.yaml` file:
-
-```yaml
-dependencies:
-  pinput: ^2.0.2
-```
-
-You can install packages from the command line:
-
-with `pub`:
-
-```css
-$ pub get
-```
-
-with `Flutter`:
-
-```css
-$ flutter packages get
-```
-
-### 3. Import it
-Now in your `Dart` code, you can use:
-```dart
-import 'package:pinput/pinput.dart';
-```
-
-
 ## Properties
 
 ```dart
