@@ -13,7 +13,8 @@ Flutter package to create easily customizable Pin code input field (OTP) with sl
 -    Animated Decoration Switching
 -    Form validation
 -    iOS SMS Autofill
--    Android Autofill - [Package](https://pub.dev/packages/sms_autofill)
+-    Android Autofill, requires further implementation, use any packages listed below
+        - [android_sms_retriever](https://pub.dev/packages/android_sms_retriever), [sms_autofill](https://pub.dev/packages/sms_autofill), [otp_autofill](https://pub.dev/packages/otp_autofill), [sms_otp_auto_verify](https://pub.dev/packages/sms_otp_auto_verify)
 -    Standard Cursor
 -    Custom Cursor
 -    Cursor Animation
