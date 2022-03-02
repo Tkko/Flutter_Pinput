@@ -30,7 +30,7 @@ Flutter package to create easily customizable Pin code input field (OTP) with sl
 ## Support
 PRs Welcome
 
-Discord [Channel](https://discord.gg/ssE8eh)
+Discord [Channel](https://rebrand.ly/qwc3s0d)
 
 [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib) app on github has multiple templates to choose from
 
