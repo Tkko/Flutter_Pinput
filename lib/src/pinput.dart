@@ -32,6 +32,7 @@ class Pinput extends StatefulWidget {
     this.onEditingComplete,
     this.onSubmitted,
     this.onTap,
+    this.onLongPress,
     this.controller,
     this.focusNode,
     this.preFilledWidget,
@@ -68,7 +69,11 @@ class Pinput extends StatefulWidget {
     this.selectionControls,
     this.restorationId,
     this.onClipboardFound,
-  }) : super(key: key);
+  })  : assert(
+          onLongPress == null || enableInteractiveSelection == false,
+          'In order to catch onLongPress event enableInteractiveSelection should be false',
+        ),
+        super(key: key);
 
   /// Theme of the pin in default state
   final PinTheme? defaultPinTheme;
@@ -108,6 +113,9 @@ class Pinput extends StatefulWidget {
 
   /// Called when user clicks on PinPut
   final VoidCallback? onTap;
+
+  /// Called when user clicks on PinPut
+  final VoidCallback? onLongPress;
 
   /// Used to get, modify PinPut value and more.
   final TextEditingController? controller;
