@@ -1,10 +1,12 @@
 part of 'pinput.dart';
 
-
 class _PinputState extends State<Pinput> with WidgetsBindingObserver {
   late final FocusNode _focusNode;
   late final TextEditingController _controller;
   late TextEditingValue _recentControllerValue;
+  final _errorTextNotifier = ValueNotifier<String?>(null);
+
+  bool get hasError => _errorTextNotifier.value != null;
 
   int get selectedIndex => _recentControllerValue.selection.baseOffset;
 
@@ -38,6 +40,7 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
     _recentControllerValue = _controller.value;
     if (textChanged) {
       if (_completed) {
+        _validateOnSubmit(pin);
         widget.onCompleted?.call(pin);
         if (widget.closeKeyboardWhenCompleted) {
           _focusNode.unfocus();
@@ -45,7 +48,14 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
       }
       _maybeUseHaptic();
       widget.onChanged?.call(pin);
+      _maybeClearError(pin);
       setState(() {});
+    }
+  }
+
+  void _maybeClearError(String pin) {
+    if (widget.pinputValidateMode == PinputValidateMode.onSubmit && pin.length < widget.length) {
+      _errorTextNotifier.value = null;
     }
   }
 
@@ -135,7 +145,7 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
           selectionControls: widget.selectionControls ?? HiddenTextSelectionControls(_getDefaultPinTheme().height ?? 0),
           enableInteractiveSelection: widget.enableInteractiveSelection,
           onEditingComplete: widget.onEditingComplete,
-          onFieldSubmitted: widget.onSubmitted,
+          onFieldSubmitted: _validateOnSubmit,
           textInputAction: widget.textInputAction,
           focusNode: _focusNode,
           enabled: widget.useNativeKeyboard,
@@ -160,45 +170,121 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
           textDirection: widget.textDirection,
           obscuringCharacter: widget.obscuringCharacter,
           enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
+          validator: widget.validator != null ? _validator : null,
+          autovalidateMode: _mappedAutoValidateMode(),
         ),
       ),
     );
   }
 
+  AutovalidateMode _mappedAutoValidateMode() {
+    switch (widget.pinputValidateMode) {
+      case PinputValidateMode.disabled:
+        return AutovalidateMode.disabled;
+      case PinputValidateMode.onSubmit:
+        return AutovalidateMode.disabled;
+      case PinputValidateMode.onUserInteraction:
+        return AutovalidateMode.onUserInteraction;
+      case PinputValidateMode.always:
+        return AutovalidateMode.always;
+    }
+  }
+
+  void _validateOnSubmit(String s) {
+    if (widget.pinputValidateMode == PinputValidateMode.onSubmit) {
+      final res = widget.validator!.call(s);
+      _setErrorText(res);
+    }
+    widget.onSubmitted?.call(s);
+  }
+
+  String? _validator(String? s) {
+    if (widget.pinputValidateMode == PinputValidateMode.onSubmit) {
+      return null;
+    }
+    final res = widget.validator!.call(s);
+    _setErrorText(res);
+    return res;
+  }
+
+  void _setErrorText(String? text) async {
+    await Future<void>.delayed(Duration.zero);
+    _errorTextNotifier.value = text;
+  }
+
   Widget _fields() {
-    return _SeparatedRaw(
-      children: Iterable<int>.generate(widget.length).map(_getField).toList(),
-      separator: widget.separator,
-      separatorPositions: widget.separatorPositions,
-      mainAxisAlignment: widget.mainAxisAlignment,
+    Widget _onlyFields() {
+      return _SeparatedRaw(
+        children: Iterable<int>.generate(widget.length).map(_getField).toList(),
+        separator: widget.separator,
+        separatorPositions: widget.separatorPositions,
+        mainAxisAlignment: widget.mainAxisAlignment,
+      );
+    }
+
+    if (widget.pinputValidateMode == PinputValidateMode.disabled) {
+      return _onlyFields();
+    }
+
+    return ValueListenableBuilder<String?>(
+      valueListenable: _errorTextNotifier,
+      builder: (BuildContext context, errorText, Widget? child) {
+        return AnimatedSize(
+          duration: const Duration(milliseconds: 180),
+          alignment: Alignment.topCenter,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [_onlyFields(), _buildError()],
+          ),
+        );
+      },
     );
+  }
+
+  Widget _buildError() {
+    if (hasError) {
+      if (widget.errorBuilder != null) {
+        return widget.errorBuilder!.call(_errorTextNotifier.value!);
+      }
+
+      return Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Text(_errorTextNotifier.value!, style: widget.errorTextStyle ?? _errorTextStyle),
+      );
+    }
+
+    return SizedBox.shrink();
   }
 
   Widget _getField(int index) {
     final pinTheme = _pinTheme(index);
 
-    return Flexible(
-      child: AnimatedContainer(
-        height: pinTheme.height,
-        width: pinTheme.width,
-        constraints: pinTheme.constraints,
-        padding: pinTheme.padding,
-        margin: pinTheme.margin,
-        decoration: pinTheme.decoration,
-        alignment: widget.pinContentAlignment,
+    final child = AnimatedContainer(
+      height: pinTheme.height,
+      width: pinTheme.width,
+      constraints: pinTheme.constraints,
+      padding: pinTheme.padding,
+      margin: pinTheme.margin,
+      decoration: pinTheme.decoration,
+      alignment: widget.pinContentAlignment,
+      duration: widget.animationDuration,
+      curve: widget.animationCurve,
+      child: AnimatedSwitcher(
+        switchInCurve: widget.animationCurve,
+        switchOutCurve: widget.animationCurve,
         duration: widget.animationDuration,
-        curve: widget.animationCurve,
-        child: AnimatedSwitcher(
-          switchInCurve: widget.animationCurve,
-          switchOutCurve: widget.animationCurve,
-          duration: widget.animationDuration,
-          transitionBuilder: (child, animation) {
-            return _getTransition(child, animation);
-          },
-          child: _buildFieldContent(index, pinTheme),
-        ),
+        transitionBuilder: (child, animation) {
+          return _getTransition(child, animation);
+        },
+        child: _buildFieldContent(index, pinTheme),
       ),
     );
+
+    if (widget.mainAxisAlignment == MainAxisAlignment.center) {
+      return child;
+    }
+
+    return Flexible(child: child);
   }
 
   PinTheme _getDefaultPinTheme() => widget.defaultPinTheme ?? _defaultPinTheme;
@@ -244,7 +330,7 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
     final isLastPin = selectedIndex == widget.length;
     final hasFocus = _focusNode.hasFocus || (!widget.useNativeKeyboard && !isLastPin);
 
-    if (!hasFocus && widget.showError) {
+    if (!hasFocus && hasError) {
       return _pinThemeOrDefault(widget.errorPinTheme);
     }
 

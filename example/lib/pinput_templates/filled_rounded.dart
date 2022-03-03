@@ -50,7 +50,6 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
         controller: controller,
         focusNode: focusNode,
         defaultPinTheme: defaultPinTheme,
-        showError: showError,
         onCompleted: (pin) {
           setState(() => showError = pin != '5555');
         },

@@ -49,7 +49,6 @@ class Pinput extends StatefulWidget {
     this.animationDuration = const Duration(milliseconds: 180),
     this.pinAnimationType = PinAnimationType.scale,
     this.enabled = true,
-    this.showError = false,
     this.useNativeKeyboard = true,
     this.enableInteractiveSelection = true,
     this.autofocus = false,
@@ -69,11 +68,15 @@ class Pinput extends StatefulWidget {
     this.textInputAction,
     this.autofillHints = const [AutofillHints.oneTimeCode],
     this.textDirection,
+    this.errorTextStyle,
     this.obscuringCharacter = '•',
     this.obscuringWidget,
     this.selectionControls,
     this.restorationId,
     this.onClipboardFound,
+    this.validator,
+    this.pinputValidateMode = PinputValidateMode.onSubmit,
+    this.errorBuilder,
   })  : assert(
           onLongPress == null || enableInteractiveSelection == false,
           'In order to catch onLongPress event enableInteractiveSelection should be false',
@@ -103,6 +106,8 @@ class Pinput extends StatefulWidget {
 
   /// See [TextField.textDirection]
   final TextDirection? textDirection;
+
+  final TextStyle? errorTextStyle;
 
   /// Displayed fields count. PIN code length.
   final int length;
@@ -172,9 +177,6 @@ class Pinput extends StatefulWidget {
 
   /// See [TextField.enableInteractiveSelection]
   final bool enableInteractiveSelection;
-
-  /// If true the [errorPinTheme] will be applied
-  final bool showError;
 
   /// Whether show cursor or not
   /// Default cursor '|' or [cursor]
@@ -247,6 +249,25 @@ class Pinput extends StatefulWidget {
   /// Use haptic feedback everytime user types on keyboard
   /// See more details in [HapticFeedback]
   final HapticFeedbackType hapticFeedbackType;
+
+  /// If pin is valid return null otherwise return error text.
+  /// The returned value is exposed by the [FormFieldState.errorText] property.
+  /// The [Pinput] uses this to show error text or [errorBuilder] below the Pinput
+  ///
+  /// Alternating between error and normal state can cause the height of the
+  /// [Pinput] to change if no other subtext decoration is set on the
+  /// field. To create a field whose height is fixed regardless of whether or
+  /// not an error is displayed, either wrap the  [Pinput] in a fixed
+  /// height parent like [SizedBox], or set the [InputDecoration.helperText]
+  /// parameter to a space.
+  final FormFieldValidator? validator;
+
+  /// Used to enable/disable this form field auto validation and update its
+  /// error text.
+  final PinputValidateMode pinputValidateMode;
+
+  /// If pin is invalid and [errorBuilder] is passed it will be rendered under the Pinput
+  final PinputErrorBuilder? errorBuilder;
 
   @override
   _PinputState createState() => _PinputState();
