@@ -7,7 +7,7 @@
 
 
 Flutter package to create easily customizable Pin code input field (OTP) with slick animations.
-Please see the Changelog if you are using the old version (below 2.0.0)
+Please see the Changelog if you are using version below 2.0.0
 
 ## Features:
 -    Animated Decoration Switching

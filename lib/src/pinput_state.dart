@@ -1,5 +1,6 @@
 part of 'pinput.dart';
 
+
 class _PinputState extends State<Pinput> with WidgetsBindingObserver {
   late final FocusNode _focusNode;
   late final TextEditingController _controller;
@@ -76,8 +77,7 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
-    if (widget.onClipboardFound != null &&
-        appLifecycleState == AppLifecycleState.resumed) {
+    if (widget.onClipboardFound != null && appLifecycleState == AppLifecycleState.resumed) {
       _checkClipboard();
     }
   }
@@ -91,13 +91,11 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
   }
 
   void _handleTap() {
-    final isKeyboardHidden =
-        MediaQueryData.fromWindow(window).viewInsets.bottom == 0;
+    final isKeyboardHidden = MediaQueryData.fromWindow(window).viewInsets.bottom == 0;
 
     if (_focusNode.hasFocus && isKeyboardHidden) {
       _focusNode.unfocus();
-      Future.delayed(
-          const Duration(microseconds: 1), () => _focusNode.requestFocus());
+      Future.delayed(const Duration(microseconds: 1), () => _focusNode.requestFocus());
     } else {
       _focusNode.requestFocus();
     }
@@ -112,8 +110,8 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          widget.enableInteractiveSelection ? _fields() : _hiddenTextField(),
-          !widget.enableInteractiveSelection ? _fields() : _hiddenTextField(),
+          _fields(),
+          _hiddenTextField(),
         ],
       ),
     );
@@ -122,37 +120,47 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
   Widget _hiddenTextField() {
     return AbsorbPointer(
       absorbing: !widget.enableInteractiveSelection,
-      child: TextFormField(
-        controller: _controller,
-        onTap: widget.onTap,
-        onEditingComplete: widget.onEditingComplete,
-        onFieldSubmitted: widget.onSubmitted,
-        textInputAction: widget.textInputAction,
-        focusNode: _focusNode,
-        enabled: widget.useNativeKeyboard,
-        enableSuggestions: widget.enableSuggestions,
-        autofocus: widget.autofocus,
-        readOnly: !widget.useNativeKeyboard,
-        obscureText: widget.obscureText,
-        autofillHints: widget.autofillHints,
-        keyboardAppearance: widget.keyboardAppearance,
-        keyboardType: widget.keyboardType,
-        textCapitalization: widget.textCapitalization,
-        inputFormatters: widget.inputFormatters,
-        enableInteractiveSelection: widget.enableInteractiveSelection,
-        toolbarOptions: widget.toolbarOptions,
-        maxLength: widget.length,
-        maxLengthEnforcement: MaxLengthEnforcement.enforced,
-        autocorrect: false,
-        showCursor: false,
-        style: _hiddenTextStyle,
-        scrollPadding: EdgeInsets.zero,
-        decoration: _hiddenInputDecoration,
-        restorationId: widget.restorationId,
-        textDirection: widget.textDirection,
-        obscuringCharacter: widget.obscuringCharacter,
-        selectionControls: widget.selectionControls,
-        enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
+      child: Theme(
+        data: ThemeData(
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: Colors.transparent,
+            selectionColor: Colors.transparent,
+            selectionHandleColor: Colors.transparent,
+          ),
+        ),
+        child: TextFormField(
+          controller: _controller,
+          onTap: widget.onTap,
+          toolbarOptions: widget.toolbarOptions,
+          selectionControls: widget.selectionControls ?? HiddenTextSelectionControls(_getDefaultPinTheme().height ?? 0),
+          enableInteractiveSelection: widget.enableInteractiveSelection,
+          onEditingComplete: widget.onEditingComplete,
+          onFieldSubmitted: widget.onSubmitted,
+          textInputAction: widget.textInputAction,
+          focusNode: _focusNode,
+          enabled: widget.useNativeKeyboard,
+          enableSuggestions: widget.enableSuggestions,
+          autofocus: widget.autofocus,
+          readOnly: !widget.useNativeKeyboard,
+          obscureText: widget.obscureText,
+          autofillHints: widget.autofillHints,
+          keyboardAppearance: widget.keyboardAppearance,
+          keyboardType: widget.keyboardType,
+          textCapitalization: widget.textCapitalization,
+          inputFormatters: widget.inputFormatters,
+          maxLength: widget.length,
+          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+          textAlign: TextAlign.center,
+          autocorrect: false,
+          showCursor: false,
+          style: _hiddenTextStyle,
+          scrollPadding: EdgeInsets.zero,
+          decoration: _hiddenInputDecoration,
+          restorationId: widget.restorationId,
+          textDirection: widget.textDirection,
+          obscuringCharacter: widget.obscuringCharacter,
+          enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
+        ),
       ),
     );
   }
@@ -195,8 +203,7 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
 
   PinTheme _getDefaultPinTheme() => widget.defaultPinTheme ?? _defaultPinTheme;
 
-  PinTheme _pinThemeOrDefault(PinTheme? theme) =>
-      theme ?? _getDefaultPinTheme();
+  PinTheme _pinThemeOrDefault(PinTheme? theme) => theme ?? _getDefaultPinTheme();
 
   Widget _buildFieldContent(int index, PinTheme pinTheme) {
     final key = ValueKey<String>(index < pin.length ? pin[index] : '');
@@ -218,8 +225,7 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
     final focused = _focusNode.hasFocus || !widget.useNativeKeyboard;
 
     if (widget.showCursor && isActiveField && focused) {
-      return _PinputCursor(
-          textStyle: pinTheme.textStyle, cursor: widget.cursor);
+      return _PinputCursor(textStyle: pinTheme.textStyle, cursor: widget.cursor);
     }
 
     if (widget.preFilledWidget != null) {
@@ -236,8 +242,7 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
     }
 
     final isLastPin = selectedIndex == widget.length;
-    final hasFocus =
-        _focusNode.hasFocus || (!widget.useNativeKeyboard && !isLastPin);
+    final hasFocus = _focusNode.hasFocus || (!widget.useNativeKeyboard && !isLastPin);
 
     if (!hasFocus && widget.showError) {
       return _pinThemeOrDefault(widget.errorPinTheme);

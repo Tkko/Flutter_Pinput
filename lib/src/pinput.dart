@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 part 'pinput_state.dart';
@@ -15,6 +18,8 @@ part 'pin_theme.dart';
 part 'constants.dart';
 
 part 'extensions.dart';
+
+part 'hidden_text_selection_controls.dart';
 
 class Pinput extends StatefulWidget {
   const Pinput({
