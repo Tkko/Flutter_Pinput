@@ -135,7 +135,7 @@ Put everything together
 ## Properties
 
 ```dart
-  /// Theme of the pin in default state
+ /// Theme of the pin in default state
   final PinTheme? defaultPinTheme;
 
   /// Theme of the pin in focused state
@@ -162,7 +162,7 @@ Put everything together
   /// Displayed fields count. PIN code length.
   final int length;
 
-  /// Same as FormField onFieldSubmitted, called when PinPut submitted.
+  /// Fires when user completes pin input
   final ValueChanged<String>? onCompleted;
 
   /// Signature for being notified when a form field changes value.
@@ -173,6 +173,9 @@ Put everything together
 
   /// Called when user clicks on PinPut
   final VoidCallback? onTap;
+
+  /// In order to catch event [enableInteractiveSelection] should be false
+  final VoidCallback? onLongPress;
 
   /// Used to get, modify PinPut value and more.
   final TextEditingController? controller;
@@ -299,6 +302,7 @@ Put everything together
   /// Use haptic feedback everytime user types on keyboard
   /// See more details in [HapticFeedback]
   final HapticFeedbackType hapticFeedbackType;
+
 ```
 
 

@@ -76,7 +76,8 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
-    if (widget.onClipboardFound != null && appLifecycleState == AppLifecycleState.resumed) {
+    if (widget.onClipboardFound != null &&
+        appLifecycleState == AppLifecycleState.resumed) {
       _checkClipboard();
     }
   }
@@ -90,11 +91,13 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
   }
 
   void _handleTap() {
-    final isKeyboardHidden = MediaQueryData.fromWindow(window).viewInsets.bottom == 0;
+    final isKeyboardHidden =
+        MediaQueryData.fromWindow(window).viewInsets.bottom == 0;
 
     if (_focusNode.hasFocus && isKeyboardHidden) {
       _focusNode.unfocus();
-      Future.delayed(const Duration(microseconds: 1), () => _focusNode.requestFocus());
+      Future.delayed(
+          const Duration(microseconds: 1), () => _focusNode.requestFocus());
     } else {
       _focusNode.requestFocus();
     }
@@ -192,7 +195,8 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
 
   PinTheme _getDefaultPinTheme() => widget.defaultPinTheme ?? _defaultPinTheme;
 
-  PinTheme _pinThemeOrDefault(PinTheme? theme) => theme ?? _getDefaultPinTheme();
+  PinTheme _pinThemeOrDefault(PinTheme? theme) =>
+      theme ?? _getDefaultPinTheme();
 
   Widget _buildFieldContent(int index, PinTheme pinTheme) {
     final key = ValueKey<String>(index < pin.length ? pin[index] : '');
@@ -214,7 +218,8 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
     final focused = _focusNode.hasFocus || !widget.useNativeKeyboard;
 
     if (widget.showCursor && isActiveField && focused) {
-      return _PinputCursor(textStyle: pinTheme.textStyle, cursor: widget.cursor);
+      return _PinputCursor(
+          textStyle: pinTheme.textStyle, cursor: widget.cursor);
     }
 
     if (widget.preFilledWidget != null) {
@@ -231,7 +236,8 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver {
     }
 
     final isLastPin = selectedIndex == widget.length;
-    final hasFocus = _focusNode.hasFocus || (!widget.useNativeKeyboard && !isLastPin);
+    final hasFocus =
+        _focusNode.hasFocus || (!widget.useNativeKeyboard && !isLastPin);
 
     if (!hasFocus && widget.showError) {
       return _pinThemeOrDefault(widget.errorPinTheme);

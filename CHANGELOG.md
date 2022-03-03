@@ -1,3 +1,8 @@
+## 2.0.4 -03/03/2022
+- Updated docs
+- Added onLongPress
+
+
 ## 2.0.3 -02/03/2022
 - Updated readme.
 

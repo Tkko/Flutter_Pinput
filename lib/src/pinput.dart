@@ -114,7 +114,7 @@ class Pinput extends StatefulWidget {
   /// Called when user clicks on PinPut
   final VoidCallback? onTap;
 
-  /// Called when user clicks on PinPut
+  /// In order to catch event [enableInteractiveSelection] should be false
   final VoidCallback? onLongPress;
 
   /// Used to get, modify PinPut value and more.
