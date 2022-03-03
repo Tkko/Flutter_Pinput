@@ -1,5 +1,3 @@
-# Changelog
-
 ## 2.0.3 -02/03/2022
 - Updated readme.
 
@@ -10,6 +8,25 @@ Introduced PinTheme class to control state of the individual pin easily, see rea
 - Refactored, renamed some properties.
 - Added new Pinput examples
 - With long press user can paste from clipboard
+
+
+### Changes
+
+| Old   | New |
+|------------|:-------:|
+| onSubmit  | onCompleted |
+| fieldsCount  | length |
+| obscureText  | obscuringCharacter |
+| obscureText  | obscuringCharacter |
+| eachFieldHeight  | PinTheme.height |
+| eachFieldWidth  | PinTheme.width |
+| eachFieldConstraints  | PinTheme.constraints |
+| disabledDecoration  | PinTheme.disabledPinTheme |
+| followingFieldDecoration  | PinTheme.followingPinTheme |
+| selectedFieldDecoration  | PinTheme.focusedPinTheme |
+| submittedFieldDecoration  | PinTheme.submittedPinTheme |
+| eachFieldMargin  | PinTheme.margin |
+| eachFieldPadding  | PinTheme.padding |
 
 ## 1.2.1 -10/09/2021
 🔥🚀
@@ -127,7 +144,7 @@ Breaking changes, changed widget building logic so now it supports:
 ## 0.1.5 - 12/17/2018
 
 * Added
- Copy From Clipboard fnctionality if copied text length is equal to fields count
+ Copy From Clipboard functionality if copied text length is equal to fields count
 
 | Property  | Default |
 | ------------- | ------------- |
@@ -152,7 +169,7 @@ Breaking changes, changed widget building logic so now it supports:
 ## 0.1.3 - 10/26/2018
 
 * Transformed plugin to MVVM pattern
-* Fixed onSubmit call when all fieds aren't filled
+* Fixed onSubmit call when all fields aren't filled
 * Updated Demo
 * Added
 
