@@ -21,6 +21,8 @@ part 'extensions.dart';
 
 part 'hidden_text_selection_controls.dart';
 
+part 'pinput_utils.dart';
+
 class Pinput extends StatefulWidget {
   const Pinput({
     Key? key,
@@ -49,10 +51,13 @@ class Pinput extends StatefulWidget {
     this.animationDuration = const Duration(milliseconds: 180),
     this.pinAnimationType = PinAnimationType.scale,
     this.enabled = true,
+    this.readOnly = false,
     this.useNativeKeyboard = true,
-    this.enableInteractiveSelection = true,
+    this.toolbarEnabled = true,
     this.autofocus = false,
     this.obscureText = false,
+    this.showError = false,
+    this.errorText,
     this.showCursor = false,
     this.enableSuggestions = true,
     this.enableIMEPersonalizedLearning = true,
@@ -77,11 +82,7 @@ class Pinput extends StatefulWidget {
     this.validator,
     this.pinputValidateMode = PinputValidateMode.onSubmit,
     this.errorBuilder,
-  })  : assert(
-          onLongPress == null || enableInteractiveSelection == false,
-          'In order to catch onLongPress event enableInteractiveSelection should be false',
-        ),
-        super(key: key);
+  }) : super(key: key);
 
   /// Theme of the pin in default state
   final PinTheme? defaultPinTheme;
@@ -167,6 +168,8 @@ class Pinput extends StatefulWidget {
   /// Defines [Pinput] state
   final bool enabled;
 
+  final bool readOnly;
+
   /// {@macro flutter.widgets.editableText.autofocus}
   final bool autofocus;
 
@@ -175,8 +178,14 @@ class Pinput extends StatefulWidget {
   /// so you should set value of [Pinput]'s [TextEditingController] programmatically
   final bool useNativeKeyboard;
 
-  /// See [TextField.enableInteractiveSelection]
-  final bool enableInteractiveSelection;
+  /// If true, paste button will appear on longPress event
+  final bool toolbarEnabled;
+
+  ///
+  final bool showError;
+
+  ///
+  final String? errorText;
 
   /// Whether show cursor or not
   /// Default cursor '|' or [cursor]

@@ -29,7 +29,9 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
       width: 56,
       height: 56,
       textStyle: GoogleFonts.poppins(
-          fontSize: 22, color: Color.fromRGBO(30, 60, 87, 1)),
+        fontSize: 22,
+        color: Color.fromRGBO(30, 60, 87, 1),
+      ),
       decoration: BoxDecoration(),
     );
 

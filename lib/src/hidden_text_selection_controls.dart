@@ -21,7 +21,7 @@ class HiddenTextSelectionControls extends TextSelectionControls {
   ) {
     return _controls.buildToolbar(
       context,
-      globalEditableRegion.shift(Offset(0, -(height - 20) / 2)),
+      globalEditableRegion,
       textLineHeight,
       selectionMidpoint,
       endpoints,
