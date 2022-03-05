@@ -29,9 +29,9 @@ class _PinputState extends State<Pinput>
     final NavigationMode mode = MediaQuery.maybeOf(context)?.navigationMode ?? NavigationMode.traditional;
     switch (mode) {
       case NavigationMode.traditional:
-        return isEnabled;
+        return isEnabled && widget.useNativeKeyboard;
       case NavigationMode.directional:
-        return true;
+        return true && widget.useNativeKeyboard;
     }
   }
 
@@ -305,7 +305,7 @@ class _PinputState extends State<Pinput>
             _maybeUseHaptic(widget.hapticFeedbackType);
           },
           expands: false,
-          showCursor: true,
+          showCursor: false,
           autocorrect: false,
           autofillClient: this,
           showSelectionHandles: false,
@@ -319,7 +319,10 @@ class _PinputState extends State<Pinput>
           keyboardType: widget.keyboardType,
           textDirection: TextDirection.ltr,
           obscureText: widget.obscureText,
-          onSubmitted: widget.onSubmitted,
+          onSubmitted: (s) {
+            widget.onSubmitted?.call(s);
+            _maybeValidateForm();
+          },
           mouseCursor: MouseCursor.defer,
           focusNode: effectiveFocusNode,
           textAlign: TextAlign.center,
@@ -328,7 +331,7 @@ class _PinputState extends State<Pinput>
           key: editableTextKey,
           restorationId: 'pinput',
           clipBehavior: Clip.hardEdge,
-          cursorColor: Colors.redAccent,
+          cursorColor: Colors.transparent,
           controller: _effectiveController,
           autofillHints: widget.autofillHints,
           selectionWidthStyle: BoxWidthStyle.tight,
@@ -339,9 +342,9 @@ class _PinputState extends State<Pinput>
           obscuringCharacter: widget.obscuringCharacter,
           onAppPrivateCommand: widget.onAppPrivateCommand,
           onSelectionHandleTapped: _handleSelectionHandleTapped,
-          keyboardAppearance: widget.keyboardAppearance ?? Theme.of(context).brightness,
           readOnly: widget.readOnly || !isEnabled || !widget.useNativeKeyboard,
           selectionControls: widget.toolbarEnabled ? textSelectionControls : null,
+          keyboardAppearance: widget.keyboardAppearance ?? Theme.of(context).brightness,
         ),
       ),
     );
