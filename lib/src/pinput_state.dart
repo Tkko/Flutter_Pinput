@@ -378,23 +378,25 @@ class _PinputState extends State<Pinput>
       );
     }
 
-    return AnimatedBuilder(
-      animation: Listenable.merge(<Listenable>[effectiveFocusNode, _effectiveController]),
-      builder: (BuildContext context, Widget? child) {
-        if (widget.validator == null) return _onlyFields();
+    return Center(
+      child: AnimatedBuilder(
+        animation: Listenable.merge(<Listenable>[effectiveFocusNode, _effectiveController]),
+        builder: (BuildContext context, Widget? child) {
+          if (widget.validator == null) return _onlyFields();
 
-        return AnimatedSize(
-          duration: widget.animationDuration,
-          alignment: Alignment.topCenter,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _onlyFields(),
-              _buildError(),
-            ],
-          ),
-        );
-      },
+          return AnimatedSize(
+            duration: widget.animationDuration,
+            alignment: Alignment.topCenter,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _onlyFields(),
+                _buildError(),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

@@ -10,38 +10,15 @@ class _PinputSelectionGestureDetectorBuilder extends TextSelectionGestureDetecto
   @override
   void onForcePressStart(ForcePressDetails details) {
     super.onForcePressStart(details);
-    if (delegate.selectionEnabled && shouldShowSelectionToolbar) {
+    if (shouldShowSelectionToolbar) {
       editableText.showToolbar();
     }
   }
 
   @override
-  void onForcePressEnd(ForcePressDetails details) {
-    // Not required.
-  }
-
-  @override
-  void onSingleLongTapMoveUpdate(LongPressMoveUpdateDetails details) {
-    if (delegate.selectionEnabled) {
-      switch (Theme.of(_state.context).platform) {
-        case TargetPlatform.iOS:
-        case TargetPlatform.macOS:
-          renderEditable.selectPositionAt(
-            from: details.globalPosition,
-            cause: SelectionChangedCause.longPress,
-          );
-          break;
-        case TargetPlatform.android:
-        case TargetPlatform.fuchsia:
-        case TargetPlatform.linux:
-        case TargetPlatform.windows:
-          renderEditable.selectWordsInRange(
-            from: details.globalPosition - details.offsetFromOrigin,
-            to: details.globalPosition,
-            cause: SelectionChangedCause.longPress,
-          );
-          break;
-      }
+  void onDoubleTapDown(TapDownDetails details) {
+    if (_state.widget.toolbarEnabled) {
+      if (shouldShowSelectionToolbar) editableText.showToolbar();
     }
   }
 
@@ -56,23 +33,6 @@ class _PinputSelectionGestureDetectorBuilder extends TextSelectionGestureDetecto
   @override
   void onSingleLongTapStart(LongPressStartDetails details) {
     _state.widget.onLongPress?.call();
-    if (delegate.selectionEnabled) {
-      switch (Theme.of(_state.context).platform) {
-        case TargetPlatform.iOS:
-        case TargetPlatform.macOS:
-          renderEditable.selectPositionAt(
-            from: details.globalPosition,
-            cause: SelectionChangedCause.longPress,
-          );
-          break;
-        case TargetPlatform.android:
-        case TargetPlatform.fuchsia:
-        case TargetPlatform.linux:
-        case TargetPlatform.windows:
-          renderEditable.selectWord(cause: SelectionChangedCause.longPress);
-          Feedback.forLongPress(_state.context);
-          break;
-      }
-    }
+    if (shouldShowSelectionToolbar) editableText.showToolbar();
   }
 }
