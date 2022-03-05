@@ -1,4 +1,19 @@
-part of 'pinput.dart';
+part of '../pinput.dart';
+
+class _PinputFormField extends FormField<String> {
+  _PinputFormField({
+    required final FormFieldValidator<String>? validator,
+    required final bool enabled,
+    required final Widget child,
+    Key? key,
+  }) : super(
+          key: key,
+          enabled: enabled,
+          validator: validator,
+          autovalidateMode: AutovalidateMode.disabled,
+          builder: (FormFieldState<String> field) => child,
+        );
+}
 
 class _SeparatedRaw extends StatelessWidget {
   final List<Widget> children;
@@ -273,7 +288,7 @@ class _CupertinoPasteButton extends StatelessWidget {
         Positioned(
           bottom: 1,
           child: ClipPath(
-            clipper: CustomTriangleClipper(),
+            clipper: _TriangleClipper(),
             child: Container(
               height: 8,
               width: 15,
@@ -308,7 +323,7 @@ class _CupertinoPasteButton extends StatelessWidget {
   }
 }
 
-class CustomTriangleClipper extends CustomClipper<Path> {
+class _TriangleClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();

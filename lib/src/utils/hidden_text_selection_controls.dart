@@ -1,4 +1,4 @@
-part of 'pinput.dart';
+part of '../pinput.dart';
 
 class HiddenTextSelectionControls extends TextSelectionControls {
   final double height;

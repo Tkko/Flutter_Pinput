@@ -1,4 +1,4 @@
-part of 'pinput.dart';
+part of '../pinput.dart';
 
 class PinTheme {
   /// width of each [Pinput] field

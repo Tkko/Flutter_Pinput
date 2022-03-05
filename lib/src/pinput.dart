@@ -4,28 +4,35 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 
 part 'pinput_state.dart';
 
-part 'widgets.dart';
+part 'utils/enums.dart';
 
-part 'enums.dart';
+part 'utils/constants.dart';
 
-part 'always_disabled_focus_node.dart';
+part 'widgets/widgets.dart';
 
-part 'pin_theme.dart';
+part 'models/pin_theme.dart';
 
-part 'constants.dart';
+part 'utils/extensions.dart';
 
-part 'extensions.dart';
+part 'widgets/_pin_item.dart';
 
-part 'hidden_text_selection_controls.dart';
+part 'utils/pinput_utils_mixin.dart';
 
-part 'pinput_utils.dart';
+part 'utils/always_disabled_focus_node.dart';
+
+part 'utils/hidden_text_selection_controls.dart';
+
+part 'widgets/_pinput_selection_gesture_detector_builder.dart';
+
+part 'form_pinput/form_pinput.dart';
 
 class Pinput extends StatefulWidget {
   const Pinput({
-    Key? key,
     this.length = 4,
     this.defaultPinTheme,
     this.focusedPinTheme,
@@ -35,8 +42,6 @@ class Pinput extends StatefulWidget {
     this.errorPinTheme,
     this.onChanged,
     this.onCompleted,
-    this.onSaved,
-    this.onEditingComplete,
     this.onSubmitted,
     this.onTap,
     this.onLongPress,
@@ -56,11 +61,8 @@ class Pinput extends StatefulWidget {
     this.toolbarEnabled = true,
     this.autofocus = false,
     this.obscureText = false,
-    this.showError = false,
-    this.errorText,
     this.showCursor = false,
     this.enableSuggestions = true,
-    this.enableIMEPersonalizedLearning = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
     this.keyboardType = TextInputType.number,
@@ -69,20 +71,24 @@ class Pinput extends StatefulWidget {
     this.slideTransitionBeginOffset,
     this.cursor,
     this.keyboardAppearance,
-    this.inputFormatters,
+    this.inputFormatters = const [],
     this.textInputAction,
-    this.autofillHints = const [AutofillHints.oneTimeCode],
-    this.textDirection,
-    this.errorTextStyle,
+    this.autofillHints,
     this.obscuringCharacter = '•',
     this.obscuringWidget,
     this.selectionControls,
     this.restorationId,
     this.onClipboardFound,
+    this.onAppPrivateCommand,
+    this.mouseCursor,
     this.validator,
-    this.pinputValidateMode = PinputValidateMode.onSubmit,
     this.errorBuilder,
-  }) : super(key: key);
+    this.errorTextStyle,
+    this.pinputAutovalidateMode = PinputAutovalidateMode.disabled,
+    Key? key,
+  })  : assert(obscuringCharacter.length == 1),
+        assert(textInputAction != TextInputAction.newline, 'Pinput is not multiline'),
+        super(key: key);
 
   /// Theme of the pin in default state
   final PinTheme? defaultPinTheme;
@@ -102,13 +108,8 @@ class Pinput extends StatefulWidget {
   /// Theme of the pin in error state
   final PinTheme? errorPinTheme;
 
-  ///
+  /// If true keyboard will be closed
   final bool closeKeyboardWhenCompleted;
-
-  /// See [TextField.textDirection]
-  final TextDirection? textDirection;
-
-  final TextStyle? errorTextStyle;
 
   /// Displayed fields count. PIN code length.
   final int length;
@@ -116,11 +117,11 @@ class Pinput extends StatefulWidget {
   /// Fires when user completes pin input
   final ValueChanged<String>? onCompleted;
 
-  /// Signature for being notified when a form field changes value.
-  final FormFieldSetter<String>? onSaved;
-
   /// Called every time input value changes.
   final ValueChanged<String>? onChanged;
+
+  /// See [EditableText.onSubmitted]
+  final ValueChanged<String>? onSubmitted;
 
   /// Called when user clicks on PinPut
   final VoidCallback? onTap;
@@ -168,24 +169,19 @@ class Pinput extends StatefulWidget {
   /// Defines [Pinput] state
   final bool enabled;
 
+  /// See [EditableText.readOnly]
   final bool readOnly;
 
-  /// {@macro flutter.widgets.editableText.autofocus}
+  /// See [EditableText.autofocus]
   final bool autofocus;
 
-  /// Whether we use Native keyboard or custom `Numpad`
+  /// Whether to use Native keyboard or custom one
   /// when flag is set to false [Pinput] wont be focusable anymore
   /// so you should set value of [Pinput]'s [TextEditingController] programmatically
   final bool useNativeKeyboard;
 
   /// If true, paste button will appear on longPress event
   final bool toolbarEnabled;
-
-  ///
-  final bool showError;
-
-  ///
-  final String? errorText;
 
   /// Whether show cursor or not
   /// Default cursor '|' or [cursor]
@@ -199,10 +195,10 @@ class Pinput extends StatefulWidget {
   /// If unset, defaults to [ThemeData.brightness].
   final Brightness? keyboardAppearance;
 
-  /// See [TextField.inputFormatters]
-  final List<TextInputFormatter>? inputFormatters;
+  /// See [EditableText.inputFormatters]
+  final List<TextInputFormatter> inputFormatters;
 
-  /// See [TextField.keyboardType]
+  /// See [EditableText.keyboardType]
   final TextInputType keyboardType;
 
   /// Provide any symbol to obscure each [Pinput] pin
@@ -215,7 +211,7 @@ class Pinput extends StatefulWidget {
   /// Whether hide typed pin or not
   final bool obscureText;
 
-  /// See [TextField.textCapitalization]
+  /// See [EditableText.textCapitalization]
   final TextCapitalization textCapitalization;
 
   /// The type of action button to use for the keyboard.
@@ -229,28 +225,19 @@ class Pinput extends StatefulWidget {
   /// If not set, select all and paste will default to be enabled. Copy and cut
   /// will be disabled if [obscureText] is true. If [readOnly] is true,
   /// paste and cut will be disabled regardless.
-  final ToolbarOptions? toolbarOptions;
+  final ToolbarOptions toolbarOptions;
 
-  /// See [TextField.autofillHints]
+  /// See [EditableText.autofillHints]
   final Iterable<String>? autofillHints;
 
-  /// See [TextField.enableSuggestions]
+  /// See [EditableText.enableSuggestions]
   final bool enableSuggestions;
 
-  /// See [TextField.onEditingComplete]
-  final VoidCallback? onEditingComplete;
-
-  /// See [TextField.onSubmitted]
-  final ValueChanged<String>? onSubmitted;
-
-  /// See [TextField.selectionControls]
+  /// See [EditableText.selectionControls]
   final TextSelectionControls? selectionControls;
 
   /// See [TextField.restorationId]
   final String? restorationId;
-
-  /// See [TextField.enableIMEPersonalizedLearning]
-  final bool enableIMEPersonalizedLearning;
 
   /// Fires when clipboard has text of Pinput's length
   final ValueChanged<String>? onClipboardFound;
@@ -259,25 +246,44 @@ class Pinput extends StatefulWidget {
   /// See more details in [HapticFeedback]
   final HapticFeedbackType hapticFeedbackType;
 
-  /// If pin is valid return null otherwise return error text.
-  /// The returned value is exposed by the [FormFieldState.errorText] property.
-  /// The [Pinput] uses this to show error text or [errorBuilder] below the Pinput
-  ///
-  /// Alternating between error and normal state can cause the height of the
-  /// [Pinput] to change if no other subtext decoration is set on the
-  /// field. To create a field whose height is fixed regardless of whether or
-  /// not an error is displayed, either wrap the  [Pinput] in a fixed
-  /// height parent like [SizedBox], or set the [InputDecoration.helperText]
-  /// parameter to a space.
-  final FormFieldValidator? validator;
+  /// See [EditableText.onAppPrivateCommand]
+  final AppPrivateCommandCallback? onAppPrivateCommand;
 
-  /// Used to enable/disable this form field auto validation and update its
-  /// error text.
-  final PinputValidateMode pinputValidateMode;
+  /// See [EditableText.mouseCursor]
+  final MouseCursor? mouseCursor;
 
-  /// If pin is invalid and [errorBuilder] is passed it will be rendered under the Pinput
+  /// Style of error text
+  final TextStyle? errorTextStyle;
+
+  /// If [showError] is true and [errorBuilder] is passed it will be rendered under the Pinput
   final PinputErrorBuilder? errorBuilder;
 
+  /// Return null if pin is valid or any String otherwise
+  final FormFieldValidator<String>? validator;
+
+  /// Return null if pin is valid or any String otherwise
+  final PinputAutovalidateMode pinputAutovalidateMode;
+
   @override
-  _PinputState createState() => _PinputState();
+  State<Pinput> createState() => _PinputState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<TextEditingController>('controller', controller, defaultValue: null));
+    properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode, defaultValue: null));
+    properties.add(DiagnosticsProperty<bool>('enabled', enabled, defaultValue: null));
+    properties
+        .add(DiagnosticsProperty<TextInputType>('keyboardType', keyboardType, defaultValue: TextInputType.number));
+    properties.add(DiagnosticsProperty<bool>('autofocus', autofocus, defaultValue: false));
+    properties.add(DiagnosticsProperty<String>('obscuringCharacter', obscuringCharacter, defaultValue: '•'));
+    properties.add(DiagnosticsProperty<bool>('obscureText', obscureText, defaultValue: false));
+    properties.add(DiagnosticsProperty<bool>('enableSuggestions', enableSuggestions, defaultValue: true));
+    properties.add(IntProperty('length', length, defaultValue: 4));
+    properties
+        .add(EnumProperty<TextInputAction>('textInputAction', textInputAction, defaultValue: TextInputAction.done));
+    properties.add(EnumProperty<TextCapitalization>('textCapitalization', textCapitalization,
+        defaultValue: TextCapitalization.none));
+    properties.add(DiagnosticsProperty<Brightness>('keyboardAppearance', keyboardAppearance, defaultValue: null));
+  }
 }

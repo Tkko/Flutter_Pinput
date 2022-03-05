@@ -1,19 +1,6 @@
-part of 'pinput.dart';
+part of '../pinput.dart';
 
-mixin PinputUtils {
-  AutovalidateMode _mappedAutoValidateMode(PinputValidateMode pinputValidateMode) {
-    switch (pinputValidateMode) {
-      case PinputValidateMode.disabled:
-        return AutovalidateMode.disabled;
-      case PinputValidateMode.onSubmit:
-        return AutovalidateMode.disabled;
-      case PinputValidateMode.onUserInteraction:
-        return AutovalidateMode.onUserInteraction;
-      case PinputValidateMode.always:
-        return AutovalidateMode.always;
-    }
-  }
-
+mixin PinputUtilsMixin {
   void _maybeUseHaptic(HapticFeedbackType hapticFeedbackType) {
     switch (hapticFeedbackType) {
       case HapticFeedbackType.disabled:
@@ -34,5 +21,10 @@ mixin PinputUtils {
         HapticFeedback.vibrate();
         break;
     }
+  }
+
+  Future<String> _getClipboardOrEmpty() async {
+    final ClipboardData? clipboardData = await Clipboard.getData('text/plain');
+    return clipboardData?.text ?? '';
   }
 }

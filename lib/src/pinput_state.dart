@@ -1,18 +1,54 @@
 part of 'pinput.dart';
 
-class _PinputState extends State<Pinput> with WidgetsBindingObserver, RestorationMixin, PinputUtils {
-  final _errorTextNotifier = ValueNotifier<String?>(null);
+class _PinputState extends State<Pinput>
+    with RestorationMixin, WidgetsBindingObserver, PinputUtilsMixin
+    implements TextSelectionGestureDetectorBuilderDelegate, AutofillClient {
+  @override
+  late bool forcePressEnabled;
+
+  @override
+  final GlobalKey<EditableTextState> editableTextKey = GlobalKey<EditableTextState>();
+
+  @override
+  bool get selectionEnabled => false;
+
+  @override
+  String get autofillId => _editableText!.autofillId;
+
+  @override
+  String? get restorationId => widget.restorationId;
+
   late TextEditingValue _recentControllerValue;
+  late final _PinputSelectionGestureDetectorBuilder _gestureDetectorBuilder;
   RestorableTextEditingController? _controller;
   FocusNode? _focusNode;
+  bool _isHovering = false;
+  String? _errorText;
+
+  bool get _canRequestFocus {
+    final NavigationMode mode = MediaQuery.maybeOf(context)?.navigationMode ?? NavigationMode.traditional;
+    switch (mode) {
+      case NavigationMode.traditional:
+        return isEnabled;
+      case NavigationMode.directional:
+        return true;
+    }
+  }
 
   TextEditingController get _effectiveController => widget.controller ?? _controller!.value;
 
-  FocusNode get _effectiveFocusNode => widget.focusNode ?? (_focusNode ??= FocusNode());
+  @protected
+  FocusNode get effectiveFocusNode => widget.focusNode ?? (_focusNode ??= FocusNode());
 
-  String? get errorText => _errorTextNotifier.value ?? widget.errorText;
+  @protected
+  bool get hasError => _errorText != null;
 
-  bool get hasError => errorText != null || widget.showError;
+  @protected
+  bool get isEnabled => widget.enabled;
+
+  int get _currentLength => _effectiveController.value.text.characters.length;
+
+  EditableTextState? get _editableText => editableTextKey.currentState;
 
   int get selectedIndex => pin.length;
 
@@ -23,14 +59,70 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver, Restoratio
   @override
   void initState() {
     super.initState();
+    _gestureDetectorBuilder = _PinputSelectionGestureDetectorBuilder(state: this);
     if (widget.controller == null) {
       _createLocalController();
-      _registerController();
     }
     _recentControllerValue = _effectiveController.value;
     _effectiveController.addListener(_onTextChangedListener);
-    _effectiveFocusNode.addListener(_focusListener);
-    WidgetsBinding.instance!.addObserver(this);
+    effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
+  }
+
+  void _onTextChangedListener() {
+    final textChanged = _recentControllerValue.text != _effectiveController.value.text;
+    _recentControllerValue = _effectiveController.value;
+    if (textChanged) {
+      widget.onChanged?.call(pin);
+      if (_completed) {
+        widget.onCompleted?.call(pin);
+        _maybeValidateForm();
+        _maybeCloseKeyboard();
+      }
+    }
+  }
+
+  void _maybeValidateForm() {
+    if (widget.pinputAutovalidateMode == PinputAutovalidateMode.onSubmit) {
+      _validator();
+    }
+  }
+
+  void _maybeCloseKeyboard() {
+    if (widget.closeKeyboardWhenCompleted) {
+      effectiveFocusNode.unfocus();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    effectiveFocusNode.canRequestFocus = _canRequestFocus;
+  }
+
+  @override
+  void didUpdateWidget(Pinput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller == null && oldWidget.controller != null) {
+      _createLocalController(oldWidget.controller!.value);
+    } else if (widget.controller != null && oldWidget.controller == null) {
+      unregisterFromRestoration(_controller!);
+      _controller!.dispose();
+      _controller = null;
+    }
+
+    if (widget.controller != oldWidget.controller) {
+      oldWidget.controller?.removeListener(_onTextChangedListener);
+      widget.controller?.addListener(_onTextChangedListener);
+    }
+
+    effectiveFocusNode.canRequestFocus = _canRequestFocus;
+  }
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    if (_controller != null) {
+      _registerController();
+    }
   }
 
   void _registerController() {
@@ -46,236 +138,257 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver, Restoratio
     }
   }
 
-  bool get _canRequestFocus {
-    final NavigationMode mode = MediaQuery.maybeOf(context)?.navigationMode ?? NavigationMode.traditional;
-    switch (mode) {
-      case NavigationMode.traditional:
-        return widget.enabled;
-      case NavigationMode.directional:
-        return true;
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _effectiveFocusNode.canRequestFocus = _canRequestFocus;
-  }
-
-  @override
-  void didUpdateWidget(covariant Pinput oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (widget.controller != oldWidget.controller) {
-      oldWidget.controller?.removeListener(_onTextChangedListener);
-      widget.controller?.addListener(_onTextChangedListener);
-    }
-    if (widget.controller == null && oldWidget.controller != null) {
-      _createLocalController(oldWidget.controller!.value);
-    } else if (widget.controller != null && oldWidget.controller == null) {
-      unregisterFromRestoration(_controller!);
-      _controller!.dispose();
-      _controller = null;
-    }
-
-    if (widget.focusNode != oldWidget.focusNode) {
-      (oldWidget.focusNode ?? _focusNode)?.removeListener(_focusListener);
-      (widget.focusNode ?? _focusNode)?.addListener(_focusListener);
-    }
-    _effectiveFocusNode.canRequestFocus = _canRequestFocus;
-  }
-
-  @override
-  String? get restorationId => widget.restorationId;
-
-  @override
-  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    if (_controller != null) {
-      _registerController();
-    }
-  }
-
   @override
   void dispose() {
-    _effectiveFocusNode.removeListener(_focusListener);
-    _focusNode?.dispose();
     _effectiveController.removeListener(_onTextChangedListener);
+    _focusNode?.dispose();
     _controller?.dispose();
-    _errorTextNotifier.dispose();
     super.dispose();
   }
 
-  void _onTextChangedListener() {
-    final textChanged = _recentControllerValue.text != _effectiveController.value.text;
+  void _requestKeyboard() {
+    if (effectiveFocusNode.canRequestFocus) {
+      _editableText?.requestKeyboard();
+    }
+  }
 
-    _recentControllerValue = _effectiveController.value;
-    if (textChanged) {
-      if (_completed) {
-        _validateOnSubmit(pin);
-        widget.onCompleted?.call(pin);
-        if (widget.closeKeyboardWhenCompleted) {
-          _effectiveFocusNode.unfocus();
+  void _handleSelectionChanged(TextSelection selection, SelectionChangedCause? cause) {
+    switch (Theme.of(context).platform) {
+      case TargetPlatform.iOS:
+      case TargetPlatform.macOS:
+        if (cause == SelectionChangedCause.longPress || cause == SelectionChangedCause.drag) {
+          _editableText?.bringIntoView(selection.extent);
         }
-      }
-      widget.onChanged?.call(pin);
-      _maybeUseHaptic(widget.hapticFeedbackType);
-      _maybeClearError(pin);
-      setState(() {});
+        return;
+      case TargetPlatform.linux:
+      case TargetPlatform.windows:
+      case TargetPlatform.fuchsia:
+      case TargetPlatform.android:
+        if (cause == SelectionChangedCause.drag) {
+          _editableText?.bringIntoView(selection.extent);
+        }
+        return;
     }
   }
 
-  void _maybeClearError(String pin) {
-    if (widget.pinputValidateMode == PinputValidateMode.onSubmit && pin.length < widget.length) {
-      _errorTextNotifier.value = null;
+  /// Toggle the toolbar when a selection handle is tapped.
+  void _handleSelectionHandleTapped() {
+    if (_effectiveController.selection.isCollapsed) {
+      _editableText!.toggleToolbar();
     }
   }
 
-  void _focusListener() {
-    if (mounted) setState(() {});
+  void _handleHover(bool hovering) {
+    if (hovering != _isHovering) {
+      setState(() => _isHovering = hovering);
+    }
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) {
+  void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) async {
     if (widget.onClipboardFound != null && appLifecycleState == AppLifecycleState.resumed) {
-      _checkClipboard();
+      final clipboard = await _getClipboardOrEmpty();
+      if (clipboard.length == widget.length) {
+        widget.onClipboardFound!.call(clipboard);
+      }
     }
   }
 
-  Future<void> _checkClipboard() async {
-    final ClipboardData? clipboardData = await Clipboard.getData('text/plain');
-    final String text = clipboardData?.text ?? '';
-    if (text.length == widget.length) {
-      widget.onClipboardFound!.call(text);
-    }
-  }
-
-  void _handleTap() {
-    final isKeyboardHidden = MediaQueryData.fromWindow(window).viewInsets.bottom == 0;
-
-    if (_effectiveFocusNode.hasFocus && isKeyboardHidden) {
-      _effectiveFocusNode.unfocus();
-      Future.delayed(const Duration(microseconds: 1), () => _effectiveFocusNode.requestFocus());
-    } else {
-      _effectiveFocusNode.requestFocus();
-    }
-    widget.onTap?.call();
-  }
-
-  void _validateOnSubmit(String s) {
-    if (widget.validator != null && widget.pinputValidateMode == PinputValidateMode.onSubmit) {
-      final res = widget.validator!.call(s);
-      _setErrorText(res);
-    }
-    widget.onSubmitted?.call(s);
-  }
-
-  String? _validator(String? s) {
-    if (widget.pinputValidateMode == PinputValidateMode.onSubmit) {
-      return null;
-    }
-    final res = widget.validator!.call(s);
-    _setErrorText(res);
+  String? _validator([String? _]) {
+    final res = widget.validator?.call(pin) ?? null;
+    setState(() => _errorText = res);
     return res;
-  }
-
-  void _setErrorText(String? text) async {
-    await Future<void>.delayed(Duration.zero);
-    _errorTextNotifier.value = text;
   }
 
   @override
   Widget build(BuildContext context) {
-    return _PasteWrapper(
-      onTap: _handleTap,
-      onLongPress: widget.onLongPress,
-      controller: _effectiveController,
-      length: widget.length,
-      toolbarEnabled: widget.toolbarEnabled,
-      child: Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          _buildFields(),
-          _buildHiddenTextField(),
-        ],
+    assert(debugCheckHasMaterial(context));
+    assert(debugCheckHasMaterialLocalizations(context));
+    assert(debugCheckHasDirectionality(context));
+    final isDense = widget.mainAxisAlignment == MainAxisAlignment.center;
+
+    return isDense ? IntrinsicWidth(child: _buildPinput()) : _buildPinput();
+  }
+
+  Widget _buildPinput() {
+    final theme = Theme.of(context);
+    VoidCallback? handleDidGainAccessibilityFocus;
+    TextSelectionControls? textSelectionControls = widget.selectionControls;
+
+    switch (theme.platform) {
+      case TargetPlatform.iOS:
+        forcePressEnabled = true;
+        textSelectionControls ??= cupertinoTextSelectionControls;
+        break;
+      case TargetPlatform.macOS:
+        forcePressEnabled = false;
+        textSelectionControls ??= cupertinoDesktopTextSelectionControls;
+        handleDidGainAccessibilityFocus = () {
+          if (!effectiveFocusNode.hasFocus && effectiveFocusNode.canRequestFocus) {
+            effectiveFocusNode.requestFocus();
+          }
+        };
+        break;
+      case TargetPlatform.android:
+      case TargetPlatform.fuchsia:
+        forcePressEnabled = false;
+        textSelectionControls ??= materialTextSelectionControls;
+        break;
+      case TargetPlatform.linux:
+        forcePressEnabled = false;
+        textSelectionControls ??= desktopTextSelectionControls;
+        break;
+      case TargetPlatform.windows:
+        forcePressEnabled = false;
+        textSelectionControls ??= desktopTextSelectionControls;
+        handleDidGainAccessibilityFocus = () {
+          if (!effectiveFocusNode.hasFocus && effectiveFocusNode.canRequestFocus) {
+            effectiveFocusNode.requestFocus();
+          }
+        };
+        break;
+    }
+
+    return _PinputFormField(
+      enabled: isEnabled,
+      validator: _validator,
+      child: FocusTrapArea(
+        focusNode: effectiveFocusNode,
+        child: MouseRegion(
+          cursor: _effectiveMouseCursor,
+          onEnter: (PointerEnterEvent event) => _handleHover(true),
+          onExit: (PointerExitEvent event) => _handleHover(false),
+          child: IgnorePointer(
+            ignoring: !isEnabled || !widget.useNativeKeyboard,
+            child: AnimatedBuilder(
+              animation: _effectiveController,
+              builder: (_, Widget? child) => Semantics(
+                maxValueLength: widget.length,
+                currentValueLength: _currentLength,
+                onTap: widget.readOnly ? null : _semanticsOnTap,
+                onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
+                child: child,
+              ),
+              child: _gestureDetectorBuilder.buildGestureDetector(
+                behavior: HitTestBehavior.translucent,
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    _buildEditable(textSelectionControls),
+                    _buildFields(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildHiddenTextField() {
-    return AbsorbPointer(
-      absorbing: true,
-      child: Theme(
-        data: ThemeData(
-          inputDecorationTheme: InputDecorationTheme(
-            fillColor: Colors.redAccent,
-          ),
-          textSelectionTheme: TextSelectionThemeData(
-            cursorColor: Colors.transparent,
-            selectionColor: Colors.transparent,
-            selectionHandleColor: Colors.transparent,
-          ),
-        ),
-        child: TextFormField(
-          controller: _effectiveController,
-          focusNode: _effectiveFocusNode,
-          onTap: widget.onTap,
-          toolbarOptions: ToolbarOptions(),
-          enableInteractiveSelection: false,
-          onEditingComplete: widget.onEditingComplete,
-          onFieldSubmitted: _validateOnSubmit,
-          textInputAction: widget.textInputAction,
-          enabled: widget.useNativeKeyboard,
-          enableSuggestions: widget.enableSuggestions,
-          autofocus: widget.autofocus,
-          readOnly: !widget.useNativeKeyboard,
-          obscureText: widget.obscureText,
-          autofillHints: widget.autofillHints,
-          keyboardAppearance: widget.keyboardAppearance,
-          keyboardType: widget.keyboardType,
-          textCapitalization: widget.textCapitalization,
-          inputFormatters: widget.inputFormatters,
-          maxLength: widget.length,
-          maxLengthEnforcement: MaxLengthEnforcement.enforced,
-          textAlign: TextAlign.center,
-          autocorrect: false,
-          showCursor: false,
+  Widget _buildEditable(TextSelectionControls? textSelectionControls) {
+    final formatters = <TextInputFormatter>[
+      ...widget.inputFormatters,
+      LengthLimitingTextInputFormatter(
+        widget.length,
+        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+      ),
+    ];
+
+    return RepaintBoundary(
+      child: UnmanagedRestorationScope(
+        bucket: bucket,
+        child: EditableText(
+          maxLines: 1,
           style: _hiddenTextStyle,
-          scrollPadding: EdgeInsets.zero,
-          decoration: _hiddenInputDecoration,
-          restorationId: widget.restorationId,
-          textDirection: widget.textDirection,
+          onChanged: (_) {
+            _maybeUseHaptic(widget.hapticFeedbackType);
+          },
+          expands: false,
+          showCursor: true,
+          autocorrect: false,
+          autofillClient: this,
+          showSelectionHandles: false,
+          rendererIgnoresPointer: true,
+          enableInteractiveSelection: false,
+          enableIMEPersonalizedLearning: false,
+          textInputAction: widget.textInputAction,
+          textCapitalization: widget.textCapitalization,
+          toolbarOptions: widget.toolbarOptions,
+          selectionColor: Colors.transparent,
+          keyboardType: widget.keyboardType,
+          textDirection: TextDirection.ltr,
+          obscureText: widget.obscureText,
+          onSubmitted: widget.onSubmitted,
+          mouseCursor: MouseCursor.defer,
+          focusNode: effectiveFocusNode,
+          textAlign: TextAlign.center,
+          autofocus: widget.autofocus,
+          inputFormatters: formatters,
+          key: editableTextKey,
+          restorationId: 'pinput',
+          clipBehavior: Clip.hardEdge,
+          cursorColor: Colors.redAccent,
+          controller: _effectiveController,
+          autofillHints: widget.autofillHints,
+          selectionWidthStyle: BoxWidthStyle.tight,
+          backgroundCursorColor: Colors.transparent,
+          selectionHeightStyle: BoxHeightStyle.tight,
+          enableSuggestions: widget.enableSuggestions,
+          onSelectionChanged: _handleSelectionChanged,
           obscuringCharacter: widget.obscuringCharacter,
-          enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
-          validator: widget.validator != null ? _validator : null,
-          autovalidateMode: _mappedAutoValidateMode(widget.pinputValidateMode),
+          onAppPrivateCommand: widget.onAppPrivateCommand,
+          onSelectionHandleTapped: _handleSelectionHandleTapped,
+          keyboardAppearance: widget.keyboardAppearance ?? Theme.of(context).brightness,
+          readOnly: widget.readOnly || !isEnabled || !widget.useNativeKeyboard,
+          selectionControls: widget.toolbarEnabled ? textSelectionControls : null,
         ),
       ),
     );
+  }
+
+  MouseCursor get _effectiveMouseCursor => MaterialStateProperty.resolveAs<MouseCursor>(
+        widget.mouseCursor ?? MaterialStateMouseCursor.textable,
+        <MaterialState>{
+          if (!isEnabled) MaterialState.disabled,
+          if (_isHovering) MaterialState.hovered,
+          if (effectiveFocusNode.hasFocus) MaterialState.focused,
+          if (hasError) MaterialState.error,
+        },
+      );
+
+  void _semanticsOnTap() {
+    if (!_effectiveController.selection.isValid)
+      _effectiveController.selection = TextSelection.collapsed(offset: _effectiveController.text.length);
+    _requestKeyboard();
   }
 
   Widget _buildFields() {
     Widget _onlyFields() {
       return _SeparatedRaw(
-        children: Iterable<int>.generate(widget.length).map(_getField).toList(),
+        children: Iterable<int>.generate(widget.length).map<Widget>((index) {
+          return _PinItem(state: this, index: index);
+        }).toList(),
         separator: widget.separator,
         separatorPositions: widget.separatorPositions,
         mainAxisAlignment: widget.mainAxisAlignment,
       );
     }
 
-    if (widget.pinputValidateMode == PinputValidateMode.disabled) {
-      return _onlyFields();
-    }
+    return AnimatedBuilder(
+      animation: Listenable.merge(<Listenable>[effectiveFocusNode, _effectiveController]),
+      builder: (BuildContext context, Widget? child) {
+        if (widget.validator == null) return _onlyFields();
 
-    return ValueListenableBuilder<String?>(
-      valueListenable: _errorTextNotifier,
-      builder: (BuildContext context, errorText, Widget? child) {
         return AnimatedSize(
           duration: widget.animationDuration,
           alignment: Alignment.topCenter,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_onlyFields(), _buildError()],
+            children: [
+              _onlyFields(),
+              _buildError(),
+            ],
           ),
         );
       },
@@ -283,139 +396,46 @@ class _PinputState extends State<Pinput> with WidgetsBindingObserver, Restoratio
   }
 
   Widget _buildError() {
-    if (hasError) {
+    if (hasError && !effectiveFocusNode.hasFocus) {
       if (widget.errorBuilder != null) {
-        return widget.errorBuilder!.call(errorText!);
+        return widget.errorBuilder!.call(_errorText!, pin);
       }
 
-      return Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: Text(errorText!, style: widget.errorTextStyle ?? _errorTextStyle),
-      );
+      final theme = Theme.of(context);
+
+      if (_errorText != null) {
+        return Padding(
+          padding: const EdgeInsetsDirectional.only(start: 4, top: 8),
+          child: Text(
+            _errorText!,
+            style: widget.errorTextStyle ??
+                theme.textTheme.subtitle1?.copyWith(
+                  color: theme.errorColor,
+                ),
+          ),
+        );
+      }
     }
 
     return SizedBox.shrink();
   }
 
-  Widget _getField(int index) {
-    final pinTheme = _pinTheme(index);
+  // AutofillClient implementation start.
+  @override
+  void autofill(TextEditingValue newEditingValue) => _editableText!.autofill(newEditingValue);
 
-    return Flexible(
-      child: AnimatedContainer(
-        height: pinTheme.height,
-        width: pinTheme.width,
-        constraints: pinTheme.constraints,
-        padding: pinTheme.padding,
-        margin: pinTheme.margin,
-        decoration: pinTheme.decoration,
-        alignment: widget.pinContentAlignment,
-        duration: widget.animationDuration,
-        curve: widget.animationCurve,
-        child: AnimatedSwitcher(
-          switchInCurve: widget.animationCurve,
-          switchOutCurve: widget.animationCurve,
-          duration: widget.animationDuration,
-          transitionBuilder: (child, animation) {
-            return _getTransition(child, animation);
-          },
-          child: _buildFieldContent(index, pinTheme),
-        ),
-      ),
-    );
-  }
+  @override
+  TextInputConfiguration get textInputConfiguration {
+    final List<String>? autofillHints = widget.autofillHints?.toList(growable: false);
+    final AutofillConfiguration autofillConfiguration = autofillHints != null
+        ? AutofillConfiguration(
+            uniqueIdentifier: autofillId,
+            autofillHints: autofillHints,
+            currentEditingValue: _effectiveController.value,
+            hintText: 'One Time Code',
+          )
+        : AutofillConfiguration.disabled;
 
-  Widget _getTransition(Widget child, Animation animation) {
-    if (child is _PinputCursor) {
-      return child;
-    }
-
-    switch (widget.pinAnimationType) {
-      case PinAnimationType.none:
-        return child;
-      case PinAnimationType.fade:
-        return FadeTransition(
-          opacity: animation as Animation<double>,
-          child: child,
-        );
-      case PinAnimationType.scale:
-        return ScaleTransition(
-          scale: animation as Animation<double>,
-          child: child,
-        );
-      case PinAnimationType.slide:
-        return SlideTransition(
-          position: Tween<Offset>(
-            begin: widget.slideTransitionBeginOffset ?? Offset(0.8, 0),
-            end: Offset.zero,
-          ).animate(animation as Animation<double>),
-          child: child,
-        );
-      case PinAnimationType.rotation:
-        return RotationTransition(
-          turns: animation as Animation<double>,
-          child: child,
-        );
-    }
-  }
-
-  PinTheme _getDefaultPinTheme() => widget.defaultPinTheme ?? _defaultPinTheme;
-
-  PinTheme _pinThemeOrDefault(PinTheme? theme) => theme ?? _getDefaultPinTheme();
-
-  Widget _buildFieldContent(int index, PinTheme pinTheme) {
-    final key = ValueKey<String>(index < pin.length ? pin[index] : '');
-    final isSubmittedPin = index < pin.length;
-
-    if (isSubmittedPin) {
-      if (widget.obscureText && widget.obscuringWidget != null) {
-        return SizedBox(key: key, child: widget.obscuringWidget);
-      }
-
-      return Text(
-        widget.obscureText ? widget.obscuringCharacter : pin[index],
-        key: key,
-        style: pinTheme.textStyle,
-      );
-    }
-
-    final isActiveField = index == pin.length;
-    final focused = _effectiveFocusNode.hasFocus || !widget.useNativeKeyboard;
-
-    if (widget.showCursor && isActiveField && focused) {
-      return _PinputCursor(textStyle: pinTheme.textStyle, cursor: widget.cursor);
-    }
-
-    if (widget.preFilledWidget != null) {
-      return SizedBox(key: key, child: widget.preFilledWidget);
-    }
-
-    return Text('', key: key, style: pinTheme.textStyle);
-  }
-
-  PinTheme _pinTheme(int index) {
-    /// Disabled pin or default
-    if (!widget.enabled) {
-      return _pinThemeOrDefault(widget.disabledPinTheme);
-    }
-
-    final isLastPin = selectedIndex == widget.length;
-    final hasFocus = _effectiveFocusNode.hasFocus || (!widget.useNativeKeyboard && !isLastPin);
-
-    if (!hasFocus && hasError) {
-      return _pinThemeOrDefault(widget.errorPinTheme);
-    }
-
-    /// Focused pin or default
-    if (hasFocus && index == selectedIndex.clamp(0, widget.length - 1)) {
-      return _pinThemeOrDefault(widget.focusedPinTheme);
-    }
-
-    /// Submitted pin or default
-    if (index < selectedIndex) {
-      return _pinThemeOrDefault(widget.submittedPinTheme);
-    }
-
-    /// Following pin or default
-    return _pinThemeOrDefault(widget.followingPinTheme);
+    return _editableText!.textInputConfiguration.copyWith(autofillConfiguration: autofillConfiguration);
   }
 }

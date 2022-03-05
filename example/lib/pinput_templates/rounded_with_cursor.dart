@@ -11,6 +11,7 @@ class RoundedWithCustomCursor extends StatefulWidget {
 }
 
 class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final controller = TextEditingController();
   final focusNode = FocusNode();
 
@@ -42,19 +43,22 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
 
     return Column(
       children: [
+        TextButton(
+          onPressed: () {
+            // controller.setText('7629');
+          },
+          child: Text('Paste'),
+        ),
         Pinput(
           controller: controller,
           focusNode: focusNode,
           defaultPinTheme: defaultPinTheme,
-          showCursor: true,
-          showError: true,
-          errorText: 'Error',
-          onTap: () => print('onTap'),
+          validator: (s) {
+            return s == '2222' ? null : 'Error';
+          },
+          pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
           hapticFeedbackType: HapticFeedbackType.lightImpact,
           onCompleted: (pin) => print(pin),
-          validator: (s) {
-            return s == '1111' ? null : 'Wrong Pin';
-          },
           cursor: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
