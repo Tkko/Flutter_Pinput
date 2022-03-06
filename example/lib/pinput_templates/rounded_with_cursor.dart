@@ -4,20 +4,19 @@ import 'package:pinput/pinput.dart';
 
 class RoundedWithCustomCursor extends StatefulWidget {
   @override
-  _RoundedWithCustomCursorState createState() =>
-      _RoundedWithCustomCursorState();
+  _RoundedWithCustomCursorState createState() => _RoundedWithCustomCursorState();
 
   @override
   String toStringShort() => 'Rounded With Cursor';
 }
 
 class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
-  final controller = TextEditingController();
+  final pinController = TextEditingController();
   final focusNode = FocusNode();
 
   @override
   void dispose() {
-    controller.dispose();
+    pinController.dispose();
     focusNode.dispose();
     super.dispose();
   }
@@ -42,7 +41,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
     );
 
     return Pinput(
-      controller: controller,
+      controller: pinController,
       focusNode: focusNode,
       defaultPinTheme: defaultPinTheme,
       validator: (s) {

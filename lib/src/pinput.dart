@@ -81,8 +81,7 @@ class Pinput extends StatefulWidget {
     Key? key,
   })  : assert(obscuringCharacter.length == 1),
         assert(length > 0),
-        assert(textInputAction != TextInputAction.newline,
-            'Pinput is not multiline'),
+        assert(textInputAction != TextInputAction.newline, 'Pinput is not multiline'),
         super(key: key);
 
   /// Theme of the pin in default state
@@ -281,151 +280,77 @@ class Pinput extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<PinTheme>(
-        'defaultPinTheme', defaultPinTheme,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<PinTheme>(
-        'focusedPinTheme', focusedPinTheme,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<PinTheme>(
-        'submittedPinTheme', submittedPinTheme,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<PinTheme>(
-        'followingPinTheme', followingPinTheme,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<PinTheme>(
-        'disabledPinTheme', disabledPinTheme,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<PinTheme>('errorPinTheme', errorPinTheme,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<TextEditingController>(
-        'controller', controller,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode,
-        defaultValue: null));
+    properties.add(DiagnosticsProperty<PinTheme>('defaultPinTheme', defaultPinTheme, defaultValue: null));
+    properties.add(DiagnosticsProperty<PinTheme>('focusedPinTheme', focusedPinTheme, defaultValue: null));
+    properties.add(DiagnosticsProperty<PinTheme>('submittedPinTheme', submittedPinTheme, defaultValue: null));
+    properties.add(DiagnosticsProperty<PinTheme>('followingPinTheme', followingPinTheme, defaultValue: null));
+    properties.add(DiagnosticsProperty<PinTheme>('disabledPinTheme', disabledPinTheme, defaultValue: null));
+    properties.add(DiagnosticsProperty<PinTheme>('errorPinTheme', errorPinTheme, defaultValue: null));
+    properties.add(DiagnosticsProperty<TextEditingController>('controller', controller, defaultValue: null));
+    properties.add(DiagnosticsProperty<FocusNode>('focusNode', focusNode, defaultValue: null));
+    properties.add(DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true));
     properties
-        .add(DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true));
-    properties.add(DiagnosticsProperty<bool>(
-        'closeKeyboardWhenCompleted', closeKeyboardWhenCompleted,
-        defaultValue: true));
-    properties.add(DiagnosticsProperty<TextInputType>(
-        'keyboardType', keyboardType,
-        defaultValue: TextInputType.number));
-    properties.add(DiagnosticsProperty<int>('length', length,
-        defaultValue: _defaultLength));
-    properties.add(DiagnosticsProperty<ValueChanged<String>?>(
-        'onCompleted', onCompleted,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<ValueChanged<String>?>(
-        'onChanged', onChanged,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<ValueChanged<String>?>(
-        'onClipboardFound', onClipboardFound,
-        defaultValue: null));
-    properties.add(
-        DiagnosticsProperty<VoidCallback?>('onTap', onTap, defaultValue: null));
-    properties.add(DiagnosticsProperty<VoidCallback?>(
-        'onLongPress', onLongPress,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<Widget?>(
-        'preFilledWidget', preFilledWidget,
-        defaultValue: null));
-    properties.add(
-        DiagnosticsProperty<Widget?>('cursor', cursor, defaultValue: null));
-    properties.add(DiagnosticsProperty<Widget?>('separator', separator,
-        defaultValue: _defaultSeparator));
-    properties.add(DiagnosticsProperty<Widget?>(
-        'obscuringWidget', obscuringWidget,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<List<int>?>(
-        'separatorPositions', separatorPositions,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<MainAxisAlignment>(
-        'mainAxisAlignment', mainAxisAlignment,
+        .add(DiagnosticsProperty<bool>('closeKeyboardWhenCompleted', closeKeyboardWhenCompleted, defaultValue: true));
+    properties
+        .add(DiagnosticsProperty<TextInputType>('keyboardType', keyboardType, defaultValue: TextInputType.number));
+    properties.add(DiagnosticsProperty<int>('length', length, defaultValue: _defaultLength));
+    properties.add(DiagnosticsProperty<ValueChanged<String>?>('onCompleted', onCompleted, defaultValue: null));
+    properties.add(DiagnosticsProperty<ValueChanged<String>?>('onChanged', onChanged, defaultValue: null));
+    properties
+        .add(DiagnosticsProperty<ValueChanged<String>?>('onClipboardFound', onClipboardFound, defaultValue: null));
+    properties.add(DiagnosticsProperty<VoidCallback?>('onTap', onTap, defaultValue: null));
+    properties.add(DiagnosticsProperty<VoidCallback?>('onLongPress', onLongPress, defaultValue: null));
+    properties.add(DiagnosticsProperty<Widget?>('preFilledWidget', preFilledWidget, defaultValue: null));
+    properties.add(DiagnosticsProperty<Widget?>('cursor', cursor, defaultValue: null));
+    properties.add(DiagnosticsProperty<Widget?>('separator', separator, defaultValue: _defaultSeparator));
+    properties.add(DiagnosticsProperty<Widget?>('obscuringWidget', obscuringWidget, defaultValue: null));
+    properties.add(DiagnosticsProperty<List<int>?>('separatorPositions', separatorPositions, defaultValue: null));
+    properties.add(DiagnosticsProperty<MainAxisAlignment>('mainAxisAlignment', mainAxisAlignment,
         defaultValue: MainAxisAlignment.center));
-    properties.add(DiagnosticsProperty<AlignmentGeometry>(
-        'pinContentAlignment', pinContentAlignment,
+    properties.add(DiagnosticsProperty<AlignmentGeometry>('pinContentAlignment', pinContentAlignment,
         defaultValue: Alignment.center));
-    properties.add(DiagnosticsProperty<Curve>('animationCurve', animationCurve,
-        defaultValue: Curves.easeIn));
-    properties.add(DiagnosticsProperty<Duration>(
-        'animationDuration', animationDuration,
-        defaultValue: _animationDuration));
-    properties.add(DiagnosticsProperty<PinAnimationType>(
-        'pinAnimationType', pinAnimationType,
-        defaultValue: PinAnimationType.scale));
-    properties.add(DiagnosticsProperty<Offset?>(
-        'slideTransitionBeginOffset', slideTransitionBeginOffset,
-        defaultValue: null));
-
+    properties.add(DiagnosticsProperty<Curve>('animationCurve', animationCurve, defaultValue: Curves.easeIn));
     properties
-        .add(DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true));
+        .add(DiagnosticsProperty<Duration>('animationDuration', animationDuration, defaultValue: _animationDuration));
+    properties.add(DiagnosticsProperty<PinAnimationType>('pinAnimationType', pinAnimationType,
+        defaultValue: PinAnimationType.scale));
     properties.add(
-        DiagnosticsProperty<bool>('readOnly', readOnly, defaultValue: false));
-    properties.add(DiagnosticsProperty<bool>('obscureText', obscureText,
-        defaultValue: false));
-    properties.add(
-        DiagnosticsProperty<bool>('autofocus', autofocus, defaultValue: false));
-    properties.add(DiagnosticsProperty<bool>(
-        'useNativeKeyboard', useNativeKeyboard,
-        defaultValue: false));
-    properties.add(DiagnosticsProperty<bool>('toolbarEnabled', toolbarEnabled,
-        defaultValue: true));
-    properties.add(DiagnosticsProperty<bool>('showCursor', showCursor,
-        defaultValue: true));
-    properties.add(DiagnosticsProperty<String>(
-        'obscuringCharacter', obscuringCharacter,
-        defaultValue: '•'));
-    properties.add(DiagnosticsProperty<bool>('obscureText', obscureText,
-        defaultValue: false));
-    properties.add(DiagnosticsProperty<bool>(
-        'enableSuggestions', enableSuggestions,
-        defaultValue: true));
-    properties.add(DiagnosticsProperty<List<TextInputFormatter>>(
-        'inputFormatters', inputFormatters,
+        DiagnosticsProperty<Offset?>('slideTransitionBeginOffset', slideTransitionBeginOffset, defaultValue: null));
+
+    properties.add(DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true));
+    properties.add(DiagnosticsProperty<bool>('readOnly', readOnly, defaultValue: false));
+    properties.add(DiagnosticsProperty<bool>('obscureText', obscureText, defaultValue: false));
+    properties.add(DiagnosticsProperty<bool>('autofocus', autofocus, defaultValue: false));
+    properties.add(DiagnosticsProperty<bool>('useNativeKeyboard', useNativeKeyboard, defaultValue: false));
+    properties.add(DiagnosticsProperty<bool>('toolbarEnabled', toolbarEnabled, defaultValue: true));
+    properties.add(DiagnosticsProperty<bool>('showCursor', showCursor, defaultValue: true));
+    properties.add(DiagnosticsProperty<String>('obscuringCharacter', obscuringCharacter, defaultValue: '•'));
+    properties.add(DiagnosticsProperty<bool>('obscureText', obscureText, defaultValue: false));
+    properties.add(DiagnosticsProperty<bool>('enableSuggestions', enableSuggestions, defaultValue: true));
+    properties.add(DiagnosticsProperty<List<TextInputFormatter>>('inputFormatters', inputFormatters,
         defaultValue: const <TextInputFormatter>[]));
-    properties.add(EnumProperty<TextInputAction>(
-        'textInputAction', textInputAction,
-        defaultValue: TextInputAction.done));
-    properties.add(EnumProperty<TextCapitalization>(
-        'textCapitalization', textCapitalization,
+    properties
+        .add(EnumProperty<TextInputAction>('textInputAction', textInputAction, defaultValue: TextInputAction.done));
+    properties.add(EnumProperty<TextCapitalization>('textCapitalization', textCapitalization,
         defaultValue: TextCapitalization.none));
-    properties.add(DiagnosticsProperty<Brightness>(
-        'keyboardAppearance', keyboardAppearance,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<TextInputType>(
-        'keyboardType', keyboardType,
-        defaultValue: TextInputType.number));
-    properties.add(DiagnosticsProperty<ToolbarOptions>(
-        'toolbarOptions', toolbarOptions,
+    properties.add(DiagnosticsProperty<Brightness>('keyboardAppearance', keyboardAppearance, defaultValue: null));
+    properties
+        .add(DiagnosticsProperty<TextInputType>('keyboardType', keyboardType, defaultValue: TextInputType.number));
+    properties.add(DiagnosticsProperty<ToolbarOptions>('toolbarOptions', toolbarOptions,
         defaultValue: ToolbarOptions(paste: true)));
-    properties.add(DiagnosticsProperty<Iterable<String>?>(
-        'autofillHints', autofillHints,
+    properties.add(DiagnosticsProperty<Iterable<String>?>('autofillHints', autofillHints, defaultValue: null));
+    properties
+        .add(DiagnosticsProperty<TextSelectionControls?>('selectionControls', selectionControls, defaultValue: null));
+    properties.add(DiagnosticsProperty<String?>('restorationId', restorationId, defaultValue: null));
+    properties.add(DiagnosticsProperty<AppPrivateCommandCallback?>('onAppPrivateCommand', onAppPrivateCommand,
         defaultValue: null));
-    properties.add(DiagnosticsProperty<TextSelectionControls?>(
-        'selectionControls', selectionControls,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<String?>('restorationId', restorationId,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<AppPrivateCommandCallback?>(
-        'onAppPrivateCommand', onAppPrivateCommand,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<MouseCursor?>('mouseCursor', mouseCursor,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<TextStyle?>(
-        'errorTextStyle', errorTextStyle,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<PinputErrorBuilder?>(
-        'errorBuilder', errorBuilder,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<FormFieldValidator<String>?>(
-        'validator', validator,
-        defaultValue: null));
-    properties.add(DiagnosticsProperty<PinputAutovalidateMode>(
-        'pinputAutovalidateMode', pinputAutovalidateMode,
+    properties.add(DiagnosticsProperty<MouseCursor?>('mouseCursor', mouseCursor, defaultValue: null));
+    properties.add(DiagnosticsProperty<TextStyle?>('errorTextStyle', errorTextStyle, defaultValue: null));
+    properties.add(DiagnosticsProperty<PinputErrorBuilder?>('errorBuilder', errorBuilder, defaultValue: null));
+    properties.add(DiagnosticsProperty<FormFieldValidator<String>?>('validator', validator, defaultValue: null));
+    properties.add(DiagnosticsProperty<PinputAutovalidateMode>('pinputAutovalidateMode', pinputAutovalidateMode,
         defaultValue: PinputAutovalidateMode.onSubmit));
-    properties.add(DiagnosticsProperty<HapticFeedbackType>(
-        'hapticFeedbackType', hapticFeedbackType,
+    properties.add(DiagnosticsProperty<HapticFeedbackType>('hapticFeedbackType', hapticFeedbackType,
         defaultValue: HapticFeedbackType.disabled));
   }
 }
