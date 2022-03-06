@@ -41,14 +41,16 @@ class _PinItem extends StatelessWidget {
     }
 
     final isLastPin = state.selectedIndex == state.widget.length;
-    final hasFocus = state.effectiveFocusNode.hasFocus || (!state.widget.useNativeKeyboard && !isLastPin);
+    final hasFocus = state.effectiveFocusNode.hasFocus ||
+        (!state.widget.useNativeKeyboard && !isLastPin);
 
     if (!hasFocus && state.hasError) {
       return _pinThemeOrDefault(state.widget.errorPinTheme);
     }
 
     /// Focused pin or default
-    if (hasFocus && index == state.selectedIndex.clamp(0, state.widget.length - 1)) {
+    if (hasFocus &&
+        index == state.selectedIndex.clamp(0, state.widget.length - 1)) {
       return _pinThemeOrDefault(state.widget.focusedPinTheme);
     }
 
@@ -61,9 +63,11 @@ class _PinItem extends StatelessWidget {
     return _pinThemeOrDefault(state.widget.followingPinTheme);
   }
 
-  PinTheme _getDefaultPinTheme() => state.widget.defaultPinTheme ?? _defaultPinTheme;
+  PinTheme _getDefaultPinTheme() =>
+      state.widget.defaultPinTheme ?? _defaultPinTheme;
 
-  PinTheme _pinThemeOrDefault(PinTheme? theme) => theme ?? _getDefaultPinTheme();
+  PinTheme _pinThemeOrDefault(PinTheme? theme) =>
+      theme ?? _getDefaultPinTheme();
 
   Widget _buildFieldContent(int index, PinTheme pinTheme) {
     final pin = state.pin;
@@ -83,10 +87,15 @@ class _PinItem extends StatelessWidget {
     }
 
     final isActiveField = index == pin.length;
-    final focused = state.effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
+    final focused =
+        state.effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
 
-    if (state.widget.showCursor && state.isEnabled && isActiveField && focused) {
-      return _PinputCursor(textStyle: pinTheme.textStyle, cursor: state.widget.cursor);
+    if (state.widget.showCursor &&
+        state.isEnabled &&
+        isActiveField &&
+        focused) {
+      return _PinputCursor(
+          textStyle: pinTheme.textStyle, cursor: state.widget.cursor);
     }
 
     if (state.widget.preFilledWidget != null) {

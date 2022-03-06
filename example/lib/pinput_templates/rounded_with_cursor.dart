@@ -4,14 +4,14 @@ import 'package:pinput/pinput.dart';
 
 class RoundedWithCustomCursor extends StatefulWidget {
   @override
-  _RoundedWithCustomCursorState createState() => _RoundedWithCustomCursorState();
+  _RoundedWithCustomCursorState createState() =>
+      _RoundedWithCustomCursorState();
 
   @override
   String toStringShort() => 'Rounded With Cursor';
 }
 
 class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final controller = TextEditingController();
   final focusNode = FocusNode();
 
@@ -49,6 +49,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
         return s == '2222' ? null : 'Error';
       },
       hapticFeedbackType: HapticFeedbackType.lightImpact,
+      keyboardType: TextInputType.text,
       onCompleted: (pin) => print(pin),
       cursor: Column(
         mainAxisAlignment: MainAxisAlignment.end,
