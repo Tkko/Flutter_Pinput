@@ -25,4 +25,4 @@ enum PinputAutovalidateMode {
   onSubmit,
 }
 
-typedef PinputErrorBuilder = Widget Function(String errorText, String pin);
+typedef PinputErrorBuilder = Widget Function(String? errorText, String pin);

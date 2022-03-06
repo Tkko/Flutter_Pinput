@@ -74,6 +74,8 @@ class Pinput extends StatefulWidget {
     this.onClipboardFound,
     this.onAppPrivateCommand,
     this.mouseCursor,
+    this.forceErrorState = false,
+    this.errorText,
     this.validator,
     this.errorBuilder,
     this.errorTextStyle,
@@ -262,6 +264,12 @@ class Pinput extends StatefulWidget {
 
   /// See [EditableText.mouseCursor]
   final MouseCursor? mouseCursor;
+
+  /// If true [errorPinTheme] will be applied and [errorText] will be displayed under the Pinput
+  final bool forceErrorState;
+
+  /// Text displayed under the Pinput if Pinput is invalid
+  final String? errorText;
 
   /// Style of error text
   final TextStyle? errorTextStyle;

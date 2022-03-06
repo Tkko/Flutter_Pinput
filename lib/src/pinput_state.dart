@@ -24,7 +24,9 @@ class _PinputState extends State<Pinput>
   RestorableTextEditingController? _controller;
   FocusNode? _focusNode;
   bool _isHovering = false;
-  String? _errorText;
+  String? _validatorErrorText;
+
+  String? get _errorText => widget.errorText ?? _validatorErrorText;
 
   bool get _canRequestFocus {
     final NavigationMode mode = MediaQuery.maybeOf(context)?.navigationMode ??
@@ -45,7 +47,7 @@ class _PinputState extends State<Pinput>
       widget.focusNode ?? (_focusNode ??= FocusNode());
 
   @protected
-  bool get hasError => _errorText != null;
+  bool get hasError => widget.forceErrorState || _validatorErrorText != null;
 
   @protected
   bool get isEnabled => widget.enabled;
@@ -213,7 +215,7 @@ class _PinputState extends State<Pinput>
 
   String? _validator([String? _]) {
     final res = widget.validator?.call(pin) ?? null;
-    setState(() => _errorText = res);
+    setState(() => _validatorErrorText = res);
     return res;
   }
 
@@ -321,7 +323,9 @@ class _PinputState extends State<Pinput>
           maxLines: 1,
           style: _hiddenTextStyle,
           onChanged: (String text) {
-            _onChanged(text);
+            if (widget.controller == null) {
+              _onChanged(text);
+            }
             _maybeUseHaptic(widget.hapticFeedbackType);
           },
           expands: false,
@@ -407,7 +411,10 @@ class _PinputState extends State<Pinput>
         animation: Listenable.merge(
             <Listenable>[effectiveFocusNode, _effectiveController]),
         builder: (BuildContext context, Widget? child) {
-          if (widget.validator == null) return _onlyFields();
+          final shouldHideErrorContent =
+              widget.validator == null && widget.errorText == null;
+
+          if (shouldHideErrorContent) return _onlyFields();
 
           return AnimatedSize(
             duration: widget.animationDuration,
@@ -425,14 +432,23 @@ class _PinputState extends State<Pinput>
     );
   }
 
+  @protected
+  bool get hasFocus {
+    final isLastPin = selectedIndex == widget.length;
+    return effectiveFocusNode.hasFocus ||
+        (!widget.useNativeKeyboard && !isLastPin);
+  }
+
+  @protected
+  bool get showErrorState => hasError && (!hasFocus || widget.forceErrorState);
+
   Widget _buildError() {
-    if (hasError && !effectiveFocusNode.hasFocus) {
+    if (showErrorState) {
       if (widget.errorBuilder != null) {
-        return widget.errorBuilder!.call(_errorText!, pin);
+        return widget.errorBuilder!.call(_errorText, pin);
       }
 
       final theme = Theme.of(context);
-
       if (_errorText != null) {
         return Padding(
           padding: const EdgeInsetsDirectional.only(start: 4, top: 8),

@@ -179,24 +179,34 @@ Put everything together
   
 - #### Validation   
 ```dart  
-    /// Create key  
-    final formKey = GlobalKey<FormState>();  
-  
-    /// Validate manually  
-    /// Don't call validate in build method, this is just illustration.  
-    formKey.currentState!.validate();  
-  
-    return Form(  
-      key: formKey,  
-      child: Pinput(  
-        /// Auto validate after user tap on keyboard done button, or completes Pinput  
-        pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,  
-        validator: (pin) {  
-          if (pin == '2224') return null;  
-          return 'Pin is incorrect';  
-        },  
-      ),  
-    );  
+    /// Create key
+    final formKey = GlobalKey<FormState>();
+
+    /// Validate manually
+    /// Don't call validate in build method, this is just illustration.
+    formKey.currentState!.validate();
+
+    return Form(
+      key: formKey,
+      child: Pinput(
+        // Without Validator
+        // If true error state will be applied no matter what validator returns
+        forceErrorState: true,
+        // Text will be displayed under the Pinput
+        errorText: 'Error',
+
+        /// ------------
+        /// With Validator
+        /// Auto validate after user tap on keyboard done button, or completes Pinput
+        pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+        validator: (pin) {
+          if (pin == '2224') return null;
+
+          /// Text will be displayed under the Pinput
+          return 'Pin is incorrect';
+        },
+      ),
+    );
 ```  
 ## Properties  
   

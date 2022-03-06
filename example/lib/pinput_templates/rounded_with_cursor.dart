@@ -46,11 +46,10 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
       focusNode: focusNode,
       defaultPinTheme: defaultPinTheme,
       validator: (s) {
-        return s == '2222' ? null : 'Error';
+        return s == '2222' ? null : 'Pin is incorrect';
       },
       hapticFeedbackType: HapticFeedbackType.lightImpact,
-      keyboardType: TextInputType.text,
-      onCompleted: (pin) => print(pin),
+      onCompleted: print,
       cursor: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

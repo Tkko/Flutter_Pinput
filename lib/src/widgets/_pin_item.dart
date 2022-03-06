@@ -40,16 +40,12 @@ class _PinItem extends StatelessWidget {
       return _pinThemeOrDefault(state.widget.disabledPinTheme);
     }
 
-    final isLastPin = state.selectedIndex == state.widget.length;
-    final hasFocus = state.effectiveFocusNode.hasFocus ||
-        (!state.widget.useNativeKeyboard && !isLastPin);
-
-    if (!hasFocus && state.hasError) {
+    if (state.showErrorState) {
       return _pinThemeOrDefault(state.widget.errorPinTheme);
     }
 
     /// Focused pin or default
-    if (hasFocus &&
+    if (state.hasFocus &&
         index == state.selectedIndex.clamp(0, state.widget.length - 1)) {
       return _pinThemeOrDefault(state.widget.focusedPinTheme);
     }

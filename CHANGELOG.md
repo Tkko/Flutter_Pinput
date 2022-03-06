@@ -1,4 +1,4 @@
-## 2.1.2 -06/03/2022
+## 2.1.3 -06/03/2022
 Updated docs
 
 Added
@@ -10,6 +10,8 @@ Added
 | errorBuilder  | To build custom error widget under the Pinput |
 | errorTextStyle  | Standard error text style, displayed under the Pinput |
 | toolbarEnabled  | If true, paste button will appear on longPress, doubleTap event / true|
+| forceErrorState  | If true [errorPinTheme] will be applied and [errorText] will be displayed under the Pinput / false|
+| errorText  | Text displayed under the Pinput if Pinput is invalid|
 
 
 
