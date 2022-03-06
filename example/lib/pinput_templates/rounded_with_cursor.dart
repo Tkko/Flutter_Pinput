@@ -41,47 +41,42 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
       ),
     );
 
-    return Column(
-      children: [
-        TextField(),
-        Pinput(
-          controller: controller,
-          focusNode: focusNode,
-          defaultPinTheme: defaultPinTheme,
-          validator: (s) {
-            return s == '2222' ? null : 'Error';
-          },
-          hapticFeedbackType: HapticFeedbackType.lightImpact,
-          onCompleted: (pin) => print(pin),
-          cursor: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                margin: EdgeInsets.only(bottom: 9),
-                width: 22,
-                height: 1,
-                color: focusedBorderColor,
-              ),
-            ],
+    return Pinput(
+      controller: controller,
+      focusNode: focusNode,
+      defaultPinTheme: defaultPinTheme,
+      validator: (s) {
+        return s == '2222' ? null : 'Error';
+      },
+      hapticFeedbackType: HapticFeedbackType.lightImpact,
+      onCompleted: (pin) => print(pin),
+      cursor: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: 9),
+            width: 22,
+            height: 1,
+            color: focusedBorderColor,
           ),
-          focusedPinTheme: defaultPinTheme.copyWith(
-            decoration: defaultPinTheme.decoration!.copyWith(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: focusedBorderColor),
-            ),
-          ),
-          submittedPinTheme: defaultPinTheme.copyWith(
-            decoration: defaultPinTheme.decoration!.copyWith(
-              color: fillColor,
-              borderRadius: BorderRadius.circular(19),
-              border: Border.all(color: focusedBorderColor),
-            ),
-          ),
-          errorPinTheme: defaultPinTheme.copyBorderWith(
-            border: Border.all(color: Colors.redAccent),
-          ),
+        ],
+      ),
+      focusedPinTheme: defaultPinTheme.copyWith(
+        decoration: defaultPinTheme.decoration!.copyWith(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: focusedBorderColor),
         ),
-      ],
+      ),
+      submittedPinTheme: defaultPinTheme.copyWith(
+        decoration: defaultPinTheme.decoration!.copyWith(
+          color: fillColor,
+          borderRadius: BorderRadius.circular(19),
+          border: Border.all(color: focusedBorderColor),
+        ),
+      ),
+      errorPinTheme: defaultPinTheme.copyBorderWith(
+        border: Border.all(color: Colors.redAccent),
+      ),
     );
   }
 }

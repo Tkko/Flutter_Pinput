@@ -62,18 +62,15 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
       ],
     );
 
-    return SizedBox(
-      height: 68,
-      child: Pinput(
-        length: 5,
-        pinAnimationType: PinAnimationType.slide,
-        controller: controller,
-        focusNode: focusNode,
-        defaultPinTheme: defaultPinTheme,
-        showCursor: true,
-        cursor: cursor,
-        preFilledWidget: preFilledWidget,
-      ),
+    return Pinput(
+      length: 5,
+      pinAnimationType: PinAnimationType.slide,
+      controller: controller,
+      focusNode: focusNode,
+      defaultPinTheme: defaultPinTheme,
+      showCursor: true,
+      cursor: cursor,
+      preFilledWidget: preFilledWidget,
     );
   }
 }

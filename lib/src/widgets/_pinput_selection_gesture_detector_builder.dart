@@ -17,15 +17,15 @@ class _PinputSelectionGestureDetectorBuilder extends TextSelectionGestureDetecto
 
   @override
   void onDoubleTapDown(TapDownDetails details) {
-    if (_state.widget.toolbarEnabled) {
-      if (shouldShowSelectionToolbar) editableText.showToolbar();
+    if (shouldShowSelectionToolbar) {
+      editableText.showToolbar();
     }
   }
 
   @override
   void onSingleTapUp(TapUpDetails details) {
-    editableText.hideToolbar();
     super.onSingleTapUp(details);
+    editableText.hideToolbar();
     _state._requestKeyboard();
     _state.widget.onTap?.call();
   }
@@ -33,6 +33,8 @@ class _PinputSelectionGestureDetectorBuilder extends TextSelectionGestureDetecto
   @override
   void onSingleLongTapStart(LongPressStartDetails details) {
     _state.widget.onLongPress?.call();
-    if (shouldShowSelectionToolbar) editableText.showToolbar();
+    if (shouldShowSelectionToolbar) {
+      editableText.showToolbar();
+    }
   }
 }
