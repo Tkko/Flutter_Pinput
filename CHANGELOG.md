@@ -1,3 +1,18 @@
+## 2.1.0 -06/03/2022
+Updated docs
+
+Added
+
+| Property   | Meaning/Default |
+|------------|:-------:|
+| Validator  | To validate Pinput with or without Form |
+| pinputAutovalidateMode  | PinputAutovalidateMode.onSubmit |
+| errorBuilder  | To build custom error widget under the Pinput |
+| errorTextStyle  | Standard error text style, displayed under the Pinput |
+| toolbarEnabled  | If true, paste button will appear on longPress, doubleTap event / true|
+
+
+
 ## 2.0.4 -03/03/2022
 - Updated docs
 - Added onLongPress
