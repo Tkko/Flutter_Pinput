@@ -25,6 +25,7 @@ class _PinputState extends State<Pinput>
   FocusNode? _focusNode;
   bool _isHovering = false;
   String? _validatorErrorText;
+  SmartAuth? _smartAuth;
 
   String? get _errorText => widget.errorText ?? _validatorErrorText;
 
@@ -75,6 +76,25 @@ class _PinputState extends State<Pinput>
       widget.controller!.addListener(_handleTextEditingControllerChanges);
     }
     effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
+    maybeInitSmartAuth();
+  }
+
+  /// Android Autofill
+  void maybeInitSmartAuth() async {
+    if (Platform.isAndroid &&
+        (widget.isAndroidAutofillEnabled ||
+            widget.useUserConsentApiOnAndroid)) {
+      _smartAuth = SmartAuth();
+      if (!widget.useUserConsentApiOnAndroid) {
+        _smartAuth!.getAppSignature().then((value) => debugPrint(
+            'Pinput: App Signature for SMS Retriever API Is: $value'));
+      }
+      final res = await _smartAuth!
+          .getSmsCode(useUserConsentApi: widget.useUserConsentApiOnAndroid);
+      if (res.succeed && res.code?.length == widget.length) {
+        _effectiveController.setText(res.code!);
+      }
+    }
   }
 
   void _handleTextEditingControllerChanges() {
@@ -159,6 +179,7 @@ class _PinputState extends State<Pinput>
     widget.controller?.removeListener(_handleTextEditingControllerChanges);
     _focusNode?.dispose();
     _controller?.dispose();
+    _smartAuth?.removeSmsListener();
     super.dispose();
   }
 

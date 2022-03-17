@@ -5,6 +5,8 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:smart_auth/smart_auth.dart';
+import 'dart:io' show Platform;
 
 part 'pinput_state.dart';
 
@@ -33,6 +35,9 @@ class Pinput extends StatefulWidget {
     this.followingPinTheme,
     this.disabledPinTheme,
     this.errorPinTheme,
+    this.isAndroidAutofillEnabled = false,
+    this.useUserConsentApiOnAndroid = true,
+    this.smsCodeMatcher,
     this.onChanged,
     this.onCompleted,
     this.onSubmitted,
@@ -110,6 +115,18 @@ class Pinput extends StatefulWidget {
 
   /// Displayed fields count. PIN code length.
   final int length;
+
+  /// If true SMS User Consent API will be used otherwise plugin will use SMS Retriever API
+  /// More about SMS Retriever API [https://developers.google.com/identity/sms-retriever/overview?hl=en]
+  /// More about SMS User Consent API [https://developers.google.com/identity/sms-retriever/user-consent/overview]
+  final bool isAndroidAutofillEnabled;
+
+  /// If true SMS User Consent API will be used rather than SMS Retriever API
+  /// More about SMS User Consent API [https://developers.google.com/identity/sms-retriever/user-consent/overview]
+  final bool useUserConsentApiOnAndroid;
+
+  //// Used to extract code from SMS for Android Autofill
+  final String? smsCodeMatcher;
 
   /// Fires when user completes pin input
   final ValueChanged<String>? onCompleted;

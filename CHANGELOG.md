@@ -1,3 +1,11 @@
+## 2.2.0 -17/03/2022
+Added Android SMS Autofill support
+
+| Property   | Meaning/Default |
+|------------|:-------:|
+| isAndroidAutofillEnabled  | If true SMS User Consent API will be used otherwise plugin will use SMS Retriever API |
+| useUserConsentApiOnAndroid  | If true SMS User Consent API will be used rather than SMS Retriever API |
+
 ## 2.1.4 -06/03/2022
 Updated docs
 

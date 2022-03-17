@@ -1,44 +1,43 @@
 
 <div align="center">  
  <h1 align="center" style="font-size: 70px;">Flutter Pinput From <a href="https://www.linkedin.com/in/thornike/" target="_blank">Tornike </a> & Great <a href="https://github.com/Tkko/Flutter_Pinput/graphs/contributors" target="_blank">Contributors</a> </h1>  
-  
-<a href="https://www.buymeacoffee.com/fman" target="_blank"><img src="https://img.buymeacoffee.com/button-api/?text=Thank me with a coffee&emoji=&slug=fman&button_colour=40DCA5&font_colour=ffffff&font_family=Poppins&outline_colour=000000&coffee_colour=FFDD00"></a>  
-  
+
+<a href="https://www.buymeacoffee.com/fman" target="_blank"><img src="https://img.buymeacoffee.com/button-api/?text=Thank me with a coffee&emoji=&slug=fman&button_colour=40DCA5&font_colour=ffffff&font_family=Poppins&outline_colour=000000&coffee_colour=FFDD00"></a>
+
 </div>  
-  
-  
+
+
 Flutter package to create easily customizable Pin code input field (OTP) with slick animations.  
-Please see the Changelog if you are migrating from version < 2.0.0  
-  
-## Features:  
-- Animated Decoration Switching  
-- Form validation  
-- iOS SMS Autofill  
-- Android Autofill, requires further implementation, use any packages listed below  
-        - [android_sms_retriever](https://pub.dev/packages/android_sms_retriever), [sms_autofill](https://pub.dev/packages/sms_autofill), [otp_autofill](https://pub.dev/packages/otp_autofill), [sms_otp_auto_verify](https://pub.dev/packages/sms_otp_auto_verify)  
-- Standard Cursor  
-- Custom Cursor  
-- Cursor Animation  
-- Copy From Clipboard  
-- Ready For Custom Keyboard  
-- Standard Paste option  
-- Obscuring Character  
-- Obscuring Widget  
-- Haptic Feedback  
-- Close Keyboard After Completion  
-- Beautiful [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)  
-  
-  
-## Support  
-PRs Welcome  
-  
-Discord [Channel](https://rebrand.ly/qwc3s0d)  
-  
-[Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib) app on github has multiple templates to choose from  
-  
-Don't forget to give it a star ⭐  
-  
-## Demo  
+Please see the Changelog if you are migrating from version < 2.0.0
+
+## Features:
+- Animated Decoration Switching
+- Form validation
+- SMS Autofill on iOS
+- SMS Autofill on Android
+- Standard Cursor
+- Custom Cursor
+- Cursor Animation
+- Copy From Clipboard
+- Ready For Custom Keyboard
+- Standard Paste option
+- Obscuring Character
+- Obscuring Widget
+- Haptic Feedback
+- Close Keyboard After Completion
+- Beautiful [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)
+
+
+## Support
+PRs Welcome
+
+Discord [Channel](https://rebrand.ly/qwc3s0d)
+
+[Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib) app on Github has multiple templates to choose from
+
+Don't forget to give it a star ⭐
+
+## Demo
 
 | [Live Demo](https://rebrand.ly/6390b8) | Rounded With Shadows | Rounded With Cursor |
 |--|--|--|
@@ -47,14 +46,14 @@ Don't forget to give it a star ⭐
 | Rounded Filled | With Bottom Cursor | Filled |
 |--|--|--|
 | ![Rounded Filled](https://user-images.githubusercontent.com/26390946/155600099-d0a02f55-09e6-4142-92de-066cd71cf211.gif) | ![With Bottom Cursor](https://user-images.githubusercontent.com/26390946/155600276-0380b3b4-3d9c-4ea8-87d0-4f7ebd86e460.gif) | ![Filled](https://user-images.githubusercontent.com/26390946/155600427-901c1eae-e565-4cf8-a338-8ac40eb1149c.gif) |
-  
-  
-## Getting Started  
-  
-Pin has 6 state `default` `focused`, `submitted`, `following`, `disabled`, `error`, you can customize each state by specifying theme parameter.  
+
+
+## Getting Started
+
+The pin has 6 states `default` `focused`, `submitted`, `following`, `disabled`, `error`, you can customize each state by specifying theme parameter.  
 Pin smoothly animates from one state to another automatically.  
-`PinTheme Class`  
-  
+`PinTheme Class`
+
 | Property  | Default/Type |  
 | ------------- | :-------------: |  
 | width  | 56.0 |  
@@ -63,8 +62,8 @@ Pin smoothly animates from one state to another automatically.
 | margin  | EdgeInsetsGeometry |  
 | padding  | EdgeInsetsGeometry |  
 | constraints  | BoxConstraints |  
-  
-You can use standard Pinput like so  
+
+You can use standard Pinput like so
 ```dart  
   Widget buildPinPut() {  
     return Pinput(  
@@ -72,8 +71,8 @@ You can use standard Pinput like so
     );  
   }  
 ```  
-If you want to customize it, create `defaultPinTheme` first.  
-  
+If you want to customize it, create `defaultPinTheme` first.
+
 ```dart  
     final defaultPinTheme = PinTheme(  
       width: 56,  
@@ -86,7 +85,7 @@ If you want to customize it, create `defaultPinTheme` first.
     );  
 ```  
 if you want all pins to be the same don't pass other theme parameters,  
-If not, create `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `errorPinTheme` from `defaultPinTheme`  
+If not, create `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `errorPinTheme` from `defaultPinTheme`
 ```dart  
     final focusedPinTheme = defaultPinTheme.copyDecorationWith(  
       border: Border.all(color: Color.fromRGBO(114, 178, 238, 1)),  
@@ -99,7 +98,7 @@ If not, create `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `err
       ),  
     );  
 ```  
-Put everything together  
+Put everything together
 ```dart  
     final defaultPinTheme = PinTheme(  
       width: 56,  
@@ -134,11 +133,45 @@ Put everything together
       onCompleted: (pin) => print(pin),  
     );  
 ```  
-## See Example app for more Pinput examples  [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)  
-  
-## Tips  
-  
-- #### Controller   
+
+## SMS Autofill
+On Android, you have two options, [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview?hl=en) and [SMS User Consent API](https://developers.google.com/identity/sms-retriever/user-consent/overview),
+[SmartAuth](https://github.com/Tkko/flutter_smart_auth) is a wrapper package for Flutter for these APIs and it is behind the autofill support of Pinput
+
+##### SMS Retriever API
+To use Retriever API you need The App [signature](https://stackoverflow.com/questions/53849023/android-sms-retriever-api-computing-apps-hash-string-problem), Pinput calculates the hash for you and prints it in the console
+Sms code will be automatically applied, without user interaction.
+
+```dart
+    return Pinput(
+      isAndroidAutofillEnabled: true,
+    );
+```
+Example of printed signature
+`Pinput: App Signature for SMS Retriever API Is: kg+TZ3A5qzS`
+
+##### SMS User Consent API
+You don't need the App signature, the user will be prompted to confirm reading the message
+
+```dart
+    return Pinput(
+      isAndroidAutofillEnabled: true,
+      useUserConsentApiOnAndroid: true,
+    );
+```
+ <img src="https://user-images.githubusercontent.com/26390946/158870589-a2d631fa-55d7-487f-8c30-d378bab4c21d.png" style="height: 700px; width: auto; image-rendering: pixelated;" alt="Request Hint" />
+
+
+### SmartAuth
+If autofill support doesn't fit your needs, you can use [SmartAuth](https://github.com/Tkko/flutter_smart_auth) to implement autofill,
+Also, you can suggest a phone number by showing native Android dialog.
+`No need to add SmartAuth dependency, it is already added`
+
+## See Example app for more Pinput examples  [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)
+
+## Tips
+
+- #### Controller
 ```dart  
     /// Create Controller  
     final pinController = TextEditingController();  
@@ -158,8 +191,8 @@ Put everything together
       controller: pinController,  
     );  
 ```  
-  
-- #### Focus   
+
+- #### Focus
 ```dart  
     /// Create FocusNode  
     final pinputFocusNode = FocusNode();  
@@ -176,8 +209,8 @@ Put everything together
       focusNode: pinputFocusNode,  
     );  
 ```  
-  
-- #### Validation   
+
+- #### Validation
 ```dart  
     /// Create key
     final formKey = GlobalKey<FormState>();
@@ -208,8 +241,8 @@ Put everything together
       ),
     );
 ```  
-## Properties  
-  
+## Properties
+
 ```dart  
   /// Theme of the pin in default state  
   final PinTheme? defaultPinTheme;  
