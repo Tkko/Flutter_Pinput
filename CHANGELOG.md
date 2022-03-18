@@ -3,8 +3,8 @@ Added Android SMS Autofill support
 
 | Property   | Meaning/Default |
 |------------|:-------:|
-| isAndroidAutofillEnabled  | If true SMS User Consent API will be used otherwise plugin will use SMS Retriever API |
-| useUserConsentApiOnAndroid  | If true SMS User Consent API will be used rather than SMS Retriever API |
+| androidSmsAutofillMethod  | Options to enable SMS autofill on Android |
+| smsCodeMatcher  | Used to extract code from SMS for Android Autofill if [androidSmsAutofillMethod] is enabled |
 
 ## 2.1.4 -06/03/2022
 Updated docs
