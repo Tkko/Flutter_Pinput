@@ -5,8 +5,11 @@
 
 </div>
 
-Flutter package to create easily customizable Pin code input field (OTP) with slick animations.
+Flutter package to create easily customizable Pin code input field, that your designers can't even draw in Figma 🤭
+
 Please see the Changelog if you are migrating from version < 2.0.0
+
+Bonus tip: 🤫 Tell your PM that you need a week to implement the feature and chill with your friends meanwhile.
 
 ## Features:
 
