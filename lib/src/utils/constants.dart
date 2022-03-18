@@ -23,5 +23,4 @@ const _defaultPinTheme = PinTheme(
   decoration: _defaultPinputDecoration,
 );
 
-
 const _defaultSmsCodeMatcher = '\\d{4,7}';
