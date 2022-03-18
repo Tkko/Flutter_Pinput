@@ -1,16 +1,15 @@
-
 <div align="center">  
- <h1 align="center" style="font-size: 70px;">Flutter Pinput From <a href="https://www.linkedin.com/in/thornike/" target="_blank">Tornike </a> & Great <a href="https://github.com/Tkko/Flutter_Pinput/graphs/contributors" target="_blank">Contributors</a> </h1>  
+ <h1 align="center" style="font-size: 70px;">Flutter Pinput From <a href="https://www.linkedin.com/in/thornike/" target="_blank">Tornike </a> & Great <a href="https://github.com/Tkko/Flutter_Pinput/graphs/contributors" target="_blank">Contributors</a> </h1>
 
 <a href="https://www.buymeacoffee.com/fman" target="_blank"><img src="https://img.buymeacoffee.com/button-api/?text=Thank me with a coffee&emoji=&slug=fman&button_colour=40DCA5&font_colour=ffffff&font_family=Poppins&outline_colour=000000&coffee_colour=FFDD00"></a>
 
-</div>  
+</div>
 
-
-Flutter package to create easily customizable Pin code input field (OTP) with slick animations.  
+Flutter package to create easily customizable Pin code input field (OTP) with slick animations.
 Please see the Changelog if you are migrating from version < 2.0.0
 
 ## Features:
+
 - Animated Decoration Switching
 - Form validation
 - SMS Autofill on iOS
@@ -27,8 +26,8 @@ Please see the Changelog if you are migrating from version < 2.0.0
 - Close Keyboard After Completion
 - Beautiful [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)
 
-
 ## Support
+
 PRs Welcome
 
 Discord [Channel](https://rebrand.ly/qwc3s0d)
@@ -39,41 +38,45 @@ Don't forget to give it a star ⭐
 
 ## Demo
 
-| [Live Demo](https://rebrand.ly/6390b8) | Rounded With Shadows | Rounded With Cursor |
-|--|--|--|
+
+| [Live Demo](https://rebrand.ly/6390b8)                                                                                                                        | Rounded With Shadows                                                                                                           | Rounded With Cursor                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | <a href="https://rebrand.ly/6390b8"> ![Live Demo](https://user-images.githubusercontent.com/26390946/155666045-aa93bf48-f8e7-407c-bb19-bc247d9e12bd.png) <a/> | ![Rounded With Shadows](https://user-images.githubusercontent.com/26390946/155599527-fe934f2c-5124-4754-bbf6-bb97d55a77c0.gif) | ![Rounded With Cursor](https://user-images.githubusercontent.com/26390946/155599870-03387689-7be2-4a30-8e6f-90136a0515be.gif) |
 
-| Rounded Filled | With Bottom Cursor | Filled |
-|--|--|--|
-| ![Rounded Filled](https://user-images.githubusercontent.com/26390946/155600099-d0a02f55-09e6-4142-92de-066cd71cf211.gif) | ![With Bottom Cursor](https://user-images.githubusercontent.com/26390946/155600276-0380b3b4-3d9c-4ea8-87d0-4f7ebd86e460.gif) | ![Filled](https://user-images.githubusercontent.com/26390946/155600427-901c1eae-e565-4cf8-a338-8ac40eb1149c.gif) |
 
+| Rounded Filled                                                                                                           | With Bottom Cursor                                                                                                           | Filled                                                                                                           |
+| -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| ![Rounded Filled](https://user-images.githubusercontent.com/26390946/155600099-d0a02f55-09e6-4142-92de-066cd71cf211.gif) | ![With Bottom Cursor](https://user-images.githubusercontent.com/26390946/155600276-0380b3b4-3d9c-4ea8-87d0-4f7ebd86e460.gif) | ![Filled](https://user-images.githubusercontent.com/26390946/155600427-901c1eae-e565-4cf8-a338-8ac40eb1149c.gif) |
 
 ## Getting Started
 
-The pin has 6 states `default` `focused`, `submitted`, `following`, `disabled`, `error`, you can customize each state by specifying theme parameter.  
-Pin smoothly animates from one state to another automatically.  
+The pin has 6 states `default` `focused`, `submitted`, `following`, `disabled`, `error`, you can customize each state by specifying theme parameter.
+Pin smoothly animates from one state to another automatically.
 `PinTheme Class`
 
-| Property  | Default/Type |  
-| ------------- | :-------------: |  
-| width  | 56.0 |  
-| height  | 60.0 |  
-| textStyle  |  TextStyle() |  
-| margin  | EdgeInsetsGeometry |  
-| padding  | EdgeInsetsGeometry |  
-| constraints  | BoxConstraints |  
+
+| Property    |    Default/Type    |
+| ------------- | :------------------: |
+| width       |        56.0        |
+| height      |        60.0        |
+| textStyle   |    TextStyle()    |
+| margin      | EdgeInsetsGeometry |
+| padding     | EdgeInsetsGeometry |
+| constraints |   BoxConstraints   |
 
 You can use standard Pinput like so
-```dart  
+
+```dart
   Widget buildPinPut() {  
     return Pinput(  
       onCompleted: (pin) => print(pin),  
     );  
   }  
-```  
+```
+
 If you want to customize it, create `defaultPinTheme` first.
 
-```dart  
+```dart
     final defaultPinTheme = PinTheme(  
       width: 56,  
       height: 56,  
@@ -83,10 +86,12 @@ If you want to customize it, create `defaultPinTheme` first.
         borderRadius: BorderRadius.circular(20),  
       ),  
     );  
-```  
-if you want all pins to be the same don't pass other theme parameters,  
+```
+
+if you want all pins to be the same don't pass other theme parameters,
 If not, create `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `errorPinTheme` from `defaultPinTheme`
-```dart  
+
+```dart
     final focusedPinTheme = defaultPinTheme.copyDecorationWith(  
       border: Border.all(color: Color.fromRGBO(114, 178, 238, 1)),  
       borderRadius: BorderRadius.circular(8),  
@@ -97,9 +102,11 @@ If not, create `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `err
         color: Color.fromRGBO(234, 239, 243, 1),  
       ),  
     );  
-```  
+```
+
 Put everything together
-```dart  
+
+```dart
     final defaultPinTheme = PinTheme(  
       width: 56,  
       height: 56,  
@@ -132,47 +139,62 @@ Put everything together
       showCursor: true,  
       onCompleted: (pin) => print(pin),  
     );  
-```  
+```
 
 ## SMS Autofill
-On Android, you have two options, [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview?hl=en) and [SMS User Consent API](https://developers.google.com/identity/sms-retriever/user-consent/overview),
+
+### iOS
+
+Works out of the box, by tapping the code on top of the keyboard
+
+### Android
+
+You have two options, [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview?hl=en) and [SMS User Consent API](https://developers.google.com/identity/sms-retriever/user-consent/overview),
+
 [SmartAuth](https://github.com/Tkko/flutter_smart_auth) is a wrapper package for Flutter for these APIs and it is behind the autofill support of Pinput
 
-##### SMS Retriever API
+###### SMS Retriever API
+
 To use Retriever API you need The App [signature](https://stackoverflow.com/questions/53849023/android-sms-retriever-api-computing-apps-hash-string-problem), Pinput calculates the hash for you and prints it in the console
 Sms code will be automatically applied, without user interaction.
 
+`Note that The App Signature might be different for debug and release mode`
+
 ```dart
     return Pinput(
-      isAndroidAutofillEnabled: true,
+      androidSmsAutofillMethod:  AndroidSmsAutofillMethod.smsRetrieverApi,
     );
 ```
+
 Example of printed signature
 `Pinput: App Signature for SMS Retriever API Is: kg+TZ3A5qzS`
 
-##### SMS User Consent API
+###### SMS User Consent API
+
 You don't need the App signature, the user will be prompted to confirm reading the message
 
 ```dart
     return Pinput(
-      isAndroidAutofillEnabled: true,
-      useUserConsentApiOnAndroid: true,
+      androidSmsAutofillMethod:  AndroidSmsAutofillMethod.smsUserConsentApi,
     );
 ```
- <img src="https://user-images.githubusercontent.com/26390946/158870589-a2d631fa-55d7-487f-8c30-d378bab4c21d.png" style="height: 700px; width: auto; image-rendering: pixelated;" alt="Request Hint" />
 
+<img src="https://user-images.githubusercontent.com/26390946/158870589-a2d631fa-55d7-487f-8c30-d378bab4c21d.png" style="height: 700px; width: auto; image-rendering: pixelated;" alt="Request Hint" />
 
 ### SmartAuth
+
 If autofill support doesn't fit your needs, you can use [SmartAuth](https://github.com/Tkko/flutter_smart_auth) to implement autofill,
 Also, you can suggest a phone number by showing native Android dialog.
+
 `No need to add SmartAuth dependency, it is already added`
 
-## See Example app for more Pinput examples  [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)
+## See Example app for more [templates](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)
 
 ## Tips
 
 - #### Controller
-```dart  
+
+```dart
     /// Create Controller  
     final pinController = TextEditingController();  
   
@@ -184,16 +206,17 @@ Also, you can suggest a phone number by showing native Android dialog.
   
     /// Delete last character  
     pinController.delete();  
-      
+  
     /// Don't call setText, append, delete in build method, this is just illustration.  
   
     return Pinput(  
       controller: pinController,  
     );  
-```  
+```
 
 - #### Focus
-```dart  
+
+```dart
     /// Create FocusNode  
     final pinputFocusNode = FocusNode();  
   
@@ -202,16 +225,17 @@ Also, you can suggest a phone number by showing native Android dialog.
   
     /// UnFocus pinput  
     pinputFocusNode.unfocus();  
-      
+  
     /// Don't call requestFocus, unfocus in build method, this is just illustration.  
   
     return Pinput(  
       focusNode: pinputFocusNode,  
     );  
-```  
+```
 
 - #### Validation
-```dart  
+
+```dart
     /// Create key
     final formKey = GlobalKey<FormState>();
 
@@ -240,10 +264,11 @@ Also, you can suggest a phone number by showing native Android dialog.
         },
       ),
     );
-```  
+```
+
 ## Properties
 
-```dart  
+```dart
   /// Theme of the pin in default state  
   final PinTheme? defaultPinTheme;  
   
