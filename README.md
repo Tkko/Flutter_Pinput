@@ -9,7 +9,7 @@ Flutter package to create easily customizable Pin code input field, that your de
 
 Please see the Changelog if you are migrating from version < 2.0.0
 
-Bonus tip: 🤫 Tell your PM that you need a week to implement the feature and chill with your friends meanwhile.
+`Bonus tip: 🤫 Tell your PM that you need a week to implement the feature and chill with your friends meanwhile.`
 
 ## Features:
 
