@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  smart_auth
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)
