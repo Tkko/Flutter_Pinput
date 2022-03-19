@@ -1,4 +1,4 @@
-## 2.2.2 -17/03/2022
+## 2.2.3 -19/03/2022
 Added Android SMS Autofill support
 
 | Property   | Meaning/Default |

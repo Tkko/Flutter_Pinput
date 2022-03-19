@@ -81,16 +81,11 @@ class _PinputState extends State<Pinput>
 
   /// Android Autofill
   void maybeInitSmartAuth() async {
-    bool isAndroid() {
-      try {
-        return Platform.isAndroid;
-      } catch (e) {
-        return false;
-      }
-    }
+    final isAndroid = defaultTargetPlatform == TargetPlatform.android;
+    final isAutofillEnabled =
+        widget.androidSmsAutofillMethod != AndroidSmsAutofillMethod.none;
 
-    if (isAndroid() &&
-        widget.androidSmsAutofillMethod != AndroidSmsAutofillMethod.none) {
+    if (isAndroid && isAutofillEnabled) {
       _smartAuth = SmartAuth();
       if (widget.androidSmsAutofillMethod ==
           AndroidSmsAutofillMethod.smsRetrieverApi) {
