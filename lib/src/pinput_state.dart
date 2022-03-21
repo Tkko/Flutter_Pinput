@@ -76,11 +76,13 @@ class _PinputState extends State<Pinput>
       widget.controller!.addListener(_handleTextEditingControllerChanges);
     }
     effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
-    maybeInitSmartAuth();
+    _maybeInitSmartAuth();
+    _maybeCheckClipboard();
+    WidgetsBinding.instance!.addObserver(this);
   }
 
   /// Android Autofill
-  void maybeInitSmartAuth() async {
+  void _maybeInitSmartAuth() async {
     final isAndroid = defaultTargetPlatform == TargetPlatform.android;
     final isAutofillEnabled =
         widget.androidSmsAutofillMethod != AndroidSmsAutofillMethod.none;
@@ -185,6 +187,7 @@ class _PinputState extends State<Pinput>
     _focusNode?.dispose();
     _controller?.dispose();
     _smartAuth?.removeSmsListener();
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
@@ -230,8 +233,13 @@ class _PinputState extends State<Pinput>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) async {
-    if (widget.onClipboardFound != null &&
-        appLifecycleState == AppLifecycleState.resumed) {
+    if (appLifecycleState == AppLifecycleState.resumed) {
+      _maybeCheckClipboard();
+    }
+  }
+
+  void _maybeCheckClipboard() async {
+    if (widget.onClipboardFound != null) {
       final clipboard = await _getClipboardOrEmpty();
       if (clipboard.length == widget.length) {
         widget.onClipboardFound!.call(clipboard);

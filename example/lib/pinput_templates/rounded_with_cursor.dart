@@ -46,11 +46,15 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
       focusNode: focusNode,
       androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsRetrieverApi,
       defaultPinTheme: defaultPinTheme,
-      validator: (s) {
-        return s == '2222' ? null : 'Pin is incorrect';
+      validator: (value) {
+        return value == '2222' ? null : 'Pin is incorrect';
+      },
+      onClipboardFound: (value) {
+        debugPrint('onClipboardFound: $value');
+        pinController.setText(value);
       },
       hapticFeedbackType: HapticFeedbackType.lightImpact,
-      onCompleted: print,
+      onCompleted: debugPrint,
       cursor: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

@@ -1,3 +1,7 @@
+## 2.2.4 -21/03/2022
+- Fixed onClipboardFound
+
+
 ## 2.2.3 -19/03/2022
 Added Android SMS Autofill support
 
