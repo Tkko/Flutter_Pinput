@@ -1,3 +1,11 @@
+## 2.2.5 -28/03/2022
+Added
+
+| Property   | Meaning/Default |
+|------------|:-------:|
+| crossAxisAlignment  | CrossAxisAlignment.start |
+
+
 ## 2.2.4 -21/03/2022
 - Fixed onClipboardFound
 

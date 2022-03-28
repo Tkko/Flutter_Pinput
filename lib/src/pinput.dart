@@ -47,6 +47,7 @@ class Pinput extends StatefulWidget {
     this.smsCodeMatcher = _defaultSmsCodeMatcher,
     this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
     this.mainAxisAlignment = MainAxisAlignment.center,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
     this.pinContentAlignment = Alignment.center,
     this.animationCurve = Curves.easeIn,
     this.animationDuration = _animationDuration,
@@ -178,6 +179,9 @@ class Pinput extends StatefulWidget {
 
   /// Defines how [Pinput] fields are being placed inside [Row]
   final MainAxisAlignment mainAxisAlignment;
+
+  /// Defines how [Pinput] and ([errorText] or [errorBuilder]) are being placed inside [Column]
+  final CrossAxisAlignment crossAxisAlignment;
 
   /// Defines how each [Pinput] field are being placed within the container
   final AlignmentGeometry pinContentAlignment;
