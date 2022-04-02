@@ -1,7 +1,19 @@
 <div align="center">  
  <h1 align="center" style="font-size: 70px;">Flutter Pinput From <a href="https://www.linkedin.com/in/thornike/" target="_blank">Tornike </a> & Great <a href="https://github.com/Tkko/Flutter_Pinput/graphs/contributors" target="_blank">Contributors</a> </h1>
+<!--  Donations -->
+ <a href="https://ko-fi.com/flutterman">
+  <img width="300" src="https://user-images.githubusercontent.com/26390946/161375567-9e14cd0e-1675-4896-a576-a449b0bcd293.png">
+ </a>
+ <div align="center">
+   <a href="https://www.buymeacoffee.com/fman">
+    <img width="150" alt="buymeacoffee" src="https://user-images.githubusercontent.com/26390946/161375563-69c634fd-89d2-45ac-addd-931b03996b34.png">
+  </a>
+   <a href="https://ko-fi.com/flutterman">
+    <img width="150" alt="Ko-fi" src="https://user-images.githubusercontent.com/26390946/161375565-e7d64410-bbcf-4a28-896b-7514e106478e.png">
+  </a>
+ </div>
+<!--  Donations -->
 
-<a href="https://www.buymeacoffee.com/fman" target="_blank"><img src="https://img.buymeacoffee.com/button-api/?text=Thank me with a coffee&emoji=&slug=fman&button_colour=40DCA5&font_colour=ffffff&font_family=Poppins&outline_colour=000000&coffee_colour=FFDD00"></a>
  
 [![Pub package](https://img.shields.io/pub/v/pinput.svg)](https://pub.dev/packages/pinput)
 [![Github starts](https://img.shields.io/github/stars/tkko/flutter_pinput.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/tkko/flutter_pinput)
