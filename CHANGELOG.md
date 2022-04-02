@@ -1,3 +1,8 @@
+## 2.2.6 -02/04/2022
+- Updated smart_auth
+- Updated readme
+
+
 ## 2.2.5 -28/03/2022
 Added
 

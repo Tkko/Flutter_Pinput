@@ -4,7 +4,8 @@ import 'package:pinput/pinput.dart';
 
 class RoundedWithCustomCursor extends StatefulWidget {
   @override
-  _RoundedWithCustomCursorState createState() => _RoundedWithCustomCursorState();
+  _RoundedWithCustomCursorState createState() =>
+      _RoundedWithCustomCursorState();
 
   @override
   String toStringShort() => 'Rounded With Cursor';
