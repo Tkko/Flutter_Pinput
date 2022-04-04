@@ -45,6 +45,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
       controller: pinController,
       focusNode: focusNode,
       androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsRetrieverApi,
+      listenForMultipleSmsOnAndroid: true,
       defaultPinTheme: defaultPinTheme,
       validator: (value) {
         return value == '2222' ? null : 'Pin is incorrect';

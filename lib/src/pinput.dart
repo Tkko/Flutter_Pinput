@@ -46,6 +46,7 @@ class Pinput extends StatefulWidget {
     this.separator = _defaultSeparator,
     this.smsCodeMatcher = _defaultSmsCodeMatcher,
     this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
+    this.listenForMultipleSmsOnAndroid = false,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.pinContentAlignment = Alignment.center,
@@ -124,6 +125,10 @@ class Pinput extends StatefulWidget {
   /// [AndroidSmsAutofillMethod.smsUserConsentApi]
   /// More about SMS User Consent API [https://developers.google.com/identity/sms-retriever/user-consent/overview]
   final AndroidSmsAutofillMethod androidSmsAutofillMethod;
+
+  /// If true [androidSmsAutofillMethod] is not [AndroidSmsAutofillMethod.none]
+  /// Pinput will listen multiple sms codes, helpful if user request another sms code
+  final bool listenForMultipleSmsOnAndroid;
 
   /// Used to extract code from SMS for Android Autofill if [androidSmsAutofillMethod] is enabled
   /// By default it is [_defaultSmsCodeMatcher]

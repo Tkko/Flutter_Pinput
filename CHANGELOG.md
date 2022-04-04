@@ -1,3 +1,10 @@
+## 2.2.7 -04/04/2022
+- Option to listen for multiple sms on android
+| Property   | Meaning/Default |
+|------------|:-------:|
+| listenForMultipleSmsOnAndroid  | false |
+
+
 ## 2.2.6 -02/04/2022
 - Updated smart_auth
 - Updated readme

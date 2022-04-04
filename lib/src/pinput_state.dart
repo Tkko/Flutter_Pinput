@@ -89,18 +89,30 @@ class _PinputState extends State<Pinput>
 
     if (isAndroid && isAutofillEnabled) {
       _smartAuth = SmartAuth();
-      if (widget.androidSmsAutofillMethod ==
-          AndroidSmsAutofillMethod.smsRetrieverApi) {
-        _smartAuth!.getAppSignature().then((value) => debugPrint(
-            'Pinput: App Signature for SMS Retriever API Is: $value'));
-      }
-      final useUserConsentApi = widget.androidSmsAutofillMethod ==
-          AndroidSmsAutofillMethod.smsUserConsentApi;
-      final res =
-          await _smartAuth!.getSmsCode(useUserConsentApi: useUserConsentApi);
-      if (res.succeed && res.code?.length == widget.length) {
-        _effectiveController.setText(res.code!);
-      }
+      _maybePrintAppSignature();
+      _listenForSmsCode();
+    }
+  }
+
+  void _maybePrintAppSignature() async {
+    if (widget.androidSmsAutofillMethod ==
+        AndroidSmsAutofillMethod.smsRetrieverApi) {
+      final res = await _smartAuth!.getAppSignature();
+      debugPrint('Pinput: App Signature for SMS Retriever API Is: $res');
+    }
+  }
+
+  void _listenForSmsCode() async {
+    final useUserConsentApi = widget.androidSmsAutofillMethod ==
+        AndroidSmsAutofillMethod.smsUserConsentApi;
+    final res =
+        await _smartAuth!.getSmsCode(useUserConsentApi: useUserConsentApi);
+    if (res.succeed && res.codeFound && res.code!.length == widget.length) {
+      _effectiveController.setText(res.code!);
+    }
+    // Listen for multiple sms codes
+    if (widget.listenForMultipleSmsOnAndroid) {
+      _listenForSmsCode();
     }
   }
 
