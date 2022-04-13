@@ -4,8 +4,7 @@ import 'package:pinput/pinput.dart';
 
 class RoundedWithCustomCursor extends StatefulWidget {
   @override
-  _RoundedWithCustomCursorState createState() =>
-      _RoundedWithCustomCursorState();
+  _RoundedWithCustomCursorState createState() => _RoundedWithCustomCursorState();
 
   @override
   String toStringShort() => 'Rounded With Cursor';
@@ -47,6 +46,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
       androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsRetrieverApi,
       listenForMultipleSmsOnAndroid: true,
       defaultPinTheme: defaultPinTheme,
+      useNativeKeyboard: false,
       validator: (value) {
         return value == '2222' ? null : 'Pin is incorrect';
       },
