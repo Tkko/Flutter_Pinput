@@ -78,7 +78,7 @@ class _PinputState extends State<Pinput>
     effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
     _maybeInitSmartAuth();
     _maybeCheckClipboard();
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   /// Android Autofill
@@ -199,7 +199,7 @@ class _PinputState extends State<Pinput>
     _focusNode?.dispose();
     _controller?.dispose();
     _smartAuth?.removeSmsListener();
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
