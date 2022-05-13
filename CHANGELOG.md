@@ -1,3 +1,7 @@
+## 2.2.8 -13/05/2022
+- Fixed dart 2.17 hints
+
+
 ## 2.2.7 -04/04/2022
 - Option to listen for multiple sms on android
 | Property   | Meaning/Default |
