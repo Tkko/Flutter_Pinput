@@ -22,11 +22,16 @@ void main() {
     final length = 4;
     final focusNode = FocusNode();
     final defaultTheme = PinTheme(decoration: BoxDecoration(color: Colors.red));
-    final focusedTheme = defaultTheme.copyDecorationWith(color: Colors.greenAccent.withOpacity(.9));
-    final submittedTheme = defaultTheme.copyDecorationWith(color: Colors.greenAccent.withOpacity(.8));
-    final followingTheme = defaultTheme.copyDecorationWith(color: Colors.greenAccent.withOpacity(.7));
-    final disabledTheme = defaultTheme.copyDecorationWith(color: Colors.greenAccent.withOpacity(.6));
-    final errorTheme = defaultTheme.copyDecorationWith(color: Colors.greenAccent.withOpacity(.5));
+    final focusedTheme = defaultTheme.copyDecorationWith(
+        color: Colors.greenAccent.withOpacity(.9));
+    final submittedTheme = defaultTheme.copyDecorationWith(
+        color: Colors.greenAccent.withOpacity(.8));
+    final followingTheme = defaultTheme.copyDecorationWith(
+        color: Colors.greenAccent.withOpacity(.7));
+    final disabledTheme = defaultTheme.copyDecorationWith(
+        color: Colors.greenAccent.withOpacity(.6));
+    final errorTheme = defaultTheme.copyDecorationWith(
+        color: Colors.greenAccent.withOpacity(.5));
 
     await tester.pumpWidget(
       MaterialApp(
@@ -47,7 +52,8 @@ void main() {
 
     void _testState(int count, PinTheme theme) {
       expect(
-        find.byWidgetPredicate((w) => w is AnimatedContainer && w.decoration == theme.decoration),
+        find.byWidgetPredicate(
+            (w) => w is AnimatedContainer && w.decoration == theme.decoration),
         findsNWidgets(count),
       );
     }
@@ -90,7 +96,8 @@ void main() {
     _testState(0, disabledTheme);
   });
 
-  testWidgets('Should properly handle focused state', (WidgetTester tester) async {
+  testWidgets('Should properly handle focused state',
+      (WidgetTester tester) async {
     final focusNode = FocusNode();
     final defaultTheme = PinTheme(decoration: BoxDecoration());
     final focusedTheme = defaultTheme.copyDecorationWith(color: Colors.red);
@@ -114,7 +121,8 @@ void main() {
     expect(find.text('|'), findsOneWidget);
 
     expect(
-      find.byWidgetPredicate((w) => w is AnimatedContainer && w.decoration == focusedTheme.decoration),
+      find.byWidgetPredicate((w) =>
+          w is AnimatedContainer && w.decoration == focusedTheme.decoration),
       findsOneWidget,
     );
   });
@@ -231,7 +239,8 @@ void main() {
     expect(tapCount, 3);
   });
 
-  testWidgets('onTap is not called, field is disabled', (WidgetTester tester) async {
+  testWidgets('onTap is not called, field is disabled',
+      (WidgetTester tester) async {
     int tapCount = 0;
 
     await tester.pumpWidget(

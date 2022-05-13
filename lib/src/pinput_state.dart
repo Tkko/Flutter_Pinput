@@ -78,7 +78,9 @@ class _PinputState extends State<Pinput>
     effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
     _maybeInitSmartAuth();
     _maybeCheckClipboard();
-    WidgetsBinding.instance.addObserver(this);
+    // https://github.com/Tkko/Flutter_Pinput/issues/89
+    // ignore: unnecessary_cast
+    (WidgetsBinding.instance as WidgetsBinding).addObserver(this);
   }
 
   /// Android Autofill
@@ -199,7 +201,9 @@ class _PinputState extends State<Pinput>
     _focusNode?.dispose();
     _controller?.dispose();
     _smartAuth?.removeSmsListener();
-    WidgetsBinding.instance.removeObserver(this);
+    // https://github.com/Tkko/Flutter_Pinput/issues/89
+    // ignore: unnecessary_cast
+    (WidgetsBinding.instance as WidgetsBinding).removeObserver(this);
     super.dispose();
   }
 

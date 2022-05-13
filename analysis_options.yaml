@@ -1,13 +1,13 @@
 analyzer:
-  strong-mode: 
+  strong-mode:
     implicit-dynamic: false
   errors:
     missing_required_param: warning
     missing_return: warning
     todo: ignore
   exclude:
-  - flutter/**
-  - lib/api/*.dart
+    - flutter/**
+    - lib/api/*.dart
 
 linter:
   rules:
