@@ -41,47 +41,56 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
       ),
     );
 
-    return Pinput(
-      controller: pinController,
-      focusNode: focusNode,
-      androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsRetrieverApi,
-      listenForMultipleSmsOnAndroid: true,
-      defaultPinTheme: defaultPinTheme,
-      validator: (value) {
-        return value == '2222' ? null : 'Pin is incorrect';
-      },
-      onClipboardFound: (value) {
-        debugPrint('onClipboardFound: $value');
-        pinController.setText(value);
-      },
-      hapticFeedbackType: HapticFeedbackType.lightImpact,
-      onCompleted: debugPrint,
-      cursor: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            margin: EdgeInsets.only(bottom: 9),
-            width: 22,
-            height: 1,
-            color: focusedBorderColor,
+    return Directionality(
+      // Specify direction if desired
+      textDirection: TextDirection.ltr,
+      child: Pinput(
+        controller: pinController,
+        focusNode: focusNode,
+        androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
+        listenForMultipleSmsOnAndroid: true,
+        defaultPinTheme: defaultPinTheme,
+        validator: (value) {
+          return value == '2222' ? null : 'Pin is incorrect';
+        },
+        onClipboardFound: (value) {
+          debugPrint('onClipboardFound: $value');
+          pinController.setText(value);
+        },
+        hapticFeedbackType: HapticFeedbackType.lightImpact,
+        onCompleted: (pin) {
+          debugPrint('onCompleted: $pin');
+        },
+        onChanged: (value) {
+          debugPrint('onChanged: $value');
+        },
+        cursor: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              margin: EdgeInsets.only(bottom: 9),
+              width: 22,
+              height: 1,
+              color: focusedBorderColor,
+            ),
+          ],
+        ),
+        focusedPinTheme: defaultPinTheme.copyWith(
+          decoration: defaultPinTheme.decoration!.copyWith(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: focusedBorderColor),
           ),
-        ],
-      ),
-      focusedPinTheme: defaultPinTheme.copyWith(
-        decoration: defaultPinTheme.decoration!.copyWith(
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: focusedBorderColor),
         ),
-      ),
-      submittedPinTheme: defaultPinTheme.copyWith(
-        decoration: defaultPinTheme.decoration!.copyWith(
-          color: fillColor,
-          borderRadius: BorderRadius.circular(19),
-          border: Border.all(color: focusedBorderColor),
+        submittedPinTheme: defaultPinTheme.copyWith(
+          decoration: defaultPinTheme.decoration!.copyWith(
+            color: fillColor,
+            borderRadius: BorderRadius.circular(19),
+            border: Border.all(color: focusedBorderColor),
+          ),
         ),
-      ),
-      errorPinTheme: defaultPinTheme.copyBorderWith(
-        border: Border.all(color: Colors.redAccent),
+        errorPinTheme: defaultPinTheme.copyBorderWith(
+          border: Border.all(color: Colors.redAccent),
+        ),
       ),
     );
   }

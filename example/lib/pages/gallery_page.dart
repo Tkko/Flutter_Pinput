@@ -53,6 +53,8 @@ class GalleryPageState extends State<GalleryPage>
     });
   }
 
+  final controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return ScrollConfiguration(

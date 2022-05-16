@@ -2,16 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pinput/pinput.dart';
 
+import 'helpers/helpers.dart';
+
 void main() {
   testWidgets('Pins are displayed', (WidgetTester tester) async {
     final length = 4;
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: Pinput(length: length),
-        ),
-      ),
-    );
+    await tester.pumpApp(Pinput(length: length));
 
     expect(find.byType(Flexible), findsNWidgets(length));
     expect(find.byType(AnimatedContainer), findsNWidgets(length));
@@ -33,20 +29,16 @@ void main() {
     final errorTheme = defaultTheme.copyDecorationWith(
         color: Colors.greenAccent.withOpacity(.5));
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: Pinput(
-            length: length,
-            focusNode: focusNode,
-            defaultPinTheme: defaultTheme,
-            focusedPinTheme: focusedTheme,
-            submittedPinTheme: submittedTheme,
-            followingPinTheme: followingTheme,
-            disabledPinTheme: disabledTheme,
-            errorPinTheme: errorTheme,
-          ),
-        ),
+    await tester.pumpApp(
+      Pinput(
+        length: length,
+        focusNode: focusNode,
+        defaultPinTheme: defaultTheme,
+        focusedPinTheme: focusedTheme,
+        submittedPinTheme: submittedTheme,
+        followingPinTheme: followingTheme,
+        disabledPinTheme: disabledTheme,
+        errorPinTheme: errorTheme,
       ),
     );
 
@@ -101,16 +93,12 @@ void main() {
     final focusNode = FocusNode();
     final defaultTheme = PinTheme(decoration: BoxDecoration());
     final focusedTheme = defaultTheme.copyDecorationWith(color: Colors.red);
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: Pinput(
-            focusNode: focusNode,
-            autofocus: true,
-            defaultPinTheme: defaultTheme,
-            focusedPinTheme: focusedTheme,
-          ),
-        ),
+    await tester.pumpApp(
+      Pinput(
+        focusNode: focusNode,
+        autofocus: true,
+        defaultPinTheme: defaultTheme,
+        focusedPinTheme: focusedTheme,
       ),
     );
 
@@ -128,14 +116,10 @@ void main() {
   });
 
   testWidgets('Should display custom cursor', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: Pinput(
-            autofocus: true,
-            cursor: const FlutterLogo(),
-          ),
-        ),
+    await tester.pumpApp(
+      Pinput(
+        autofocus: true,
+        cursor: const FlutterLogo(),
       ),
     );
 
@@ -143,88 +127,148 @@ void main() {
     expect(find.byType(FlutterLogo), findsOneWidget);
   });
 
-  testWidgets('onChanged callback is called', (WidgetTester tester) async {
-    String? fieldValue;
+  group('onChanged should work properly', () {
+    testWidgets('onChanged should work with controller',
+        (WidgetTester tester) async {
+      String? fieldValue;
+      int called = 0;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: Pinput(
-            onChanged: (value) => fieldValue = value,
-          ),
+      await tester.pumpApp(
+        Pinput(
+          onChanged: (value) {
+            fieldValue = value;
+            called++;
+          },
         ),
-      ),
-    );
+      );
 
-    expect(fieldValue, isNull);
+      expect(fieldValue, isNull);
+      expect(called, 0);
 
-    Future<void> checkText(String testValue) async {
-      await tester.enterText(find.byType(EditableText), testValue);
-      expect(fieldValue, equals(testValue));
-    }
+      Future<void> checkText(String testValue) async {
+        await tester.enterText(find.byType(EditableText), testValue);
+        expect(fieldValue, equals(testValue));
+      }
 
-    await checkText('123');
-    await checkText('');
+      await checkText('123');
+      expect(called, 1);
+
+      await checkText('123');
+      expect(called, 1);
+
+      await checkText('');
+      expect(called, 2);
+    });
+
+    testWidgets('onChanged should work with controller',
+        (WidgetTester tester) async {
+      String? fieldValue;
+      int called = 0;
+      final TextEditingController controller = TextEditingController();
+
+      await tester.pumpApp(
+        Pinput(
+          controller: controller,
+          onChanged: (value) {
+            fieldValue = value;
+            called++;
+          },
+        ),
+      );
+
+      expect(fieldValue, isNull);
+      expect(called, 0);
+
+      await tester.enterText(find.byType(EditableText), '11');
+      expect(fieldValue, equals('11'));
+      expect(called, 1);
+
+      controller.setText('12');
+      expect(fieldValue, equals('12'));
+      expect(called, 2);
+
+      controller.setText('12');
+      expect(fieldValue, equals('12'));
+      expect(called, 2);
+
+      controller.clear();
+      expect(fieldValue, equals(''));
+      expect(called, 3);
+    });
   });
 
-  testWidgets('onCompleted callback is called', (WidgetTester tester) async {
-    String? fieldValue;
+  group('onCompleted should work properly', () {
+    testWidgets('onCompleted works without controller',
+        (WidgetTester tester) async {
+      String? fieldValue;
+      int called = 0;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: Pinput(
-            length: 4,
-            onCompleted: (value) => fieldValue = value,
-          ),
+      await tester.pumpApp(
+        Pinput(
+          length: 4,
+          onCompleted: (value) {
+            fieldValue = value;
+            called++;
+          },
         ),
-      ),
-    );
+      );
 
-    expect(fieldValue, isNull);
+      expect(fieldValue, isNull);
+      expect(called, 0);
 
-    await tester.enterText(find.byType(EditableText), '1234');
-    expect(fieldValue, equals('1234'));
+      await tester.enterText(find.byType(EditableText), '1234');
+      expect(fieldValue, equals('1234'));
+      expect(called, 1);
 
-    fieldValue = null;
-    await tester.enterText(find.byType(EditableText), '123');
-    expect(fieldValue, isNull);
-  });
+      fieldValue = null;
+      await tester.enterText(find.byType(EditableText), '123');
+      expect(fieldValue, isNull);
+      expect(called, 1);
+    });
 
-  testWidgets('onCompleted callback is called', (WidgetTester tester) async {
-    String? fieldValue;
+    testWidgets('onCompleted callback is called', (WidgetTester tester) async {
+      final TextEditingController controller = TextEditingController();
+      String? fieldValue;
+      int called = 0;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: Pinput(
-            length: 4,
-            onCompleted: (value) => fieldValue = value,
-          ),
+      await tester.pumpApp(
+        Pinput(
+          controller: controller,
+          onCompleted: (value) {
+            fieldValue = value;
+            called++;
+          },
         ),
-      ),
-    );
+      );
 
-    expect(fieldValue, isNull);
+      expect(fieldValue, isNull);
+      expect(called, 0);
 
-    await tester.enterText(find.byType(EditableText), '1234');
-    expect(fieldValue, equals('1234'));
+      controller.setText('1234');
+      expect(fieldValue, equals('1234'));
+      expect(called, 1);
 
-    fieldValue = null;
-    await tester.enterText(find.byType(EditableText), '123');
-    expect(fieldValue, isNull);
+      controller.clear();
+      expect(fieldValue, equals('1234'));
+      expect(called, 1);
+
+      fieldValue = null;
+      await tester.enterText(find.byType(EditableText), '123');
+      expect(fieldValue, isNull);
+      expect(called, 1);
+
+      controller.setText('12345');
+      expect(fieldValue, isNull);
+      expect(called, 1);
+    });
   });
 
   testWidgets('onTap is called upon tap', (WidgetTester tester) async {
     int tapCount = 0;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: Pinput(
-            onTap: () => ++tapCount,
-          ),
-        ),
+    await tester.pumpApp(
+      Pinput(
+        onTap: () => ++tapCount,
       ),
     );
 
@@ -243,14 +287,10 @@ void main() {
       (WidgetTester tester) async {
     int tapCount = 0;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: Pinput(
-            enabled: false,
-            onTap: () => ++tapCount,
-          ),
-        ),
+    await tester.pumpApp(
+      Pinput(
+        enabled: false,
+        onTap: () => ++tapCount,
       ),
     );
 
@@ -263,13 +303,9 @@ void main() {
   testWidgets('onLongPress is called', (WidgetTester tester) async {
     int tapCount = 0;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: Pinput(
-            onLongPress: () => ++tapCount,
-          ),
-        ),
+    await tester.pumpApp(
+      Pinput(
+        onLongPress: () => ++tapCount,
       ),
     );
 
@@ -287,13 +323,9 @@ void main() {
   testWidgets('onSubmitted callback is called', (WidgetTester tester) async {
     String? fieldValue;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Material(
-          child: Pinput(
-            onSubmitted: (value) => fieldValue = value,
-          ),
-        ),
+    await tester.pumpApp(
+      Pinput(
+        onSubmitted: (value) => fieldValue = value,
       ),
     );
 

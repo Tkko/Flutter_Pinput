@@ -1,5 +1,13 @@
 part of 'pinput.dart';
 
+/// This allows a value of type T or T?
+/// to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become
+/// non-nullable can still be used with `!` and `?`
+/// to support older versions of the API as well.
+T? _ambiguate<T>(T? value) => value;
+
 class _PinputState extends State<Pinput>
     with RestorationMixin, WidgetsBindingObserver, PinputUtilsMixin
     implements TextSelectionGestureDetectorBuilderDelegate, AutofillClient {
@@ -79,8 +87,7 @@ class _PinputState extends State<Pinput>
     _maybeInitSmartAuth();
     _maybeCheckClipboard();
     // https://github.com/Tkko/Flutter_Pinput/issues/89
-    // ignore: unnecessary_cast
-    (WidgetsBinding.instance as WidgetsBinding).addObserver(this);
+    _ambiguate(WidgetsBinding.instance)!.addObserver(this);
   }
 
   /// Android Autofill
@@ -161,6 +168,7 @@ class _PinputState extends State<Pinput>
       _createLocalController(oldWidget.controller!.value);
     } else if (widget.controller != null && oldWidget.controller == null) {
       unregisterFromRestoration(_controller!);
+      _controller!.removeListener(_handleTextEditingControllerChanges);
       _controller!.dispose();
       _controller = null;
     }
@@ -190,6 +198,7 @@ class _PinputState extends State<Pinput>
     _controller = value == null
         ? RestorableTextEditingController()
         : RestorableTextEditingController.fromValue(value);
+    _controller!.addListener(_handleTextEditingControllerChanges);
     if (!restorePending) {
       _registerController();
     }
@@ -202,8 +211,7 @@ class _PinputState extends State<Pinput>
     _controller?.dispose();
     _smartAuth?.removeSmsListener();
     // https://github.com/Tkko/Flutter_Pinput/issues/89
-    // ignore: unnecessary_cast
-    (WidgetsBinding.instance as WidgetsBinding).removeObserver(this);
+    _ambiguate(WidgetsBinding.instance)!.removeObserver(this);
     super.dispose();
   }
 
@@ -372,10 +380,7 @@ class _PinputState extends State<Pinput>
         child: EditableText(
           maxLines: 1,
           style: _hiddenTextStyle,
-          onChanged: (String text) {
-            if (widget.controller == null) {
-              _onChanged(text);
-            }
+          onChanged: (_) {
             _maybeUseHaptic(widget.hapticFeedbackType);
           },
           expands: false,

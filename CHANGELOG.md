@@ -1,3 +1,8 @@
+## 2.2.9 -16/05/2022
+- onCompleted mot called
+- Added tests
+
+
 ## 2.2.8 -13/05/2022
 - Fixed dart 2.17 hints
 
