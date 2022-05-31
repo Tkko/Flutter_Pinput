@@ -413,6 +413,7 @@ class _PinputState extends State<Pinput>
           cursorColor: Colors.transparent,
           controller: _effectiveController,
           autofillHints: widget.autofillHints,
+          scrollPadding: widget.scrollPadding,
           selectionWidthStyle: BoxWidthStyle.tight,
           backgroundCursorColor: Colors.transparent,
           selectionHeightStyle: BoxHeightStyle.tight,

@@ -85,6 +85,7 @@ class Pinput extends StatefulWidget {
     this.errorBuilder,
     this.errorTextStyle,
     this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
+    this.scrollPadding = const EdgeInsets.all(20),
     Key? key,
   })  : assert(obscuringCharacter.length == 1),
         assert(length > 0),
@@ -308,6 +309,12 @@ class Pinput extends StatefulWidget {
 
   /// Return null if pin is valid or any String otherwise
   final PinputAutovalidateMode pinputAutovalidateMode;
+
+  /// When this widget receives focus and is not completely visible (for example scrolled partially
+  /// off the screen or overlapped by the keyboard)
+  /// then it will attempt to make itself visible by scrolling a surrounding [Scrollable], if one is present.
+  /// This value controls how far from the edges of a [Scrollable] the TextField will be positioned after the scroll.
+  final EdgeInsets scrollPadding;
 
   @override
   State<Pinput> createState() => _PinputState();
