@@ -1,3 +1,13 @@
+## 2.2.10 -31/05/2022
+- When this widget receives focus and is not completely visible (for example scrolled partially
+  off the screen or overlapped by the keyboard)
+  then it will attempt to make itself visible by scrolling a surrounding [Scrollable], if one is present.
+  This value controls how far from the edges of a [Scrollable] the TextField will be positioned after the scroll.
+  | Property   | Meaning/Default |
+  |------------|:-------:|
+  | scrollPadding  | EdgeInsets.all(20) |
+
+
 ## 2.2.9 -16/05/2022
 - onCompleted mot called
 - Added tests
