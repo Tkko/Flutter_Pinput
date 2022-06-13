@@ -115,7 +115,7 @@ class _PinputState extends State<Pinput>
     final useUserConsentApi = widget.androidSmsAutofillMethod ==
         AndroidSmsAutofillMethod.smsUserConsentApi;
     final res =
-        await _smartAuth!.getSmsCode(useUserConsentApi: useUserConsentApi);
+        await _smartAuth!.getSmsCode(useUserConsentApi: useUserConsentApi, matcher: widget.smsCodeMatcher!);
     if (res.succeed && res.codeFound && res.code!.length == widget.length) {
       _effectiveController.setText(res.code!);
     }
