@@ -133,7 +133,7 @@ class Pinput extends StatefulWidget {
 
   /// Used to extract code from SMS for Android Autofill if [androidSmsAutofillMethod] is enabled
   /// By default it is [_defaultSmsCodeMatcher]
-  final String? smsCodeMatcher;
+  final String smsCodeMatcher;
 
   /// Fires when user completes pin input
   final ValueChanged<String>? onCompleted;
