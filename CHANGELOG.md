@@ -1,3 +1,7 @@
+## 2.2.11 -14/06/2022
+- Fixed `smsCodeMatcher` ([PR](https://github.com/Tkko/Flutter_Pinput/pull/94))
+
+
 ## 2.2.10 -31/05/2022
 - When this widget receives focus and is not completely visible (for example scrolled partially
   off the screen or overlapped by the keyboard)

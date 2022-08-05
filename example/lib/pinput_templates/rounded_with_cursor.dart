@@ -4,8 +4,7 @@ import 'package:pinput/pinput.dart';
 
 class RoundedWithCustomCursor extends StatefulWidget {
   @override
-  _RoundedWithCustomCursorState createState() =>
-      _RoundedWithCustomCursorState();
+  _RoundedWithCustomCursorState createState() => _RoundedWithCustomCursorState();
 
   @override
   String toStringShort() => 'Rounded With Cursor';
@@ -14,6 +13,7 @@ class RoundedWithCustomCursor extends StatefulWidget {
 class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
   final pinController = TextEditingController();
   final focusNode = FocusNode();
+  final formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -41,56 +41,67 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
       ),
     );
 
-    return Directionality(
-      // Specify direction if desired
-      textDirection: TextDirection.ltr,
-      child: Pinput(
-        controller: pinController,
-        focusNode: focusNode,
-        androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
-        listenForMultipleSmsOnAndroid: true,
-        defaultPinTheme: defaultPinTheme,
-        validator: (value) {
-          return value == '2222' ? null : 'Pin is incorrect';
-        },
-        onClipboardFound: (value) {
-          debugPrint('onClipboardFound: $value');
-          pinController.setText(value);
-        },
-        hapticFeedbackType: HapticFeedbackType.lightImpact,
-        onCompleted: (pin) {
-          debugPrint('onCompleted: $pin');
-        },
-        onChanged: (value) {
-          debugPrint('onChanged: $value');
-        },
-        cursor: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Container(
-              margin: EdgeInsets.only(bottom: 9),
-              width: 22,
-              height: 1,
-              color: focusedBorderColor,
+    return Form(
+      key: formKey,
+      child: Column(
+        children: [
+          Directionality(
+            // Specify direction if desired
+            textDirection: TextDirection.ltr,
+            child: Pinput(
+              controller: pinController,
+              focusNode: focusNode,
+              androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
+              listenForMultipleSmsOnAndroid: true,
+              defaultPinTheme: defaultPinTheme,
+              validator: (value) {
+                return value == '2222' ? null : 'Pin is incorrect';
+              },
+              onClipboardFound: (value) {
+                debugPrint('onClipboardFound: $value');
+                pinController.setText(value);
+              },
+              hapticFeedbackType: HapticFeedbackType.lightImpact,
+              onCompleted: (pin) {
+                debugPrint('onCompleted: $pin');
+              },
+              onChanged: (value) {
+                debugPrint('onChanged: $value');
+              },
+              cursor: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(bottom: 9),
+                    width: 22,
+                    height: 1,
+                    color: focusedBorderColor,
+                  ),
+                ],
+              ),
+              focusedPinTheme: defaultPinTheme.copyWith(
+                decoration: defaultPinTheme.decoration!.copyWith(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: focusedBorderColor),
+                ),
+              ),
+              submittedPinTheme: defaultPinTheme.copyWith(
+                decoration: defaultPinTheme.decoration!.copyWith(
+                  color: fillColor,
+                  borderRadius: BorderRadius.circular(19),
+                  border: Border.all(color: focusedBorderColor),
+                ),
+              ),
+              errorPinTheme: defaultPinTheme.copyBorderWith(
+                border: Border.all(color: Colors.redAccent),
+              ),
             ),
-          ],
-        ),
-        focusedPinTheme: defaultPinTheme.copyWith(
-          decoration: defaultPinTheme.decoration!.copyWith(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: focusedBorderColor),
           ),
-        ),
-        submittedPinTheme: defaultPinTheme.copyWith(
-          decoration: defaultPinTheme.decoration!.copyWith(
-            color: fillColor,
-            borderRadius: BorderRadius.circular(19),
-            border: Border.all(color: focusedBorderColor),
+          TextButton(
+            onPressed: () => formKey.currentState!.validate(),
+            child: Text('Validate'),
           ),
-        ),
-        errorPinTheme: defaultPinTheme.copyBorderWith(
-          border: Border.all(color: Colors.redAccent),
-        ),
+        ],
       ),
     );
   }
