@@ -45,6 +45,7 @@ class Pinput extends StatefulWidget {
     this.separatorPositions,
     this.separator = _defaultSeparator,
     this.smsCodeMatcher = _defaultSmsCodeMatcher,
+    this.senderPhoneNumber,
     this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
     this.listenForMultipleSmsOnAndroid = false,
     this.mainAxisAlignment = MainAxisAlignment.center,
@@ -316,6 +317,9 @@ class Pinput extends StatefulWidget {
   /// This value controls how far from the edges of a [Scrollable] the TextField will be positioned after the scroll.
   final EdgeInsets scrollPadding;
 
+  /// Optional paramater for Android SMS User Consent API.
+  final String? senderPhoneNumber;
+
   @override
   State<Pinput> createState() => _PinputState();
 
@@ -468,5 +472,8 @@ class Pinput extends StatefulWidget {
     properties.add(DiagnosticsProperty<HapticFeedbackType>(
         'hapticFeedbackType', hapticFeedbackType,
         defaultValue: HapticFeedbackType.disabled));
+    properties.add(DiagnosticsProperty<String?>(
+        'senderPhoneNumber', senderPhoneNumber,
+        defaultValue: null));
   }
 }
