@@ -1,3 +1,9 @@
+## 2.2.12 -05/08/2022
+- Added
+  | Property   | Meaning/Default |
+  |------------|:-------:|
+  | senderPhoneNumber  | null / Optional parameter for Android SMS User Consent API |
+
 ## 2.2.11 -14/06/2022
 - Fixed `smsCodeMatcher` ([PR](https://github.com/Tkko/Flutter_Pinput/pull/94))
 

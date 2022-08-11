@@ -317,7 +317,7 @@ class Pinput extends StatefulWidget {
   /// This value controls how far from the edges of a [Scrollable] the TextField will be positioned after the scroll.
   final EdgeInsets scrollPadding;
 
-  /// Optional paramater for Android SMS User Consent API.
+  /// Optional parameter for Android SMS User Consent API.
   final String? senderPhoneNumber;
 
   @override
