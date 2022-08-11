@@ -334,12 +334,11 @@ class _PinputState extends State<Pinput>
     return _PinputFormField(
       enabled: isEnabled,
       validator: _validator,
-      child: FocusTrapArea(
-        focusNode: effectiveFocusNode,
-        child: MouseRegion(
-          cursor: _effectiveMouseCursor,
-          onEnter: (PointerEnterEvent event) => _handleHover(true),
-          onExit: (PointerExitEvent event) => _handleHover(false),
+      child: MouseRegion(
+        cursor: _effectiveMouseCursor,
+        onEnter: (PointerEnterEvent event) => _handleHover(true),
+        onExit: (PointerExitEvent event) => _handleHover(false),
+        child: TextFieldTapRegion(
           child: IgnorePointer(
             ignoring: !isEnabled || !widget.useNativeKeyboard,
             child: AnimatedBuilder(
