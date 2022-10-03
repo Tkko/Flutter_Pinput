@@ -1,3 +1,11 @@
+## 2.2.13 -03/10/2022
+- Bumped minimum Flutter SDK version to 2.0.0
+- Added
+  | Property   | Meaning/Default |
+  |------------|:-------:|
+  | isCursorAnimationEnabled  | true |
+
+
 ## 2.2.12 -05/08/2022
 - Added
   | Property   | Meaning/Default |

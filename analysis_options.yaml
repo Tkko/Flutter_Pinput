@@ -25,3 +25,4 @@ linter:
     - unnecessary_const
     - unnecessary_new
     - prefer_single_quotes
+    - require_trailing_commas

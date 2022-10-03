@@ -32,8 +32,9 @@ class _SeparatedRaw extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (separator != null) {
-      final _separatorPositions =
-          separatorPositions ?? List.generate(children.length - 1, (index) => index + 1).toList(growable: false);
+      final _separatorPositions = separatorPositions ??
+          List.generate(children.length - 1, (index) => index + 1)
+              .toList(growable: false);
 
       final separatorsCount = _separatorPositions.length;
 
@@ -48,7 +49,9 @@ class _SeparatedRaw extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: mainAxisAlignment,
-      mainAxisSize: mainAxisAlignment == MainAxisAlignment.center ? MainAxisSize.min : MainAxisSize.max,
+      mainAxisSize: mainAxisAlignment == MainAxisAlignment.center
+          ? MainAxisSize.min
+          : MainAxisSize.max,
       children: children,
     );
   }
@@ -77,7 +80,8 @@ class _PinputAnimatedCursor extends StatefulWidget {
   State<_PinputAnimatedCursor> createState() => _PinputAnimatedCursorState();
 }
 
-class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor> with SingleTickerProviderStateMixin {
+class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
 
   @override

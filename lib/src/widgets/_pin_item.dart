@@ -45,7 +45,8 @@ class _PinItem extends StatelessWidget {
     }
 
     /// Focused pin or default
-    if (state.hasFocus && index == state.selectedIndex.clamp(0, state.widget.length - 1)) {
+    if (state.hasFocus &&
+        index == state.selectedIndex.clamp(0, state.widget.length - 1)) {
       return _pinThemeOrDefault(state.widget.focusedPinTheme);
     }
 
@@ -58,9 +59,11 @@ class _PinItem extends StatelessWidget {
     return _pinThemeOrDefault(state.widget.followingPinTheme);
   }
 
-  PinTheme _getDefaultPinTheme() => state.widget.defaultPinTheme ?? _defaultPinTheme;
+  PinTheme _getDefaultPinTheme() =>
+      state.widget.defaultPinTheme ?? _defaultPinTheme;
 
-  PinTheme _pinThemeOrDefault(PinTheme? theme) => theme ?? _getDefaultPinTheme();
+  PinTheme _pinThemeOrDefault(PinTheme? theme) =>
+      theme ?? _getDefaultPinTheme();
 
   Widget _buildFieldContent(int index, PinTheme pinTheme) {
     final pin = state.pin;
@@ -80,8 +83,10 @@ class _PinItem extends StatelessWidget {
     }
 
     final isActiveField = index == pin.length;
-    final focused = state.effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
-    final shouldShowCursor = state.widget.showCursor && state.isEnabled && isActiveField && focused;
+    final focused =
+        state.effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
+    final shouldShowCursor =
+        state.widget.showCursor && state.isEnabled && isActiveField && focused;
 
     if (shouldShowCursor) {
       return _buildCursor(pinTheme);

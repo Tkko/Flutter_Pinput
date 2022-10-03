@@ -4,7 +4,8 @@ import 'package:pinput/pinput.dart';
 
 class RoundedWithCustomCursor extends StatefulWidget {
   @override
-  _RoundedWithCustomCursorState createState() => _RoundedWithCustomCursorState();
+  _RoundedWithCustomCursorState createState() =>
+      _RoundedWithCustomCursorState();
 
   @override
   String toStringShort() => 'Rounded With Cursor';
@@ -51,7 +52,8 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
             child: Pinput(
               controller: pinController,
               focusNode: focusNode,
-              androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
+              androidSmsAutofillMethod:
+                  AndroidSmsAutofillMethod.smsUserConsentApi,
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
               validator: (value) {
