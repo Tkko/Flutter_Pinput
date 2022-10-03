@@ -81,8 +81,9 @@ class _PinItem extends StatelessWidget {
 
     final isActiveField = index == pin.length;
     final focused = state.effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
+    final shouldShowCursor = state.widget.showCursor && state.isEnabled && isActiveField && focused;
 
-    if (state.widget.showCursor && state.isEnabled && isActiveField && focused) {
+    if (shouldShowCursor) {
       return _buildCursor(pinTheme);
     }
 
