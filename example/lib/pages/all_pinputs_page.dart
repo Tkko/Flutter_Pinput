@@ -13,8 +13,7 @@ class AllPinputs extends StatefulWidget {
   String toStringShort() => 'All';
 }
 
-class _AllPinputsState extends State<AllPinputs>
-    with AutomaticKeepAliveClientMixin {
+class _AllPinputsState extends State<AllPinputs> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);

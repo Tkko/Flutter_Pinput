@@ -45,8 +45,7 @@ class _PinItem extends StatelessWidget {
     }
 
     /// Focused pin or default
-    if (state.hasFocus &&
-        index == state.selectedIndex.clamp(0, state.widget.length - 1)) {
+    if (state.hasFocus && index == state.selectedIndex.clamp(0, state.widget.length - 1)) {
       return _pinThemeOrDefault(state.widget.focusedPinTheme);
     }
 
@@ -59,11 +58,9 @@ class _PinItem extends StatelessWidget {
     return _pinThemeOrDefault(state.widget.followingPinTheme);
   }
 
-  PinTheme _getDefaultPinTheme() =>
-      state.widget.defaultPinTheme ?? _defaultPinTheme;
+  PinTheme _getDefaultPinTheme() => state.widget.defaultPinTheme ?? _defaultPinTheme;
 
-  PinTheme _pinThemeOrDefault(PinTheme? theme) =>
-      theme ?? _getDefaultPinTheme();
+  PinTheme _pinThemeOrDefault(PinTheme? theme) => theme ?? _getDefaultPinTheme();
 
   Widget _buildFieldContent(int index, PinTheme pinTheme) {
     final pin = state.pin;
@@ -83,15 +80,10 @@ class _PinItem extends StatelessWidget {
     }
 
     final isActiveField = index == pin.length;
-    final focused =
-        state.effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
+    final focused = state.effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
 
-    if (state.widget.showCursor &&
-        state.isEnabled &&
-        isActiveField &&
-        focused) {
-      return _PinputCursor(
-          textStyle: pinTheme.textStyle, cursor: state.widget.cursor);
+    if (state.widget.showCursor && state.isEnabled && isActiveField && focused) {
+      return _buildCursor(pinTheme);
     }
 
     if (state.widget.preFilledWidget != null) {
@@ -101,8 +93,22 @@ class _PinItem extends StatelessWidget {
     return Text('', key: key, style: pinTheme.textStyle);
   }
 
+  Widget _buildCursor(PinTheme pinTheme) {
+    if (state.widget.isCursorAnimationEnabled) {
+      return _PinputAnimatedCursor(
+        textStyle: pinTheme.textStyle,
+        cursor: state.widget.cursor,
+      );
+    }
+
+    return _PinputCursor(
+      textStyle: pinTheme.textStyle,
+      cursor: state.widget.cursor,
+    );
+  }
+
   Widget _getTransition(Widget child, Animation animation) {
-    if (child is _PinputCursor) {
+    if (child is _PinputAnimatedCursor) {
       return child;
     }
 

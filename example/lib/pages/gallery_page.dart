@@ -13,8 +13,7 @@ class GalleryPage extends StatefulWidget {
   GalleryPageState createState() => GalleryPageState();
 }
 
-class GalleryPageState extends State<GalleryPage>
-    with SingleTickerProviderStateMixin {
+class GalleryPageState extends State<GalleryPage> with SingleTickerProviderStateMixin {
   TabController? _tabController;
 
   final backgroundColors = [
@@ -43,8 +42,7 @@ class GalleryPageState extends State<GalleryPage>
       ...otpPages,
     ]);
 
-    _tabController =
-        TabController(length: pinPuts.length, vsync: this, initialIndex: 1);
+    _tabController = TabController(length: pinPuts.length, vsync: this, initialIndex: 1);
     _tabController!.animation!.addListener(() {
       final focusScope = FocusScope.of(context);
       if (focusScope.hasFocus) {

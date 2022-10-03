@@ -32,9 +32,8 @@ class _SeparatedRaw extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (separator != null) {
-      final _separatorPositions = separatorPositions ??
-          List.generate(children.length - 1, (index) => index + 1)
-              .toList(growable: false);
+      final _separatorPositions =
+          separatorPositions ?? List.generate(children.length - 1, (index) => index + 1).toList(growable: false);
 
       final separatorsCount = _separatorPositions.length;
 
@@ -49,29 +48,36 @@ class _SeparatedRaw extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: mainAxisAlignment,
-      mainAxisSize: mainAxisAlignment == MainAxisAlignment.center
-          ? MainAxisSize.min
-          : MainAxisSize.max,
+      mainAxisSize: mainAxisAlignment == MainAxisAlignment.center ? MainAxisSize.min : MainAxisSize.max,
       children: children,
     );
   }
 }
 
-class _PinputCursor extends StatefulWidget {
+class _PinputCursor extends StatelessWidget {
   final Widget? cursor;
   final TextStyle? textStyle;
 
-  _PinputCursor({
-    this.textStyle,
-    this.cursor,
+  _PinputCursor({required this.textStyle, required this.cursor});
+
+  @override
+  Widget build(BuildContext context) => cursor ?? Text('|', style: textStyle);
+}
+
+class _PinputAnimatedCursor extends StatefulWidget {
+  final Widget? cursor;
+  final TextStyle? textStyle;
+
+  _PinputAnimatedCursor({
+    required this.textStyle,
+    required this.cursor,
   });
 
   @override
-  State<_PinputCursor> createState() => _PinputCursorState();
+  State<_PinputAnimatedCursor> createState() => _PinputAnimatedCursorState();
 }
 
-class _PinputCursorState extends State<_PinputCursor>
-    with SingleTickerProviderStateMixin {
+class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
 
   @override
@@ -102,16 +108,9 @@ class _PinputCursorState extends State<_PinputCursor>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animationController,
-      builder: (_, __) {
-        return Center(
-          child: Opacity(
-            opacity: _animationController.value,
-            child: widget.cursor ?? Text('|', style: widget.textStyle),
-          ),
-        );
-      },
+    return FadeTransition(
+      opacity: _animationController,
+      child: _PinputCursor(textStyle: widget.textStyle, cursor: widget.cursor),
     );
   }
 }
