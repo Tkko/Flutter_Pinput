@@ -79,10 +79,10 @@ class _PinputExampleState extends State<PinputExample> {
               validator: (value) {
                 return value == '2222' ? null : 'Pin is incorrect';
               },
-              onClipboardFound: (value) {
-                debugPrint('onClipboardFound: $value');
-                pinController.setText(value);
-              },
+              // onClipboardFound: (value) {
+              //   debugPrint('onClipboardFound: $value');
+              //   pinController.setText(value);
+              // },
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) {
                 debugPrint('onCompleted: $pin');

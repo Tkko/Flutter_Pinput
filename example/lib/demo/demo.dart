@@ -8,14 +8,19 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
   Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-  };
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }
 
 void main() => runApp(AppView());
 
-class AppView extends StatelessWidget {
+class AppView extends StatefulWidget {
+  @override
+  State<AppView> createState() => _AppViewState();
+}
+
+class _AppViewState extends State<AppView> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -42,7 +47,7 @@ class AppView extends StatelessWidget {
         );
 
         final shortestSide =
-        min(constraints.maxWidth.abs(), constraints.maxHeight.abs());
+            min(constraints.maxWidth.abs(), constraints.maxHeight.abs());
         if (shortestSide > 600) {
           return Container(
             color: Colors.white,
@@ -60,20 +65,22 @@ class AppView extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                  width: 375,
-                  height: 812,
-                  margin: EdgeInsets.all(20),
-                  clipBehavior: Clip.antiAlias,
-                  foregroundDecoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.black, width: 15),
+                Flexible(
+                  child: Container(
+                    width: 500,
+                    height: min(1100, constraints.maxHeight.abs()),
+                    margin: EdgeInsets.all(20),
+                    clipBehavior: Clip.antiAlias,
+                    foregroundDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: Colors.black, width: 15),
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 15),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: app,
                   ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, width: 15),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: app,
                 ),
               ],
             ),

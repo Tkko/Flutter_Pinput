@@ -59,10 +59,6 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
               validator: (value) {
                 return value == '2222' ? null : 'Pin is incorrect';
               },
-              onClipboardFound: (value) {
-                debugPrint('onClipboardFound: $value');
-                pinController.setText(value);
-              },
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) {
                 debugPrint('onCompleted: $pin');
