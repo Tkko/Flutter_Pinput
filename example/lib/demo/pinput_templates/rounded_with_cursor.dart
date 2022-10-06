@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
 class RoundedWithCustomCursor extends StatefulWidget {
+  const RoundedWithCustomCursor({Key? key}) : super(key: key);
+
   @override
   _RoundedWithCustomCursorState createState() =>
       _RoundedWithCustomCursorState();
@@ -34,7 +36,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
       height: 56,
       textStyle: GoogleFonts.poppins(
         fontSize: 22,
-        color: Color.fromRGBO(30, 60, 87, 1),
+        color: const Color.fromRGBO(30, 60, 87, 1),
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(19),
@@ -70,7 +72,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(bottom: 9),
+                    margin: const EdgeInsets.only(bottom: 9),
                     width: 22,
                     height: 1,
                     color: focusedBorderColor,
@@ -97,7 +99,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
           ),
           TextButton(
             onPressed: () => formKey.currentState!.validate(),
-            child: Text('Validate'),
+            child: const Text('Validate'),
           ),
         ],
       ),

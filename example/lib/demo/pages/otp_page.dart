@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class OtpPage extends StatefulWidget {
   final Widget pinPut;
 
-  OtpPage(this.pinPut);
+  const OtpPage(this.pinPut, {Key? key}) : super(key: key);
 
   @override
   State<OtpPage> createState() => _OtpPageState();
@@ -18,17 +18,17 @@ class _OtpPageState extends State<OtpPage> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(24, 64, 24, 24),
+      padding: const EdgeInsets.fromLTRB(24, 64, 24, 24),
       child: Column(
         children: [
-          OtpHeader(),
+          const OtpHeader(),
           widget.pinPut,
           const SizedBox(height: 44),
           Text(
             'Didn’t receive code?',
             style: GoogleFonts.poppins(
               fontSize: 16,
-              color: Color.fromRGBO(62, 116, 165, 1),
+              color: const Color.fromRGBO(62, 116, 165, 1),
             ),
           ),
           Text(
@@ -36,7 +36,7 @@ class _OtpPageState extends State<OtpPage> with AutomaticKeepAliveClientMixin {
             style: GoogleFonts.poppins(
               fontSize: 16,
               decoration: TextDecoration.underline,
-              color: Color.fromRGBO(62, 116, 165, 1),
+              color: const Color.fromRGBO(62, 116, 165, 1),
             ),
           ),
         ],
@@ -49,6 +49,8 @@ class _OtpPageState extends State<OtpPage> with AutomaticKeepAliveClientMixin {
 }
 
 class OtpHeader extends StatelessWidget {
+  const OtpHeader({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -59,7 +61,7 @@ class OtpHeader extends StatelessWidget {
           style: GoogleFonts.poppins(
             fontSize: 24,
             fontWeight: FontWeight.w700,
-            color: Color.fromRGBO(30, 60, 87, 1),
+            color: const Color.fromRGBO(30, 60, 87, 1),
           ),
         ),
         const SizedBox(height: 24),
@@ -67,7 +69,7 @@ class OtpHeader extends StatelessWidget {
           'Enter the code sent to the number',
           style: GoogleFonts.poppins(
             fontSize: 16,
-            color: Color.fromRGBO(133, 153, 170, 1),
+            color: const Color.fromRGBO(133, 153, 170, 1),
           ),
         ),
         const SizedBox(height: 16),
@@ -75,7 +77,7 @@ class OtpHeader extends StatelessWidget {
           '+995 123 3456',
           style: GoogleFonts.poppins(
             fontSize: 16,
-            color: Color.fromRGBO(30, 60, 87, 1),
+            color: const Color.fromRGBO(30, 60, 87, 1),
           ),
         ),
         const SizedBox(height: 64)

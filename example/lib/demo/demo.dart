@@ -13,9 +13,11 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
       };
 }
 
-void main() => runApp(AppView());
+void main() => runApp(const AppView());
 
 class AppView extends StatefulWidget {
+  const AppView({Key? key}) : super(key: key);
+
   @override
   State<AppView> createState() => _AppViewState();
 }
@@ -30,20 +32,24 @@ class _AppViewState extends State<AppView> {
           theme: ThemeData(
             tabBarTheme: TabBarTheme(
               indicatorSize: TabBarIndicatorSize.label,
-              indicator: BoxDecoration(
+              indicator: const BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: Color.fromRGBO(30, 60, 87, 1), width: 2.0),
+                    color: Color.fromRGBO(30, 60, 87, 1),
+                    width: 2.0,
+                  ),
                 ),
               ),
               unselectedLabelStyle: GoogleFonts.poppins(fontSize: 16),
               labelStyle: GoogleFonts.poppins(
-                  fontSize: 16, fontWeight: FontWeight.w600),
-              labelColor: Color.fromRGBO(30, 60, 87, 1),
-              unselectedLabelColor: Color.fromRGBO(107, 137, 165, 1),
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+              labelColor: const Color.fromRGBO(30, 60, 87, 1),
+              unselectedLabelColor: const Color.fromRGBO(107, 137, 165, 1),
             ),
           ),
-          home: GalleryPage(),
+          home: const GalleryPage(),
         );
 
         final shortestSide =
@@ -69,7 +75,7 @@ class _AppViewState extends State<AppView> {
                   child: Container(
                     width: 500,
                     height: min(1100, constraints.maxHeight.abs()),
-                    margin: EdgeInsets.all(20),
+                    margin: const EdgeInsets.all(20),
                     clipBehavior: Clip.antiAlias,
                     foregroundDecoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24),

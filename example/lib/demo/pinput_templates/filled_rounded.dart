@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
 class FilledRoundedPinPut extends StatefulWidget {
+  const FilledRoundedPinPut({Key? key}) : super(key: key);
+
   @override
   _FilledRoundedPinPutState createState() => _FilledRoundedPinPutState();
 
@@ -25,7 +27,7 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
 
   @override
   Widget build(BuildContext context) {
-    final length = 4;
+    const length = 4;
     const borderColor = Color.fromRGBO(114, 178, 238, 1);
     const errorColor = Color.fromRGBO(255, 234, 238, 1);
     const fillColor = Color.fromRGBO(222, 231, 240, .57);
@@ -34,7 +36,7 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
       height: 60,
       textStyle: GoogleFonts.poppins(
         fontSize: 22,
-        color: Color.fromRGBO(30, 60, 87, 1),
+        color: const Color.fromRGBO(30, 60, 87, 1),
       ),
       decoration: BoxDecoration(
         color: fillColor,

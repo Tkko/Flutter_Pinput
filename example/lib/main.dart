@@ -8,15 +8,15 @@ void main() {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          title: Text('Pinput Example'),
+          title: const Text('Pinput Example'),
           centerTitle: true,
-          titleTextStyle: TextStyle(
+          titleTextStyle: const TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w600,
             color: Color.fromRGBO(30, 60, 87, 1),
           ),
         ),
-        body: FractionallySizedBox(widthFactor: 1, child: PinputExample()),
+        body: const FractionallySizedBox(widthFactor: 1, child: PinputExample()),
       ),
     ),
   );
@@ -52,7 +52,7 @@ class _PinputExampleState extends State<PinputExample> {
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
-      textStyle: TextStyle(
+      textStyle: const TextStyle(
         fontSize: 22,
         color: Color.fromRGBO(30, 60, 87, 1),
       ),
@@ -96,7 +96,7 @@ class _PinputExampleState extends State<PinputExample> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(bottom: 9),
+                    margin: const EdgeInsets.only(bottom: 9),
                     width: 22,
                     height: 1,
                     color: focusedBorderColor,
@@ -123,7 +123,7 @@ class _PinputExampleState extends State<PinputExample> {
           ),
           TextButton(
             onPressed: () => formKey.currentState!.validate(),
-            child: Text('Validate'),
+            child: const Text('Validate'),
           ),
         ],
       ),

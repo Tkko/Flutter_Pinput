@@ -9,6 +9,8 @@ import 'package:pinput_example/demo/pinput_templates/rounded_with_cursor.dart';
 import 'package:pinput_example/demo/pinput_templates/rounded_with_shadow.dart';
 
 class GalleryPage extends StatefulWidget {
+  const GalleryPage({Key? key}) : super(key: key);
+
   @override
   GalleryPageState createState() => GalleryPageState();
 }
@@ -18,12 +20,30 @@ class GalleryPageState extends State<GalleryPage>
   TabController? _tabController;
 
   final backgroundColors = [
-    [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)], // All
-    [Color.fromRGBO(200, 255, 221, 1), Color.fromRGBO(255, 255, 255, 1)],
-    [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)],
-    [Color.fromRGBO(228, 217, 236, 1), Color.fromRGBO(255, 255, 255, 1)],
-    [Color.fromRGBO(255, 255, 255, 1), Color.fromRGBO(255, 255, 255, 1)],
-    [Color.fromRGBO(228, 217, 236, 1), Color.fromRGBO(255, 255, 255, 1)],
+    [
+      const Color.fromRGBO(255, 255, 255, 1),
+      const Color.fromRGBO(255, 255, 255, 1)
+    ], // All
+    [
+      const Color.fromRGBO(200, 255, 221, 1),
+      const Color.fromRGBO(255, 255, 255, 1)
+    ],
+    [
+      const Color.fromRGBO(255, 255, 255, 1),
+      const Color.fromRGBO(255, 255, 255, 1)
+    ],
+    [
+      const Color.fromRGBO(228, 217, 236, 1),
+      const Color.fromRGBO(255, 255, 255, 1)
+    ],
+    [
+      const Color.fromRGBO(255, 255, 255, 1),
+      const Color.fromRGBO(255, 255, 255, 1)
+    ],
+    [
+      const Color.fromRGBO(228, 217, 236, 1),
+      const Color.fromRGBO(255, 255, 255, 1)
+    ],
   ];
 
   final List<Widget> pinPuts = [];
@@ -31,7 +51,7 @@ class GalleryPageState extends State<GalleryPage>
   @override
   void initState() {
     super.initState();
-    final otpPages = [
+    const otpPages = [
       OtpPage(RoundedWithCustomCursor()),
       OtpPage(RoundedWithShadow()),
       OtpPage(OnlyBottomCursor()),

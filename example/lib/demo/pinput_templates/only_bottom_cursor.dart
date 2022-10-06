@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
 class OnlyBottomCursor extends StatefulWidget {
+  const OnlyBottomCursor({Key? key}) : super(key: key);
+
   @override
   _OnlyBottomCursorState createState() => _OnlyBottomCursorState();
 
@@ -30,9 +32,9 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
       height: 56,
       textStyle: GoogleFonts.poppins(
         fontSize: 22,
-        color: Color.fromRGBO(30, 60, 87, 1),
+        color: const Color.fromRGBO(30, 60, 87, 1),
       ),
-      decoration: BoxDecoration(),
+      decoration: const BoxDecoration(),
     );
 
     final cursor = Column(

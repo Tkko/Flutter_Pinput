@@ -5,19 +5,19 @@ import 'package:pinput/pinput.dart';
 class AlienKeyboard extends StatelessWidget {
   final TextEditingController controller;
 
-  AlienKeyboard({required this.controller});
+  const AlienKeyboard({Key? key, required this.controller}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final padding = 20.0;
+        const padding = 20.0;
         final width = constraints.maxWidth - 2 * padding;
-        final maxCount = 5;
-        final spacing = 5.0;
+        const maxCount = 5;
+        const spacing = 5.0;
         final buttonSize = (width - spacing * (maxCount - 1)) / maxCount;
         return Container(
-          padding: EdgeInsets.all(padding),
+          padding: const EdgeInsets.all(padding),
           height: buttonSize * 4.5,
           width: constraints.maxWidth,
           alignment: Alignment.center,
@@ -71,7 +71,7 @@ class AlienKeyboard extends StatelessWidget {
                         size: buttonSize,
                         onTap: () => controller.append('0', 4),
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       CircularButton(
                         text: '-',
                         size: buttonSize,
@@ -94,7 +94,8 @@ class CircularButton extends StatelessWidget {
   final String? text;
   final double? size;
 
-  CircularButton({this.onTap, this.text, this.size});
+  const CircularButton({Key? key, this.onTap, this.text, this.size})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +105,7 @@ class CircularButton extends StatelessWidget {
       child: Ink(
         width: size,
         height: size,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           shape: BoxShape.circle,
           color: Color.fromRGBO(37, 61, 84, 1),
         ),

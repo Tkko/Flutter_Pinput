@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
 class Filled extends StatefulWidget {
+  const Filled({Key? key}) : super(key: key);
+
   @override
   _FilledState createState() => _FilledState();
 
@@ -27,7 +29,8 @@ class _FilledState extends State<Filled> {
       width: 60,
       height: 64,
       textStyle: GoogleFonts.poppins(fontSize: 20, color: Colors.white),
-      decoration: BoxDecoration(color: Color.fromRGBO(159, 132, 193, 0.8)),
+      decoration:
+          const BoxDecoration(color: Color.fromRGBO(159, 132, 193, 0.8)),
     );
 
     return Container(
@@ -49,7 +52,8 @@ class _FilledState extends State<Filled> {
         defaultPinTheme: defaultPinTheme,
         showCursor: true,
         focusedPinTheme: defaultPinTheme.copyWith(
-          decoration: BoxDecoration(color: Color.fromRGBO(124, 102, 152, 1)),
+          decoration:
+              const BoxDecoration(color: Color.fromRGBO(124, 102, 152, 1)),
         ),
       ),
     );

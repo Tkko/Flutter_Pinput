@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
 class RoundedWithShadow extends StatefulWidget {
+  const RoundedWithShadow({Key? key}) : super(key: key);
+
   @override
   _RoundedWithShadowState createState() => _RoundedWithShadowState();
 
@@ -27,9 +29,11 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
       width: 60,
       height: 64,
       textStyle: GoogleFonts.poppins(
-          fontSize: 20, color: Color.fromRGBO(70, 69, 66, 1)),
+        fontSize: 20,
+        color: const Color.fromRGBO(70, 69, 66, 1),
+      ),
       decoration: BoxDecoration(
-        color: Color.fromRGBO(232, 235, 241, 0.37),
+        color: const Color.fromRGBO(232, 235, 241, 0.37),
         borderRadius: BorderRadius.circular(24),
       ),
     );
@@ -39,9 +43,9 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
       child: Container(
         width: 21,
         height: 1,
-        margin: EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: Color.fromRGBO(137, 146, 160, 1),
+          color: const Color.fromRGBO(137, 146, 160, 1),
           borderRadius: BorderRadius.circular(8),
         ),
       ),
@@ -52,12 +56,12 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
       controller: controller,
       focusNode: focusNode,
       defaultPinTheme: defaultPinTheme,
-      separator: SizedBox(width: 16),
+      separator: const SizedBox(width: 16),
       focusedPinTheme: defaultPinTheme.copyWith(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Color.fromRGBO(0, 0, 0, 0.05999999865889549),
               offset: Offset(0, 3),

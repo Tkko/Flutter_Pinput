@@ -4,7 +4,7 @@ class AllPinputs extends StatefulWidget {
   final List<Widget> pinPuts;
   final List<List<Color>> colors;
 
-  AllPinputs(this.pinPuts, this.colors);
+  const AllPinputs(this.pinPuts, this.colors, {Key? key}) : super(key: key);
 
   @override
   _AllPinputsState createState() => _AllPinputsState();
@@ -19,7 +19,7 @@ class _AllPinputsState extends State<AllPinputs>
   Widget build(BuildContext context) {
     super.build(context);
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(vertical: 30),
+      padding: const EdgeInsets.symmetric(vertical: 30),
       child: Column(
         children: [
           ...widget.pinPuts.asMap().entries.map((item) {
