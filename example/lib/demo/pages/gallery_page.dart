@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pinput_example/main.dart';
-import 'package:pinput_example/pages/all_pinputs_page.dart';
-import 'package:pinput_example/pages/otp_page.dart';
-import 'package:pinput_example/pinput_templates/filled.dart';
-import 'package:pinput_example/pinput_templates/filled_rounded.dart';
-import 'package:pinput_example/pinput_templates/only_bottom_cursor.dart';
-import 'package:pinput_example/pinput_templates/rounded_with_cursor.dart';
-import 'package:pinput_example/pinput_templates/rounded_with_shadow.dart';
+import 'package:pinput_example/demo/demo.dart';
+import 'package:pinput_example/demo/pages/all_pinputs_page.dart';
+import 'package:pinput_example/demo/pages/otp_page.dart';
+import 'package:pinput_example/demo/pinput_templates/filled.dart';
+import 'package:pinput_example/demo/pinput_templates/filled_rounded.dart';
+import 'package:pinput_example/demo/pinput_templates/only_bottom_cursor.dart';
+import 'package:pinput_example/demo/pinput_templates/rounded_with_cursor.dart';
+import 'package:pinput_example/demo/pinput_templates/rounded_with_shadow.dart';
 
 class GalleryPage extends StatefulWidget {
   @override

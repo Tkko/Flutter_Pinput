@@ -1,86 +1,130 @@
-import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:pinput_example/pages/gallery_page.dart';
+import 'package:pinput/pinput.dart';
 
-class MyCustomScrollBehavior extends MaterialScrollBehavior {
-  // Override behavior methods and getters like dragDevices
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-      };
+void main() {
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Text('Pinput Example'),
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: Color.fromRGBO(30, 60, 87, 1),
+          ),
+        ),
+        body: FractionallySizedBox(widthFactor: 1, child: PinputExample()),
+      ),
+    ),
+  );
 }
 
-void main() => runApp(AppView());
+class PinputExample extends StatefulWidget {
+  const PinputExample({Key? key}) : super(key: key);
 
-class AppView extends StatelessWidget {
+  @override
+  State<PinputExample> createState() => _PinputExampleState();
+}
+
+class _PinputExampleState extends State<PinputExample> {
+  final pinController = TextEditingController();
+  final focusNode = FocusNode();
+  final formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    pinController.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-        final app = MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            tabBarTheme: TabBarTheme(
-              indicatorSize: TabBarIndicatorSize.label,
-              indicator: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                      color: Color.fromRGBO(30, 60, 87, 1), width: 2.0),
+    const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
+    const fillColor = Color.fromRGBO(243, 246, 249, 0);
+    const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
+
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 56,
+      textStyle: TextStyle(
+        fontSize: 22,
+        color: Color.fromRGBO(30, 60, 87, 1),
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(19),
+        border: Border.all(color: borderColor),
+      ),
+    );
+
+    /// Optionally you can use form to validate the Pinput
+    return Form(
+      key: formKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Directionality(
+            // Specify direction if desired
+            textDirection: TextDirection.ltr,
+            child: Pinput(
+              controller: pinController,
+              focusNode: focusNode,
+              androidSmsAutofillMethod:
+                  AndroidSmsAutofillMethod.smsUserConsentApi,
+              listenForMultipleSmsOnAndroid: true,
+              defaultPinTheme: defaultPinTheme,
+              validator: (value) {
+                return value == '2222' ? null : 'Pin is incorrect';
+              },
+              onClipboardFound: (value) {
+                debugPrint('onClipboardFound: $value');
+                pinController.setText(value);
+              },
+              hapticFeedbackType: HapticFeedbackType.lightImpact,
+              onCompleted: (pin) {
+                debugPrint('onCompleted: $pin');
+              },
+              onChanged: (value) {
+                debugPrint('onChanged: $value');
+              },
+              cursor: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(bottom: 9),
+                    width: 22,
+                    height: 1,
+                    color: focusedBorderColor,
+                  ),
+                ],
+              ),
+              focusedPinTheme: defaultPinTheme.copyWith(
+                decoration: defaultPinTheme.decoration!.copyWith(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: focusedBorderColor),
                 ),
               ),
-              unselectedLabelStyle: GoogleFonts.poppins(fontSize: 16),
-              labelStyle: GoogleFonts.poppins(
-                  fontSize: 16, fontWeight: FontWeight.w600),
-              labelColor: Color.fromRGBO(30, 60, 87, 1),
-              unselectedLabelColor: Color.fromRGBO(107, 137, 165, 1),
+              submittedPinTheme: defaultPinTheme.copyWith(
+                decoration: defaultPinTheme.decoration!.copyWith(
+                  color: fillColor,
+                  borderRadius: BorderRadius.circular(19),
+                  border: Border.all(color: focusedBorderColor),
+                ),
+              ),
+              errorPinTheme: defaultPinTheme.copyBorderWith(
+                border: Border.all(color: Colors.redAccent),
+              ),
             ),
           ),
-          home: GalleryPage(),
-        );
-
-        final shortestSide =
-            min(constraints.maxWidth.abs(), constraints.maxHeight.abs());
-        if (shortestSide > 600) {
-          return Container(
-            color: Colors.white,
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Directionality(
-                  textDirection: TextDirection.ltr,
-                  child: Text(
-                    'Pinput Examples',
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 375,
-                  height: 812,
-                  margin: EdgeInsets.all(20),
-                  clipBehavior: Clip.antiAlias,
-                  foregroundDecoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.black, width: 15),
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, width: 15),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: app,
-                ),
-              ],
-            ),
-          );
-        }
-        return app;
-      },
+          TextButton(
+            onPressed: () => formKey.currentState!.validate(),
+            child: Text('Validate'),
+          ),
+        ],
+      ),
     );
   }
 }
