@@ -1,3 +1,7 @@
+## 2.2.14 -06/10/2022
+- Improved Example
+
+
 ## 2.2.13 -03/10/2022
 - Bumped minimum Flutter SDK version to 2.0.0
 - Added

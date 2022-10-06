@@ -22,6 +22,8 @@ void main() {
   );
 }
 
+/// This is the basic usage of Pinput
+/// For more examples check out the demo directory
 class PinputExample extends StatefulWidget {
   const PinputExample({Key? key}) : super(key: key);
 
