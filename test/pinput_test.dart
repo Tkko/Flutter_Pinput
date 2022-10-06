@@ -6,8 +6,8 @@ import 'helpers/helpers.dart';
 
 void main() {
   testWidgets('Pins are displayed', (WidgetTester tester) async {
-    final length = 4;
-    await tester.pumpApp(Pinput(length: length));
+    const length = 4;
+    await tester.pumpApp(const Pinput(length: length));
 
     expect(find.byType(Flexible), findsNWidgets(length));
     expect(find.byType(AnimatedContainer), findsNWidgets(length));
@@ -15,9 +15,9 @@ void main() {
   });
 
   testWidgets('Should properly handle states', (WidgetTester tester) async {
-    final length = 4;
+    const length = 4;
     final focusNode = FocusNode();
-    final defaultTheme = PinTheme(decoration: BoxDecoration(color: Colors.red));
+    const defaultTheme = PinTheme(decoration: BoxDecoration(color: Colors.red));
     final focusedTheme = defaultTheme.copyDecorationWith(
       color: Colors.greenAccent.withOpacity(.9),
     );
@@ -47,7 +47,7 @@ void main() {
       ),
     );
 
-    void _testState(int count, PinTheme theme) {
+    void testState(int count, PinTheme theme) {
       expect(
         find.byWidgetPredicate(
           (w) => w is AnimatedContainer && w.decoration == theme.decoration,
@@ -57,47 +57,47 @@ void main() {
     }
 
     // Unfocused
-    _testState(length, followingTheme);
-    _testState(0, focusedTheme);
-    _testState(0, submittedTheme);
-    _testState(0, errorTheme);
-    _testState(0, disabledTheme);
+    testState(length, followingTheme);
+    testState(0, focusedTheme);
+    testState(0, submittedTheme);
+    testState(0, errorTheme);
+    testState(0, disabledTheme);
 
     //Focused
     focusNode.requestFocus();
     await tester.pump();
 
-    _testState(length - 1, followingTheme);
-    _testState(1, focusedTheme);
-    _testState(0, submittedTheme);
-    _testState(0, errorTheme);
-    _testState(0, disabledTheme);
+    testState(length - 1, followingTheme);
+    testState(1, focusedTheme);
+    testState(0, submittedTheme);
+    testState(0, errorTheme);
+    testState(0, disabledTheme);
 
     // Focused submitted
     await tester.enterText(find.byType(EditableText), '1');
     await tester.pump();
 
-    _testState(length - 2, followingTheme);
-    _testState(1, focusedTheme);
-    _testState(1, submittedTheme);
-    _testState(0, errorTheme);
-    _testState(0, disabledTheme);
+    testState(length - 2, followingTheme);
+    testState(1, focusedTheme);
+    testState(1, submittedTheme);
+    testState(0, errorTheme);
+    testState(0, disabledTheme);
 
     // UnFocused submitted
     focusNode.unfocus();
     await tester.pump();
 
-    _testState(length - 1, followingTheme);
-    _testState(0, focusedTheme);
-    _testState(1, submittedTheme);
-    _testState(0, errorTheme);
-    _testState(0, disabledTheme);
+    testState(length - 1, followingTheme);
+    testState(0, focusedTheme);
+    testState(1, submittedTheme);
+    testState(0, errorTheme);
+    testState(0, disabledTheme);
   });
 
   testWidgets('Should properly handle focused state',
       (WidgetTester tester) async {
     final focusNode = FocusNode();
-    final defaultTheme = PinTheme(decoration: BoxDecoration());
+    const defaultTheme = PinTheme(decoration: BoxDecoration());
     final focusedTheme = defaultTheme.copyDecorationWith(color: Colors.red);
     await tester.pumpApp(
       Pinput(
@@ -125,9 +125,9 @@ void main() {
 
   testWidgets('Should display custom cursor', (WidgetTester tester) async {
     await tester.pumpApp(
-      Pinput(
+      const Pinput(
         autofocus: true,
-        cursor: const FlutterLogo(),
+        cursor: FlutterLogo(),
       ),
     );
 

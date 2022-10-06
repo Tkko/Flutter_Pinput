@@ -12,9 +12,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  smart_auth: ^1.0.5
+  smart_auth: ^1.0.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  lint: ^1.8.2
+  flutter_lints: ^2.0.1

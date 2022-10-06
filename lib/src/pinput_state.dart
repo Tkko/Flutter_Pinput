@@ -9,7 +9,7 @@ part of 'pinput.dart';
 T? _ambiguate<T>(T? value) => value;
 
 class _PinputState extends State<Pinput>
-    with RestorationMixin, WidgetsBindingObserver, PinputUtilsMixin
+    with RestorationMixin, WidgetsBindingObserver, _PinputUtilsMixin
     implements TextSelectionGestureDetectorBuilderDelegate, AutofillClient {
   @override
   late bool forcePressEnabled;
@@ -277,7 +277,7 @@ class _PinputState extends State<Pinput>
   }
 
   String? _validator([String? _]) {
-    final res = widget.validator?.call(pin) ?? null;
+    final res = widget.validator?.call(pin);
     setState(() => _validatorErrorText = res);
     return res;
   }
@@ -449,21 +449,22 @@ class _PinputState extends State<Pinput>
       );
 
   void _semanticsOnTap() {
-    if (!_effectiveController.selection.isValid)
+    if (!_effectiveController.selection.isValid) {
       _effectiveController.selection =
           TextSelection.collapsed(offset: _effectiveController.text.length);
+    }
     _requestKeyboard();
   }
 
   Widget _buildFields() {
-    Widget _onlyFields() {
+    Widget onlyFields() {
       return _SeparatedRaw(
-        children: Iterable<int>.generate(widget.length).map<Widget>((index) {
-          return _PinItem(state: this, index: index);
-        }).toList(),
         separator: widget.separator,
         separatorPositions: widget.separatorPositions,
         mainAxisAlignment: widget.mainAxisAlignment,
+        children: Iterable<int>.generate(widget.length).map<Widget>((index) {
+          return _PinItem(state: this, index: index);
+        }).toList(),
       );
     }
 
@@ -476,7 +477,7 @@ class _PinputState extends State<Pinput>
           final shouldHideErrorContent =
               widget.validator == null && widget.errorText == null;
 
-          if (shouldHideErrorContent) return _onlyFields();
+          if (shouldHideErrorContent) return onlyFields();
 
           return AnimatedSize(
             duration: widget.animationDuration,
@@ -484,7 +485,7 @@ class _PinputState extends State<Pinput>
             child: Column(
               crossAxisAlignment: widget.crossAxisAlignment,
               children: [
-                _onlyFields(),
+                onlyFields(),
                 _buildError(),
               ],
             ),
@@ -525,7 +526,7 @@ class _PinputState extends State<Pinput>
       }
     }
 
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   }
 
   // AutofillClient implementation start.

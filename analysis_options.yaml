@@ -1,3 +1,5 @@
+include: package:flutter_lints/flutter.yaml
+
 analyzer:
   strong-mode:
     implicit-dynamic: false
@@ -11,18 +13,19 @@ analyzer:
 
 linter:
   rules:
-    - always_declare_return_types
-    - camel_case_types
-    - empty_constructor_bodies
-    - annotate_overrides
-    - avoid_init_to_null
-    - constant_identifier_names
-    - one_member_abstracts
-    - slash_for_doc_comments
-    - unnecessary_brace_in_string_interps
-    - cancel_subscriptions
-    - close_sinks
-    - unnecessary_const
-    - unnecessary_new
-    - prefer_single_quotes
-    - require_trailing_commas
+    unnecessary_this: false
+    always_declare_return_types: true
+    camel_case_types: true
+    empty_constructor_bodies: true
+    annotate_overrides: true
+    avoid_init_to_null: true
+    constant_identifier_names: true
+    one_member_abstracts: true
+    slash_for_doc_comments: true
+    unnecessary_brace_in_string_interps: true
+    cancel_subscriptions: true
+    close_sinks: true
+    unnecessary_const: true
+    unnecessary_new: true
+    prefer_single_quotes: true
+    require_trailing_commas: true

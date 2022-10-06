@@ -1,6 +1,6 @@
 part of '../pinput.dart';
 
-mixin PinputUtilsMixin {
+mixin _PinputUtilsMixin {
   void _maybeUseHaptic(HapticFeedbackType hapticFeedbackType) {
     switch (hapticFeedbackType) {
       case HapticFeedbackType.disabled:

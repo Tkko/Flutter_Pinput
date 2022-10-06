@@ -1,36 +1,20 @@
 # Publishing the package on pub.dev
+function fail {
+  printf '%s\n' "$1" >&2
+  exit "${2-1}"
+}
 
 cd ../
-
-flutter format --set-exit-if-changed .
-if [ $? -ne 0 ]; then
-  exit 1
-fi
-
-flutter analyze
-if [ $? -ne 0 ]; then
-  exit 1
-fi
-
-flutter test
-if [ $? -ne 0 ]; then
-  exit 1
-fi
-
+flutter format .
+flutter analyze || fail "flutter analyze failed"
+flutter test || fail "flutter test failed"
+flutter pub global activate dartdoc
+export FLUTTER_ROOT=~/fvm/default
+dart doc . || fail "dart doc failed"
 flutter pub global activate pana
-
-if flutter packages pub global run pana --exit-code-threshold=0 --no-warning --source path ./; then
-  echo "run pana succeeded"
-else
-  echo "run pana failed"
-  exit 1
-fi
-
-if flutter packages pub publish --dry-run; then
-  echo "pub publish succeeded"
-else
-  echo "pub publish failed"
-  exit 1
-fi
-
+flutter packages pub global run pana --exit-code-threshold=0 --no-warning --source path ./ || fail "run pana failed"
+flutter packages pub publish --dry-run || fail "pub publish failed"
 flutter packages pub publish
+
+# run docs in the browser
+# dhttpd --path doc/api

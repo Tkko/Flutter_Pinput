@@ -1,5 +1,7 @@
 part of '../pinput.dart';
 
+/// Theme of the individual pin items for following states:
+/// default, focused pin, submitted pin, following pin, disabled pin and error pin
 class PinTheme {
   /// width of each [Pinput] field
   final double? width;
@@ -28,8 +30,7 @@ class PinTheme {
   ///  ```
   final BoxConstraints? constraints;
 
-  ///  Box decoration of following properties of [Pinput]
-  ///  [submittedFieldDecoration] [selectedFieldDecoration] [followingFieldDecoration] [disabledDecoration]
+  ///  Box decoration of following properties of Pin item
   ///  You can customize every pixel with it
   ///  properties are being animated implicitly when value changes
   ///  ```dart

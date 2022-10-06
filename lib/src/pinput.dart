@@ -25,6 +25,24 @@ part 'utils/pinput_utils_mixin.dart';
 
 part 'widgets/_pinput_selection_gesture_detector_builder.dart';
 
+/// Flutter package to create easily customizable Pin code input field, that your designers can't even draw in Figma 🤭
+///
+/// ## Features:
+/// - Animated Decoration Switching
+/// - Form validation
+/// - SMS Autofill on iOS
+/// - SMS Autofill on Android
+/// - Standard Cursor
+/// - Custom Cursor
+/// - Cursor Animation
+/// - Copy From Clipboard
+/// - Ready For Custom Keyboard
+/// - Standard Paste option
+/// - Obscuring Character
+/// - Obscuring Widget
+/// - Haptic Feedback
+/// - Close Keyboard After Completion
+/// - Beautiful [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib/demo)
 class Pinput extends StatefulWidget {
   const Pinput({
     this.length = _defaultLength,
@@ -124,11 +142,11 @@ class Pinput extends StatefulWidget {
   /// By default Android autofill is Disabled, you cane enable it by using any of options listed below
   ///
   /// First option is [AndroidSmsAutofillMethod.smsRetrieverApi] it automatically reads sms without user interaction
-  /// More about Sms Retriever API [https://developers.google.com/identity/sms-retriever/overview?hl=en]
+  /// More about Sms Retriever API https://developers.google.com/identity/sms-retriever/overview?hl=en
   ///
   /// Second option requires user interaction to confirm reading a SMS, See readme for more details
   /// [AndroidSmsAutofillMethod.smsUserConsentApi]
-  /// More about SMS User Consent API [https://developers.google.com/identity/sms-retriever/user-consent/overview]
+  /// More about SMS User Consent API https://developers.google.com/identity/sms-retriever/user-consent/overview
   final AndroidSmsAutofillMethod androidSmsAutofillMethod;
 
   /// If true [androidSmsAutofillMethod] is not [AndroidSmsAutofillMethod.none]
@@ -151,7 +169,8 @@ class Pinput extends StatefulWidget {
   /// Called when user clicks on PinPut
   final VoidCallback? onTap;
 
-  /// In order to catch event [enableInteractiveSelection] should be false
+  /// Triggered when a pointer has remained in contact with the Pinput at the
+  /// same location for a long period of time.
   final VoidCallback? onLongPress;
 
   /// Used to get, modify PinPut value and more.
@@ -307,7 +326,7 @@ class Pinput extends StatefulWidget {
   /// Style of error text
   final TextStyle? errorTextStyle;
 
-  /// If [showError] is true and [errorBuilder] is passed it will be rendered under the Pinput
+  /// If [Pinput] has error and [errorBuilder] is passed it will be rendered under the Pinput
   final PinputErrorBuilder? errorBuilder;
 
   /// Return null if pin is valid or any String otherwise
@@ -611,7 +630,7 @@ class Pinput extends StatefulWidget {
       DiagnosticsProperty<ToolbarOptions>(
         'toolbarOptions',
         toolbarOptions,
-        defaultValue: ToolbarOptions(paste: true),
+        defaultValue: const ToolbarOptions(paste: true),
       ),
     );
     properties.add(

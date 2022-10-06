@@ -1,5 +1,6 @@
 part of '../pinput.dart';
 
+/// The mode which determines the Pinput validation method
 enum PinputAutovalidateMode {
   /// No auto validation will occur.
   disabled,
@@ -8,21 +9,23 @@ enum PinputAutovalidateMode {
   onSubmit,
 }
 
+/// The method that is used to get the sms code on Android
 enum AndroidSmsAutofillMethod {
   /// Disabled SMS autofill on Android
   none,
 
   /// Automatically reads sms without user interaction
   /// Requires SMS to contain The App signature, see readme for more details
-  /// More about Sms Retriever API [https://developers.google.com/identity/sms-retriever/overview?hl=en]
+  /// More about Sms Retriever API https://developers.google.com/identity/sms-retriever/overview?hl=en
   smsRetrieverApi,
 
   /// Requires user interaction to confirm reading a SMS, see readme for more details
   /// [AndroidSmsAutofillMethod.smsUserConsentApi]
-  /// More about SMS User Consent API [https://developers.google.com/identity/sms-retriever/user-consent/overview]
+  /// More about SMS User Consent API https://developers.google.com/identity/sms-retriever/user-consent/overview
   smsUserConsentApi,
 }
 
+/// The animation type if Pin item
 enum PinAnimationType {
   none,
   scale,
@@ -31,6 +34,7 @@ enum PinAnimationType {
   rotation,
 }
 
+/// The vibration type when user types
 enum HapticFeedbackType {
   disabled,
   lightImpact,
@@ -40,4 +44,5 @@ enum HapticFeedbackType {
   vibrate,
 }
 
+/// Error widget builder of Pinput
 typedef PinputErrorBuilder = Widget Function(String? errorText, String pin);

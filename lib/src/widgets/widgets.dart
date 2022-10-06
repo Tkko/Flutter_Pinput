@@ -21,7 +21,7 @@ class _SeparatedRaw extends StatelessWidget {
   final List<int>? separatorPositions;
   final Widget? separator;
 
-  _SeparatedRaw({
+  const _SeparatedRaw({
     required this.children,
     required this.mainAxisAlignment,
     this.separator,
@@ -32,14 +32,14 @@ class _SeparatedRaw extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (separator != null) {
-      final _separatorPositions = separatorPositions ??
+      final actualSeparatorPositions = separatorPositions ??
           List.generate(children.length - 1, (index) => index + 1)
               .toList(growable: false);
 
-      final separatorsCount = _separatorPositions.length;
+      final separatorsCount = actualSeparatorPositions.length;
 
       for (int i = 0; i < separatorsCount; ++i) {
-        final index = i + _separatorPositions[i];
+        final index = i + actualSeparatorPositions[i];
         if (index <= children.length) {
           children.insert(index, separator!);
         }
@@ -61,7 +61,7 @@ class _PinputCursor extends StatelessWidget {
   final Widget? cursor;
   final TextStyle? textStyle;
 
-  _PinputCursor({required this.textStyle, required this.cursor});
+  const _PinputCursor({required this.textStyle, required this.cursor});
 
   @override
   Widget build(BuildContext context) => cursor ?? Text('|', style: textStyle);
@@ -71,7 +71,7 @@ class _PinputAnimatedCursor extends StatefulWidget {
   final Widget? cursor;
   final TextStyle? textStyle;
 
-  _PinputAnimatedCursor({
+  const _PinputAnimatedCursor({
     required this.textStyle,
     required this.cursor,
   });

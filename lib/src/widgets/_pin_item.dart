@@ -4,7 +4,7 @@ class _PinItem extends StatelessWidget {
   final _PinputState state;
   final int index;
 
-  _PinItem({required this.state, required this.index});
+  const _PinItem({required this.state, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +134,8 @@ class _PinItem extends StatelessWidget {
       case PinAnimationType.slide:
         return SlideTransition(
           position: Tween<Offset>(
-            begin: state.widget.slideTransitionBeginOffset ?? Offset(0.8, 0),
+            begin:
+                state.widget.slideTransitionBeginOffset ?? const Offset(0.8, 0),
             end: Offset.zero,
           ).animate(animation as Animation<double>),
           child: child,
