@@ -16,7 +16,8 @@ void main() {
             color: Color.fromRGBO(30, 60, 87, 1),
           ),
         ),
-        body: const FractionallySizedBox(widthFactor: 1, child: PinputExample()),
+        body:
+            const FractionallySizedBox(widthFactor: 1, child: PinputExample()),
       ),
     ),
   );

@@ -1,3 +1,7 @@
+## 2.2.15 -06/10/2022
+- Improved Docs
+
+
 ## 2.2.14 -06/10/2022
 - Improved Example
 
