@@ -9,8 +9,6 @@ screenshots:
     path: pinput_demo.webp
 funding:
   - https://ko-fi.com/flutterman
-  - https://www.buymeacoffee.com/fman
-
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
