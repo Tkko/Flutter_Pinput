@@ -24,21 +24,15 @@
 
 Flutter package to create easily customizable Pin code input field, that your designers can't even draw in Figma 🤭
 
-Please see the Changelog if you are migrating from version < 2.0.0
+**If you aren't using Flutter's stable channel, you should depend on a specific branch.** [issue](https://github.com/Tkko/Flutter_Pinput/issues/98)
+```
+  pinput:
+   git:
+    url: https://github.com/Tkko/Flutter_Pinput
+    ref: dev 
+```
 
 `Bonus tip: 🤫 Tell your PM that you need a week to implement the feature and chill with your friends meanwhile.`
-
-
-## 2.2.16 -06/10/2022
-- Improved Docs
-
-## 2.2.15 -06/10/2022
-- Improved Docs
-
-
-## 2.2.14 -06/10/2022
-- Improved Example
-
 
 
 ## Features:
