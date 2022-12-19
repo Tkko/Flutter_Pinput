@@ -1,73 +1,76 @@
-## 2.2.15 -06/10/2022
+## 2.2.17 -19/12/2022
+
+- Added demo screenshot for pub
+- Added funding URLs
+
+## 2.2.16 -06/10/2022
+
 - Improved Docs
 
+## 2.2.15 -06/10/2022
+
+- Improved Docs
 
 ## 2.2.14 -06/10/2022
+
 - Improved Example
 
-
 ## 2.2.13 -03/10/2022
-- Bumped minimum Flutter SDK version to 2.0.0
-- Added
-  | Property   | Meaning/Default |
-  |------------|:-------:|
-  | isCursorAnimationEnabled  | true |
 
+- Bumped minimum Flutter SDK version to 2.0.0
+- Added | Property | Meaning/Default | |------------|:-------:| | isCursorAnimationEnabled | true |
 
 ## 2.2.12 -05/08/2022
-- Added
-  | Property   | Meaning/Default |
-  |------------|:-------:|
-  | senderPhoneNumber  | null / Optional parameter for Android SMS User Consent API |
+
+- Added | Property | Meaning/Default | |------------|:-------:| | senderPhoneNumber | null /
+  Optional parameter for Android SMS User Consent API |
 
 ## 2.2.11 -14/06/2022
+
 - Fixed `smsCodeMatcher` ([PR](https://github.com/Tkko/Flutter_Pinput/pull/94))
 
-
 ## 2.2.10 -31/05/2022
-- When this widget receives focus and is not completely visible (for example scrolled partially
-  off the screen or overlapped by the keyboard)
-  then it will attempt to make itself visible by scrolling a surrounding [Scrollable], if one is present.
-  This value controls how far from the edges of a [Scrollable] the TextField will be positioned after the scroll.
-  | Property   | Meaning/Default |
-  |------------|:-------:|
-  | scrollPadding  | EdgeInsets.all(20) |
 
+- When this widget receives focus and is not completely visible (for example scrolled partially off
+  the screen or overlapped by the keyboard)
+  then it will attempt to make itself visible by scrolling a surrounding [Scrollable], if one is
+  present. This value controls how far from the edges of a [Scrollable] the TextField will be
+  positioned after the scroll. | Property | Meaning/Default | |------------|:-------:| |
+  scrollPadding | EdgeInsets.all(20) |
 
 ## 2.2.9 -16/05/2022
+
 - onCompleted mot called
 - Added tests
 
-
 ## 2.2.8 -13/05/2022
+
 - Fixed dart 2.17 hints
 
-
 ## 2.2.7 -04/04/2022
-- Option to listen for multiple sms on android
-| Property   | Meaning/Default |
-|------------|:-------:|
-| listenForMultipleSmsOnAndroid  | false |
 
+- Option to listen for multiple sms on android | Property | Meaning/Default | |------------|:
+  -------:| | listenForMultipleSmsOnAndroid | false |
 
 ## 2.2.6 -02/04/2022
+
 - Updated smart_auth
 - Updated readme
 
-
 ## 2.2.5 -28/03/2022
+
 Added
 
 | Property   | Meaning/Default |
 |------------|:-------:|
 | crossAxisAlignment  | CrossAxisAlignment.start |
 
-
 ## 2.2.4 -21/03/2022
+
 - Fixed onClipboardFound
 
-
 ## 2.2.3 -19/03/2022
+
 Added Android SMS Autofill support
 
 | Property   | Meaning/Default |
@@ -76,6 +79,7 @@ Added Android SMS Autofill support
 | smsCodeMatcher  | Used to extract code from SMS for Android Autofill if [androidSmsAutofillMethod] is enabled |
 
 ## 2.1.4 -06/03/2022
+
 Updated docs
 
 Added
@@ -90,24 +94,23 @@ Added
 | forceErrorState  | If true [errorPinTheme] will be applied and [errorText] will be displayed under the Pinput / false|
 | errorText  | Text displayed under the Pinput if Pinput is invalid|
 
-
-
 ## 2.0.4 -03/03/2022
+
 - Updated docs
 - Added onLongPress
 
-
 ## 2.0.3 -02/03/2022
+
 - Updated readme.
 
 ## 2.0.2 -25/02/2022
-Sorry guys this version will break your code 💙
-Introduced PinTheme class to control state of the individual pin easily, see readme's Getting Started section for examples.
+
+Sorry guys this version will break your code 💙 Introduced PinTheme class to control state of the
+individual pin easily, see readme's Getting Started section for examples.
 
 - Refactored, renamed some properties.
 - Added new Pinput examples
 - With long press user can paste from clipboard
-
 
 ### Changes
 
@@ -128,82 +131,80 @@ Introduced PinTheme class to control state of the individual pin easily, see rea
 | eachFieldPadding  | PinTheme.padding |
 
 ## 1.2.1 -10/09/2021
-🔥🚀
-Merged PRs and Fixed common issues
+
+🔥🚀 Merged PRs and Fixed common issues
 
 ## 1.2.0 -03/13/2021
-🔥🚀
-Now PinPut supports custom numpad.(See demos)
+
+🔥🚀 Now PinPut supports custom numpad.(See demos)
 Added `checkClipboard` property
 
-
 ## 1.1.0 -03/02/2021
-🔥🚀
-Migrated to Null safety
+
+🔥🚀 Migrated to Null safety
 
 ## 1.0.0 -01/14/2021
-🔥🚀
-Updated Example, Increased package version to `1.0.0` in order to make it more trustful
+
+🔥🚀 Updated Example, Increased package version to `1.0.0` in order to make it more trustful
 
 ## 0.2.6 -10/09/2020
-🔥🚀
-Added `cursor`, `preFilledWidget`, `mainAxisSize` and `autovalidateMode` properties.
+
+🔥🚀 Added `cursor`, `preFilledWidget`, `mainAxisSize` and `autovalidateMode` properties.
 
 ## 0.2.5 -08/30/2020
-🔥🚀
-Added fake `cursor`, `separatorPositions`, `separator` and optimized project with the help of community. credits to @[furaiev](https://github.com/furaiev), @[Holofox](https://github.com/Holofox),
+
+🔥🚀 Added fake `cursor`, `separatorPositions`, `separator` and optimized project with the help of
+community. credits to @[furaiev](https://github.com/furaiev), @[Holofox](https://github.com/Holofox)
+,
 
 ## 0.2.4 -05/19/2020
-🔥🚀
-Fixed Focus problems.
-Updated readme.
 
+🔥🚀 Fixed Focus problems. Updated readme.
 
 ## 0.2.3 -04/12/2020
-🔥🚀
-Fixed Focus on click after back button click
 
+🔥🚀 Fixed Focus on click after back button click
 
 ## 0.2.2 -04/09/2020
-🔥🚀
-Fixed Demo urls
 
+🔥🚀 Fixed Demo urls
 
 ## 0.2.1 -04/09/2020
-🔥🚀
-Minor fixes and demos
 
+🔥🚀 Minor fixes and demos
 
 ## 0.2.0 -04/07/2020
-🔥🚀
-Added some useful Documentation
 
+🔥🚀 Added some useful Documentation
 
 ## 0.2.0-dev.1 -04/07/2020
-🔥🚀
-Breaking changes, changed widget building logic so now it supports:
--    Backspace on keyboard
--    Every pixel customization
--    Nice animations
--    Form validation
--    Ios auto fill - testing needed
 
+🔥🚀 Breaking changes, changed widget building logic so now it supports:
+
+- Backspace on keyboard
+- Every pixel customization
+- Nice animations
+- Form validation
+- Ios auto fill - testing needed
 
 ## 0.1.10 -02/08/2019
+
 👍 With the help of community: @xportation
+
 * Added Set autofocus on the first field when the attribute is defined|
 
-
 ## 0.1.9 -07/02/2019
+
 * Added
 
 | Property  | Default/Meaning |
 | ------------- | ------------- |
 | onClear  | Clear button callback |
 
-
 ## 0.1.8 -06/14/2019
+
 👍 With the help of community: @datvo0110, @almeynman
+
 * Fixed minor bugs
 * Added
 
@@ -211,24 +212,20 @@ Breaking changes, changed widget building logic so now it supports:
 | ------------- | ------------- |
 | containerHeight  | 100.0 |
 
-
-
 ## 0.1.7 -05/12/2019
+
 👍 With the help of community: @datvo0110, @mwgriffiths88, @inromualdo
+
 * Fixed minor bugs, check clipboard when app is resumed...
-* Added
- Properties ability to hide keyboard & custumize more
+* Added Properties ability to hide keyboard & custumize more
 
 | Property  | Default/Meaning |
 | ------------- | ------------- |
 | textCapitalization  | TextCapitalization.none |
 
-
-
 ## 0.1.6 -01/17/2019
 
-* Added
- Properties ability to hide keyboard & custumize more
+* Added Properties ability to hide keyboard & custumize more
 
 | Property  | Default/Meaning |
 | ------------- | ------------- |
@@ -239,11 +236,9 @@ Breaking changes, changed widget building logic so now it supports:
 | spaceBetween | space between fields Default: 10.0|
 | inputDecoration  | Ability to style field's border, padding etc... |
 
-
 ## 0.1.5 - 12/17/2018
 
-* Added
- Copy From Clipboard functionality if copied text length is equal to fields count
+* Added Copy From Clipboard functionality if copied text length is equal to fields count
 
 | Property  | Default |
 | ------------- | ------------- |
@@ -251,7 +246,8 @@ Breaking changes, changed widget building logic so now it supports:
 
 *Note that
 
-   clearButtonEnabled will change with actionButtonEnabled in next release, right now if it is true both clear and paste functinality works
+clearButtonEnabled will change with actionButtonEnabled in next release, right now if it is true
+both clear and paste functinality works
 
 ## 0.1.4 - 10/31/2018
 

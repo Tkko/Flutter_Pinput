@@ -384,7 +384,7 @@ class _PinputState extends State<Pinput>
         bucket: bucket,
         child: EditableText(
           maxLines: 1,
-          style: _hiddenTextStyle,
+          style: PinputConstants._hiddenTextStyle,
           onChanged: (_) {
             _maybeUseHaptic(widget.hapticFeedbackType);
           },

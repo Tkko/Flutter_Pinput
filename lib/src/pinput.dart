@@ -11,7 +11,7 @@ part 'pinput_state.dart';
 
 part 'utils/enums.dart';
 
-part 'utils/constants.dart';
+part 'utils/pinput_constants.dart';
 
 part 'widgets/widgets.dart';
 
@@ -45,7 +45,7 @@ part 'widgets/_pinput_selection_gesture_detector_builder.dart';
 /// - Beautiful [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib/demo)
 class Pinput extends StatefulWidget {
   const Pinput({
-    this.length = _defaultLength,
+    this.length = PinputConstants._defaultLength,
     this.defaultPinTheme,
     this.focusedPinTheme,
     this.submittedPinTheme,
@@ -61,8 +61,8 @@ class Pinput extends StatefulWidget {
     this.focusNode,
     this.preFilledWidget,
     this.separatorPositions,
-    this.separator = _defaultSeparator,
-    this.smsCodeMatcher = _defaultSmsCodeMatcher,
+    this.separator = PinputConstants._defaultSeparator,
+    this.smsCodeMatcher = PinputConstants.defaultSmsCodeMatcher,
     this.senderPhoneNumber,
     this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
     this.listenForMultipleSmsOnAndroid = false,
@@ -70,7 +70,7 @@ class Pinput extends StatefulWidget {
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.pinContentAlignment = Alignment.center,
     this.animationCurve = Curves.easeIn,
-    this.animationDuration = _animationDuration,
+    this.animationDuration = PinputConstants._animationDuration,
     this.pinAnimationType = PinAnimationType.scale,
     this.enabled = true,
     this.readOnly = false,
@@ -154,7 +154,7 @@ class Pinput extends StatefulWidget {
   final bool listenForMultipleSmsOnAndroid;
 
   /// Used to extract code from SMS for Android Autofill if [androidSmsAutofillMethod] is enabled
-  /// By default it is [_defaultSmsCodeMatcher]
+  /// By default it is [PinputConstants.defaultSmsCodeMatcher]
   final String smsCodeMatcher;
 
   /// Fires when user completes pin input
@@ -426,7 +426,7 @@ class Pinput extends StatefulWidget {
       DiagnosticsProperty<int>(
         'length',
         length,
-        defaultValue: _defaultLength,
+        defaultValue: PinputConstants._defaultLength,
       ),
     );
     properties.add(
@@ -474,7 +474,7 @@ class Pinput extends StatefulWidget {
       DiagnosticsProperty<Widget?>(
         'separator',
         separator,
-        defaultValue: _defaultSeparator,
+        defaultValue: PinputConstants._defaultSeparator,
       ),
     );
     properties.add(
@@ -516,7 +516,7 @@ class Pinput extends StatefulWidget {
       DiagnosticsProperty<Duration>(
         'animationDuration',
         animationDuration,
-        defaultValue: _animationDuration,
+        defaultValue: PinputConstants._animationDuration,
       ),
     );
     properties.add(

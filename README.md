@@ -28,6 +28,19 @@ Please see the Changelog if you are migrating from version < 2.0.0
 
 `Bonus tip: 🤫 Tell your PM that you need a week to implement the feature and chill with your friends meanwhile.`
 
+
+## 2.2.16 -06/10/2022
+- Improved Docs
+
+## 2.2.15 -06/10/2022
+- Improved Docs
+
+
+## 2.2.14 -06/10/2022
+- Improved Example
+
+
+
 ## Features:
 - Animated Decoration Switching
 - Form validation
@@ -84,78 +97,78 @@ Pin smoothly animates from one state to another automatically.
 You can use standard Pinput like so
 
 ```dart
-  Widget buildPinPut() {
-    return Pinput(
-      onCompleted: (pin) => print(pin),
-    );
-  }
+Widget buildPinPut() {
+  return Pinput(
+    onCompleted: (pin) => print(pin),
+  );
+}
 ```
 
 If you want to customize it, create `defaultPinTheme` first.
 
 ```dart
-    final defaultPinTheme = PinTheme(
-      width: 56,
-      height: 56,
-      textStyle: TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
-      decoration: BoxDecoration(
-        border: Border.all(color: Color.fromRGBO(234, 239, 243, 1)),
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
+final defaultPinTheme = PinTheme(
+  width: 56,
+  height: 56,
+  textStyle: TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
+  decoration: BoxDecoration(
+    border: Border.all(color: Color.fromRGBO(234, 239, 243, 1)),
+    borderRadius: BorderRadius.circular(20),
+  ),
+);
 ```
 
 if you want all pins to be the same don't pass other theme parameters,
 If not, create `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `errorPinTheme` from `defaultPinTheme`
 
 ```dart
-    final focusedPinTheme = defaultPinTheme.copyDecorationWith(
-      border: Border.all(color: Color.fromRGBO(114, 178, 238, 1)),
-      borderRadius: BorderRadius.circular(8),
-    );
+final focusedPinTheme = defaultPinTheme.copyDecorationWith(
+  border: Border.all(color: Color.fromRGBO(114, 178, 238, 1)),
+  borderRadius: BorderRadius.circular(8),
+);
 
-    final submittedPinTheme = defaultPinTheme.copyWith(
-      decoration: defaultPinTheme.decoration.copyWith(
-        color: Color.fromRGBO(234, 239, 243, 1),
-      ),
-    );
+final submittedPinTheme = defaultPinTheme.copyWith(
+  decoration: defaultPinTheme.decoration.copyWith(
+    color: Color.fromRGBO(234, 239, 243, 1),
+  ),
+);
 ```
 
 Put everything together
 
 ```dart
-    final defaultPinTheme = PinTheme(
-      width: 56,
-      height: 56,
-      textStyle: TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
-      decoration: BoxDecoration(
-        border: Border.all(color: Color.fromRGBO(234, 239, 243, 1)),
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
+final defaultPinTheme = PinTheme(
+  width: 56,
+  height: 56,
+  textStyle: TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
+  decoration: BoxDecoration(
+    border: Border.all(color: Color.fromRGBO(234, 239, 243, 1)),
+    borderRadius: BorderRadius.circular(20),
+  ),
+);
 
-    final focusedPinTheme = defaultPinTheme.copyDecorationWith(
-      border: Border.all(color: Color.fromRGBO(114, 178, 238, 1)),
-      borderRadius: BorderRadius.circular(8),
-    );
+final focusedPinTheme = defaultPinTheme.copyDecorationWith(
+  border: Border.all(color: Color.fromRGBO(114, 178, 238, 1)),
+  borderRadius: BorderRadius.circular(8),
+);
 
-    final submittedPinTheme = defaultPinTheme.copyWith(
-      decoration: defaultPinTheme.decoration.copyWith(
-        color: Color.fromRGBO(234, 239, 243, 1),
-      ),
-    );
+final submittedPinTheme = defaultPinTheme.copyWith(
+  decoration: defaultPinTheme.decoration.copyWith(
+    color: Color.fromRGBO(234, 239, 243, 1),
+  ),
+);
 
-    return Pinput(
-      defaultPinTheme: defaultPinTheme,
-      focusedPinTheme: focusedPinTheme,
-      submittedPinTheme: submittedPinTheme,
-      validator: (s) {
-        return s == '2222' ? null : 'Pin is incorrect';
-      },
-      pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-      showCursor: true,
-      onCompleted: (pin) => print(pin),
-    );
+return Pinput(
+  defaultPinTheme: defaultPinTheme,
+  focusedPinTheme: focusedPinTheme,
+  submittedPinTheme: submittedPinTheme,
+  validator: (s) {
+    return s == '2222' ? null : 'Pin is incorrect';
+  },
+  pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+  showCursor: true,
+  onCompleted: (pin) => print(pin),
+);
 ```
 
 ## SMS Autofill
@@ -181,9 +194,9 @@ Sms code will be automatically applied, without user interaction.
 `Note that The App Signature might be different for debug and release mode`
 
 ```dart
-    return Pinput(
-      androidSmsAutofillMethod:  AndroidSmsAutofillMethod.smsRetrieverApi,
-    );
+return Pinput(
+  androidSmsAutofillMethod:  AndroidSmsAutofillMethod.smsRetrieverApi,
+);
 ```
 
 Example of printed signature
@@ -194,9 +207,9 @@ Example of printed signature
 You don't need the App signature, the user will be prompted to confirm reading the message
 
 ```dart
-    return Pinput(
-      androidSmsAutofillMethod:  AndroidSmsAutofillMethod.smsUserConsentApi,
-    );
+return Pinput(
+  androidSmsAutofillMethod:  AndroidSmsAutofillMethod.smsUserConsentApi,
+);
 ```
 
 <img src="https://user-images.githubusercontent.com/26390946/158870589-a2d631fa-55d7-487f-8c30-d378bab4c21d.png" style="height: 700px; width: auto; image-rendering: pixelated;" alt="Request Hint" />
@@ -215,81 +228,81 @@ Also, you can suggest a phone number by showing native Android dialog.
 - #### Controller
 
 ```dart
-    /// Create Controller  
-    final pinController = TextEditingController();  
-  
-    /// Set text programmatically  
-    pinController.setText('1222');  
-  
-    /// Append typed character, useful if you are using custom keyboard  
-    pinController.append('1', 4);  
-  
-    /// Delete last character  
-    pinController.delete();  
-  
-    /// Don't call setText, append, delete in build method, this is just illustration.  
-  
-    return Pinput(  
-      controller: pinController,  
-    );  
+/// Create Controller  
+final pinController = TextEditingController();  
+
+/// Set text programmatically  
+pinController.setText('1222');  
+
+/// Append typed character, useful if you are using custom keyboard  
+pinController.append('1', 4);  
+
+/// Delete last character  
+pinController.delete();  
+
+/// Don't call setText, append, delete in build method, this is just illustration.  
+
+return Pinput(  
+  controller: pinController,  
+);  
 ```
 
 - #### Focus
 
 ```dart
-    /// Create FocusNode  
-    final pinputFocusNode = FocusNode();  
-  
-    /// Focus pinput  
-    pinputFocusNode.requestFocus();  
-  
-    /// UnFocus pinput  
-    pinputFocusNode.unfocus();  
-  
-    /// Don't call requestFocus, unfocus in build method, this is just illustration.  
-  
-    return Pinput(  
-      focusNode: pinputFocusNode,  
-    );  
+/// Create FocusNode  
+final pinputFocusNode = FocusNode();  
+
+/// Focus pinput  
+pinputFocusNode.requestFocus();  
+
+/// UnFocus pinput  
+pinputFocusNode.unfocus();  
+
+/// Don't call requestFocus, unfocus in build method, this is just illustration.  
+
+return Pinput(  
+  focusNode: pinputFocusNode,  
+);  
 ```
 
 - #### Validation
 
 ```dart
-    /// Create key
-    final formKey = GlobalKey<FormState>();
+/// Create key
+final formKey = GlobalKey<FormState>();
 
-    /// Validate manually
-    /// Don't call validate in build method, this is just illustration.
-    formKey.currentState!.validate();
+/// Validate manually
+/// Don't call validate in build method, this is just illustration.
+formKey.currentState!.validate();
 
-    return Form(
-      key: formKey,
-      child: Pinput(
-        // Without Validator
-        // If true error state will be applied no matter what validator returns
-        forceErrorState: true,
-        // Text will be displayed under the Pinput
-        errorText: 'Error',
+return Form(
+  key: formKey,
+  child: Pinput(
+    // Without Validator
+    // If true error state will be applied no matter what validator returns
+    forceErrorState: true,
+    // Text will be displayed under the Pinput
+    errorText: 'Error',
 
-        /// ------------
-        /// With Validator
-        /// Auto validate after user tap on keyboard done button, or completes Pinput
-        pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-        validator: (pin) {
-          if (pin == '2224') return null;
+    /// ------------
+    /// With Validator
+    /// Auto validate after user tap on keyboard done button, or completes Pinput
+    pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+    validator: (pin) {
+      if (pin == '2224') return null;
 
-          /// Text will be displayed under the Pinput
-          return 'Pin is incorrect';
-        },
-      ),
-    );
+      /// Text will be displayed under the Pinput
+      return 'Pin is incorrect';
+    },
+  ),
+);
 ```
 
 ## Properties
 
 ```dart
-  /// Theme of the pin in default state
+/// Theme of the pin in default state
 final PinTheme? defaultPinTheme;
 
 /// Theme of the pin in focused state
@@ -328,7 +341,7 @@ final AndroidSmsAutofillMethod androidSmsAutofillMethod;
 final bool listenForMultipleSmsOnAndroid;
 
 /// Used to extract code from SMS for Android Autofill if [androidSmsAutofillMethod] is enabled
-/// By default it is [_defaultSmsCodeMatcher]
+/// By default it is [PinputConstants.defaultSmsCodeMatcher]
 final String smsCodeMatcher;
 
 /// Fires when user completes pin input

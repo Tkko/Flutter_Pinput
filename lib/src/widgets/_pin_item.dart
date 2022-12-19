@@ -60,7 +60,7 @@ class _PinItem extends StatelessWidget {
   }
 
   PinTheme _getDefaultPinTheme() =>
-      state.widget.defaultPinTheme ?? _defaultPinTheme;
+      state.widget.defaultPinTheme ?? PinputConstants._defaultPinTheme;
 
   PinTheme _pinThemeOrDefault(PinTheme? theme) =>
       theme ?? _getDefaultPinTheme();
