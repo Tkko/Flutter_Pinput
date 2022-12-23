@@ -1,5 +1,5 @@
 name: pinput
-version: 2.2.19
+version: 2.2.20
 description: Pin code input (OTP) text field, iOS SMS autofill, Android SMS autofill One Time Code, Password, Passcode, Captcha, Security, Coupon, Wowcher, 2FA, Two step verification
 homepage: https://github.com/Tkko/Flutter_PinPut
 repository: https://github.com/Tkko/Flutter_PinPut
@@ -20,7 +20,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  smart_auth: ^1.0.6
+  smart_auth: ^1.0.7
 
 dev_dependencies:
   flutter_test:

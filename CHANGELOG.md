@@ -1,3 +1,7 @@
+#### 2.2.20 · 23/12/2022
+
+- Fixed the case where app was crashing while reading the OTP
+
 #### 2.2.19 · 19/12/2022
 
 - Improved changelog
