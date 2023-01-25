@@ -289,232 +289,315 @@ return Form(
 ## Properties
 
 ```dart
-/// Theme of the pin in default state
-final PinTheme? defaultPinTheme;
+class Pinput extends StatefulWidget {
+  const Pinput({
+    this.length = PinputConstants._defaultLength,
+    this.defaultPinTheme,
+    this.focusedPinTheme,
+    this.submittedPinTheme,
+    this.followingPinTheme,
+    this.disabledPinTheme,
+    this.errorPinTheme,
+    this.onChanged,
+    this.onCompleted,
+    this.onSubmitted,
+    this.onTap,
+    this.onLongPress,
+    this.controller,
+    this.focusNode,
+    this.preFilledWidget,
+    this.separatorPositions,
+    this.separator = PinputConstants._defaultSeparator,
+    this.smsCodeMatcher = PinputConstants.defaultSmsCodeMatcher,
+    this.senderPhoneNumber,
+    this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
+    this.listenForMultipleSmsOnAndroid = false,
+    this.mainAxisAlignment = MainAxisAlignment.center,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.pinContentAlignment = Alignment.center,
+    this.animationCurve = Curves.easeIn,
+    this.animationDuration = PinputConstants._animationDuration,
+    this.pinAnimationType = PinAnimationType.scale,
+    this.enabled = true,
+    this.readOnly = false,
+    this.useNativeKeyboard = true,
+    this.toolbarEnabled = true,
+    this.autofocus = false,
+    this.obscureText = false,
+    this.showCursor = true,
+    this.isCursorAnimationEnabled = true,
+    this.enableSuggestions = true,
+    this.hapticFeedbackType = HapticFeedbackType.disabled,
+    this.closeKeyboardWhenCompleted = true,
+    this.keyboardType = TextInputType.number,
+    this.textCapitalization = TextCapitalization.none,
+    this.slideTransitionBeginOffset,
+    this.cursor,
+    this.keyboardAppearance,
+    this.inputFormatters = const [],
+    this.textInputAction,
+    this.autofillHints,
+    this.obscuringCharacter = '•',
+    this.obscuringWidget,
+    this.selectionControls,
+    this.restorationId,
+    this.onClipboardFound,
+    this.onAppPrivateCommand,
+    this.mouseCursor,
+    this.forceErrorState = false,
+    this.errorText,
+    this.validator,
+    this.errorBuilder,
+    this.errorTextStyle,
+    this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
+    this.scrollPadding = const EdgeInsets.all(20),
+    this.contextMenuBuilder = _defaultContextMenuBuilder,
+    this.onTapOutside,
+    Key? key,
+  })  : assert(obscuringCharacter.length == 1),
+        assert(length > 0),
+        assert(
+        textInputAction != TextInputAction.newline,
+        'Pinput is not multiline',
+        ),
+        super(key: key);
 
-/// Theme of the pin in focused state
-final PinTheme? focusedPinTheme;
+  /// Theme of the pin in default state
+  final PinTheme? defaultPinTheme;
 
-/// Theme of the pin in submitted state
-final PinTheme? submittedPinTheme;
+  /// Theme of the pin in focused state
+  final PinTheme? focusedPinTheme;
 
-/// Theme of the pin in following state
-final PinTheme? followingPinTheme;
+  /// Theme of the pin in submitted state
+  final PinTheme? submittedPinTheme;
 
-/// Theme of the pin in disabled state
-final PinTheme? disabledPinTheme;
+  /// Theme of the pin in following state
+  final PinTheme? followingPinTheme;
 
-/// Theme of the pin in error state
-final PinTheme? errorPinTheme;
+  /// Theme of the pin in disabled state
+  final PinTheme? disabledPinTheme;
 
-/// If true keyboard will be closed
-final bool closeKeyboardWhenCompleted;
+  /// Theme of the pin in error state
+  final PinTheme? errorPinTheme;
 
-/// Displayed fields count. PIN code length.
-final int length;
+  /// If true keyboard will be closed
+  final bool closeKeyboardWhenCompleted;
 
-/// By default Android autofill is Disabled, you cane enable it by using any of options listed below
-///
-/// First option is [AndroidSmsAutofillMethod.smsRetrieverApi] it automatically reads sms without user interaction
-/// More about Sms Retriever API https://developers.google.com/identity/sms-retriever/overview?hl=en
-///
-/// Second option requires user interaction to confirm reading a SMS, See readme for more details
-/// [AndroidSmsAutofillMethod.smsUserConsentApi]
-/// More about SMS User Consent API https://developers.google.com/identity/sms-retriever/user-consent/overview
-final AndroidSmsAutofillMethod androidSmsAutofillMethod;
+  /// Displayed fields count. PIN code length.
+  final int length;
 
-/// If true [androidSmsAutofillMethod] is not [AndroidSmsAutofillMethod.none]
-/// Pinput will listen multiple sms codes, helpful if user request another sms code
-final bool listenForMultipleSmsOnAndroid;
+  /// By default Android autofill is Disabled, you cane enable it by using any of options listed below
+  ///
+  /// First option is [AndroidSmsAutofillMethod.smsRetrieverApi] it automatically reads sms without user interaction
+  /// More about Sms Retriever API https://developers.google.com/identity/sms-retriever/overview?hl=en
+  ///
+  /// Second option requires user interaction to confirm reading a SMS, See readme for more details
+  /// [AndroidSmsAutofillMethod.smsUserConsentApi]
+  /// More about SMS User Consent API https://developers.google.com/identity/sms-retriever/user-consent/overview
+  final AndroidSmsAutofillMethod androidSmsAutofillMethod;
 
-/// Used to extract code from SMS for Android Autofill if [androidSmsAutofillMethod] is enabled
-/// By default it is [PinputConstants.defaultSmsCodeMatcher]
-final String smsCodeMatcher;
+  /// If true [androidSmsAutofillMethod] is not [AndroidSmsAutofillMethod.none]
+  /// Pinput will listen multiple sms codes, helpful if user request another sms code
+  final bool listenForMultipleSmsOnAndroid;
 
-/// Fires when user completes pin input
-final ValueChanged<String>? onCompleted;
+  /// Used to extract code from SMS for Android Autofill if [androidSmsAutofillMethod] is enabled
+  /// By default it is [PinputConstants.defaultSmsCodeMatcher]
+  final String smsCodeMatcher;
 
-/// Called every time input value changes.
-final ValueChanged<String>? onChanged;
+  /// Fires when user completes pin input
+  final ValueChanged<String>? onCompleted;
 
-/// See [EditableText.onSubmitted]
-final ValueChanged<String>? onSubmitted;
+  /// Called every time input value changes.
+  final ValueChanged<String>? onChanged;
 
-/// Called when user clicks on PinPut
-final VoidCallback? onTap;
+  /// See [EditableText.onSubmitted]
+  final ValueChanged<String>? onSubmitted;
 
-/// Triggered when a pointer has remained in contact with the Pinput at the
-/// same location for a long period of time.
-final VoidCallback? onLongPress;
+  /// Called when user clicks on PinPut
+  final VoidCallback? onTap;
 
-/// Used to get, modify PinPut value and more.
-/// Don't forget to dispose controller
-/// ``` dart
-///   @override
-///   void dispose() {
-///     controller.dispose();
-///     super.dispose();
-///   }
-/// ```
-final TextEditingController? controller;
+  /// Triggered when a pointer has remained in contact with the Pinput at the
+  /// same location for a long period of time.
+  final VoidCallback? onLongPress;
 
-/// Defines the keyboard focus for this
-/// To give the keyboard focus to this widget, provide a [focusNode] and then
-/// use the current [FocusScope] to request the focus:
-/// Don't forget to dispose focusNode
-/// ``` dart
-///   @override
-///   void dispose() {
-///     focusNode.dispose();
-///     super.dispose();
-///   }
-/// ```
-final FocusNode? focusNode;
+  /// Used to get, modify PinPut value and more.
+  /// Don't forget to dispose controller
+  /// ``` dart
+  ///   @override
+  ///   void dispose() {
+  ///     controller.dispose();
+  ///     super.dispose();
+  ///   }
+  /// ```
+  final TextEditingController? controller;
 
-/// Widget that is displayed before field submitted.
-final Widget? preFilledWidget;
+  /// Defines the keyboard focus for this
+  /// To give the keyboard focus to this widget, provide a [focusNode] and then
+  /// use the current [FocusScope] to request the focus:
+  /// Don't forget to dispose focusNode
+  /// ``` dart
+  ///   @override
+  ///   void dispose() {
+  ///     focusNode.dispose();
+  ///     super.dispose();
+  ///   }
+  /// ```
+  final FocusNode? focusNode;
 
-/// Sets the positions where the separator should be shown
-final List<int>? separatorPositions;
+  /// Widget that is displayed before field submitted.
+  final Widget? preFilledWidget;
 
-/// Builds a Pinput separator
-final Widget? separator;
+  /// Sets the positions where the separator should be shown
+  final List<int>? separatorPositions;
 
-/// Defines how [Pinput] fields are being placed inside [Row]
-final MainAxisAlignment mainAxisAlignment;
+  /// Builds a Pinput separator
+  final Widget? separator;
 
-/// Defines how [Pinput] and ([errorText] or [errorBuilder]) are being placed inside [Column]
-final CrossAxisAlignment crossAxisAlignment;
+  /// Defines how [Pinput] fields are being placed inside [Row]
+  final MainAxisAlignment mainAxisAlignment;
 
-/// Defines how each [Pinput] field are being placed within the container
-final AlignmentGeometry pinContentAlignment;
+  /// Defines how [Pinput] and ([errorText] or [errorBuilder]) are being placed inside [Column]
+  final CrossAxisAlignment crossAxisAlignment;
 
-/// curve of every [Pinput] Animation
-final Curve animationCurve;
+  /// Defines how each [Pinput] field are being placed within the container
+  final AlignmentGeometry pinContentAlignment;
 
-/// Duration of every [Pinput] Animation
-final Duration animationDuration;
+  /// curve of every [Pinput] Animation
+  final Curve animationCurve;
 
-/// Animation Type of each [Pinput] field
-/// options:
-/// none, scale, fade, slide, rotation
-final PinAnimationType pinAnimationType;
+  /// Duration of every [Pinput] Animation
+  final Duration animationDuration;
 
-/// Begin Offset of ever [Pinput] field when [pinAnimationType] is slide
-final Offset? slideTransitionBeginOffset;
+  /// Animation Type of each [Pinput] field
+  /// options:
+  /// none, scale, fade, slide, rotation
+  final PinAnimationType pinAnimationType;
 
-/// Defines [Pinput] state
-final bool enabled;
+  /// Begin Offset of ever [Pinput] field when [pinAnimationType] is slide
+  final Offset? slideTransitionBeginOffset;
 
-/// See [EditableText.readOnly]
-final bool readOnly;
+  /// Defines [Pinput] state
+  final bool enabled;
 
-/// See [EditableText.autofocus]
-final bool autofocus;
+  /// See [EditableText.readOnly]
+  final bool readOnly;
 
-/// Whether to use Native keyboard or custom one
-/// when flag is set to false [Pinput] wont be focusable anymore
-/// so you should set value of [Pinput]'s [TextEditingController] programmatically
-final bool useNativeKeyboard;
+  /// See [EditableText.autofocus]
+  final bool autofocus;
 
-/// If true, paste button will appear on longPress event
-final bool toolbarEnabled;
+  /// Whether to use Native keyboard or custom one
+  /// when flag is set to false [Pinput] wont be focusable anymore
+  /// so you should set value of [Pinput]'s [TextEditingController] programmatically
+  final bool useNativeKeyboard;
 
-/// Whether show cursor or not
-/// Default cursor '|' or [cursor]
-final bool showCursor;
+  /// If true, paste button will appear on longPress event
+  final bool toolbarEnabled;
 
-final bool isCursorAnimationEnabled;
+  /// Whether show cursor or not
+  /// Default cursor '|' or [cursor]
+  final bool showCursor;
 
-/// If [showCursor] true the focused field will show passed Widget
-final Widget? cursor;
+  final bool isCursorAnimationEnabled;
 
-/// The appearance of the keyboard.
-/// This setting is only honored on iOS devices.
-/// If unset, defaults to [ThemeData.brightness].
-final Brightness? keyboardAppearance;
+  /// If [showCursor] true the focused field will show passed Widget
+  final Widget? cursor;
 
-/// See [EditableText.inputFormatters]
-final List<TextInputFormatter> inputFormatters;
+  /// The appearance of the keyboard.
+  /// This setting is only honored on iOS devices.
+  /// If unset, defaults to [ThemeData.brightness].
+  final Brightness? keyboardAppearance;
 
-/// See [EditableText.keyboardType]
-final TextInputType keyboardType;
+  /// See [EditableText.inputFormatters]
+  final List<TextInputFormatter> inputFormatters;
 
-/// Provide any symbol to obscure each [Pinput] pin
-/// Recommended ●
-final String obscuringCharacter;
+  /// See [EditableText.keyboardType]
+  final TextInputType keyboardType;
 
-/// IF [obscureText] is true typed text will be replaced with passed Widget
-final Widget? obscuringWidget;
+  /// Provide any symbol to obscure each [Pinput] pin
+  /// Recommended ●
+  final String obscuringCharacter;
 
-/// Whether hide typed pin or not
-final bool obscureText;
+  /// IF [obscureText] is true typed text will be replaced with passed Widget
+  final Widget? obscuringWidget;
 
-/// See [EditableText.textCapitalization]
-final TextCapitalization textCapitalization;
+  /// Whether hide typed pin or not
+  final bool obscureText;
 
-/// The type of action button to use for the keyboard.
-///
-/// Defaults to [TextInputAction.newline] if [keyboardType] is
-/// [TextInputType.multiline] and [TextInputAction.done] otherwise.
-final TextInputAction? textInputAction;
+  /// See [EditableText.textCapitalization]
+  final TextCapitalization textCapitalization;
 
-/// Configuration of toolbar options.
-///
-/// If not set, select all and paste will default to be enabled. Copy and cut
-/// will be disabled if [obscureText] is true. If [readOnly] is true,
-/// paste and cut will be disabled regardless.
-final ToolbarOptions toolbarOptions;
+  /// The type of action button to use for the keyboard.
+  ///
+  /// Defaults to [TextInputAction.newline] if [keyboardType] is
+  /// [TextInputType.multiline] and [TextInputAction.done] otherwise.
+  final TextInputAction? textInputAction;
 
-/// See [EditableText.autofillHints]
-final Iterable<String>? autofillHints;
+  /// See [EditableText.autofillHints]
+  final Iterable<String>? autofillHints;
 
-/// See [EditableText.enableSuggestions]
-final bool enableSuggestions;
+  /// See [EditableText.enableSuggestions]
+  final bool enableSuggestions;
 
-/// See [EditableText.selectionControls]
-final TextSelectionControls? selectionControls;
+  /// See [EditableText.selectionControls]
+  final TextSelectionControls? selectionControls;
 
-/// See [TextField.restorationId]
-final String? restorationId;
+  /// See [TextField.restorationId]
+  final String? restorationId;
 
-/// Fires when clipboard has text of Pinput's length
-final ValueChanged<String>? onClipboardFound;
+  /// Fires when clipboard has text of Pinput's length
+  final ValueChanged<String>? onClipboardFound;
 
-/// Use haptic feedback everytime user types on keyboard
-/// See more details in [HapticFeedback]
-final HapticFeedbackType hapticFeedbackType;
+  /// Use haptic feedback everytime user types on keyboard
+  /// See more details in [HapticFeedback]
+  final HapticFeedbackType hapticFeedbackType;
 
-/// See [EditableText.onAppPrivateCommand]
-final AppPrivateCommandCallback? onAppPrivateCommand;
+  /// See [EditableText.onAppPrivateCommand]
+  final AppPrivateCommandCallback? onAppPrivateCommand;
 
-/// See [EditableText.mouseCursor]
-final MouseCursor? mouseCursor;
+  /// See [EditableText.mouseCursor]
+  final MouseCursor? mouseCursor;
 
-/// If true [errorPinTheme] will be applied and [errorText] will be displayed under the Pinput
-final bool forceErrorState;
+  /// If true [errorPinTheme] will be applied and [errorText] will be displayed under the Pinput
+  final bool forceErrorState;
 
-/// Text displayed under the Pinput if Pinput is invalid
-final String? errorText;
+  /// Text displayed under the Pinput if Pinput is invalid
+  final String? errorText;
 
-/// Style of error text
-final TextStyle? errorTextStyle;
+  /// Style of error text
+  final TextStyle? errorTextStyle;
 
-/// If [Pinput] has error and [errorBuilder] is passed it will be rendered under the Pinput
-final PinputErrorBuilder? errorBuilder;
+  /// If [Pinput] has error and [errorBuilder] is passed it will be rendered under the Pinput
+  final PinputErrorBuilder? errorBuilder;
 
-/// Return null if pin is valid or any String otherwise
-final FormFieldValidator<String>? validator;
+  /// Return null if pin is valid or any String otherwise
+  final FormFieldValidator<String>? validator;
 
-/// Return null if pin is valid or any String otherwise
-final PinputAutovalidateMode pinputAutovalidateMode;
+  /// Return null if pin is valid or any String otherwise
+  final PinputAutovalidateMode pinputAutovalidateMode;
 
-/// When this widget receives focus and is not completely visible (for example scrolled partially
-/// off the screen or overlapped by the keyboard)
-/// then it will attempt to make itself visible by scrolling a surrounding [Scrollable], if one is present.
-/// This value controls how far from the edges of a [Scrollable] the TextField will be positioned after the scroll.
-final EdgeInsets scrollPadding;
+  /// When this widget receives focus and is not completely visible (for example scrolled partially
+  /// off the screen or overlapped by the keyboard)
+  /// then it will attempt to make itself visible by scrolling a surrounding [Scrollable], if one is present.
+  /// This value controls how far from the edges of a [Scrollable] the TextField will be positioned after the scroll.
+  final EdgeInsets scrollPadding;
 
-/// Optional parameter for Android SMS User Consent API.
-final String? senderPhoneNumber;
+  /// Optional parameter for Android SMS User Consent API.
+  final String? senderPhoneNumber;
+
+  /// {@macro flutter.widgets.EditableText.contextMenuBuilder}
+  ///
+  /// If not provided, will build a default menu based on the platform.
+  ///
+  /// See also:
+  ///
+  ///  * [AdaptiveTextSelectionToolbar], which is built by default.
+  final EditableTextContextMenuBuilder? contextMenuBuilder;
+
+  /// A callback to be invoked when a tap is detected outside of this [TapRegion]
+  /// The [PointerDownEvent] passed to the function is the event that caused the
+  /// notification. If this region is part of a group
+  /// then it's possible that the event may be outside of this immediate region,
+  /// although it will be within the region of one of the group members.
+  /// This is useful if you want to unfocus the [Pinput] when user taps outside of it
+  final TapRegionCallback? onTapOutside;
 ```
