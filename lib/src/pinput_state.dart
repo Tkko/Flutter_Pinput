@@ -336,8 +336,10 @@ class _PinputState extends State<Pinput>
     return _PinputFormField(
       enabled: isEnabled,
       validator: _validator,
-      child: FocusTrapArea(
-        focusNode: effectiveFocusNode,
+      child: TapRegion(
+        onTapOutside: (event) {
+          effectiveFocusNode.unfocus();
+        },
         child: MouseRegion(
           cursor: _effectiveMouseCursor,
           onEnter: (PointerEnterEvent event) => _handleHover(true),
