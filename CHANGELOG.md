@@ -1,3 +1,11 @@
+#### 2.2.22 · 25/01/2023
+
+- Removed FocusTrapArea
+- Removed ToolbarOptions
+- Added contextMenuBuilder, which is replacement of ToolbarOptions
+- Added onTapOutside callback, which is invoked when a tap is detected outside of the Pinput
+- Fixed text selection behavior
+
 #### 2.2.21 · 29/12/2022
 
 - Fixed the case where app was crashing while reading the OTP

@@ -8,11 +8,10 @@ function run_dart_doc {
   flutter pub global activate dartdoc
   export FLUTTER_ROOT=~/fvm/default
   dart doc . || fail "dart doc failed"
+}
 
-  run_docs_in_browser=$1
-  if $run_docs_in_browser; then
-    dhttpd --path doc/api
-  fi
+function host_docs {
+  dhttpd --path doc/api
 }
 
 function run_pana {
@@ -26,13 +25,14 @@ function publish {
 }
 
 function format_and_analyze {
-  flutter format .
+  dart format .
   flutter analyze || fail "flutter analyze failed"
   flutter test || fail "flutter test failed"
 }
 
 cd ../
 format_and_analyze
-run_dart_doc false
+run_dart_doc
 run_pana
+#host_docs
 publish

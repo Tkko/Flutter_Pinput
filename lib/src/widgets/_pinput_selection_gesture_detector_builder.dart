@@ -11,7 +11,7 @@ class _PinputSelectionGestureDetectorBuilder
   @override
   void onForcePressStart(ForcePressDetails details) {
     super.onForcePressStart(details);
-    if (shouldShowSelectionToolbar) {
+    if (delegate.selectionEnabled && shouldShowSelectionToolbar) {
       editableText.showToolbar();
     }
   }
