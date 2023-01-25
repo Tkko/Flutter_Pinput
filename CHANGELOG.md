@@ -1,3 +1,9 @@
+#### 2.2.23 · 25/01/2023
+
+- Added correct SDK constraints
+- Improved readme
+
+
 #### 2.2.22 · 25/01/2023
 
 - Removed FocusTrapArea

@@ -20,7 +20,6 @@ function run_pana {
 }
 
 function publish {
-  flutter packages pub publish --dry-run || fail "pub publish failed"
   flutter packages pub publish || fail "pub publish failed"
 }
 
@@ -34,5 +33,5 @@ cd ../
 format_and_analyze
 run_dart_doc
 run_pana
-#host_docs
 publish
+host_docs
