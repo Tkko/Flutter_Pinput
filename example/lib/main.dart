@@ -16,8 +16,7 @@ void main() {
             color: Color.fromRGBO(30, 60, 87, 1),
           ),
         ),
-        body:
-            const FractionallySizedBox(widthFactor: 1, child: PinputExample()),
+        body: const FractionallySizedBox(widthFactor: 1, child: PinputExample()),
       ),
     ),
   );
@@ -75,8 +74,7 @@ class _PinputExampleState extends State<PinputExample> {
             child: Pinput(
               controller: pinController,
               focusNode: focusNode,
-              androidSmsAutofillMethod:
-                  AndroidSmsAutofillMethod.smsUserConsentApi,
+              androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
               validator: (value) {
@@ -123,7 +121,10 @@ class _PinputExampleState extends State<PinputExample> {
             ),
           ),
           TextButton(
-            onPressed: () => formKey.currentState!.validate(),
+            onPressed: () {
+              focusNode.unfocus();
+              formKey.currentState!.validate();
+            },
             child: const Text('Validate'),
           ),
         ],
