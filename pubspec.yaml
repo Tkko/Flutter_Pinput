@@ -22,6 +22,7 @@ dependencies:
     sdk: flutter
   smart_auth: ^1.0.8
   universal_platform: ^1.0.0+1
+  flutter_neumorphic:
 
 dev_dependencies:
   flutter_test:
