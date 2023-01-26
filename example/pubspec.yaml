@@ -27,6 +27,8 @@ dependencies:
     path: ../
   google_fonts: ^2.3.0
   cupertino_icons: ^1.0.4
+  flutter_neumorphic: 
+
 
 dev_dependencies:
   flutter_test:
