@@ -1,30 +1,23 @@
 import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:smart_auth/smart_auth.dart';
 import 'package:universal_platform/universal_platform.dart';
 
-part 'pinput_state.dart';
-
-part 'utils/enums.dart';
-
-part 'utils/pinput_constants.dart';
-
-part 'widgets/widgets.dart';
-
 part 'models/pin_theme.dart';
-
+part 'pinput_state.dart';
+part 'utils/enums.dart';
 part 'utils/extensions.dart';
-
-part 'widgets/_pin_item.dart';
-
+part 'utils/pinput_constants.dart';
 part 'utils/pinput_utils_mixin.dart';
-
+part 'widgets/_pin_item.dart';
 part 'widgets/_pinput_selection_gesture_detector_builder.dart';
+part 'widgets/widgets.dart';
 
 /// Flutter package to create easily customizable Pin code input field, that your designers can't even draw in Figma 🤭
 ///
@@ -80,6 +73,7 @@ class Pinput extends StatefulWidget {
     this.autofocus = false,
     this.obscureText = false,
     this.showCursor = true,
+    this.showNeumorphicDesign = false,
     this.isCursorAnimationEnabled = true,
     this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
@@ -108,6 +102,7 @@ class Pinput extends StatefulWidget {
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     this.onTapOutside,
+    this.neumorphicStyle,
     Key? key,
   })  : assert(obscuringCharacter.length == 1),
         assert(length > 0),
@@ -355,6 +350,13 @@ class Pinput extends StatefulWidget {
   /// although it will be within the region of one of the group members.
   /// This is useful if you want to unfocus the [Pinput] when user taps outside of it
   final TapRegionCallback? onTapOutside;
+
+  /// Whether show Neumorphic Design or not
+  final bool showNeumorphicDesign;
+
+  /// Creating a new instance of the NeumorphicStyle class.
+  /// Enables the User to pass their own neumorphicStyle
+  final NeumorphicStyle? neumorphicStyle;
 
   static Widget _defaultContextMenuBuilder(
     BuildContext context,
@@ -728,6 +730,21 @@ class Pinput extends StatefulWidget {
         'contextMenuBuilder',
         contextMenuBuilder,
         defaultValue: _defaultContextMenuBuilder,
+      ),
+    );
+
+    properties.add(
+      DiagnosticsProperty<bool>(
+        'showNeumorphicDesign',
+        showNeumorphicDesign,
+        defaultValue: false,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<NeumorphicStyle>(
+        'neumorphicStyle',
+        neumorphicStyle,
+        defaultValue: null,
       ),
     );
   }

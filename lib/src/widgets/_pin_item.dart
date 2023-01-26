@@ -9,27 +9,52 @@ class _PinItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pinTheme = _pinTheme(index);
+    final showNeumorphic = state.widget.showNeumorphicDesign;
+    final neumorphicStyle = state.widget.neumorphicStyle;
+
 
     return Flexible(
-      child: AnimatedContainer(
-        height: pinTheme.height,
-        width: pinTheme.width,
-        constraints: pinTheme.constraints,
-        padding: pinTheme.padding,
-        margin: pinTheme.margin,
-        decoration: pinTheme.decoration,
-        alignment: state.widget.pinContentAlignment,
+      child: showNeumorphic
+          ? Neumorphic(
+              style: neumorphicStyle ?? NeumorphicStyle(
+                shape: NeumorphicShape.concave,
+                boxShape:
+                    NeumorphicBoxShape.roundRect(BorderRadius.circular(19)),
+                depth: 1,
+                intensity: 5,
+                color: Colors.white,
+              ),
+              child: inputsWithoutNeumorphic(pinTheme, showNeumorphic),
+            )
+          : inputsWithoutNeumorphic(pinTheme, showNeumorphic),
+    );
+  }
+
+  AnimatedContainer inputsWithoutNeumorphic(
+    PinTheme pinTheme,
+    bool showNeumorphic,
+  ) {
+    return AnimatedContainer(
+      height: pinTheme.height,
+      width: pinTheme.width,
+      constraints: pinTheme.constraints,
+      padding: pinTheme.padding,
+      margin: pinTheme.margin,
+      decoration: showNeumorphic
+          ? pinTheme.decoration!
+              .copyWith(border: Border.all(color: Colors.transparent))
+          : pinTheme.decoration,
+      alignment: state.widget.pinContentAlignment,
+      duration: state.widget.animationDuration,
+      curve: state.widget.animationCurve,
+      child: AnimatedSwitcher(
+        switchInCurve: state.widget.animationCurve,
+        switchOutCurve: state.widget.animationCurve,
         duration: state.widget.animationDuration,
-        curve: state.widget.animationCurve,
-        child: AnimatedSwitcher(
-          switchInCurve: state.widget.animationCurve,
-          switchOutCurve: state.widget.animationCurve,
-          duration: state.widget.animationDuration,
-          transitionBuilder: (child, animation) {
-            return _getTransition(child, animation);
-          },
-          child: _buildFieldContent(index, pinTheme),
-        ),
+        transitionBuilder: (child, animation) {
+          return _getTransition(child, animation);
+        },
+        child: _buildFieldContent(index, pinTheme),
       ),
     );
   }
