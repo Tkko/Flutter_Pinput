@@ -71,6 +71,13 @@ Don't forget to give it a star ⭐
 | - | - | - |
 | <img width="300" src="https://user-images.githubusercontent.com/26390946/155600099-d0a02f55-09e6-4142-92de-066cd71cf211.gif"/> | <img width="300" src="https://user-images.githubusercontent.com/26390946/155600276-0380b3b4-3d9c-4ea8-87d0-4f7ebd86e460.gif"/> | <img width="300" src="https://user-images.githubusercontent.com/26390946/155600427-901c1eae-e565-4cf8-a338-8ac40eb1149c.gif"/> |
 
+| [(Neumophic Design)](./example/lib/demo/pinput_templates/neumophic_designs.dart)|
+| - | - | - |
+| - | - | - |
+
+| <img width="300" src="https://user-images.githubusercontent.com/32597034/214843044-7183c4ab-8f87-48f2-a8bb-6bf03726bb24.png"/>
+
+
 ## Getting Started
 
 The pin has 6 states `default` `focused`, `submitted`, `following`, `disabled`, `error`, you can customize each state by specifying theme parameter.
