@@ -14,7 +14,7 @@
  </div>
 <!--  Donations -->
 
- 
+
 [![Pub package](https://img.shields.io/pub/v/pinput.svg)](https://pub.dev/packages/pinput)
 [![Github starts](https://img.shields.io/github/stars/tkko/flutter_pinput.svg?style=flat&logo=github&colorB=deeppink&label=stars)](https://github.com/tkko/flutter_pinput)
 [![style: effective dart](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://github.com/tenhobi/effective_dart)
@@ -25,12 +25,6 @@
 Flutter package to create easily customizable Pin code input field, that your designers can't even draw in Figma 🤭
 
 **If you are using Flutter version <3.7.0 you have to use Pinput version 2.2.21**
-```dart
-  pinput:
-    git:
-    url: https://github.com/Tkko/Flutter_Pinput
-    ref: 2.2.21
-```
 
 `Bonus tip: 🤫 Tell your PM that you need a week to implement the feature and chill with your friends meanwhile.`
 
@@ -172,10 +166,26 @@ Works out of the box, by tapping the code on top of the keyboard
 
 ### Android
 
-`If you are using` [firebase_auth](https://firebase.flutter.dev/docs/auth/phone#verificationcompleted) `you don't need to use any option below,
-because firebase_auth support automatic SMS code resolution.`
-
-You have two options, [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview?hl=en) and [SMS User Consent API](https://developers.google.com/identity/sms-retriever/user-consent/overview),
+If you are using [firebase_auth](https://firebase.flutter.dev/docs/auth/phone#verificationcompleted) you have to set `androidSmsAutofillMethod` to `AndroidSmsAutofillMethod.none` and set `controller'`s value in `verificationCompleted` callback, here is an example code:
+``` dart
+    Pinput(
+      androidSmsAutofillMethod: AndroidSmsAutofillMethod.none,
+      controller: pinController,
+    );
+```
+And set pinController's value in `verificationCompleted` callback:
+``` dart
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      verificationCompleted: (PhoneAuthCredential credential) {
+        pinController.setText(credential.smsCode);
+      },
+      verificationFailed: (FirebaseAuthException e) {},
+      codeSent: (String verificationId, int? resendToken) {},
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
+```
+---
+If you aren't using firebase_auth, you have two options, [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview?hl=en) and [SMS User Consent API](https://developers.google.com/identity/sms-retriever/user-consent/overview),
 
 [SmartAuth](https://github.com/Tkko/flutter_smart_auth) is a wrapper package for Flutter for these APIs and it is behind the autofill support of Pinput
 
