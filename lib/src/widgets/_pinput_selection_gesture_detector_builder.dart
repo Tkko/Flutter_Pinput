@@ -9,7 +9,7 @@ class _PinputSelectionGestureDetectorBuilder
   final _PinputState _state;
 
   @override
-  void onForcePressStart(ForcePressDetails details) {
+  void onForcePressStart(details) {
     super.onForcePressStart(details);
     if (delegate.selectionEnabled && shouldShowSelectionToolbar) {
       editableText.showToolbar();
@@ -17,14 +17,7 @@ class _PinputSelectionGestureDetectorBuilder
   }
 
   @override
-  void onDoubleTapDown(TapDownDetails details) {
-    if (shouldShowSelectionToolbar) {
-      editableText.showToolbar();
-    }
-  }
-
-  @override
-  void onSingleTapUp(TapUpDetails details) {
+  void onSingleTapUp(details) {
     super.onSingleTapUp(details);
     editableText.hideToolbar();
     _state._requestKeyboard();
@@ -32,7 +25,14 @@ class _PinputSelectionGestureDetectorBuilder
   }
 
   @override
-  void onSingleLongTapStart(LongPressStartDetails details) {
+  void onDoubleTapDown(_) {
+    if (shouldShowSelectionToolbar) {
+      editableText.showToolbar();
+    }
+  }
+
+  @override
+  void onSingleLongTapStart(details) {
     _state.widget.onLongPress?.call();
     if (shouldShowSelectionToolbar) {
       editableText.showToolbar();

@@ -25,9 +25,7 @@ class _PinItem extends StatelessWidget {
           switchInCurve: state.widget.animationCurve,
           switchOutCurve: state.widget.animationCurve,
           duration: state.widget.animationDuration,
-          transitionBuilder: (child, animation) {
-            return _getTransition(child, animation);
-          },
+          transitionBuilder: _getTransition,
           child: _buildFieldContent(index, pinTheme),
         ),
       ),
@@ -113,7 +111,7 @@ class _PinItem extends StatelessWidget {
     );
   }
 
-  Widget _getTransition(Widget child, Animation animation) {
+  Widget _getTransition(Widget child, Animation<double> animation) {
     if (child is _PinputAnimatedCursor) {
       return child;
     }
@@ -123,12 +121,12 @@ class _PinItem extends StatelessWidget {
         return child;
       case PinAnimationType.fade:
         return FadeTransition(
-          opacity: animation as Animation<double>,
+          opacity: animation,
           child: child,
         );
       case PinAnimationType.scale:
         return ScaleTransition(
-          scale: animation as Animation<double>,
+          scale: animation,
           child: child,
         );
       case PinAnimationType.slide:
@@ -137,12 +135,12 @@ class _PinItem extends StatelessWidget {
             begin:
                 state.widget.slideTransitionBeginOffset ?? const Offset(0.8, 0),
             end: Offset.zero,
-          ).animate(animation as Animation<double>),
+          ).animate(animation),
           child: child,
         );
       case PinAnimationType.rotation:
         return RotationTransition(
-          turns: animation as Animation<double>,
+          turns: animation,
           child: child,
         );
     }

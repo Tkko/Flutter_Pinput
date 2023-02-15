@@ -11,6 +11,7 @@ function run_dart_doc {
 }
 
 function host_docs {
+  flutter pub global activate dhttpd
   dhttpd --path doc/api
 }
 
@@ -32,6 +33,6 @@ function format_and_analyze {
 cd ../
 format_and_analyze
 run_dart_doc
+#host_docs
 run_pana
 publish
-host_docs
