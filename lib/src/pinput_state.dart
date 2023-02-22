@@ -416,7 +416,7 @@ class _PinputState extends State<Pinput>
           showSelectionHandles: false,
           rendererIgnoresPointer: true,
           enableInteractiveSelection: false,
-          enableIMEPersonalizedLearning: false,
+          enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
           textInputAction: widget.textInputAction,
           textCapitalization: widget.textCapitalization,
           selectionColor: Colors.transparent,

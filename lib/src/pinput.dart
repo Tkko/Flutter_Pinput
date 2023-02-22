@@ -81,6 +81,7 @@ class Pinput extends StatefulWidget {
     this.obscureText = false,
     this.showCursor = true,
     this.isCursorAnimationEnabled = true,
+    this.enableIMEPersonalizedLearning = false,
     this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
@@ -253,6 +254,13 @@ class Pinput extends StatefulWidget {
   final bool showCursor;
 
   final bool isCursorAnimationEnabled;
+
+  /// Whether to enable that the IME update personalized data such as typing history and user dictionary data.
+  //
+  // This flag only affects Android. On iOS, there is no equivalent flag.
+  //
+  // Defaults to false. Cannot be null.
+  final bool enableIMEPersonalizedLearning;
 
   /// If [showCursor] true the focused field will show passed Widget
   final Widget? cursor;
