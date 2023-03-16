@@ -22,11 +22,9 @@
 
 </div>
 
-Flutter package to create easily customizable Pin code input field, that your designers can't even draw in Figma 🤭
+Flutter Pinput is a package that provides an easy-to-use and customizable Pin code input field. It offers several features such as animated decoration switching, form validation, SMS autofill, custom cursor, copying from clipboard, and more. It also provides beautiful examples that you can choose from.
 
 **If you are using Flutter version <3.7.0 you have to use Pinput version 2.2.21**
-
-`Bonus tip: 🤫 Tell your PM that you need a week to implement the feature and chill with your friends meanwhile.`
 
 ## Features:
 - Animated Decoration Switching
