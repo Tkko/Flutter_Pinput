@@ -41,6 +41,7 @@ class _ExampleState extends State<Example> {
   Widget build(BuildContext context) {
     return Pinput(
       controller: pinController,
+      autofillHints: const [AutofillHints.oneTimeCode],
       length: 10,
       toolbarEnabled: false,
       inputFormatters: [Formatter()],
