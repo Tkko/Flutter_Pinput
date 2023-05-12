@@ -7,6 +7,15 @@ assignees: Tkko
 
 ---
 
+---
+name: Bug report
+about: Create a report to help us improve
+title: ''
+labels: ''
+assignees: Tkko
+
+---
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
@@ -19,6 +28,8 @@ Steps to reproduce the behavior:
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
+
+**Pinput version:** [e.g. 1.0.0]
 
 **Result of:** `flutter doctor --verbose`
 <details>
