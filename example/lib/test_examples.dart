@@ -48,3 +48,27 @@ class _ExampleState extends State<Example> {
     );
   }
 }
+
+class ErrorStateExample extends StatefulWidget {
+  const ErrorStateExample({Key? key}) : super(key: key);
+
+  @override
+  State<ErrorStateExample> createState() => _ErrorStateExampleState();
+}
+
+class _ErrorStateExampleState extends State<ErrorStateExample> {
+  bool _hasError = false;
+
+  Future<void> _validate(String value) async {
+    await Future.delayed(const Duration(seconds: 2));
+    setState(() => _hasError = value == '1111');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Pinput(
+      forceErrorState: _hasError,
+      onCompleted: _validate,
+    );
+  }
+}

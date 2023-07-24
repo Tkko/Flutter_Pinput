@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:pinput/pinput.dart';
 
 void main() {
@@ -17,8 +16,10 @@ void main() {
             color: Color.fromRGBO(30, 60, 87, 1),
           ),
         ),
-        body:
-            const FractionallySizedBox(widthFactor: 1, child: PinputExample()),
+        body: const FractionallySizedBox(
+          widthFactor: 1,
+          child: PinputExample(),
+        ),
       ),
     ),
   );

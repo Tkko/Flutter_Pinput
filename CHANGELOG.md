@@ -1,3 +1,10 @@
+#### 2.3.0 · 24/07/2023
+
+- Fixed AGP 4.2<= compatibility in smart_auth
+- Updated SDK constraints
+- Updated default SMS code matcher regex length to 8 digits
+
+
 #### 2.2.31 · 22/02/2023
 
 ### Added:

@@ -300,8 +300,36 @@ return Form(
 );
 ```
 
-## Properties
+## FAQ
 
+#### autofill isn't working on iOS?
+
+- Make sure you are using real device, not simulator
+- Temporary replace Pinput with TextField, and check if autofill works. If, not it's probably a
+  problem with SMS you are getting, autofill doesn't work with most of the languages
+- If you are using non stable version of Flutter that might be cause because something might be
+  broken inside the Framework
+
+#### are you using firebase_auth?
+
+Set `androidSmsAutofillMethod` to `AndroidSmsAutofillMethod.none` and set `controller'`s value in `verificationCompleted` callback, here is an example code:
+``` dart
+    Pinput(
+      androidSmsAutofillMethod: AndroidSmsAutofillMethod.none,
+      controller: pinController,
+    );
+    
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      verificationCompleted: (PhoneAuthCredential credential) {
+        pinController.setText(credential.smsCode);
+      },
+      verificationFailed: (FirebaseAuthException e) {},
+      codeSent: (String verificationId, int? resendToken) {},
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
+```
+
+## Properties
 ```dart
 class Pinput extends StatefulWidget {
   const Pinput({
