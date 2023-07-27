@@ -44,7 +44,7 @@ class _FilledState extends State<Filled> {
         length: 4,
         controller: controller,
         focusNode: focusNode,
-        separator: Container(
+        separatorBuilder: (index) => Container(
           height: 64,
           width: 1,
           color: Colors.white,

@@ -13,7 +13,6 @@ class PinputConstants {
   /// The default value [Pinput.length]
   static const _defaultLength = 4;
 
-  /// The default value [Pinput.separator]
   static const _defaultSeparator = SizedBox(width: 8);
 
   /// The hidden text under the Pinput

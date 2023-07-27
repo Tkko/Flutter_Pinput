@@ -61,8 +61,7 @@ class Pinput extends StatefulWidget {
     this.controller,
     this.focusNode,
     this.preFilledWidget,
-    this.separatorPositions,
-    this.separator = PinputConstants._defaultSeparator,
+    this.separatorBuilder,
     this.smsCodeMatcher = PinputConstants.defaultSmsCodeMatcher,
     this.senderPhoneNumber,
     this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
@@ -203,11 +202,8 @@ class Pinput extends StatefulWidget {
   /// Widget that is displayed before field submitted.
   final Widget? preFilledWidget;
 
-  /// Sets the positions where the separator should be shown
-  final List<int>? separatorPositions;
-
   /// Builds a Pinput separator
-  final Widget? separator;
+  final Widget Function(int index)? separatorBuilder;
 
   /// Defines how [Pinput] fields are being placed inside [Row]
   final MainAxisAlignment mainAxisAlignment;
@@ -500,9 +496,9 @@ class Pinput extends StatefulWidget {
       DiagnosticsProperty<Widget?>('cursor', cursor, defaultValue: null),
     );
     properties.add(
-      DiagnosticsProperty<Widget?>(
-        'separator',
-        separator,
+      DiagnosticsProperty<Widget Function(int index)?>(
+        'separatorBuilder',
+        separatorBuilder,
         defaultValue: PinputConstants._defaultSeparator,
       ),
     );
@@ -513,13 +509,7 @@ class Pinput extends StatefulWidget {
         defaultValue: null,
       ),
     );
-    properties.add(
-      DiagnosticsProperty<List<int>?>(
-        'separatorPositions',
-        separatorPositions,
-        defaultValue: null,
-      ),
-    );
+
     properties.add(
       DiagnosticsProperty<MainAxisAlignment>(
         'mainAxisAlignment',

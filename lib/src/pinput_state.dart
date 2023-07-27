@@ -478,8 +478,7 @@ class _PinputState extends State<Pinput>
   Widget _buildFields() {
     Widget onlyFields() {
       return _SeparatedRaw(
-        separator: widget.separator,
-        separatorPositions: widget.separatorPositions,
+        separatorBuilder: widget.separatorBuilder,
         mainAxisAlignment: widget.mainAxisAlignment,
         children: Iterable<int>.generate(widget.length).map<Widget>((index) {
           return _PinItem(state: this, index: index);
