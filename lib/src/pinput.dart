@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -203,7 +204,7 @@ class Pinput extends StatefulWidget {
   final Widget? preFilledWidget;
 
   /// Builds a Pinput separator
-  final Widget Function(int index)? separatorBuilder;
+  final JustIndexedWidgetBuilder? separatorBuilder;
 
   /// Defines how [Pinput] fields are being placed inside [Row]
   final MainAxisAlignment mainAxisAlignment;
@@ -496,7 +497,7 @@ class Pinput extends StatefulWidget {
       DiagnosticsProperty<Widget?>('cursor', cursor, defaultValue: null),
     );
     properties.add(
-      DiagnosticsProperty<Widget Function(int index)?>(
+      DiagnosticsProperty<JustIndexedWidgetBuilder?>(
         'separatorBuilder',
         separatorBuilder,
         defaultValue: PinputConstants._defaultSeparator,

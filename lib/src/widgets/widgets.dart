@@ -1,5 +1,7 @@
 part of '../pinput.dart';
 
+typedef JustIndexedWidgetBuilder = Widget Function(int index);
+
 class _PinputFormField extends FormField<String> {
   const _PinputFormField({
     required final FormFieldValidator<String>? validator,
@@ -20,7 +22,7 @@ class _PinputFormField extends FormField<String> {
 class _SeparatedRaw extends StatelessWidget {
   final List<Widget> children;
   final MainAxisAlignment mainAxisAlignment;
-  final Widget Function(int index)? separatorBuilder;
+  final JustIndexedWidgetBuilder? separatorBuilder;
 
   const _SeparatedRaw({
     required this.children,
@@ -31,35 +33,23 @@ class _SeparatedRaw extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final separators = <Widget>[];
-    separators.addAll(
-      List.generate(
-        children.length - 1,
-        separatorBuilder == null
-            ? (index) => PinputConstants._defaultSeparator
-            : separatorBuilder!,
-      ),
-    );
-
-    final actualSeparatorPositions =
-        List.generate(children.length - 1, (index) => index + 1)
-            .toList(growable: false);
-
-    for (int i = 0; i < separators.length; i++) {
-      final separator = separators[i];
-      final index = i + actualSeparatorPositions[i];
-      children.insert(index, separator);
-    }
-
+    final itemCount = max(0, children.length * 2 - 1);
+    final indexedList = [for (int i = 0; i < itemCount; i += 1) i];
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: mainAxisAlignment,
       mainAxisSize: mainAxisAlignment == MainAxisAlignment.center
           ? MainAxisSize.min
           : MainAxisSize.max,
-      children: children,
+      children: indexedList.map((index) {
+        final itemIndex = index ~/ 2;
+        return index.isEven ? children[itemIndex] : _separator(itemIndex);
+      }).toList(growable: false),
     );
   }
+
+  Widget _separator(int index) =>
+      separatorBuilder?.call(index) ?? PinputConstants._defaultSeparator;
 }
 
 class _PinputCursor extends StatelessWidget {
