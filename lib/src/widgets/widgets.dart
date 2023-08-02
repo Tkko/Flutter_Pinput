@@ -20,32 +20,35 @@ class _PinputFormField extends FormField<String> {
 class _SeparatedRaw extends StatelessWidget {
   final List<Widget> children;
   final MainAxisAlignment mainAxisAlignment;
-  final List<int>? separatorPositions;
-  final Widget? separator;
+  final Widget Function(int index)? separatorBuilder;
 
   const _SeparatedRaw({
     required this.children,
     required this.mainAxisAlignment,
-    this.separator,
-    this.separatorPositions,
+    this.separatorBuilder,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (separator != null) {
-      final actualSeparatorPositions = separatorPositions ??
-          List.generate(children.length - 1, (index) => index + 1)
-              .toList(growable: false);
+    final separators = <Widget>[];
+    separators.addAll(
+      List.generate(
+        children.length - 1,
+        separatorBuilder == null
+            ? (index) => PinputConstants._defaultSeparator
+            : separatorBuilder!,
+      ),
+    );
 
-      final separatorsCount = actualSeparatorPositions.length;
+    final actualSeparatorPositions =
+        List.generate(children.length - 1, (index) => index + 1)
+            .toList(growable: false);
 
-      for (int i = 0; i < separatorsCount; ++i) {
-        final index = i + actualSeparatorPositions[i];
-        if (index <= children.length) {
-          children.insert(index, separator!);
-        }
-      }
+    for (int i = 0; i < separators.length; i++) {
+      final separator = separators[i];
+      final index = i + actualSeparatorPositions[i];
+      children.insert(index, separator);
     }
 
     return Row(
