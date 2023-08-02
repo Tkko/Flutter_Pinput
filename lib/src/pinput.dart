@@ -204,6 +204,7 @@ class Pinput extends StatefulWidget {
   final Widget? preFilledWidget;
 
   /// Builds a Pinput separator
+  /// If null SizedBox(width: 8) will be used
   final JustIndexedWidgetBuilder? separatorBuilder;
 
   /// Defines how [Pinput] fields are being placed inside [Row]

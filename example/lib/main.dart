@@ -81,6 +81,7 @@ class _PinputExampleState extends State<PinputExample> {
                   AndroidSmsAutofillMethod.smsUserConsentApi,
               listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
+              separatorBuilder: (index) => const SizedBox(width: 8),
               validator: (value) {
                 return value == '2222' ? null : 'Pin is incorrect';
               },

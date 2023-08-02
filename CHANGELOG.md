@@ -1,3 +1,10 @@
+#### 2.4.0 · 02/08/2023
+
+- Replaced `separator` and `separatorPositions` with `separatorBuilder`
+  | Property | Meaning/Default |
+  |--------------------------|:---------------:|
+  | separatorBuilder | (_) => const SizedBox(width: 8)|
+
 #### 2.3.0 · 24/07/2023
 
 - Fixed AGP 4.2<= compatibility in smart_auth
