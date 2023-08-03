@@ -1,4 +1,4 @@
-#### 2.4.0 · 02/08/2023
+#### 3.0.0 · 03/08/2023
 
 - Replaced `separator` and `separatorPositions` with `separatorBuilder`
   | Property | Meaning/Default |
