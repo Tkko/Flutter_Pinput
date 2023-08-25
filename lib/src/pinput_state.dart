@@ -313,11 +313,11 @@ class _PinputState extends State<Pinput>
     switch (theme.platform) {
       case TargetPlatform.iOS:
         forcePressEnabled = true;
-        textSelectionControls ??= cupertinoTextSelectionControls;
+        textSelectionControls ??= cupertinoTextSelectionHandleControls;
         break;
       case TargetPlatform.macOS:
         forcePressEnabled = false;
-        textSelectionControls ??= cupertinoDesktopTextSelectionControls;
+        textSelectionControls ??= cupertinoDesktopTextSelectionHandleControls;
         handleDidGainAccessibilityFocus = () {
           if (!effectiveFocusNode.hasFocus &&
               effectiveFocusNode.canRequestFocus) {
@@ -328,15 +328,15 @@ class _PinputState extends State<Pinput>
       case TargetPlatform.android:
       case TargetPlatform.fuchsia:
         forcePressEnabled = false;
-        textSelectionControls ??= materialTextSelectionControls;
+        textSelectionControls ??= materialTextSelectionHandleControls;
         break;
       case TargetPlatform.linux:
         forcePressEnabled = false;
-        textSelectionControls ??= desktopTextSelectionControls;
+        textSelectionControls ??= desktopTextSelectionHandleControls;
         break;
       case TargetPlatform.windows:
         forcePressEnabled = false;
-        textSelectionControls ??= desktopTextSelectionControls;
+        textSelectionControls ??= desktopTextSelectionHandleControls;
         handleDidGainAccessibilityFocus = () {
           if (!effectiveFocusNode.hasFocus &&
               effectiveFocusNode.canRequestFocus) {
@@ -351,12 +351,11 @@ class _PinputState extends State<Pinput>
       validator: _validator,
       initialValue: _effectiveController.text,
       builder: (FormFieldState<String> field) {
-        return TextFieldTapRegion(
-          onTapOutside: widget.onTapOutside,
-          child: MouseRegion(
-            cursor: _effectiveMouseCursor,
-            onEnter: (PointerEnterEvent event) => _handleHover(true),
-            onExit: (PointerExitEvent event) => _handleHover(false),
+        return MouseRegion(
+          cursor: _effectiveMouseCursor,
+          onEnter: (PointerEnterEvent event) => _handleHover(true),
+          onExit: (PointerExitEvent event) => _handleHover(false),
+          child: TextFieldTapRegion(
             child: IgnorePointer(
               ignoring: !isEnabled || !widget.useNativeKeyboard,
               child: AnimatedBuilder(
@@ -426,6 +425,7 @@ class _PinputState extends State<Pinput>
             widget.onSubmitted?.call(s);
             _maybeValidateForm();
           },
+          onTapOutside: widget.onTapOutside,
           mouseCursor: MouseCursor.defer,
           focusNode: effectiveFocusNode,
           textAlign: TextAlign.center,

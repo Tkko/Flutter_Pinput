@@ -25,17 +25,25 @@ class _PinputSelectionGestureDetectorBuilder
   }
 
   @override
-  void onDoubleTapDown(_) {
-    if (shouldShowSelectionToolbar) {
-      editableText.showToolbar();
-    }
+  void onSingleLongTapEnd(LongPressEndDetails details) {
+    super.onSingleLongTapEnd(details);
+    _state.widget.onLongPress?.call();
   }
 
   @override
   void onSingleLongTapStart(details) {
-    _state.widget.onLongPress?.call();
-    if (shouldShowSelectionToolbar) {
-      editableText.showToolbar();
+    super.onSingleLongTapStart(details);
+    if (delegate.selectionEnabled) {
+      switch (Theme.of(_state.context).platform) {
+        case TargetPlatform.iOS:
+        case TargetPlatform.macOS:
+          break;
+        case TargetPlatform.android:
+        case TargetPlatform.fuchsia:
+        case TargetPlatform.linux:
+        case TargetPlatform.windows:
+          Feedback.forLongPress(_state.context);
+      }
     }
   }
 }

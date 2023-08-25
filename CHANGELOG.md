@@ -1,6 +1,11 @@
+#### 3.0.1 · 25/08/2023
+
+- Fixed contextMenuBuilder
+
 #### 3.0.0 · 03/08/2023
 
 - Replaced `separator` and `separatorPositions` with `separatorBuilder`
+
   | Property | Meaning/Default |
   |--------------------------|:---------------:|
   | separatorBuilder | (_) => const SizedBox(width: 8)|

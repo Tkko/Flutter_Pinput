@@ -22,27 +22,27 @@ class GalleryPageState extends State<GalleryPage>
   final backgroundColors = [
     [
       const Color.fromRGBO(255, 255, 255, 1),
-      const Color.fromRGBO(255, 255, 255, 1)
+      const Color.fromRGBO(255, 255, 255, 1),
     ], // All
     [
       const Color.fromRGBO(200, 255, 221, 1),
-      const Color.fromRGBO(255, 255, 255, 1)
+      const Color.fromRGBO(255, 255, 255, 1),
     ],
     [
       const Color.fromRGBO(255, 255, 255, 1),
-      const Color.fromRGBO(255, 255, 255, 1)
+      const Color.fromRGBO(255, 255, 255, 1),
     ],
     [
       const Color.fromRGBO(228, 217, 236, 1),
-      const Color.fromRGBO(255, 255, 255, 1)
+      const Color.fromRGBO(255, 255, 255, 1),
     ],
     [
       const Color.fromRGBO(255, 255, 255, 1),
-      const Color.fromRGBO(255, 255, 255, 1)
+      const Color.fromRGBO(255, 255, 255, 1),
     ],
     [
       const Color.fromRGBO(228, 217, 236, 1),
-      const Color.fromRGBO(255, 255, 255, 1)
+      const Color.fromRGBO(255, 255, 255, 1),
     ],
   ];
 

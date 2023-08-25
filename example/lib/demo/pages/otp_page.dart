@@ -80,7 +80,7 @@ class OtpHeader extends StatelessWidget {
             color: const Color.fromRGBO(30, 60, 87, 1),
           ),
         ),
-        const SizedBox(height: 64)
+        const SizedBox(height: 64),
       ],
     );
   }

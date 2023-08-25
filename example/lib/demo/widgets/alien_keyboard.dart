@@ -76,7 +76,7 @@ class AlienKeyboard extends StatelessWidget {
                         text: '-',
                         size: buttonSize,
                         onTap: () => controller.delete(),
-                      )
+                      ),
                     ],
                   ),
                 ),

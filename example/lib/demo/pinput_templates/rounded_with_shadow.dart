@@ -66,7 +66,7 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
               color: Color.fromRGBO(0, 0, 0, 0.05999999865889549),
               offset: Offset(0, 3),
               blurRadius: 16,
-            )
+            ),
           ],
         ),
       ),

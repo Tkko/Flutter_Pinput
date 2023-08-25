@@ -31,7 +31,7 @@ class _AllPinputsState extends State<AllPinputs>
               decoration: BoxDecoration(color: fromColor.withOpacity(.4)),
               child: item.value,
             );
-          })
+          }),
         ],
       ),
     );
