@@ -521,7 +521,7 @@ class _PinputState extends State<Pinput>
   }
 
   @protected
-  bool get showErrorState => hasError && (!hasFocus || widget.forceErrorState);
+  bool get showErrorState => hasError || widget.forceErrorState;
 
   Widget _buildError() {
     if (showErrorState) {
