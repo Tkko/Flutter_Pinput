@@ -1,6 +1,6 @@
 part of '../pinput.dart';
 
-typedef PinItemWidgetBuilder = Function(String, PinTheme);
+typedef PinItemWidgetBuilder = Widget Function(String, PinTheme);
 
 class _PinItem extends StatelessWidget {
   final _PinputState state;
