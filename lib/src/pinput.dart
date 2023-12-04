@@ -63,6 +63,7 @@ class Pinput extends StatefulWidget {
     this.focusNode,
     this.preFilledWidget,
     this.separatorBuilder,
+    this.pinItemBuilder,
     this.smsCodeMatcher = PinputConstants.defaultSmsCodeMatcher,
     this.senderPhoneNumber,
     this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
@@ -203,9 +204,13 @@ class Pinput extends StatefulWidget {
   /// Widget that is displayed before field submitted.
   final Widget? preFilledWidget;
 
-  /// Builds a Pinput separator
+  /// Builds a [Pinput] separator
   /// If null SizedBox(width: 8) will be used
   final JustIndexedWidgetBuilder? separatorBuilder;
+
+  /// Builds a [Pinput] item
+  /// If null the default _PinItem will be used
+  final PinItemWidgetBuilder? pinItemBuilder;
 
   /// Defines how [Pinput] fields are being placed inside [Row]
   final MainAxisAlignment mainAxisAlignment;
@@ -502,6 +507,13 @@ class Pinput extends StatefulWidget {
         'separatorBuilder',
         separatorBuilder,
         defaultValue: PinputConstants._defaultSeparator,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<PinItemWidgetBuilder?>(
+        'pinItemBuilder',
+        pinItemBuilder,
+        defaultValue: null,
       ),
     );
     properties.add(

@@ -481,7 +481,7 @@ class _PinputState extends State<Pinput>
         separatorBuilder: widget.separatorBuilder,
         mainAxisAlignment: widget.mainAxisAlignment,
         children: Iterable<int>.generate(widget.length).map<Widget>((index) {
-          return _PinItem(state: this, index: index);
+          return _PinItem(state: this, index: index, builder: widget.pinItemBuilder);
         }).toList(),
       );
     }
