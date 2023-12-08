@@ -3,12 +3,17 @@ part of '../pinput.dart';
 class _PinItem extends StatelessWidget {
   final _PinputState state;
   final int index;
+  final bool prioritizeSubmittedOverFocused;
 
-  const _PinItem({required this.state, required this.index});
+  const _PinItem({
+    required this.state,
+    required this.index,
+    required this.prioritizeSubmittedOverFocused,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final pinTheme = _pinTheme(index);
+    final pinTheme = _pinTheme(index, prioritizeSubmittedOverFocused);
 
     return Flexible(
       child: AnimatedContainer(
@@ -32,7 +37,7 @@ class _PinItem extends StatelessWidget {
     );
   }
 
-  PinTheme _pinTheme(int index) {
+  PinTheme _pinTheme(int index, bool prioritizeSubmittedOverFocused) {
     /// Disabled pin or default
     if (!state.isEnabled) {
       return _pinThemeOrDefault(state.widget.disabledPinTheme);
@@ -42,6 +47,13 @@ class _PinItem extends StatelessWidget {
       return _pinThemeOrDefault(state.widget.errorPinTheme);
     }
 
+    final submittedPinTheme =
+        _pinThemeOrDefault(state.widget.submittedPinTheme);
+
+    /// Submitted pin or default
+    if (prioritizeSubmittedOverFocused && index < state.selectedIndex)
+      return submittedPinTheme;
+
     /// Focused pin or default
     if (state.hasFocus &&
         index == state.selectedIndex.clamp(0, state.widget.length - 1)) {
@@ -49,9 +61,7 @@ class _PinItem extends StatelessWidget {
     }
 
     /// Submitted pin or default
-    if (index < state.selectedIndex) {
-      return _pinThemeOrDefault(state.widget.submittedPinTheme);
-    }
+    if (index < state.selectedIndex) return submittedPinTheme;
 
     /// Following pin or default
     return _pinThemeOrDefault(state.widget.followingPinTheme);

@@ -54,6 +54,7 @@ class Pinput extends StatefulWidget {
     this.followingPinTheme,
     this.disabledPinTheme,
     this.errorPinTheme,
+    this.prioritizeSubmittedOverFocused = false,
     this.onChanged,
     this.onCompleted,
     this.onSubmitted,
@@ -135,6 +136,9 @@ class Pinput extends StatefulWidget {
 
   /// Theme of the pin in error state
   final PinTheme? errorPinTheme;
+
+  /// Whether to use submittedPinTheme or focusedPinTheme if the pin in focused & submitted state.
+  final bool prioritizeSubmittedOverFocused;
 
   /// If true keyboard will be closed
   final bool closeKeyboardWhenCompleted;
