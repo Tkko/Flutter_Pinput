@@ -80,6 +80,7 @@ class Pinput extends StatefulWidget {
     this.autofocus = false,
     this.obscureText = false,
     this.showCursor = true,
+    this.showErrorWhenFocused = false,
     this.isCursorAnimationEnabled = true,
     this.enableIMEPersonalizedLearning = false,
     this.enableSuggestions = true,
