@@ -21,7 +21,7 @@ class _PinputFormField extends FormField<String> {
 
 class _SeparatedRaw extends StatelessWidget {
   final List<Widget> children;
-  final MainAxisAlignment mainAxisAlignment;
+  final WrapAlignment mainAxisAlignment;
   final JustIndexedWidgetBuilder? separatorBuilder;
 
   const _SeparatedRaw({
@@ -35,12 +35,10 @@ class _SeparatedRaw extends StatelessWidget {
   Widget build(BuildContext context) {
     final itemCount = max(0, children.length * 2 - 1);
     final indexedList = [for (int i = 0; i < itemCount; i += 1) i];
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: mainAxisAlignment,
-      mainAxisSize: mainAxisAlignment == MainAxisAlignment.center
-          ? MainAxisSize.min
-          : MainAxisSize.max,
+    return Wrap(
+      direction: Axis.horizontal,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      alignment: mainAxisAlignment,
       children: indexedList.map((index) {
         final itemIndex = index ~/ 2;
         return index.isEven ? children[itemIndex] : _separator(itemIndex);

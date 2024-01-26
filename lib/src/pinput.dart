@@ -67,7 +67,7 @@ class Pinput extends StatefulWidget {
     this.senderPhoneNumber,
     this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
     this.listenForMultipleSmsOnAndroid = false,
-    this.mainAxisAlignment = MainAxisAlignment.center,
+    this.mainAxisAlignment = WrapAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.pinContentAlignment = Alignment.center,
     this.animationCurve = Curves.easeIn,
@@ -207,8 +207,8 @@ class Pinput extends StatefulWidget {
   /// If null SizedBox(width: 8) will be used
   final JustIndexedWidgetBuilder? separatorBuilder;
 
-  /// Defines how [Pinput] fields are being placed inside [Row]
-  final MainAxisAlignment mainAxisAlignment;
+  /// Defines how [Pinput] fields are being placed inside [Wrap]
+  final WrapAlignment mainAxisAlignment;
 
   /// Defines how [Pinput] and ([errorText] or [errorBuilder]) are being placed inside [Column]
   final CrossAxisAlignment crossAxisAlignment;
@@ -513,10 +513,10 @@ class Pinput extends StatefulWidget {
     );
 
     properties.add(
-      DiagnosticsProperty<MainAxisAlignment>(
+      DiagnosticsProperty<WrapAlignment>(
         'mainAxisAlignment',
         mainAxisAlignment,
-        defaultValue: MainAxisAlignment.center,
+        defaultValue: WrapAlignment.center,
       ),
     );
     properties.add(
