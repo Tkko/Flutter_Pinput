@@ -12,15 +12,16 @@ part of '../pinput.dart';
 /// ```
 ///
 extension PinputControllerExt on TextEditingController {
+  /// The length of the Pinput value
   int get length => this.text.length;
 
-  // Sets Pinput value
+  /// Sets Pinput value
   void setText(String pin) {
     this.text = pin;
     this.moveCursorToEnd();
   }
 
-  // Deletes the last character of Pinput value
+  /// Deletes the last character of Pinput value
   void delete() {
     if (text.isEmpty) return;
     final pin = this.text.substring(0, this.length - 1);
@@ -28,7 +29,7 @@ extension PinputControllerExt on TextEditingController {
     this.moveCursorToEnd();
   }
 
-  // Appends character at the end of the Pinput
+  /// Appends character at the end of the Pinput
   void append(String s, int maxLength) {
     if (this.length == maxLength) return;
     this.text = '${this.text}$s';

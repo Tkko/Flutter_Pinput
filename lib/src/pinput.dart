@@ -46,6 +46,7 @@ part 'widgets/_pinput_selection_gesture_detector_builder.dart';
 /// - Close Keyboard After Completion
 /// - Beautiful [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib/demo)
 class Pinput extends StatefulWidget {
+  /// Creates a PinPut widget
   const Pinput({
     this.length = PinputConstants._defaultLength,
     this.defaultPinTheme,
@@ -251,6 +252,7 @@ class Pinput extends StatefulWidget {
   /// Default cursor '|' or [cursor]
   final bool showCursor;
 
+  /// Whether to enable cursor animation
   final bool isCursorAnimationEnabled;
 
   /// Whether to enable that the IME update personalized data such as typing history and user dictionary data.
