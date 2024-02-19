@@ -300,7 +300,7 @@ class _PinputState extends State<Pinput>
     assert(debugCheckHasMaterial(context));
     assert(debugCheckHasMaterialLocalizations(context));
     assert(debugCheckHasDirectionality(context));
-    final isDense = widget.mainAxisAlignment == MainAxisAlignment.center;
+    final isDense = widget.mainAxisAlignment == WrapAlignment.center;
 
     return isDense ? IntrinsicWidth(child: _buildPinput()) : _buildPinput();
   }

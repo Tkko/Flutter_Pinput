@@ -10,24 +10,22 @@ class _PinItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final pinTheme = _pinTheme(index);
 
-    return Flexible(
-      child: AnimatedContainer(
-        height: pinTheme.height,
-        width: pinTheme.width,
-        constraints: pinTheme.constraints,
-        padding: pinTheme.padding,
-        margin: pinTheme.margin,
-        decoration: pinTheme.decoration,
-        alignment: state.widget.pinContentAlignment,
+    return AnimatedContainer(
+      height: pinTheme.height,
+      width: pinTheme.width,
+      constraints: pinTheme.constraints,
+      padding: pinTheme.padding,
+      margin: pinTheme.margin,
+      decoration: pinTheme.decoration,
+      alignment: state.widget.pinContentAlignment,
+      duration: state.widget.animationDuration,
+      curve: state.widget.animationCurve,
+      child: AnimatedSwitcher(
+        switchInCurve: state.widget.animationCurve,
+        switchOutCurve: state.widget.animationCurve,
         duration: state.widget.animationDuration,
-        curve: state.widget.animationCurve,
-        child: AnimatedSwitcher(
-          switchInCurve: state.widget.animationCurve,
-          switchOutCurve: state.widget.animationCurve,
-          duration: state.widget.animationDuration,
-          transitionBuilder: _getTransition,
-          child: _buildFieldContent(index, pinTheme),
-        ),
+        transitionBuilder: _getTransition,
+        child: _buildFieldContent(index, pinTheme),
       ),
     );
   }
