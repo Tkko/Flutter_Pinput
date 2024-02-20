@@ -81,6 +81,7 @@ class Pinput extends StatefulWidget {
     this.autofocus = false,
     this.obscureText = false,
     this.showCursor = true,
+    this.showErrorWhenFocused = false,
     this.isCursorAnimationEnabled = true,
     this.enableIMEPersonalizedLearning = false,
     this.enableSuggestions = true,
@@ -322,6 +323,9 @@ class Pinput extends StatefulWidget {
 
   /// If true [errorPinTheme] will be applied and [errorText] will be displayed under the Pinput
   final bool forceErrorState;
+
+  /// If true, the error will also be dispalyed in the focused state. Otherwise the error is not displayed in the focused state.
+  final bool showErrorWhenFocused;
 
   /// Text displayed under the Pinput if Pinput is invalid
   final String? errorText;
