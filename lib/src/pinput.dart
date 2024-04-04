@@ -345,7 +345,7 @@ class Pinput extends StatefulWidget {
   final EdgeInsets scrollPadding;
 
   /// Optional parameter for Android SMS User Consent API.
-  final String? senderPhoneNumber;
+  final List<String>? senderPhoneNumber;
 
   /// {@macro flutter.widgets.EditableText.contextMenuBuilder}
   ///
@@ -719,7 +719,7 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<String?>(
+      DiagnosticsProperty<List<String>?>(
         'senderPhoneNumber',
         senderPhoneNumber,
         defaultValue: null,

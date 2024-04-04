@@ -114,17 +114,37 @@ class _PinputState extends State<Pinput>
   void _listenForSmsCode() async {
     final useUserConsentApi = widget.androidSmsAutofillMethod ==
         AndroidSmsAutofillMethod.smsUserConsentApi;
-    final res = await _smartAuth!.getSmsCode(
-      useUserConsentApi: useUserConsentApi,
-      matcher: widget.smsCodeMatcher,
-      senderPhoneNumber: widget.senderPhoneNumber,
-    );
-    if (res.succeed && res.codeFound && res.code!.length == widget.length) {
-      _effectiveController.setText(res.code!);
-    }
-    // Listen for multiple sms codes
-    if (widget.listenForMultipleSmsOnAndroid) {
-      _listenForSmsCode();
+    if (widget.senderPhoneNumber == null) {
+      final res = await _smartAuth!.getSmsCode(
+        useUserConsentApi: useUserConsentApi,
+        matcher: widget.smsCodeMatcher,
+        senderPhoneNumber: null,
+      );
+      if (res.succeed && res.codeFound && res.code!.length == widget.length) {
+        _effectiveController.setText(res.code!);
+      }
+      // Listen for multiple sms codes
+      if (widget.listenForMultipleSmsOnAndroid) {
+        _listenForSmsCode();
+      }
+    } else {
+      for (var i in widget.senderPhoneNumber!) {
+        _smartAuth!.getSmsCode(
+          useUserConsentApi: useUserConsentApi,
+          matcher: widget.smsCodeMatcher,
+          senderPhoneNumber: i,
+        ).then(
+          (value) {
+            if (value.succeed && value.codeFound && value.code!.length == widget.length) {
+              _effectiveController.setText(value.code!);
+            }
+            // Listen for multiple sms codes
+            if (widget.listenForMultipleSmsOnAndroid) {
+              _listenForSmsCode();
+            }
+          },
+        );
+      }
     }
   }
 
