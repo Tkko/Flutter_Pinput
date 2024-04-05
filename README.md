@@ -65,6 +65,18 @@ Don't forget to give it a star ⭐
 
 ## Getting Started
 
+
+We should set project kotlin version to 1.8.0 or above because of the new requirement for sdk 34 `RECEIVER_EXPORTED`. Or we would get **duplicate class** error in different kotlin versions.
+
+so in the android level `build.gradle` file update the kotlin version like below:
+```
+// android/build.gradle
+
+buildscript {
+    ext.kotlin_version = '1.8.0'
+}
+```
+
 The pin has 6 states `default` `focused`, `submitted`, `following`, `disabled`, `error`, you can customize each state by specifying theme parameter.
 Pin smoothly animates from one state to another automatically.
 `PinTheme Class`

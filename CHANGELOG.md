@@ -1,3 +1,8 @@
+#### 4.0.0 · 10/02/2024
+- Fixed RECEIVER_EXPORTED exception in android SDK 34 PR
+- Fix "Namespace not specified" error when upgrading to AGP 8.0 PR
+- Updated readme
+
 #### 3.0.1 · 25/08/2023
 
 - Fixed contextMenuBuilder

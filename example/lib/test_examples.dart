@@ -72,3 +72,47 @@ class _ErrorStateExampleState extends State<ErrorStateExample> {
     );
   }
 }
+
+class HeightExample extends StatelessWidget {
+  const HeightExample({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 40,
+      height: 105,
+      textStyle: const TextStyle(
+        fontSize: 22,
+        color: Color.fromRGBO(30, 60, 87, 1),
+        fontWeight: FontWeight.bold,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5.0),
+        color: Colors.black,
+      ),
+    );
+
+    return Pinput(
+      length: 6,
+      defaultPinTheme: defaultPinTheme,
+      focusedPinTheme: defaultPinTheme.copyWith(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5.0),
+          color: Colors.red,
+        ),
+      ),
+      submittedPinTheme: defaultPinTheme.copyWith(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5.0),
+          color: Colors.green,
+        ),
+      ),
+      followingPinTheme: defaultPinTheme.copyWith(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5.0),
+          color: Colors.blue,
+        ),
+      ),
+    );
+  }
+}
