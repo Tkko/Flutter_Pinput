@@ -1,10 +1,17 @@
 part of '../pinput.dart';
 
+typedef PinItemWidgetBuilder = Widget Function(String, PinTheme);
+
 class _PinItem extends StatelessWidget {
   final _PinputState state;
   final int index;
+  final PinItemWidgetBuilder? builder;
 
-  const _PinItem({required this.state, required this.index});
+  const _PinItem({
+    required this.state,
+    required this.index,
+    required this.builder,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,11 +80,12 @@ class _PinItem extends StatelessWidget {
         return SizedBox(key: key, child: state.widget.obscuringWidget);
       }
 
-      return Text(
-        state.widget.obscureText ? state.widget.obscuringCharacter : pin[index],
-        key: key,
-        style: pinTheme.textStyle,
-      );
+      final content = state.widget.obscureText
+          ? state.widget.obscuringCharacter
+          : pin[index];
+      return (builder != null)
+          ? SizedBox(key: key, child: builder!(content, pinTheme))
+          : Text(content, key: key, style: pinTheme.textStyle);
     }
 
     final isActiveField = index == pin.length;
