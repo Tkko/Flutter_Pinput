@@ -475,13 +475,44 @@ class _PinputState extends State<Pinput>
     _requestKeyboard();
   }
 
+  PinItemStateType _getState(int index) {
+    if (!isEnabled) {
+      return PinItemStateType.disabled;
+    }
+
+    if (showErrorState) {
+      return PinItemStateType.error;
+    }
+
+    if (hasFocus && index == selectedIndex.clamp(0, widget.length - 1)) {
+      return PinItemStateType.focused;
+    }
+
+    if (index < selectedIndex) {
+      return PinItemStateType.submitted;
+    }
+
+    return PinItemStateType.following;
+  }
+
   Widget _buildFields() {
     Widget onlyFields() {
       return _SeparatedRaw(
         separatorBuilder: widget.separatorBuilder,
         mainAxisAlignment: widget.mainAxisAlignment,
         children: Iterable<int>.generate(widget.length).map<Widget>((index) {
-          return _PinItem(state: this, index: index, builder: widget.pinItemBuilder);
+          if (widget._builder != null) {
+            return widget._builder!.itemBuilder.call(
+              context,
+              PinItemState(
+                value: pin.length > index ? pin[index] : '',
+                index: index,
+                type: _getState(index),
+              ),
+            );
+          }
+
+          return _PinItem(state: this, index: index);
         }).toList(),
       );
     }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:pinput_example/demo/builder_example.dart';
 
 void main() {
   runApp(
@@ -18,7 +19,7 @@ void main() {
         ),
         body: const FractionallySizedBox(
           widthFactor: 1,
-          child: PinputExample(),
+          child: PinputBuilderExample(),
         ),
       ),
     ),

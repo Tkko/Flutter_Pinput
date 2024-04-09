@@ -73,27 +73,6 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
       showCursor: true,
       cursor: cursor,
       preFilledWidget: preFilledWidget,
-      pinItemBuilder: (item, theme) {
-        return Stack(
-          children: [
-            Align(
-              alignment: Alignment.center,
-              child: Text(item, style: theme.textStyle),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: 56,
-                height: 3,
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }

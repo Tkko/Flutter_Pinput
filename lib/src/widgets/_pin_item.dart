@@ -1,16 +1,12 @@
 part of '../pinput.dart';
 
-typedef PinItemWidgetBuilder = Widget Function(String, PinTheme);
-
 class _PinItem extends StatelessWidget {
   final _PinputState state;
   final int index;
-  final PinItemWidgetBuilder? builder;
 
   const _PinItem({
     required this.state,
     required this.index,
-    required this.builder,
   });
 
   @override
@@ -40,28 +36,21 @@ class _PinItem extends StatelessWidget {
   }
 
   PinTheme _pinTheme(int index) {
-    /// Disabled pin or default
-    if (!state.isEnabled) {
-      return _pinThemeOrDefault(state.widget.disabledPinTheme);
+    final pintState = state._getState(index);
+    switch (pintState) {
+      case PinItemStateType.initial:
+        return _getDefaultPinTheme();
+      case PinItemStateType.focused:
+        return _pinThemeOrDefault(state.widget.focusedPinTheme);
+      case PinItemStateType.submitted:
+        return _pinThemeOrDefault(state.widget.submittedPinTheme);
+      case PinItemStateType.following:
+        return _pinThemeOrDefault(state.widget.followingPinTheme);
+      case PinItemStateType.disabled:
+        return _pinThemeOrDefault(state.widget.disabledPinTheme);
+      case PinItemStateType.error:
+        return _pinThemeOrDefault(state.widget.errorPinTheme);
     }
-
-    if (state.showErrorState) {
-      return _pinThemeOrDefault(state.widget.errorPinTheme);
-    }
-
-    /// Focused pin or default
-    if (state.hasFocus &&
-        index == state.selectedIndex.clamp(0, state.widget.length - 1)) {
-      return _pinThemeOrDefault(state.widget.focusedPinTheme);
-    }
-
-    /// Submitted pin or default
-    if (index < state.selectedIndex) {
-      return _pinThemeOrDefault(state.widget.submittedPinTheme);
-    }
-
-    /// Following pin or default
-    return _pinThemeOrDefault(state.widget.followingPinTheme);
   }
 
   PinTheme _getDefaultPinTheme() =>
@@ -80,12 +69,11 @@ class _PinItem extends StatelessWidget {
         return SizedBox(key: key, child: state.widget.obscuringWidget);
       }
 
-      final content = state.widget.obscureText
-          ? state.widget.obscuringCharacter
-          : pin[index];
-      return (builder != null)
-          ? SizedBox(key: key, child: builder!(content, pinTheme))
-          : Text(content, key: key, style: pinTheme.textStyle);
+      return Text(
+        state.widget.obscureText ? state.widget.obscuringCharacter : pin[index],
+        key: key,
+        style: pinTheme.textStyle,
+      );
     }
 
     final isActiveField = index == pin.length;

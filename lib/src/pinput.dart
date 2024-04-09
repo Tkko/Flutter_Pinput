@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:pinput/pinput.dart';
 import 'package:smart_auth/smart_auth.dart';
 import 'package:universal_platform/universal_platform.dart';
 
@@ -18,6 +19,8 @@ part 'utils/pinput_constants.dart';
 part 'widgets/widgets.dart';
 
 part 'models/pin_theme.dart';
+
+part 'models/models.dart';
 
 part 'utils/extensions.dart';
 
@@ -60,11 +63,11 @@ class Pinput extends StatefulWidget {
     this.onSubmitted,
     this.onTap,
     this.onLongPress,
+    this.onTapOutside,
     this.controller,
     this.focusNode,
     this.preFilledWidget,
     this.separatorBuilder,
-    this.pinItemBuilder,
     this.smsCodeMatcher = PinputConstants.defaultSmsCodeMatcher,
     this.senderPhoneNumber,
     this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
@@ -110,7 +113,6 @@ class Pinput extends StatefulWidget {
     this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
-    this.onTapOutside,
     Key? key,
   })  : assert(obscuringCharacter.length == 1),
         assert(length > 0),
@@ -118,6 +120,84 @@ class Pinput extends StatefulWidget {
           textInputAction != TextInputAction.newline,
           'Pinput is not multiline',
         ),
+        _builder = null,
+        super(key: key);
+
+  /// Creates a PinPut widget with custom pin item builder
+  /// This gives you full control over the pin item widget
+  Pinput.builder({
+    required PinItemWidgetBuilder builder,
+    this.length = PinputConstants._defaultLength,
+    this.onChanged,
+    this.onCompleted,
+    this.onSubmitted,
+    this.onTap,
+    this.onLongPress,
+    this.onTapOutside,
+    this.controller,
+    this.focusNode,
+    this.separatorBuilder,
+    this.smsCodeMatcher = PinputConstants.defaultSmsCodeMatcher,
+    this.senderPhoneNumber,
+    this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
+    this.listenForMultipleSmsOnAndroid = false,
+    this.mainAxisAlignment = MainAxisAlignment.center,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.enabled = true,
+    this.readOnly = false,
+    this.useNativeKeyboard = true,
+    this.toolbarEnabled = true,
+    this.autofocus = false,
+    this.enableIMEPersonalizedLearning = false,
+    this.enableSuggestions = true,
+    this.hapticFeedbackType = HapticFeedbackType.disabled,
+    this.closeKeyboardWhenCompleted = true,
+    this.keyboardType = TextInputType.number,
+    this.textCapitalization = TextCapitalization.none,
+    this.keyboardAppearance,
+    this.inputFormatters = const [],
+    this.textInputAction,
+    this.autofillHints,
+    this.selectionControls,
+    this.restorationId,
+    this.onClipboardFound,
+    this.onAppPrivateCommand,
+    this.mouseCursor,
+    this.forceErrorState = false,
+    this.validator,
+    this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
+    this.scrollPadding = const EdgeInsets.all(20),
+    this.contextMenuBuilder = _defaultContextMenuBuilder,
+    Key? key,
+  })  : assert(length > 0),
+        assert(
+          textInputAction != TextInputAction.newline,
+          'Pinput is not multiline',
+        ),
+        _builder = _PinItemBuilder(
+          itemBuilder: builder,
+        ),
+        defaultPinTheme = null,
+        focusedPinTheme = null,
+        submittedPinTheme = null,
+        followingPinTheme = null,
+        disabledPinTheme = null,
+        errorPinTheme = null,
+        preFilledWidget = null,
+        pinContentAlignment = Alignment.center,
+        animationCurve = Curves.easeIn,
+        animationDuration = PinputConstants._animationDuration,
+        pinAnimationType = PinAnimationType.scale,
+        obscureText = false,
+        showCursor = false,
+        isCursorAnimationEnabled = false,
+        slideTransitionBeginOffset = null,
+        cursor = null,
+        obscuringCharacter = '•',
+        obscuringWidget = null,
+        errorText = null,
+        errorBuilder = null,
+        errorTextStyle = null,
         super(key: key);
 
   /// Theme of the pin in default state
@@ -211,7 +291,7 @@ class Pinput extends StatefulWidget {
 
   /// Builds a [Pinput] item
   /// If null the default _PinItem will be used
-  final PinItemWidgetBuilder? pinItemBuilder;
+  final _PinItemBuilder? _builder;
 
   /// Defines how [Pinput] fields are being placed inside [Row]
   final MainAxisAlignment mainAxisAlignment;
@@ -366,7 +446,7 @@ class Pinput extends StatefulWidget {
   /// notification. If this region is part of a group
   /// then it's possible that the event may be outside of this immediate region,
   /// although it will be within the region of one of the group members.
-  /// This is useful if you want to unfocus the [Pinput] when user taps outside of it
+  /// This is useful if you want to un-focus the [Pinput] when user taps outside of it
   final TapRegionCallback? onTapOutside;
 
   static Widget _defaultContextMenuBuilder(
@@ -512,9 +592,9 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<PinItemWidgetBuilder?>(
-        'pinItemBuilder',
-        pinItemBuilder,
+      DiagnosticsProperty<_PinItemBuilder>(
+        '_builder',
+        _builder,
         defaultValue: null,
       ),
     );
