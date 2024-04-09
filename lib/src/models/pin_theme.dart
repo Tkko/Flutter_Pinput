@@ -46,6 +46,8 @@ class PinTheme {
   /// The decoration of each [Pinput] submitted field
   final BoxDecoration? decoration;
 
+  /// Theme of the individual pin items for following states:
+  /// default, focused pin, submitted pin, following pin, disabled pin and error pin
   const PinTheme({
     this.width,
     this.height,
@@ -56,6 +58,7 @@ class PinTheme {
     this.constraints,
   });
 
+  /// Merge two [PinTheme] into one
   PinTheme apply({required PinTheme theme}) {
     return PinTheme(
       width: this.width ?? theme.width,
@@ -68,6 +71,7 @@ class PinTheme {
     );
   }
 
+  /// Create a new [PinTheme] from the current instance
   PinTheme copyWith({
     double? width,
     double? height,
@@ -88,6 +92,7 @@ class PinTheme {
     );
   }
 
+  /// Create a new [PinTheme] from the current instance with new decoration
   PinTheme copyDecorationWith({
     Color? color,
     DecorationImage? image,
@@ -113,6 +118,7 @@ class PinTheme {
     );
   }
 
+  /// Create a new [PinTheme] from the current instance with new border
   PinTheme copyBorderWith({required Border border}) {
     assert(decoration != null);
     return copyWith(

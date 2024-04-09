@@ -29,3 +29,4 @@ linter:
     unnecessary_new: true
     prefer_single_quotes: true
     require_trailing_commas: true
+    public_member_api_docs: true
