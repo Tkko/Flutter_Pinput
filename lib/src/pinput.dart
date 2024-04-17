@@ -6,9 +6,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:pinput/pinput.dart';
-import 'package:smart_auth/smart_auth.dart';
-import 'package:universal_platform/universal_platform.dart';
 
 part 'pinput_state.dart';
 
@@ -52,6 +49,7 @@ class Pinput extends StatefulWidget {
   /// Creates a PinPut widget
   const Pinput({
     this.length = PinputConstants._defaultLength,
+    this.smsRetriever,
     this.defaultPinTheme,
     this.focusedPinTheme,
     this.submittedPinTheme,
@@ -68,10 +66,6 @@ class Pinput extends StatefulWidget {
     this.focusNode,
     this.preFilledWidget,
     this.separatorBuilder,
-    this.smsCodeMatcher = PinputConstants.defaultSmsCodeMatcher,
-    this.senderPhoneNumber,
-    this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
-    this.listenForMultipleSmsOnAndroid = false,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.pinContentAlignment = Alignment.center,
@@ -97,7 +91,9 @@ class Pinput extends StatefulWidget {
     this.keyboardAppearance,
     this.inputFormatters = const [],
     this.textInputAction,
-    this.autofillHints,
+    this.autofillHints = const [
+      AutofillHints.oneTimeCode,
+    ],
     this.obscuringCharacter = '•',
     this.obscuringWidget,
     this.selectionControls,
@@ -127,6 +123,7 @@ class Pinput extends StatefulWidget {
   /// This gives you full control over the pin item widget
   Pinput.builder({
     required PinItemWidgetBuilder builder,
+    this.smsRetriever,
     this.length = PinputConstants._defaultLength,
     this.onChanged,
     this.onCompleted,
@@ -137,10 +134,6 @@ class Pinput extends StatefulWidget {
     this.controller,
     this.focusNode,
     this.separatorBuilder,
-    this.smsCodeMatcher = PinputConstants.defaultSmsCodeMatcher,
-    this.senderPhoneNumber,
-    this.androidSmsAutofillMethod = AndroidSmsAutofillMethod.none,
-    this.listenForMultipleSmsOnAndroid = false,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.enabled = true,
@@ -224,23 +217,10 @@ class Pinput extends StatefulWidget {
   /// Displayed fields count. PIN code length.
   final int length;
 
-  /// By default Android autofill is Disabled, you cane enable it by using any of options listed below
-  ///
-  /// First option is [AndroidSmsAutofillMethod.smsRetrieverApi] it automatically reads sms without user interaction
-  /// More about Sms Retriever API https://developers.google.com/identity/sms-retriever/overview?hl=en
-  ///
-  /// Second option requires user interaction to confirm reading a SMS, See readme for more details
-  /// [AndroidSmsAutofillMethod.smsUserConsentApi]
-  /// More about SMS User Consent API https://developers.google.com/identity/sms-retriever/user-consent/overview
-  final AndroidSmsAutofillMethod androidSmsAutofillMethod;
-
-  /// If true [androidSmsAutofillMethod] is not [AndroidSmsAutofillMethod.none]
-  /// Pinput will listen multiple sms codes, helpful if user request another sms code
-  final bool listenForMultipleSmsOnAndroid;
-
-  /// Used to extract code from SMS for Android Autofill if [androidSmsAutofillMethod] is enabled
-  /// By default it is [PinputConstants.defaultSmsCodeMatcher]
-  final String smsCodeMatcher;
+  /// By default Android autofill is Disabled, you can enable it by passing [smsRetriever]
+  /// SmsRetriever exposes methods to listen for incoming SMS and extract code from it
+  /// Recommended package to get sms code on Android is smart_auth https://pub.dev/packages/smart_auth
+  final SmsRetriever? smsRetriever;
 
   /// Fires when user completes pin input
   final ValueChanged<String>? onCompleted;
@@ -428,9 +408,6 @@ class Pinput extends StatefulWidget {
   /// then it will attempt to make itself visible by scrolling a surrounding [Scrollable], if one is present.
   /// This value controls how far from the edges of a [Scrollable] the TextField will be positioned after the scroll.
   final EdgeInsets scrollPadding;
-
-  /// Optional parameter for Android SMS User Consent API.
-  final String? senderPhoneNumber;
 
   /// {@macro flutter.widgets.EditableText.contextMenuBuilder}
   ///
@@ -808,13 +785,6 @@ class Pinput extends StatefulWidget {
         'hapticFeedbackType',
         hapticFeedbackType,
         defaultValue: HapticFeedbackType.disabled,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<String?>(
-        'senderPhoneNumber',
-        senderPhoneNumber,
-        defaultValue: null,
       ),
     );
     properties.add(

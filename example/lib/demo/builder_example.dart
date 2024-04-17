@@ -64,9 +64,6 @@ class _PinputBuilderExampleState extends State<PinputBuilderExample> {
               },
               controller: pinController,
               focusNode: focusNode,
-              androidSmsAutofillMethod:
-                  AndroidSmsAutofillMethod.smsUserConsentApi,
-              listenForMultipleSmsOnAndroid: true,
               separatorBuilder: (index) => const SizedBox(width: 8),
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               validator: (value) {

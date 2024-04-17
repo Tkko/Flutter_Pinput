@@ -8,6 +8,14 @@ part of 'pinput.dart';
 /// to support older versions of the API as well.
 T? _ambiguate<T>(T? value) => value;
 
+abstract class SmsRetriever {
+  bool get listenForMultipleSms;
+
+  Future<String?> getSmsCode();
+
+  Future<void> removeSmsListener();
+}
+
 class _PinputState extends State<Pinput>
     with RestorationMixin, WidgetsBindingObserver, _PinputUtilsMixin
     implements TextSelectionGestureDetectorBuilderDelegate, AutofillClient {
@@ -33,7 +41,7 @@ class _PinputState extends State<Pinput>
   FocusNode? _focusNode;
   bool _isHovering = false;
   String? _validatorErrorText;
-  SmartAuth? _smartAuth;
+  SmsRetriever? _smsRetriever;
 
   String? get _errorText => widget.errorText ?? _validatorErrorText;
 
@@ -92,38 +100,19 @@ class _PinputState extends State<Pinput>
 
   /// Android Autofill
   void _maybeInitSmartAuth() async {
-    final isAndroid = UniversalPlatform.isAndroid;
-    final isAutofillEnabled =
-        widget.androidSmsAutofillMethod != AndroidSmsAutofillMethod.none;
-
-    if (isAndroid && isAutofillEnabled) {
-      _smartAuth = SmartAuth();
-      _maybePrintAppSignature();
+    if (_smsRetriever == null) {
+      _smsRetriever = widget.smsRetriever!;
       _listenForSmsCode();
     }
   }
 
-  void _maybePrintAppSignature() async {
-    if (widget.androidSmsAutofillMethod ==
-        AndroidSmsAutofillMethod.smsRetrieverApi) {
-      final res = await _smartAuth!.getAppSignature();
-      debugPrint('Pinput: App Signature for SMS Retriever API Is: $res');
-    }
-  }
-
   void _listenForSmsCode() async {
-    final useUserConsentApi = widget.androidSmsAutofillMethod ==
-        AndroidSmsAutofillMethod.smsUserConsentApi;
-    final res = await _smartAuth!.getSmsCode(
-      useUserConsentApi: useUserConsentApi,
-      matcher: widget.smsCodeMatcher,
-      senderPhoneNumber: widget.senderPhoneNumber,
-    );
-    if (res.succeed && res.codeFound && res.code!.length == widget.length) {
-      _effectiveController.setText(res.code!);
+    final res = await _smsRetriever!.getSmsCode();
+    if (res != null && res.length == widget.length) {
+      _effectiveController.setText(res);
     }
     // Listen for multiple sms codes
-    if (widget.listenForMultipleSmsOnAndroid) {
+    if (_smsRetriever!.listenForMultipleSms) {
       _listenForSmsCode();
     }
   }
@@ -212,7 +201,7 @@ class _PinputState extends State<Pinput>
     widget.controller?.removeListener(_handleTextEditingControllerChanges);
     _focusNode?.dispose();
     _controller?.dispose();
-    _smartAuth?.removeSmsListener();
+    _smsRetriever?.removeSmsListener();
     // https://github.com/Tkko/Flutter_Pinput/issues/89
     _ambiguate(WidgetsBinding.instance)!.removeObserver(this);
     super.dispose();

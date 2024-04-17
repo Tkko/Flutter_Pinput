@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:smart_auth/smart_auth.dart';
 
 void main() {
   runApp(
@@ -18,12 +19,36 @@ void main() {
         ),
         body: const FractionallySizedBox(
           widthFactor: 1,
+
           /// You can also checkout the [PinputBuilderExample]
           child: PinputExample(),
         ),
       ),
     ),
   );
+}
+
+class SmsRetrieverImpl implements SmsRetriever {
+  const SmsRetrieverImpl(this.smartAuth);
+
+  final SmartAuth smartAuth;
+
+  @override
+  Future<void> removeSmsListener() {
+    return smartAuth.removeSmsListener();
+  }
+
+  @override
+  Future<String?> getSmsCode() async {
+    final res = await smartAuth.getSmsCode();
+    if (res.succeed && res.codeFound) {
+      return res.code!;
+    }
+    return null;
+  }
+
+  @override
+  bool get listenForMultipleSms => false;
 }
 
 /// This is the basic usage of Pinput
@@ -66,6 +91,12 @@ class _PinputExampleState extends State<PinputExample> {
       ),
     );
 
+    Pinput(
+      smsRetriever: SmsRetrieverImpl(
+        SmartAuth(),
+      ),
+    );
+
     /// Optionally you can use form to validate the Pinput
     return Form(
       key: formKey,
@@ -76,11 +107,11 @@ class _PinputExampleState extends State<PinputExample> {
             // Specify direction if desired
             textDirection: TextDirection.ltr,
             child: Pinput(
+              smsRetriever: SmsRetrieverImpl(
+                SmartAuth(),
+              ),
               controller: pinController,
               focusNode: focusNode,
-              androidSmsAutofillMethod:
-                  AndroidSmsAutofillMethod.smsUserConsentApi,
-              listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
               separatorBuilder: (index) => const SizedBox(width: 8),
               validator: (value) {
