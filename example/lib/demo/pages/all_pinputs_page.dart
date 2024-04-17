@@ -32,6 +32,16 @@ class _AllPinputsState extends State<AllPinputs>
               child: item.value,
             );
           }),
+          const Padding(
+            padding: EdgeInsets.all(20),
+            child: TextField(
+              autofillHints: [AutofillHints.oneTimeCode],
+              decoration: InputDecoration(
+                labelText: 'Standard TextField for Testing',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -100,7 +100,7 @@ class _PinputState extends State<Pinput>
 
   /// Android Autofill
   void _maybeInitSmartAuth() async {
-    if (_smsRetriever == null) {
+    if (_smsRetriever == null && widget.smsRetriever != null) {
       _smsRetriever = widget.smsRetriever!;
       _listenForSmsCode();
     }
@@ -580,7 +580,6 @@ class _PinputState extends State<Pinput>
             uniqueIdentifier: autofillId,
             autofillHints: autofillHints,
             currentEditingValue: _effectiveController.value,
-            hintText: 'One Time Code',
           )
         : AutofillConfiguration.disabled;
 
