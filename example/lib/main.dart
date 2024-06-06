@@ -19,36 +19,12 @@ void main() {
         ),
         body: const FractionallySizedBox(
           widthFactor: 1,
-
-          /// You can also checkout the [PinputBuilderExample]
+          // You can also checkout the [PinputBuilderExample]
           child: PinputExample(),
         ),
       ),
     ),
   );
-}
-
-class SmsRetrieverImpl implements SmsRetriever {
-  const SmsRetrieverImpl(this.smartAuth);
-
-  final SmartAuth smartAuth;
-
-  @override
-  Future<void> removeSmsListener() {
-    return smartAuth.removeSmsListener();
-  }
-
-  @override
-  Future<String?> getSmsCode() async {
-    final res = await smartAuth.getSmsCode();
-    if (res.succeed && res.codeFound) {
-      return res.code!;
-    }
-    return null;
-  }
-
-  @override
-  bool get listenForMultipleSms => false;
 }
 
 /// This is the basic usage of Pinput
@@ -61,6 +37,9 @@ class PinputExample extends StatefulWidget {
 }
 
 class _PinputExampleState extends State<PinputExample> {
+  final smsRetriever = SmsRetrieverImpl(
+    SmartAuth(),
+  );
   final pinController = TextEditingController();
   final focusNode = FocusNode();
   final formKey = GlobalKey<FormState>();
@@ -91,12 +70,6 @@ class _PinputExampleState extends State<PinputExample> {
       ),
     );
 
-    Pinput(
-      smsRetriever: SmsRetrieverImpl(
-        SmartAuth(),
-      ),
-    );
-
     /// Optionally you can use form to validate the Pinput
     return Form(
       key: formKey,
@@ -107,9 +80,9 @@ class _PinputExampleState extends State<PinputExample> {
             // Specify direction if desired
             textDirection: TextDirection.ltr,
             child: Pinput(
-              smsRetriever: SmsRetrieverImpl(
-                SmartAuth(),
-              ),
+              // You can pass your own SmsRetriever implementation based on any package
+              // in this example we are using the SmartAuth
+              smsRetriever: smsRetriever,
               controller: pinController,
               focusNode: focusNode,
               defaultPinTheme: defaultPinTheme,
@@ -168,4 +141,29 @@ class _PinputExampleState extends State<PinputExample> {
       ),
     );
   }
+}
+
+class SmsRetrieverImpl implements SmsRetriever {
+  const SmsRetrieverImpl(this.smartAuth);
+
+  final SmartAuth smartAuth;
+
+  @override
+  Future<void> dispose() {
+    return smartAuth.removeSmsListener();
+  }
+
+  @override
+  Future<String?> getSmsCode() async {
+    final signature = await smartAuth.getAppSignature();
+    debugPrint('App Signature: $signature');
+    final res = await smartAuth.getSmsCode();
+    if (res.succeed && res.codeFound) {
+      return res.code!;
+    }
+    return null;
+  }
+
+  @override
+  bool get listenForMultipleSms => false;
 }

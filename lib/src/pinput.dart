@@ -19,6 +19,8 @@ part 'models/pin_theme.dart';
 
 part 'models/models.dart';
 
+part 'models/sms_retriever.dart';
+
 part 'utils/extensions.dart';
 
 part 'widgets/_pin_item.dart';
