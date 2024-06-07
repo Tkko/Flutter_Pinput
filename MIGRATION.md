@@ -1,8 +1,10 @@
-#### Migration to 5.0.0+
-- If you need SMS autofill on Android, you need to add the smart_auth package directly to your project.
+### Migration to 5.0.0+
 
+- If you need SMS autofill on Android, you need to add the smart_auth (or similar) package directly
+  to your project.
 
 Before 5.0.0:
+
 ```dart
 class Example extends StatelessWidget {
   const Example({Key? key}) : super(key: key);
@@ -11,8 +13,7 @@ class Example extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Pinput(
-      androidSmsAutofillMethod:
-      AndroidSmsAutofillMethod.smsUserConsentApi,
+      androidSmsAutofillMethod: AndroidSmsAutofillMethod.smsUserConsentApi,
       listenForMultipleSmsOnAndroid: true,
     );
   }
@@ -20,6 +21,7 @@ class Example extends StatelessWidget {
 ```
 
 After 5.0.0:
+
 ```agsl
 dependencies:
   smart_auth: 2.0.0
