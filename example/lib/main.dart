@@ -48,6 +48,7 @@ class _PinputExampleState extends State<PinputExample> {
     formKey = GlobalKey<FormState>();
     pinController = TextEditingController();
     focusNode = FocusNode();
+    /// In case you need an SMS autofill feature
     smsRetriever = SmsRetrieverImpl(
       SmartAuth(),
     );
@@ -148,6 +149,8 @@ class _PinputExampleState extends State<PinputExample> {
   }
 }
 
+/// You, as a developer should implement this interface.
+/// You can use any package to retrieve the SMS code. in this example we are using SmartAuth
 class SmsRetrieverImpl implements SmsRetriever {
   const SmsRetrieverImpl(this.smartAuth);
 
