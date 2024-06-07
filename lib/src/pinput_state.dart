@@ -437,16 +437,25 @@ class _PinputState extends State<Pinput>
     );
   }
 
-  MouseCursor get _effectiveMouseCursor =>
-      MaterialStateProperty.resolveAs<MouseCursor>(
-        widget.mouseCursor ?? MaterialStateMouseCursor.textable,
-        <MaterialState>{
-          if (!isEnabled) MaterialState.disabled,
-          if (_isHovering) MaterialState.hovered,
-          if (effectiveFocusNode.hasFocus) MaterialState.focused,
-          if (hasError) MaterialState.error,
-        },
-      );
+  // TODO: Use WidgetStateProperty instead.
+  MouseCursor get _effectiveMouseCursor {
+    // ignore: deprecated_member_use
+    return MaterialStateProperty.resolveAs<MouseCursor>(
+      // ignore: deprecated_member_use
+      widget.mouseCursor ?? MaterialStateMouseCursor.textable,
+      // ignore: deprecated_member_use
+      <MaterialState>{
+        // ignore: deprecated_member_use
+        if (!isEnabled) MaterialState.disabled,
+        // ignore: deprecated_member_use
+        if (_isHovering) MaterialState.hovered,
+        // ignore: deprecated_member_use
+        if (effectiveFocusNode.hasFocus) MaterialState.focused,
+        // ignore: deprecated_member_use
+        if (hasError) MaterialState.error,
+      },
+    );
+  }
 
   void _semanticsOnTap() {
     if (!_effectiveController.selection.isValid) {

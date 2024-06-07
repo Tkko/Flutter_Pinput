@@ -48,6 +48,7 @@ class _PinputExampleState extends State<PinputExample> {
     formKey = GlobalKey<FormState>();
     pinController = TextEditingController();
     focusNode = FocusNode();
+
     /// In case you need an SMS autofill feature
     smsRetriever = SmsRetrieverImpl(
       SmartAuth(),
