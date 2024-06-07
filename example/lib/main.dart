@@ -37,12 +37,21 @@ class PinputExample extends StatefulWidget {
 }
 
 class _PinputExampleState extends State<PinputExample> {
-  final smsRetriever = SmsRetrieverImpl(
-    SmartAuth(),
-  );
-  final pinController = TextEditingController();
-  final focusNode = FocusNode();
-  final formKey = GlobalKey<FormState>();
+  late final SmsRetriever smsRetriever;
+  late final TextEditingController pinController;
+  late final FocusNode focusNode;
+  late final GlobalKey<FormState> formKey;
+
+  @override
+  void initState() {
+    super.initState();
+    formKey = GlobalKey<FormState>();
+    pinController = TextEditingController();
+    focusNode = FocusNode();
+    smsRetriever = SmsRetrieverImpl(
+      SmartAuth(),
+    );
+  }
 
   @override
   void dispose() {
@@ -90,10 +99,6 @@ class _PinputExampleState extends State<PinputExample> {
               validator: (value) {
                 return value == '2222' ? null : 'Pin is incorrect';
               },
-              // onClipboardFound: (value) {
-              //   debugPrint('onClipboardFound: $value');
-              //   pinController.setText(value);
-              // },
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) {
                 debugPrint('onCompleted: $pin');
@@ -157,7 +162,9 @@ class SmsRetrieverImpl implements SmsRetriever {
   Future<String?> getSmsCode() async {
     final signature = await smartAuth.getAppSignature();
     debugPrint('App Signature: $signature');
-    final res = await smartAuth.getSmsCode();
+    final res = await smartAuth.getSmsCode(
+      useUserConsentApi: true,
+    );
     if (res.succeed && res.codeFound) {
       return res.code!;
     }
