@@ -344,6 +344,7 @@ class _PinputState extends State<Pinput>
                 builder: (_, Widget? child) => Semantics(
                   maxValueLength: widget.length,
                   currentValueLength: _currentLength,
+                  enabled: isEnabled,
                   onTap: widget.readOnly ? null : _semanticsOnTap,
                   onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
                   child: child,
