@@ -19,19 +19,19 @@ void main() {
     final focusNode = FocusNode();
     const defaultTheme = PinTheme(decoration: BoxDecoration(color: Colors.red));
     final focusedTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withOpacity(.9),
+      color: Colors.greenAccent.withValues(alpha: .9),
     );
     final submittedTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withOpacity(.8),
+      color: Colors.greenAccent.withValues(alpha: .8),
     );
     final followingTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withOpacity(.7),
+      color: Colors.greenAccent.withValues(alpha: .7),
     );
     final disabledTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withOpacity(.6),
+      color: Colors.greenAccent.withValues(alpha: .6),
     );
     final errorTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withOpacity(.5),
+      color: Colors.greenAccent.withValues(alpha: .5),
     );
 
     await tester.pumpApp(

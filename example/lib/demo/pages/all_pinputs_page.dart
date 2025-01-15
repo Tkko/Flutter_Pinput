@@ -28,7 +28,7 @@ class _AllPinputsState extends State<AllPinputs>
               width: double.maxFinite,
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 20),
-              decoration: BoxDecoration(color: fromColor.withOpacity(.4)),
+              decoration: BoxDecoration(color: fromColor.withValues(alpha: .4)),
               child: item.value,
             );
           }),
