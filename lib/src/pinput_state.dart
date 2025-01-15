@@ -15,8 +15,7 @@ class _PinputState extends State<Pinput>
   late bool forcePressEnabled;
 
   @override
-  final GlobalKey<EditableTextState> editableTextKey =
-      GlobalKey<EditableTextState>();
+  final GlobalKey<EditableTextState> editableTextKey = GlobalKey<EditableTextState>();
 
   @override
   bool get selectionEnabled => widget.toolbarEnabled;
@@ -38,8 +37,7 @@ class _PinputState extends State<Pinput>
   String? get _errorText => widget.errorText ?? _validatorErrorText;
 
   bool get _canRequestFocus {
-    final NavigationMode mode = MediaQuery.maybeOf(context)?.navigationMode ??
-        NavigationMode.traditional;
+    final NavigationMode mode = MediaQuery.maybeOf(context)?.navigationMode ?? NavigationMode.traditional;
     switch (mode) {
       case NavigationMode.traditional:
         return isEnabled && widget.useNativeKeyboard;
@@ -48,12 +46,10 @@ class _PinputState extends State<Pinput>
     }
   }
 
-  TextEditingController get _effectiveController =>
-      widget.controller ?? _controller!.value;
+  TextEditingController get _effectiveController => widget.controller ?? _controller!.value;
 
   @protected
-  FocusNode get effectiveFocusNode =>
-      widget.focusNode ?? (_focusNode ??= FocusNode());
+  FocusNode get effectiveFocusNode => widget.focusNode ?? (_focusNode ??= FocusNode());
 
   @protected
   bool get hasError => widget.forceErrorState || _validatorErrorText != null;
@@ -74,8 +70,7 @@ class _PinputState extends State<Pinput>
   @override
   void initState() {
     super.initState();
-    _gestureDetectorBuilder =
-        _PinputSelectionGestureDetectorBuilder(state: this);
+    _gestureDetectorBuilder = _PinputSelectionGestureDetectorBuilder(state: this);
     if (widget.controller == null) {
       _createLocalController();
       _recentControllerValue = TextEditingValue.empty;
@@ -110,8 +105,7 @@ class _PinputState extends State<Pinput>
   }
 
   void _handleTextEditingControllerChanges() {
-    final textChanged =
-        _recentControllerValue.text != _effectiveController.value.text;
+    final textChanged = _recentControllerValue.text != _effectiveController.value.text;
     _recentControllerValue = _effectiveController.value;
     if (textChanged) {
       _onChanged(pin);
@@ -179,9 +173,7 @@ class _PinputState extends State<Pinput>
 
   void _createLocalController([TextEditingValue? value]) {
     assert(_controller == null);
-    _controller = value == null
-        ? RestorableTextEditingController()
-        : RestorableTextEditingController.fromValue(value);
+    _controller = value == null ? RestorableTextEditingController() : RestorableTextEditingController.fromValue(value);
     _controller!.addListener(_handleTextEditingControllerChanges);
     if (!restorePending) {
       _registerController();
@@ -209,8 +201,7 @@ class _PinputState extends State<Pinput>
     TextSelection selection,
     SelectionChangedCause? cause,
   ) {
-    _effectiveController.selection =
-        TextSelection.collapsed(offset: pin.length);
+    _effectiveController.selection = TextSelection.collapsed(offset: pin.length);
 
     switch (Theme.of(context).platform) {
       case TargetPlatform.iOS:
@@ -219,8 +210,7 @@ class _PinputState extends State<Pinput>
       case TargetPlatform.windows:
       case TargetPlatform.fuchsia:
       case TargetPlatform.android:
-        if (cause == SelectionChangedCause.longPress ||
-            cause == SelectionChangedCause.drag) {
+        if (cause == SelectionChangedCause.longPress || cause == SelectionChangedCause.drag) {
           _editableText?.bringIntoView(selection.extent);
         }
         break;
@@ -300,8 +290,7 @@ class _PinputState extends State<Pinput>
         forcePressEnabled = false;
         textSelectionControls ??= cupertinoDesktopTextSelectionHandleControls;
         handleDidGainAccessibilityFocus = () {
-          if (!effectiveFocusNode.hasFocus &&
-              effectiveFocusNode.canRequestFocus) {
+          if (!effectiveFocusNode.hasFocus && effectiveFocusNode.canRequestFocus) {
             effectiveFocusNode.requestFocus();
           }
         };
@@ -319,8 +308,7 @@ class _PinputState extends State<Pinput>
         forcePressEnabled = false;
         textSelectionControls ??= desktopTextSelectionHandleControls;
         handleDidGainAccessibilityFocus = () {
-          if (!effectiveFocusNode.hasFocus &&
-              effectiveFocusNode.canRequestFocus) {
+          if (!effectiveFocusNode.hasFocus && effectiveFocusNode.canRequestFocus) {
             effectiveFocusNode.requestFocus();
           }
         };
@@ -344,6 +332,7 @@ class _PinputState extends State<Pinput>
                 builder: (_, Widget? child) => Semantics(
                   maxValueLength: widget.length,
                   currentValueLength: _currentLength,
+                  enabled: isEnabled,
                   onTap: widget.readOnly ? null : _semanticsOnTap,
                   onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
                   child: child,
@@ -428,10 +417,8 @@ class _PinputState extends State<Pinput>
           onSelectionChanged: _handleSelectionChanged,
           onSelectionHandleTapped: _handleSelectionHandleTapped,
           readOnly: widget.readOnly || !isEnabled || !widget.useNativeKeyboard,
-          selectionControls:
-              widget.toolbarEnabled ? textSelectionControls : null,
-          keyboardAppearance:
-              widget.keyboardAppearance ?? Theme.of(context).brightness,
+          selectionControls: widget.toolbarEnabled ? textSelectionControls : null,
+          keyboardAppearance: widget.keyboardAppearance ?? Theme.of(context).brightness,
         ),
       ),
     );
@@ -459,8 +446,7 @@ class _PinputState extends State<Pinput>
 
   void _semanticsOnTap() {
     if (!_effectiveController.selection.isValid) {
-      _effectiveController.selection =
-          TextSelection.collapsed(offset: _effectiveController.text.length);
+      _effectiveController.selection = TextSelection.collapsed(offset: _effectiveController.text.length);
     }
     _requestKeyboard();
   }
@@ -513,8 +499,7 @@ class _PinputState extends State<Pinput>
           <Listenable>[effectiveFocusNode, _effectiveController],
         ),
         builder: (BuildContext context, Widget? child) {
-          final shouldHideErrorContent =
-              widget.validator == null && widget.errorText == null;
+          final shouldHideErrorContent = widget.validator == null && widget.errorText == null;
 
           if (shouldHideErrorContent) return onlyFields();
 
@@ -537,8 +522,7 @@ class _PinputState extends State<Pinput>
   @protected
   bool get hasFocus {
     final isLastPin = selectedIndex == widget.length;
-    return effectiveFocusNode.hasFocus ||
-        (!widget.useNativeKeyboard && !isLastPin);
+    return effectiveFocusNode.hasFocus || (!widget.useNativeKeyboard && !isLastPin);
   }
 
   @protected
@@ -556,9 +540,7 @@ class _PinputState extends State<Pinput>
           padding: const EdgeInsetsDirectional.only(start: 4, top: 8),
           child: Text(
             _errorText!,
-            style: widget.errorTextStyle ??
-                theme.textTheme.titleMedium
-                    ?.copyWith(color: theme.colorScheme.error),
+            style: widget.errorTextStyle ?? theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.error),
           ),
         );
       }
@@ -569,13 +551,11 @@ class _PinputState extends State<Pinput>
 
   // AutofillClient implementation start.
   @override
-  void autofill(TextEditingValue newEditingValue) =>
-      _editableText!.autofill(newEditingValue);
+  void autofill(TextEditingValue newEditingValue) => _editableText!.autofill(newEditingValue);
 
   @override
   TextInputConfiguration get textInputConfiguration {
-    final List<String>? autofillHints =
-        widget.autofillHints?.toList(growable: false);
+    final List<String>? autofillHints = widget.autofillHints?.toList(growable: false);
     final AutofillConfiguration autofillConfiguration = autofillHints != null
         ? AutofillConfiguration(
             uniqueIdentifier: autofillId,
@@ -584,7 +564,6 @@ class _PinputState extends State<Pinput>
           )
         : AutofillConfiguration.disabled;
 
-    return _editableText!.textInputConfiguration
-        .copyWith(autofillConfiguration: autofillConfiguration);
+    return _editableText!.textInputConfiguration.copyWith(autofillConfiguration: autofillConfiguration);
   }
 }
