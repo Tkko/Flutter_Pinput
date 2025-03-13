@@ -104,6 +104,7 @@ class Pinput extends StatefulWidget {
     this.onAppPrivateCommand,
     this.mouseCursor,
     this.forceErrorState = false,
+    this.showErrorWhenFocused = false,
     this.errorText,
     this.validator,
     this.errorBuilder,
@@ -159,6 +160,7 @@ class Pinput extends StatefulWidget {
     this.onAppPrivateCommand,
     this.mouseCursor,
     this.forceErrorState = false,
+    this.showErrorWhenFocused = false,
     this.validator,
     this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
     this.scrollPadding = const EdgeInsets.all(20),
@@ -389,6 +391,9 @@ class Pinput extends StatefulWidget {
 
   /// If true [errorPinTheme] will be applied and [errorText] will be displayed under the Pinput
   final bool forceErrorState;
+
+  /// If true, the error will also be displayed in the focused state. Otherwise the error is not displayed in the focused state.
+  final bool showErrorWhenFocused;
 
   /// Text displayed under the Pinput if Pinput is invalid
   final String? errorText;
