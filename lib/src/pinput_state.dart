@@ -34,6 +34,11 @@ class _PinputState extends State<Pinput>
   bool _isHovering = false;
   String? _validatorErrorText;
   SmsRetriever? _smsRetriever;
+  int _cursorPosition = 0;
+  bool _isReplacing = false; // Track if we're in replacement mode
+
+  // For enableEditingInMiddle: track characters at their visual positions
+  List<String?> _pinValues = [];
 
   String? get _errorText => widget.errorText ?? _validatorErrorText;
 
@@ -65,11 +70,98 @@ class _PinputState extends State<Pinput>
 
   EditableTextState? get _editableText => editableTextKey.currentState;
 
-  int get selectedIndex => pin.length;
+  int get selectedIndex =>
+      widget.enableEditingInMiddle ? _cursorPosition : pin.length;
 
-  String get pin => _effectiveController.text;
+  int get currentCursorPosition => _cursorPosition;
+
+  String get pin => widget.enableEditingInMiddle
+      ? _pinValues.where((char) => char != null).join('')
+      : _effectiveController.text;
 
   bool get _completed => pin.length == widget.length;
+
+  /// Sync the pin values array with the current text (for backwards compatibility)
+  void _syncPinValuesFromText() {
+    if (!widget.enableEditingInMiddle) return;
+
+    final text = _effectiveController.text;
+
+    // Clear all positions first
+    for (int i = 0; i < _pinValues.length; i++) {
+      _pinValues[i] = null;
+    }
+
+    // Fill positions with characters from text sequentially
+    for (int i = 0; i < text.length && i < widget.length; i++) {
+      _pinValues[i] = text[i];
+    }
+
+    // Update cursor position to the next empty position or end
+    _cursorPosition = _findNextAvailablePosition();
+  }
+
+  /// Find the next available (empty) position for cursor placement
+  int _findNextAvailablePosition() {
+    for (int i = 0; i < _pinValues.length; i++) {
+      if (_pinValues[i] == null) {
+        return i;
+      }
+    }
+    // If all positions are filled, place cursor at the last position
+    return (widget.length - 1).clamp(0, widget.length - 1);
+  }
+
+  /// Get the character at a specific visual position
+  String? _getCharAtPosition(int index) {
+    if (!widget.enableEditingInMiddle) {
+      // Use the old behavior for backwards compatibility
+      return index < pin.length ? pin[index] : null;
+    }
+
+    if (index >= 0 && index < _pinValues.length) {
+      return _pinValues[index];
+    }
+    return null;
+  }
+
+  /// Get the cursor position in the text controller for a given visual index
+  int _getCursorPositionInText(int visualIndex) {
+    if (!widget.enableEditingInMiddle) {
+      return _effectiveController.text.length;
+    }
+
+    // For editing in middle, cursor position in text should correspond to
+    // the number of filled positions up to and including the visual index
+    int textPosition = 0;
+    for (int i = 0; i <= visualIndex && i < _pinValues.length; i++) {
+      if (_pinValues[i] != null) {
+        textPosition++;
+      }
+    }
+    return textPosition;
+  }
+
+  /// Get the visual position for a given text controller position
+  int _getVisualPositionFromText(int textPosition) {
+    if (!widget.enableEditingInMiddle) {
+      return textPosition;
+    }
+
+    // Count filled positions to find the corresponding visual position
+    int currentTextPos = 0;
+    for (int i = 0; i < _pinValues.length; i++) {
+      if (_pinValues[i] != null) {
+        if (currentTextPos == textPosition) {
+          return i;
+        }
+        currentTextPos++;
+      }
+    }
+
+    // If text position is beyond filled characters, return current cursor position
+    return _cursorPosition.clamp(0, _pinValues.length - 1);
+  }
 
   @override
   void initState() {
@@ -83,6 +175,15 @@ class _PinputState extends State<Pinput>
       _recentControllerValue = _effectiveController.value;
       widget.controller!.addListener(_handleTextEditingControllerChanges);
     }
+
+    // Initialize pin values array for enableEditingInMiddle
+    _pinValues = List.filled(widget.length, null);
+    if (widget.enableEditingInMiddle) {
+      _syncPinValuesFromText();
+    } else {
+      _cursorPosition = _effectiveController.text.length;
+    }
+
     effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
     _maybeInitSmartAuth();
     _maybeCheckClipboard();
@@ -112,9 +213,119 @@ class _PinputState extends State<Pinput>
   void _handleTextEditingControllerChanges() {
     final textChanged =
         _recentControllerValue.text != _effectiveController.value.text;
+
+    // Update cursor position when text changes
+    if (textChanged) {
+      final newText = _effectiveController.value.text;
+      final oldText = _recentControllerValue.text;
+      final selection = _effectiveController.value.selection;
+
+      if (widget.enableEditingInMiddle) {
+        _handleEditingInMiddleTextChange(newText, oldText, selection);
+      } else {
+        // Original behavior for non-editing-in-middle mode
+        if (selection.isValid) {
+          _cursorPosition = selection.baseOffset.clamp(0, newText.length);
+        } else {
+          if (newText.length > oldText.length &&
+              _cursorPosition == oldText.length) {
+            _cursorPosition = newText.length;
+          } else if (_cursorPosition > newText.length) {
+            _cursorPosition = newText.length;
+          }
+        }
+      }
+    }
+
     _recentControllerValue = _effectiveController.value;
     if (textChanged) {
       _onChanged(pin);
+    }
+  }
+
+  void _handleEditingInMiddleTextChange(
+    String newText,
+    String oldText,
+    TextSelection selection,
+  ) {
+    final newSelectionOffset = selection.baseOffset;
+
+    if (_isReplacing && newText.length > oldText.length) {
+      // Character replacement scenario
+      final newChar = newText[newSelectionOffset - 1];
+
+      if (_cursorPosition >= 0 && _cursorPosition < _pinValues.length) {
+        _pinValues[_cursorPosition] = newChar;
+
+        if (_cursorPosition < widget.length - 1) {
+          _cursorPosition++;
+        }
+
+        _isReplacing = false;
+        _updateControllerText();
+      }
+      return;
+    }
+
+    if (newText.length > oldText.length) {
+      // Character added
+      final addedChar = newText[newSelectionOffset - 1];
+      if (_cursorPosition >= 0 && _cursorPosition < _pinValues.length) {
+        _pinValues[_cursorPosition] = addedChar;
+
+        if (_cursorPosition < widget.length - 1) {
+          _cursorPosition++;
+        }
+
+        _updateControllerText();
+      }
+    } else if (newText.length < oldText.length) {
+      // Character deleted
+      if (_cursorPosition >= 0 && _cursorPosition < _pinValues.length) {
+        if (_pinValues[_cursorPosition] != null) {
+          _pinValues[_cursorPosition] = null;
+        } else if (_cursorPosition > 0 &&
+            _pinValues[_cursorPosition - 1] != null) {
+          _cursorPosition = (_cursorPosition - 1).clamp(0, widget.length - 1);
+          _pinValues[_cursorPosition] = null;
+        }
+
+        _updateControllerText();
+      }
+      _isReplacing = false;
+    } else if (newText.length == oldText.length && newText != oldText) {
+      // Replacement case
+      for (int i = 0; i < newText.length; i++) {
+        if (i >= oldText.length) break;
+        if (newText[i] != oldText[i]) {
+          final visualIndex = _getVisualPositionFromText(i);
+          if (visualIndex >= 0 && visualIndex < _pinValues.length) {
+            _pinValues[visualIndex] = newText[i];
+            _cursorPosition = (visualIndex + 1).clamp(0, widget.length - 1);
+          }
+          break;
+        }
+      }
+
+      _updateControllerText();
+      _isReplacing = false;
+    }
+  }
+
+  void _updateControllerText() {
+    final updatedText = _pinValues.where((char) => char != null).join('');
+    if (_effectiveController.text != updatedText) {
+      _effectiveController.removeListener(_handleTextEditingControllerChanges);
+      _effectiveController.text = updatedText;
+
+      // Set cursor position in the text controller to match our visual cursor position
+      final textOffset = _getCursorPositionInText(_cursorPosition);
+
+      _effectiveController.selection = TextSelection.collapsed(
+        offset: textOffset.clamp(0, updatedText.length),
+      );
+
+      _effectiveController.addListener(_handleTextEditingControllerChanges);
     }
   }
 
@@ -160,6 +371,28 @@ class _PinputState extends State<Pinput>
     if (widget.controller != oldWidget.controller) {
       oldWidget.controller?.removeListener(_handleTextEditingControllerChanges);
       widget.controller?.addListener(_handleTextEditingControllerChanges);
+      // Update cursor position when controller changes
+      if (widget.enableEditingInMiddle) {
+        _syncPinValuesFromText();
+      } else {
+        _cursorPosition = _effectiveController.text.length;
+      }
+    }
+
+    // Handle length changes
+    if (widget.length != oldWidget.length) {
+      _pinValues = List.filled(widget.length, null);
+      if (widget.enableEditingInMiddle) {
+        _syncPinValuesFromText();
+      }
+    }
+
+    // Handle enableEditingInMiddle changes
+    if (widget.enableEditingInMiddle != oldWidget.enableEditingInMiddle) {
+      if (widget.enableEditingInMiddle) {
+        _pinValues = List.filled(widget.length, null);
+        _syncPinValuesFromText();
+      }
     }
 
     effectiveFocusNode.canRequestFocus = _canRequestFocus;
@@ -205,13 +438,91 @@ class _PinputState extends State<Pinput>
     }
   }
 
+  void _onPinTapped(int index) {
+    // Only allow tapping on individual positions if the feature is enabled
+    if (!widget.enableEditingInMiddle) {
+      // Fallback to the default behavior - move cursor to the end
+      setState(() {
+        _cursorPosition = pin.length;
+      });
+      _requestKeyboard();
+      return;
+    }
+
+    // Allow tapping on any position within the pin length
+    if (index >= 0 && index < widget.length) {
+      setState(() {
+        _cursorPosition = index;
+        // Set replacement mode if the position has a character
+        _isReplacing = _pinValues[index] != null;
+      });
+      _requestKeyboard();
+
+      // If the position has a character, select it for replacement
+      if (_pinValues[index] != null) {
+        // Create a selection to highlight the character for replacement
+        final textIndex = _getTextIndexForVisualPosition(index);
+        // Ensure we have a valid text index
+        if (textIndex < _effectiveController.text.length) {
+          _effectiveController.selection = TextSelection(
+            baseOffset: textIndex,
+            extentOffset: textIndex + 1,
+          );
+        } else {
+          // Fallback to collapsed selection
+          _updateControllerText();
+        }
+      } else {
+        // Update the text controller cursor position for empty positions
+        _updateControllerText();
+      }
+    }
+  }
+
+  /// Get the text index for a specific visual position
+  int _getTextIndexForVisualPosition(int visualIndex) {
+    if (!widget.enableEditingInMiddle) {
+      return _effectiveController.text.length;
+    }
+
+    int textIndex = 0;
+    for (int i = 0; i < visualIndex && i < _pinValues.length; i++) {
+      if (_pinValues[i] != null) {
+        textIndex++;
+      }
+    }
+    return textIndex;
+  }
+
   void _handleSelectionChanged(
     TextSelection selection,
     SelectionChangedCause? cause,
   ) {
-    _effectiveController.selection =
-        TextSelection.collapsed(offset: pin.length);
+    // For enableEditingInMiddle, we manage cursor position manually
+    if (widget.enableEditingInMiddle) {
+      // Only update visual cursor position for user-initiated selection changes
+      if (cause != null && cause == SelectionChangedCause.tap) {
+        if (selection.isValid && selection.isCollapsed) {
+          int visualPosition = _getVisualPositionFromText(selection.baseOffset);
+          if (visualPosition != _cursorPosition) {
+            setState(() {
+              _cursorPosition = visualPosition.clamp(0, widget.length - 1);
+              _isReplacing =
+                  false; // Reset replacement mode on manual cursor movement
+            });
+          }
+        }
+      }
+    } else {
+      // Use the default behavior for non-editing-in-middle mode
+      final targetOffset = pin.length;
+      if (selection.baseOffset != targetOffset) {
+        _effectiveController.selection =
+            TextSelection.collapsed(offset: targetOffset);
+      }
+    }
 
+    // Handle platform-specific selection behaviors
     switch (Theme.of(context).platform) {
       case TargetPlatform.iOS:
       case TargetPlatform.macOS:
@@ -460,8 +771,11 @@ class _PinputState extends State<Pinput>
 
   void _semanticsOnTap() {
     if (!_effectiveController.selection.isValid) {
+      final targetOffset = widget.enableEditingInMiddle
+          ? _cursorPosition
+          : _effectiveController.text.length;
       _effectiveController.selection =
-          TextSelection.collapsed(offset: _effectiveController.text.length);
+          TextSelection.collapsed(offset: targetOffset);
     }
     _requestKeyboard();
   }
@@ -475,11 +789,20 @@ class _PinputState extends State<Pinput>
       return PinItemStateType.error;
     }
 
-    if (hasFocus && index == selectedIndex.clamp(0, widget.length - 1)) {
+    final focusedIndex = widget.enableEditingInMiddle
+        ? _cursorPosition.clamp(0, widget.length - 1)
+        : pin.length.clamp(0, widget.length - 1);
+
+    if (hasFocus && index == focusedIndex) {
       return PinItemStateType.focused;
     }
 
-    if (index < selectedIndex) {
+    // Check if this position has a character
+    final hasCharacter = widget.enableEditingInMiddle
+        ? _getCharAtPosition(index) != null
+        : index < pin.length;
+
+    if (hasCharacter) {
       return PinItemStateType.submitted;
     }
 
@@ -493,10 +816,15 @@ class _PinputState extends State<Pinput>
         mainAxisAlignment: widget.mainAxisAlignment,
         children: Iterable<int>.generate(widget.length).map<Widget>((index) {
           if (widget._builder != null) {
+            // Get the correct character for this visual position
+            final char = widget.enableEditingInMiddle
+                ? _getCharAtPosition(index) ?? ''
+                : (pin.length > index ? pin[index] : '');
+
             return widget._builder!.itemBuilder.call(
               context,
               PinItemState(
-                value: pin.length > index ? pin[index] : '',
+                value: char,
                 index: index,
                 type: _getState(index),
               ),
@@ -537,7 +865,9 @@ class _PinputState extends State<Pinput>
 
   @protected
   bool get hasFocus {
-    final isLastPin = selectedIndex == widget.length;
+    final isLastPin = widget.enableEditingInMiddle
+        ? _cursorPosition == widget.length
+        : pin.length == widget.length;
     return effectiveFocusNode.hasFocus ||
         (!widget.useNativeKeyboard && !isLastPin);
   }

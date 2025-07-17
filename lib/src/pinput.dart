@@ -77,6 +77,7 @@ class Pinput extends StatefulWidget {
     this.enabled = true,
     this.readOnly = false,
     this.useNativeKeyboard = true,
+    this.enableEditingInMiddle = false,
     this.toolbarEnabled = true,
     this.autofocus = false,
     this.obscureText = false,
@@ -141,6 +142,7 @@ class Pinput extends StatefulWidget {
     this.enabled = true,
     this.readOnly = false,
     this.useNativeKeyboard = true,
+    this.enableEditingInMiddle = false,
     this.toolbarEnabled = true,
     this.autofocus = false,
     this.enableIMEPersonalizedLearning = false,
@@ -311,6 +313,10 @@ class Pinput extends StatefulWidget {
   /// when flag is set to false [Pinput] wont be focusable anymore
   /// so you should set value of [Pinput]'s [TextEditingController] programmatically
   final bool useNativeKeyboard;
+
+  /// Whether to enable editing PIN from the middle by tapping on individual PIN positions
+  /// When enabled, users can tap on any position to place the cursor there and edit from that position
+  final bool enableEditingInMiddle;
 
   /// If true, paste button will appear on longPress event
   final bool toolbarEnabled;
@@ -653,6 +659,13 @@ class Pinput extends StatefulWidget {
       DiagnosticsProperty<bool>(
         'toolbarEnabled',
         toolbarEnabled,
+        defaultValue: true,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<bool>(
+        'enablePinAutofill',
+        enableEditingInMiddle,
         defaultValue: true,
       ),
     );
