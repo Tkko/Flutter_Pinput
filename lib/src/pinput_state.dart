@@ -36,6 +36,8 @@ class _PinputState extends State<Pinput>
   SmsRetriever? _smsRetriever;
   int _cursorPosition = 0;
   bool _isReplacing = false; // Track if we're in replacement mode
+  bool _hasCalledOnCompleted =
+      false; // Track if onCompleted has been called for current completion
 
   // For enableEditingInMiddle: track characters at their visual positions
   List<String?> _pinValues = [];
@@ -99,6 +101,11 @@ class _PinputState extends State<Pinput>
 
     // Update cursor position to the next empty position or end
     _cursorPosition = _findNextAvailablePosition();
+
+    // Reset completion flag when syncing from text
+    if (widget.callOnCompletedOnlyOnUnfocus) {
+      _hasCalledOnCompleted = false;
+    }
   }
 
   /// Find the next available (empty) position for cursor placement
@@ -108,8 +115,8 @@ class _PinputState extends State<Pinput>
         return i;
       }
     }
-    // If all positions are filled, place cursor at the last position
-    return (widget.length - 1).clamp(0, widget.length - 1);
+    // If all positions are filled, place cursor beyond the last position
+    return widget.length;
   }
 
   /// Get the character at a specific visual position
@@ -185,6 +192,7 @@ class _PinputState extends State<Pinput>
     }
 
     effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
+    effectiveFocusNode.addListener(_onFocusChange);
     _maybeInitSmartAuth();
     _maybeCheckClipboard();
     // https://github.com/Tkko/Flutter_Pinput/issues/89
@@ -213,6 +221,11 @@ class _PinputState extends State<Pinput>
   void _handleTextEditingControllerChanges() {
     final textChanged =
         _recentControllerValue.text != _effectiveController.value.text;
+    final selectionChanged = _recentControllerValue.selection !=
+        _effectiveController.value.selection;
+
+    // Track if we should check for completion even without text changes
+    bool shouldCheckCompletion = false;
 
     // Update cursor position when text changes
     if (textChanged) {
@@ -235,11 +248,64 @@ class _PinputState extends State<Pinput>
           }
         }
       }
+    } else if (selectionChanged && widget.enableEditingInMiddle) {
+      // Handle selection changes that might indicate typing the same character
+      final selection = _effectiveController.value.selection;
+      final oldSelection = _recentControllerValue.selection;
+
+      // Check if we had a selection and now we don't (indicating typing occurred)
+      if (oldSelection.isValid &&
+          !oldSelection.isCollapsed &&
+          selection.isValid &&
+          selection.isCollapsed &&
+          _isReplacing) {
+        // User was in replacement mode and typed something, move cursor forward
+        _advanceCursorAfterReplacement();
+        // Even if text didn't change, we should check for completion
+        shouldCheckCompletion = true;
+      }
     }
 
     _recentControllerValue = _effectiveController.value;
-    if (textChanged) {
+    if (textChanged || shouldCheckCompletion) {
       _onChanged(pin);
+    }
+  }
+
+  /// Helper method to advance cursor after replacement
+  void _advanceCursorAfterReplacement() {
+    if (widget.enableEditingInMiddle) {
+      if (_cursorPosition < widget.length - 1) {
+        _cursorPosition++;
+        _isReplacing = _pinValues[_cursorPosition] != null;
+
+        // Update controller text first
+        _updateControllerText();
+
+        // If the new position has a character, automatically select it for replacement
+        if (_pinValues[_cursorPosition] != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              _selectCharacterForReplacement(_cursorPosition);
+            }
+          });
+        }
+      } else {
+        // Move cursor beyond the last position to indicate completion
+        _cursorPosition = widget.length;
+        _isReplacing = false;
+        _updateControllerText();
+
+        // Explicitly check for completion when cursor moves beyond last position
+        if (_completed) {
+          _maybeValidateForm();
+          _maybeCloseKeyboard();
+          _maybeCallOnCompletedImmediate();
+        }
+      }
+    } else {
+      _cursorPosition = (_cursorPosition + 1).clamp(0, widget.length - 1);
+      _isReplacing = false;
     }
   }
 
@@ -250,34 +316,54 @@ class _PinputState extends State<Pinput>
   ) {
     final newSelectionOffset = selection.baseOffset;
 
-    if (_isReplacing && newText.length > oldText.length) {
-      // Character replacement scenario
-      final newChar = newText[newSelectionOffset - 1];
-
-      if (_cursorPosition >= 0 && _cursorPosition < _pinValues.length) {
-        _pinValues[_cursorPosition] = newChar;
-
-        if (_cursorPosition < widget.length - 1) {
-          _cursorPosition++;
-        }
-
-        _isReplacing = false;
-        _updateControllerText();
-      }
-      return;
-    }
-
     if (newText.length > oldText.length) {
-      // Character added
+      // Character added - handle both new input and replacement
       final addedChar = newText[newSelectionOffset - 1];
       if (_cursorPosition >= 0 && _cursorPosition < _pinValues.length) {
+        // Replace the character at current position (works for both empty and filled positions)
         _pinValues[_cursorPosition] = addedChar;
 
-        if (_cursorPosition < widget.length - 1) {
-          _cursorPosition++;
-        }
+        // Reset replacement mode since we've just placed a character
+        _isReplacing = false;
 
-        _updateControllerText();
+        // Move cursor to next position
+        if (widget.enableEditingInMiddle) {
+          if (_cursorPosition < widget.length - 1) {
+            _cursorPosition++;
+            _isReplacing = _pinValues[_cursorPosition] != null;
+
+            // Update controller text first
+            _updateControllerText();
+
+            // If the new position has a character, automatically select it for replacement
+            // Use a post-frame callback to ensure this happens after all updates
+            if (_pinValues[_cursorPosition] != null) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  _selectCharacterForReplacement(_cursorPosition);
+                }
+              });
+            }
+          } else {
+            // Move cursor beyond the last position to indicate completion
+            _cursorPosition = widget.length;
+            _isReplacing = false;
+            _updateControllerText();
+
+            // Explicitly check for completion when cursor moves beyond last position
+            if (_completed) {
+              _maybeValidateForm();
+              _maybeCloseKeyboard();
+              _maybeCallOnCompletedImmediate();
+            }
+          }
+        } else {
+          // Original behavior: only move if within bounds
+          if (_cursorPosition < widget.length - 1) {
+            _cursorPosition++;
+          }
+          _updateControllerText();
+        }
       }
     } else if (newText.length < oldText.length) {
       // Character deleted
@@ -290,25 +376,65 @@ class _PinputState extends State<Pinput>
           _pinValues[_cursorPosition] = null;
         }
 
+        // Reset completion flag when characters are deleted
+        if (widget.callOnCompletedOnlyOnUnfocus) {
+          _hasCalledOnCompleted = false;
+        }
         _updateControllerText();
       }
       _isReplacing = false;
-    } else if (newText.length == oldText.length && newText != oldText) {
-      // Replacement case
+    } else if (newText.length == oldText.length) {
+      // Direct character replacement (same length but different content)
+      // This happens when a character is selected and replaced
+
+      // Check for character differences and handle replacement
       for (int i = 0; i < newText.length; i++) {
         if (i >= oldText.length) break;
         if (newText[i] != oldText[i]) {
           final visualIndex = _getVisualPositionFromText(i);
           if (visualIndex >= 0 && visualIndex < _pinValues.length) {
             _pinValues[visualIndex] = newText[i];
-            _cursorPosition = (visualIndex + 1).clamp(0, widget.length - 1);
+
+            // Move cursor forward after replacement
+            if (widget.enableEditingInMiddle) {
+              if (visualIndex < widget.length - 1) {
+                _cursorPosition = visualIndex + 1;
+                _isReplacing = _pinValues[_cursorPosition] != null;
+
+                // Update controller text first
+                _updateControllerText();
+
+                // If the new position has a character, automatically select it for replacement
+                if (_pinValues[_cursorPosition] != null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) {
+                      _selectCharacterForReplacement(_cursorPosition);
+                    }
+                  });
+                  return; // Early return to avoid double _updateControllerText call
+                }
+              } else {
+                // Move cursor beyond the last position to indicate completion
+                _cursorPosition = widget.length;
+                _isReplacing = false;
+
+                // Explicitly check for completion when cursor moves beyond last position
+                if (_completed) {
+                  _maybeValidateForm();
+                  _maybeCloseKeyboard();
+                  _maybeCallOnCompletedImmediate();
+                }
+              }
+            } else {
+              _cursorPosition = (visualIndex + 1).clamp(0, widget.length - 1);
+              _isReplacing = false;
+            }
           }
           break;
         }
       }
 
       _updateControllerText();
-      _isReplacing = false;
     }
   }
 
@@ -321,18 +447,71 @@ class _PinputState extends State<Pinput>
       // Set cursor position in the text controller to match our visual cursor position
       final textOffset = _getCursorPositionInText(_cursorPosition);
 
-      _effectiveController.selection = TextSelection.collapsed(
-        offset: textOffset.clamp(0, updatedText.length),
-      );
+      // Only set selection here if we're not in continuous editing mode or not in replacement mode
+      // In continuous editing mode with replacement, selection will be handled by _selectCharacterForReplacement
+      if (!(widget.enableEditingInMiddle &&
+          _isReplacing &&
+          _cursorPosition < _pinValues.length &&
+          _pinValues[_cursorPosition] != null)) {
+        _effectiveController.selection = TextSelection.collapsed(
+          offset: textOffset.clamp(0, updatedText.length),
+        );
+      }
 
       _effectiveController.addListener(_handleTextEditingControllerChanges);
+    }
+  }
+
+  /// Handle focus changes to call onCompleted when focus is lost and all cells are filled
+  void _onFocusChange() {
+    if (!effectiveFocusNode.hasFocus) {
+      // Field lost focus - check if we should call onCompleted
+      if (widget.callOnCompletedOnlyOnUnfocus) {
+        _maybeCallOnCompletedOnUnfocus();
+      }
+    } else {
+      // Field gained focus - reset the completion flag if pin is not complete
+      if (!_completed && widget.callOnCompletedOnlyOnUnfocus) {
+        _hasCalledOnCompleted = false;
+      }
+    }
+  }
+
+  /// Check if onCompleted should be called when the field loses focus
+  void _maybeCallOnCompletedOnUnfocus() {
+    if (_completed && !_hasCalledOnCompleted) {
+      _hasCalledOnCompleted = true;
+      widget.onCompleted?.call(pin);
+    }
+  }
+
+  /// Check if onCompleted should be called immediately for specific completion scenarios
+  void _maybeCallOnCompletedImmediate() {
+    // Call onCompleted immediately if:
+    // 1. Pin is completed
+    // 2. We haven't called it yet
+    // 3. Keyboard won't be closed (so focus won't be lost automatically)
+    // 4. The new behavior is enabled
+    if (_completed &&
+        !_hasCalledOnCompleted &&
+        !widget.closeKeyboardWhenCompleted &&
+        widget.callOnCompletedOnlyOnUnfocus) {
+      _hasCalledOnCompleted = true;
+      widget.onCompleted?.call(pin);
     }
   }
 
   void _onChanged(String pin) {
     widget.onChanged?.call(pin);
     if (_completed) {
-      widget.onCompleted?.call(pin);
+      if (widget.callOnCompletedOnlyOnUnfocus) {
+        // Reset the completion flag when pin becomes complete during editing
+        // onCompleted will be called on unfocus instead
+        _hasCalledOnCompleted = false;
+      } else {
+        // Use the original behavior - call onCompleted immediately
+        widget.onCompleted?.call(pin);
+      }
       _maybeValidateForm();
       _maybeCloseKeyboard();
     }
@@ -346,7 +525,42 @@ class _PinputState extends State<Pinput>
 
   void _maybeCloseKeyboard() {
     if (widget.closeKeyboardWhenCompleted) {
-      effectiveFocusNode.unfocus();
+      if (widget.enableEditingInMiddle) {
+        // For enableEditingInMiddle mode, close keyboard when:
+        // 1. The pin is completed (all cells filled), AND
+        // 2. The cursor has moved beyond the last position (indicating user is done editing)
+        final allPositionsFilled = _pinValues.every((char) => char != null);
+        final cursorBeyondLastPosition = _cursorPosition >= widget.length;
+
+        if (allPositionsFilled && cursorBeyondLastPosition) {
+          effectiveFocusNode.unfocus();
+        }
+      } else {
+        // For normal mode, unfocus when completed
+        effectiveFocusNode.unfocus();
+      }
+    }
+    // When closeKeyboardWhenCompleted is false, do nothing - keyboard stays open
+  }
+
+  /// Helper method to select a character at a specific position for replacement
+  void _selectCharacterForReplacement(int position) {
+    if (position >= 0 &&
+        position < _pinValues.length &&
+        _pinValues[position] != null) {
+      // Use addPostFrameCallback to ensure the selection happens after all other updates
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          final textIndex = _getTextIndexForVisualPosition(position);
+          final currentText = _effectiveController.text;
+          if (textIndex < currentText.length) {
+            _effectiveController.selection = TextSelection(
+              baseOffset: textIndex,
+              extentOffset: textIndex + 1,
+            );
+          }
+        }
+      });
     }
   }
 
@@ -371,6 +585,10 @@ class _PinputState extends State<Pinput>
     if (widget.controller != oldWidget.controller) {
       oldWidget.controller?.removeListener(_handleTextEditingControllerChanges);
       widget.controller?.addListener(_handleTextEditingControllerChanges);
+      // Reset completion flag when controller changes
+      if (widget.callOnCompletedOnlyOnUnfocus) {
+        _hasCalledOnCompleted = false;
+      }
       // Update cursor position when controller changes
       if (widget.enableEditingInMiddle) {
         _syncPinValuesFromText();
@@ -382,6 +600,10 @@ class _PinputState extends State<Pinput>
     // Handle length changes
     if (widget.length != oldWidget.length) {
       _pinValues = List.filled(widget.length, null);
+      // Reset completion flag when length changes
+      if (widget.callOnCompletedOnlyOnUnfocus) {
+        _hasCalledOnCompleted = false;
+      }
       if (widget.enableEditingInMiddle) {
         _syncPinValuesFromText();
       }
@@ -424,6 +646,7 @@ class _PinputState extends State<Pinput>
   @override
   void dispose() {
     widget.controller?.removeListener(_handleTextEditingControllerChanges);
+    effectiveFocusNode.removeListener(_onFocusChange);
     _focusNode?.dispose();
     _controller?.dispose();
     _smsRetriever?.dispose();
@@ -458,22 +681,24 @@ class _PinputState extends State<Pinput>
       });
       _requestKeyboard();
 
-      // If the position has a character, select it for replacement
+      // If the position has a character, we need to handle selection carefully
       if (_pinValues[index] != null) {
-        // Create a selection to highlight the character for replacement
+        // For positions with existing values, we want to replace the character
+        // when the user starts typing. We need to ensure the text controller
+        // reflects the current state properly.
+        _updateControllerText();
+
+        // After updating, select the character at the current position for replacement
         final textIndex = _getTextIndexForVisualPosition(index);
-        // Ensure we have a valid text index
         if (textIndex < _effectiveController.text.length) {
+          // Select the character so it gets replaced when user types
           _effectiveController.selection = TextSelection(
             baseOffset: textIndex,
             extentOffset: textIndex + 1,
           );
-        } else {
-          // Fallback to collapsed selection
-          _updateControllerText();
         }
       } else {
-        // Update the text controller cursor position for empty positions
+        // For empty positions, just update cursor position
         _updateControllerText();
       }
     }

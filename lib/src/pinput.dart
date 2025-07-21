@@ -87,6 +87,7 @@ class Pinput extends StatefulWidget {
     this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
+    this.callOnCompletedOnlyOnUnfocus = false,
     this.keyboardType = TextInputType.number,
     this.textCapitalization = TextCapitalization.none,
     this.slideTransitionBeginOffset,
@@ -149,6 +150,7 @@ class Pinput extends StatefulWidget {
     this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
+    this.callOnCompletedOnlyOnUnfocus = false,
     this.keyboardType = TextInputType.number,
     this.textCapitalization = TextCapitalization.none,
     this.keyboardAppearance,
@@ -217,6 +219,10 @@ class Pinput extends StatefulWidget {
 
   /// If true keyboard will be closed
   final bool closeKeyboardWhenCompleted;
+
+  /// If true, onCompleted will only be called when the field loses focus and all cells are filled.
+  /// If false (default), onCompleted will be called immediately when all cells are filled during editing.
+  final bool callOnCompletedOnlyOnUnfocus;
 
   /// Displayed fields count. PIN code length.
   final int length;
@@ -512,6 +518,13 @@ class Pinput extends StatefulWidget {
         'closeKeyboardWhenCompleted',
         closeKeyboardWhenCompleted,
         defaultValue: true,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<bool>(
+        'callOnCompletedOnlyOnUnfocus',
+        callOnCompletedOnlyOnUnfocus,
+        defaultValue: false,
       ),
     );
     properties.add(

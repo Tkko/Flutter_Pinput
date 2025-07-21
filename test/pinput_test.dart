@@ -269,6 +269,103 @@ void main() {
       expect(fieldValue, isNull);
       expect(called, 1);
     });
+
+    testWidgets(
+        'onCompleted is called on unfocus when pin is complete and callOnCompletedOnlyOnUnfocus is true',
+        (WidgetTester tester) async {
+      final FocusNode focusNode = FocusNode();
+      String? fieldValue;
+      int called = 0;
+
+      await tester.pumpApp(
+        Column(
+          children: [
+            Pinput(
+              length: 4,
+              focusNode: focusNode,
+              closeKeyboardWhenCompleted: false, // Prevent auto-unfocus
+              callOnCompletedOnlyOnUnfocus: true, // Enable new behavior
+              onCompleted: (value) {
+                fieldValue = value;
+                called++;
+              },
+            ),
+            // Add another focusable widget to test unfocus
+            const TextField(),
+          ],
+        ),
+      );
+
+      expect(fieldValue, isNull);
+      expect(called, 0);
+
+      // Enter text but keep focus - onCompleted should not be called
+      await tester.enterText(find.byType(EditableText).first, '1234');
+      await tester.pump();
+      expect(fieldValue, isNull);
+      expect(called, 0);
+
+      // Tap the other text field to lose focus - now onCompleted should be called
+      await tester.tap(find.byType(TextField));
+      await tester.pump();
+      expect(fieldValue, equals('1234'));
+      expect(called, 1);
+
+      // Refocus and edit - onCompleted should not be called again for the same completion
+      await tester.tap(find.byType(EditableText).first);
+      await tester.pump();
+      await tester.enterText(find.byType(EditableText).first, '1234');
+      await tester.pump();
+      expect(called, 1); // Should still be 1
+
+      // Unfocus again - onCompleted should not be called again since it's the same completion
+      await tester.tap(find.byType(TextField));
+      await tester.pump();
+      expect(called, 1); // Should still be 1
+
+      // Edit to incomplete and then complete again
+      await tester.tap(find.byType(EditableText).first);
+      await tester.pump();
+      await tester.enterText(find.byType(EditableText).first, '123');
+      await tester.pump();
+      await tester.enterText(find.byType(EditableText).first, '1235');
+      await tester.pump();
+
+      // Unfocus - onCompleted should be called for the new completion
+      await tester.tap(find.byType(TextField));
+      await tester.pump();
+      expect(fieldValue, equals('1235'));
+      expect(called, 2);
+    });
+
+    testWidgets(
+        'onCompleted is called immediately when callOnCompletedOnlyOnUnfocus is false (default behavior)',
+        (WidgetTester tester) async {
+      String? fieldValue;
+      int called = 0;
+
+      await tester.pumpApp(
+        Pinput(
+          length: 4,
+          closeKeyboardWhenCompleted: false, // Prevent auto-unfocus
+          callOnCompletedOnlyOnUnfocus:
+              false, // Use original behavior (default)
+          onCompleted: (value) {
+            fieldValue = value;
+            called++;
+          },
+        ),
+      );
+
+      expect(fieldValue, isNull);
+      expect(called, 0);
+
+      // Enter text - onCompleted should be called immediately (original behavior)
+      await tester.enterText(find.byType(EditableText), '1234');
+      await tester.pump();
+      expect(fieldValue, equals('1234'));
+      expect(called, 1);
+    });
   });
 
   testWidgets('onTap is called upon tap', (WidgetTester tester) async {
