@@ -347,6 +347,16 @@ class _PinputState extends State<Pinput>
                   enabled: isEnabled,
                   onTap: widget.readOnly ? null : _semanticsOnTap,
                   onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
+                  onFocus: isEnabled
+                      ? () {
+                          if (effectiveFocusNode.canRequestFocus &&
+                              !effectiveFocusNode.hasFocus) {
+                            effectiveFocusNode.requestFocus();
+                          } else if (!widget.readOnly) {
+                            _requestKeyboard();
+                          }
+                        }
+                      : null,
                   child: child,
                 ),
                 child: _gestureDetectorBuilder.buildGestureDetector(
