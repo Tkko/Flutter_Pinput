@@ -314,56 +314,67 @@ class _PinputState extends State<Pinput>
     String oldText,
     TextSelection selection,
   ) {
-    final newSelectionOffset = selection.baseOffset;
+    // selection.baseOffset is available if needed; text diffing below doesn't use it directly.
 
     if (newText.length > oldText.length) {
-      // Character added - handle both new input and replacement
-      final addedChar = newText[newSelectionOffset - 1];
-      if (_cursorPosition >= 0 && _cursorPosition < _pinValues.length) {
-        // Replace the character at current position (works for both empty and filled positions)
-        _pinValues[_cursorPosition] = addedChar;
+      // One or more characters added (typing or paste). Compute the inserted substring
+      final int oldLen = oldText.length;
+      final int newLen = newText.length;
+      // Find first differing index
+      int firstDiff = 0;
+      while (firstDiff < oldLen && oldText[firstDiff] == newText[firstDiff]) {
+        firstDiff++;
+      }
+      final int insertedLen = newLen - oldLen;
+      final String inserted =
+          newText.substring(firstDiff, firstDiff + insertedLen);
 
-        // Reset replacement mode since we've just placed a character
-        _isReplacing = false;
+      // Map text index to visual start position
+      int visualStart = _getVisualPositionFromText(firstDiff);
 
-        // Move cursor to next position
-        if (widget.enableEditingInMiddle) {
-          if (_cursorPosition < widget.length - 1) {
-            _cursorPosition++;
-            _isReplacing = _pinValues[_cursorPosition] != null;
+      if (visualStart < 0) visualStart = 0;
+      if (visualStart > _pinValues.length) visualStart = _pinValues.length;
 
-            // Update controller text first
-            _updateControllerText();
-
-            // If the new position has a character, automatically select it for replacement
-            // Use a post-frame callback to ensure this happens after all updates
-            if (_pinValues[_cursorPosition] != null) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) {
-                  _selectCharacterForReplacement(_cursorPosition);
-                }
-              });
-            }
-          } else {
-            // Move cursor beyond the last position to indicate completion
-            _cursorPosition = widget.length;
-            _isReplacing = false;
-            _updateControllerText();
-
-            // Explicitly check for completion when cursor moves beyond last position
-            if (_completed) {
-              _maybeValidateForm();
-              _maybeCloseKeyboard();
-              _maybeCallOnCompletedImmediate();
-            }
-          }
-        } else {
-          // Original behavior: only move if within bounds
-          if (_cursorPosition < widget.length - 1) {
-            _cursorPosition++;
-          }
-          _updateControllerText();
+      // Fill sequentially from visualStart with inserted chars
+      for (int i = 0; i < inserted.length; i++) {
+        final int pos = visualStart + i;
+        if (pos >= 0 && pos < _pinValues.length) {
+          _pinValues[pos] = inserted[i];
         }
+      }
+
+      // Update replacement/cursor state
+      _isReplacing = false;
+      final int afterPos = visualStart + inserted.length;
+      if (afterPos <= 0) {
+        _cursorPosition = 0;
+      } else if (afterPos >= widget.length) {
+        // Move cursor beyond last position to indicate completion
+        _cursorPosition = widget.length;
+      } else {
+        _cursorPosition = afterPos.clamp(0, widget.length - 1);
+        _isReplacing = _pinValues[_cursorPosition] != null;
+      }
+
+      // Update controller text and selection
+      _updateControllerText();
+
+      // If the new position has a character and we are replacing, select it
+      if (widget.enableEditingInMiddle &&
+          _cursorPosition >= 0 &&
+          _cursorPosition < _pinValues.length &&
+          _pinValues[_cursorPosition] != null &&
+          _isReplacing) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _selectCharacterForReplacement(_cursorPosition);
+        });
+      }
+
+      // Explicitly check for completion when cursor moves beyond last position
+      if (_completed) {
+        _maybeValidateForm();
+        _maybeCloseKeyboard();
+        _maybeCallOnCompletedImmediate();
       }
     } else if (newText.length < oldText.length) {
       // Character deleted
