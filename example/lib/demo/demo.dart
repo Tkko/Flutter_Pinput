@@ -29,26 +29,6 @@ class _AppViewState extends State<AppView> {
       builder: (BuildContext context, BoxConstraints constraints) {
         final app = MaterialApp(
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            tabBarTheme: TabBarTheme(
-              indicatorSize: TabBarIndicatorSize.label,
-              indicator: const BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    color: Color.fromRGBO(30, 60, 87, 1),
-                    width: 2.0,
-                  ),
-                ),
-              ),
-              unselectedLabelStyle: GoogleFonts.poppins(fontSize: 16),
-              labelStyle: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-              labelColor: const Color.fromRGBO(30, 60, 87, 1),
-              unselectedLabelColor: const Color.fromRGBO(107, 137, 165, 1),
-            ),
-          ),
           home: const GalleryPage(),
         );
 

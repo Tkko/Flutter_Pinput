@@ -188,7 +188,12 @@ class _PinputState extends State<Pinput>
     if (widget.enableEditingInMiddle) {
       _syncPinValuesFromText();
     } else {
-      _cursorPosition = _effectiveController.text.length;
+      // If a controller was provided use its text, otherwise rely on the
+      // recentControllerValue to avoid accessing a Restorable controller
+      // before it's registered (which would assert).
+      _cursorPosition = widget.controller != null
+          ? _effectiveController.text.length
+          : _recentControllerValue.text.length;
     }
 
     effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
@@ -957,7 +962,10 @@ class _PinputState extends State<Pinput>
           onTapOutside: widget.onTapOutside,
           mouseCursor: MouseCursor.defer,
           focusNode: effectiveFocusNode,
-          textAlign: TextAlign.center,
+          // Align hidden editable text to the start so the system paste menu
+          // anchors near the first character position (which maps to the
+          // first visual pin cell) instead of the center of the widget.
+          textAlign: TextAlign.start,
           autofocus: widget.autofocus,
           inputFormatters: formatters,
           restorationId: 'pinput',
