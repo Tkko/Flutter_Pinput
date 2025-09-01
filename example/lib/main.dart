@@ -58,9 +58,7 @@ class _PinputExampleState extends State<PinputExample> {
     focusNode = FocusNode();
 
     /// In case you need an SMS autofill feature
-    smsRetriever = SmsRetrieverImpl(
-      SmartAuth(),
-    );
+    smsRetriever = SmsRetrieverImpl(SmartAuth());
   }
 
   @override
@@ -104,6 +102,7 @@ class _PinputExampleState extends State<PinputExample> {
             child: Pinput(
               // You can pass your own SmsRetriever implementation based on any package
               // in this example we are using the SmartAuth
+              enableInteractiveSelection: true,
               smsRetriever: smsRetriever,
               controller: pinController,
               focusNode: focusNode,
@@ -177,9 +176,7 @@ class SmsRetrieverImpl implements SmsRetriever {
   Future<String?> getSmsCode() async {
     final signature = await smartAuth.getAppSignature();
     debugPrint('App Signature: $signature');
-    final res = await smartAuth.getSmsCode(
-      useUserConsentApi: true,
-    );
+    final res = await smartAuth.getSmsCode(useUserConsentApi: true);
     if (res.succeed && res.codeFound) {
       return res.code!;
     }

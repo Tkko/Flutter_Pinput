@@ -396,7 +396,7 @@ class _PinputState extends State<Pinput>
           autofillClient: this,
           showSelectionHandles: false,
           rendererIgnoresPointer: true,
-          enableInteractiveSelection: false,
+          enableInteractiveSelection: widget.enableInteractiveSelection,
           enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
           textInputAction: widget.textInputAction,
           textCapitalization: widget.textCapitalization,

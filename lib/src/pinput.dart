@@ -83,6 +83,7 @@ class Pinput extends StatefulWidget {
     this.showCursor = true,
     this.isCursorAnimationEnabled = true,
     this.enableIMEPersonalizedLearning = false,
+    this.enableInteractiveSelection = false,
     this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
@@ -144,6 +145,7 @@ class Pinput extends StatefulWidget {
     this.toolbarEnabled = true,
     this.autofocus = false,
     this.enableIMEPersonalizedLearning = false,
+    this.enableInteractiveSelection = false,
     this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
@@ -329,6 +331,15 @@ class Pinput extends StatefulWidget {
   // Defaults to false. Cannot be null.
   final bool enableIMEPersonalizedLearning;
 
+  /// Whether to enable text selection and interactive features like copy/paste.
+  /// When enabled, users can select text, use Ctrl+V to paste, and access context menus.
+  ///
+  /// This is useful for desktop applications where copy/paste is expected behavior.
+  /// On mobile, consider using SMS auto-fill or [onClipboardFound] callback instead.
+  ///
+  /// Defaults to false for security and UX reasons.
+  final bool enableInteractiveSelection;
+
   /// If [showCursor] true the focused field will show passed Widget
   final Widget? cursor;
 
@@ -455,6 +466,13 @@ class Pinput extends StatefulWidget {
         'focusedPinTheme',
         focusedPinTheme,
         defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<bool>(
+        'enableInteractiveSelection',
+        enableInteractiveSelection,
+        defaultValue: false,
       ),
     );
     properties.add(
