@@ -30,7 +30,7 @@ class _AppViewState extends State<AppView> {
         final app = MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            tabBarTheme: TabBarTheme(
+            tabBarTheme: TabBarThemeData(
               indicatorSize: TabBarIndicatorSize.label,
               indicator: const BoxDecoration(
                 border: Border(
