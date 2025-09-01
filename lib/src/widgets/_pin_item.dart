@@ -14,22 +14,27 @@ class _PinItem extends StatelessWidget {
     final pinTheme = _pinTheme(index);
 
     return Flexible(
-      child: AnimatedContainer(
-        height: pinTheme.height,
-        width: pinTheme.width,
-        constraints: pinTheme.constraints,
-        padding: pinTheme.padding,
-        margin: pinTheme.margin,
-        decoration: pinTheme.decoration,
-        alignment: state.widget.pinContentAlignment,
-        duration: state.widget.animationDuration,
-        curve: state.widget.animationCurve,
-        child: AnimatedSwitcher(
-          switchInCurve: state.widget.animationCurve,
-          switchOutCurve: state.widget.animationCurve,
+      child: GestureDetector(
+        onTap: state.widget.enableEditingInMiddle
+            ? () => state._onPinTapped(index)
+            : null,
+        child: AnimatedContainer(
+          height: pinTheme.height,
+          width: pinTheme.width,
+          constraints: pinTheme.constraints,
+          padding: pinTheme.padding,
+          margin: pinTheme.margin,
+          decoration: pinTheme.decoration,
+          alignment: state.widget.pinContentAlignment,
           duration: state.widget.animationDuration,
-          transitionBuilder: _getTransition,
-          child: _buildFieldContent(index, pinTheme),
+          curve: state.widget.animationCurve,
+          child: AnimatedSwitcher(
+            switchInCurve: state.widget.animationCurve,
+            switchOutCurve: state.widget.animationCurve,
+            duration: state.widget.animationDuration,
+            transitionBuilder: _getTransition,
+            child: _buildFieldContent(index, pinTheme),
+          ),
         ),
       ),
     );
@@ -60,23 +65,30 @@ class _PinItem extends StatelessWidget {
       theme ?? _getDefaultPinTheme();
 
   Widget _buildFieldContent(int index, PinTheme pinTheme) {
-    final pin = state.pin;
-    final key = ValueKey<String>(index < pin.length ? pin[index] : '');
-    final isSubmittedPin = index < pin.length;
+    final pinValue = state.widget.enableEditingInMiddle
+        ? state._getCharAtPosition(index)
+        : (index < state.pin.length ? state.pin[index] : null);
 
-    if (isSubmittedPin) {
+    final key = ValueKey<String>(pinValue ?? '');
+    final hasCharacter = pinValue != null;
+
+    if (hasCharacter) {
       if (state.widget.obscureText && state.widget.obscuringWidget != null) {
         return SizedBox(key: key, child: state.widget.obscuringWidget);
       }
 
       return Text(
-        state.widget.obscureText ? state.widget.obscuringCharacter : pin[index],
+        state.widget.obscureText ? state.widget.obscuringCharacter : pinValue,
         key: key,
         style: pinTheme.textStyle,
       );
     }
 
-    final isActiveField = index == pin.length;
+    // Show cursor at the currently focused position
+    final isActiveField = state.widget.enableEditingInMiddle
+        ? index == state.currentCursorPosition
+        : index == state.pin.length;
+
     final focused =
         state.effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
     final shouldShowCursor =
