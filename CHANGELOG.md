@@ -1,4 +1,4 @@
-#### 5.0.1 ·01/09/2025
+#### 5.0.2 ·01/09/2025
 
 - feat: add enableInteractiveSelection parameter
   flag - [PR](https://github.com/Tkko/Flutter_Pinput/pull/216)
