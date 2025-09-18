@@ -383,7 +383,7 @@ class _PinputState extends State<Pinput>
     return RepaintBoundary(
       child: UnmanagedRestorationScope(
         bucket: bucket,
-        child: EditableText(
+        child: TextField(
           key: editableTextKey,
           maxLines: 1,
           style: PinputConstants._hiddenTextStyle,
@@ -394,14 +394,10 @@ class _PinputState extends State<Pinput>
           expands: false,
           showCursor: false,
           autocorrect: false,
-          autofillClient: this,
-          showSelectionHandles: false,
-          rendererIgnoresPointer: true,
           enableInteractiveSelection: widget.enableInteractiveSelection,
           enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
           textInputAction: widget.textInputAction,
           textCapitalization: widget.textCapitalization,
-          selectionColor: Colors.transparent,
           keyboardType: widget.keyboardType,
           obscureText: widget.obscureText,
           onSubmitted: (s) {
@@ -419,16 +415,20 @@ class _PinputState extends State<Pinput>
           cursorColor: Colors.transparent,
           controller: _effectiveController,
           autofillHints: widget.autofillHints,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            errorBorder: InputBorder.none,
+            disabledBorder: InputBorder.none,
+          ),
           scrollPadding: widget.scrollPadding,
           selectionWidthStyle: BoxWidthStyle.tight,
-          backgroundCursorColor: Colors.transparent,
           selectionHeightStyle: BoxHeightStyle.tight,
           enableSuggestions: widget.enableSuggestions,
           contextMenuBuilder: widget.contextMenuBuilder,
           obscuringCharacter: widget.obscuringCharacter,
           onAppPrivateCommand: widget.onAppPrivateCommand,
-          onSelectionChanged: _handleSelectionChanged,
-          onSelectionHandleTapped: _handleSelectionHandleTapped,
           readOnly: widget.readOnly || !isEnabled || !widget.useNativeKeyboard,
           selectionControls:
               widget.toolbarEnabled ? textSelectionControls : null,
