@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class OtpPage extends StatefulWidget {
   final Widget pinPut;
 
-  const OtpPage(this.pinPut, {Key? key}) : super(key: key);
+  const OtpPage(this.pinPut, {super.key});
 
   @override
   State<OtpPage> createState() => _OtpPageState();
@@ -49,7 +49,7 @@ class _OtpPageState extends State<OtpPage> with AutomaticKeepAliveClientMixin {
 }
 
 class OtpHeader extends StatelessWidget {
-  const OtpHeader({Key? key}) : super(key: key);
+  const OtpHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

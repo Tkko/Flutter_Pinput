@@ -6,18 +6,12 @@ typedef JustIndexedWidgetBuilder = Widget Function(int index);
 
 class _PinputFormField extends FormField<String> {
   const _PinputFormField({
-    required final FormFieldValidator<String>? validator,
-    required final bool enabled,
-    required final String? initialValue,
-    required final Widget Function(FormFieldState<String> field) builder,
-    Key? key,
+    required super.validator,
+    required super.enabled,
+    required super.initialValue,
+    required super.builder,
   }) : super(
-          key: key,
-          enabled: enabled,
-          validator: validator,
           autovalidateMode: AutovalidateMode.disabled,
-          initialValue: initialValue,
-          builder: builder,
         );
 }
 
@@ -30,8 +24,7 @@ class _SeparatedRaw extends StatelessWidget {
     required this.children,
     required this.mainAxisAlignment,
     this.separatorBuilder,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

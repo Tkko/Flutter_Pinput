@@ -210,8 +210,22 @@ class _PinputState extends State<Pinput>
     TextSelection selection,
     SelectionChangedCause? cause,
   ) {
-    _effectiveController.selection =
-        TextSelection.collapsed(offset: pin.length);
+    // Only adjust selection if it's beyond the text length
+    // This allows proper backspace behavior
+    final int textLength = pin.length;
+
+    // Don't force selection during keyboard input or deletion
+    if (cause == SelectionChangedCause.keyboard) {
+      // Let EditableText handle cursor positioning during typing/deletion
+      return;
+    }
+
+    // For other causes (tap, drag, etc.), ensure selection is valid
+    if (selection.baseOffset > textLength ||
+        selection.extentOffset > textLength) {
+      _effectiveController.selection =
+          TextSelection.collapsed(offset: textLength);
+    }
 
     switch (Theme.of(context).platform) {
       case TargetPlatform.iOS:

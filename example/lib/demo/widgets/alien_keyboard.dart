@@ -5,7 +5,7 @@ import 'package:pinput/pinput.dart';
 class AlienKeyboard extends StatelessWidget {
   final TextEditingController controller;
 
-  const AlienKeyboard({Key? key, required this.controller}) : super(key: key);
+  const AlienKeyboard({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -94,8 +94,7 @@ class CircularButton extends StatelessWidget {
   final String? text;
   final double? size;
 
-  const CircularButton({Key? key, this.onTap, this.text, this.size})
-      : super(key: key);
+  const CircularButton({super.key, this.onTap, this.text, this.size});
 
   @override
   Widget build(BuildContext context) {

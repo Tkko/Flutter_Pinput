@@ -61,13 +61,13 @@ class PinTheme {
   /// Merge two [PinTheme] into one
   PinTheme apply({required PinTheme theme}) {
     return PinTheme(
-      width: this.width ?? theme.width,
-      height: this.height ?? theme.height,
-      textStyle: this.textStyle ?? theme.textStyle,
-      constraints: this.constraints ?? theme.constraints,
-      decoration: this.decoration ?? theme.decoration,
-      padding: this.padding ?? theme.padding,
-      margin: this.margin ?? theme.margin,
+      width: width ?? theme.width,
+      height: height ?? theme.height,
+      textStyle: textStyle ?? theme.textStyle,
+      constraints: constraints ?? theme.constraints,
+      decoration: decoration ?? theme.decoration,
+      padding: padding ?? theme.padding,
+      margin: margin ?? theme.margin,
     );
   }
 

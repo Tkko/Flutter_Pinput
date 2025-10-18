@@ -33,7 +33,7 @@ void main() {
 /// This is the basic usage of Pinput
 /// For more examples check out the demo directory
 class PinputExample extends StatefulWidget {
-  const PinputExample({Key? key}) : super(key: key);
+  const PinputExample({super.key});
 
   @override
   State<PinputExample> createState() => _PinputExampleState();
@@ -106,6 +106,7 @@ class _PinputExampleState extends State<PinputExample> {
               smsRetriever: smsRetriever,
               controller: pinController,
               focusNode: focusNode,
+              closeKeyboardWhenCompleted: false,
               defaultPinTheme: defaultPinTheme,
               separatorBuilder: (index) => const SizedBox(width: 8),
               validator: (value) {
@@ -117,6 +118,15 @@ class _PinputExampleState extends State<PinputExample> {
               },
               onChanged: (value) {
                 debugPrint('onChanged: $value');
+                debugPrint('Focus: ${focusNode.hasFocus}');
+                debugPrint('Can request focus: ${focusNode.canRequestFocus}');
+                debugPrint('Controller text: ${pinController.text}');
+                debugPrint('Controller selection: ${pinController.selection}');
+
+                // Focus ni saqlash
+                if (!focusNode.hasFocus && focusNode.canRequestFocus) {
+                  focusNode.requestFocus();
+                }
               },
               cursor: Column(
                 mainAxisAlignment: MainAxisAlignment.end,

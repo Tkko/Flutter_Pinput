@@ -112,15 +112,14 @@ class Pinput extends StatefulWidget {
     this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
-    Key? key,
+    super.key,
   })  : assert(obscuringCharacter.length == 1),
         assert(length > 0),
         assert(
           textInputAction != TextInputAction.newline,
           'Pinput is not multiline',
         ),
-        _builder = null,
-        super(key: key);
+        _builder = null;
 
   /// Creates a PinPut widget with custom pin item builder
   /// This gives you full control over the pin item widget
@@ -165,7 +164,7 @@ class Pinput extends StatefulWidget {
     this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
-    Key? key,
+    super.key,
   })  : assert(length > 0),
         assert(
           textInputAction != TextInputAction.newline,
@@ -194,8 +193,7 @@ class Pinput extends StatefulWidget {
         obscuringWidget = null,
         errorText = null,
         errorBuilder = null,
-        errorTextStyle = null,
-        super(key: key);
+        errorTextStyle = null;
 
   /// Theme of the pin in default state
   final PinTheme? defaultPinTheme;

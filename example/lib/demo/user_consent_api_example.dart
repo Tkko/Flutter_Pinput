@@ -28,7 +28,7 @@ class SmsRetrieverImpl implements SmsRetriever {
 }
 
 class UserConsentApiExample extends StatefulWidget {
-  const UserConsentApiExample({Key? key}) : super(key: key);
+  const UserConsentApiExample({super.key});
 
   @override
   State<UserConsentApiExample> createState() => _UserConsentApiExampleState();

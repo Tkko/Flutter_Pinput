@@ -16,7 +16,7 @@ class Formatter extends TextInputFormatter {
 }
 
 class Example extends StatefulWidget {
-  const Example({Key? key}) : super(key: key);
+  const Example({super.key});
 
   @override
   State<Example> createState() => _ExampleState();
@@ -50,7 +50,7 @@ class _ExampleState extends State<Example> {
 }
 
 class ErrorStateExample extends StatefulWidget {
-  const ErrorStateExample({Key? key}) : super(key: key);
+  const ErrorStateExample({super.key});
 
   @override
   State<ErrorStateExample> createState() => _ErrorStateExampleState();
@@ -74,7 +74,7 @@ class _ErrorStateExampleState extends State<ErrorStateExample> {
 }
 
 class HeightExample extends StatelessWidget {
-  const HeightExample({Key? key}) : super(key: key);
+  const HeightExample({super.key});
 
   @override
   Widget build(BuildContext context) {

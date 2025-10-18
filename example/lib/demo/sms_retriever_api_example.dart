@@ -26,7 +26,7 @@ class SmsRetrieverImpl implements SmsRetriever {
 }
 
 class SmsRetrieverApiExample extends StatefulWidget {
-  const SmsRetrieverApiExample({Key? key}) : super(key: key);
+  const SmsRetrieverApiExample({super.key});
 
   @override
   State<SmsRetrieverApiExample> createState() => _SmsRetrieverApiExampleState();
