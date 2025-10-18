@@ -28,10 +28,20 @@ class _AllPinputsState extends State<AllPinputs>
               width: double.maxFinite,
               alignment: Alignment.center,
               padding: const EdgeInsets.symmetric(vertical: 20),
-              decoration: BoxDecoration(color: fromColor.withOpacity(.4)),
+              decoration: BoxDecoration(color: fromColor.withValues(alpha: .4)),
               child: item.value,
             );
           }),
+          const Padding(
+            padding: EdgeInsets.all(20),
+            child: TextField(
+              autofillHints: [AutofillHints.oneTimeCode],
+              decoration: InputDecoration(
+                labelText: 'Standard TextField for Testing',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
         ],
       ),
     );

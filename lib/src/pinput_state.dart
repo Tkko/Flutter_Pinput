@@ -33,7 +33,7 @@ class _PinputState extends State<Pinput>
   FocusNode? _focusNode;
   bool _isHovering = false;
   String? _validatorErrorText;
-  SmartAuth? _smartAuth;
+  SmsRetriever? _smsRetriever;
 
   String? get _errorText => widget.errorText ?? _validatorErrorText;
 
@@ -52,7 +52,7 @@ class _PinputState extends State<Pinput>
       widget.controller ?? _controller!.value;
 
   @protected
-  FocusNode get effectiveFocusNode =>
+  FocusNode get _effectiveFocusNode =>
       widget.focusNode ?? (_focusNode ??= FocusNode());
 
   @protected
@@ -83,7 +83,7 @@ class _PinputState extends State<Pinput>
       _recentControllerValue = _effectiveController.value;
       widget.controller!.addListener(_handleTextEditingControllerChanges);
     }
-    effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
+    _effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
     _maybeInitSmartAuth();
     _maybeCheckClipboard();
     // https://github.com/Tkko/Flutter_Pinput/issues/89
@@ -92,38 +92,19 @@ class _PinputState extends State<Pinput>
 
   /// Android Autofill
   void _maybeInitSmartAuth() async {
-    final isAndroid = UniversalPlatform.isAndroid;
-    final isAutofillEnabled =
-        widget.androidSmsAutofillMethod != AndroidSmsAutofillMethod.none;
-
-    if (isAndroid && isAutofillEnabled) {
-      _smartAuth = SmartAuth();
-      _maybePrintAppSignature();
+    if (_smsRetriever == null && widget.smsRetriever != null) {
+      _smsRetriever = widget.smsRetriever!;
       _listenForSmsCode();
     }
   }
 
-  void _maybePrintAppSignature() async {
-    if (widget.androidSmsAutofillMethod ==
-        AndroidSmsAutofillMethod.smsRetrieverApi) {
-      final res = await _smartAuth!.getAppSignature();
-      debugPrint('Pinput: App Signature for SMS Retriever API Is: $res');
-    }
-  }
-
   void _listenForSmsCode() async {
-    final useUserConsentApi = widget.androidSmsAutofillMethod ==
-        AndroidSmsAutofillMethod.smsUserConsentApi;
-    final res = await _smartAuth!.getSmsCode(
-      useUserConsentApi: useUserConsentApi,
-      matcher: widget.smsCodeMatcher,
-      senderPhoneNumber: widget.senderPhoneNumber,
-    );
-    if (res.succeed && res.codeFound && res.code!.length == widget.length) {
-      _effectiveController.setText(res.code!);
+    final res = await _smsRetriever!.getSmsCode();
+    if (res != null && res.length == widget.length) {
+      _effectiveController.setText(res);
     }
     // Listen for multiple sms codes
-    if (widget.listenForMultipleSmsOnAndroid) {
+    if (_smsRetriever!.listenForMultipleSms) {
       _listenForSmsCode();
     }
   }
@@ -154,14 +135,14 @@ class _PinputState extends State<Pinput>
 
   void _maybeCloseKeyboard() {
     if (widget.closeKeyboardWhenCompleted) {
-      effectiveFocusNode.unfocus();
+      _effectiveFocusNode.unfocus();
     }
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    effectiveFocusNode.canRequestFocus = _canRequestFocus;
+    _effectiveFocusNode.canRequestFocus = _canRequestFocus;
   }
 
   @override
@@ -181,7 +162,7 @@ class _PinputState extends State<Pinput>
       widget.controller?.addListener(_handleTextEditingControllerChanges);
     }
 
-    effectiveFocusNode.canRequestFocus = _canRequestFocus;
+    _effectiveFocusNode.canRequestFocus = _canRequestFocus;
   }
 
   @override
@@ -210,16 +191,17 @@ class _PinputState extends State<Pinput>
   @override
   void dispose() {
     widget.controller?.removeListener(_handleTextEditingControllerChanges);
-    _focusNode?.dispose();
+    _controller?.removeListener(_handleTextEditingControllerChanges);
     _controller?.dispose();
-    _smartAuth?.removeSmsListener();
+    _focusNode?.dispose();
+    _smsRetriever?.dispose();
     // https://github.com/Tkko/Flutter_Pinput/issues/89
     _ambiguate(WidgetsBinding.instance)!.removeObserver(this);
     super.dispose();
   }
 
   void _requestKeyboard() {
-    if (effectiveFocusNode.canRequestFocus) {
+    if (_effectiveFocusNode.canRequestFocus) {
       _editableText?.requestKeyboard();
     }
   }
@@ -319,9 +301,9 @@ class _PinputState extends State<Pinput>
         forcePressEnabled = false;
         textSelectionControls ??= cupertinoDesktopTextSelectionHandleControls;
         handleDidGainAccessibilityFocus = () {
-          if (!effectiveFocusNode.hasFocus &&
-              effectiveFocusNode.canRequestFocus) {
-            effectiveFocusNode.requestFocus();
+          if (!_effectiveFocusNode.hasFocus &&
+              _effectiveFocusNode.canRequestFocus) {
+            _effectiveFocusNode.requestFocus();
           }
         };
         break;
@@ -338,9 +320,9 @@ class _PinputState extends State<Pinput>
         forcePressEnabled = false;
         textSelectionControls ??= desktopTextSelectionHandleControls;
         handleDidGainAccessibilityFocus = () {
-          if (!effectiveFocusNode.hasFocus &&
-              effectiveFocusNode.canRequestFocus) {
-            effectiveFocusNode.requestFocus();
+          if (!_effectiveFocusNode.hasFocus &&
+              _effectiveFocusNode.canRequestFocus) {
+            _effectiveFocusNode.requestFocus();
           }
         };
         break;
@@ -363,6 +345,7 @@ class _PinputState extends State<Pinput>
                 builder: (_, Widget? child) => Semantics(
                   maxValueLength: widget.length,
                   currentValueLength: _currentLength,
+                  enabled: isEnabled,
                   onTap: widget.readOnly ? null : _semanticsOnTap,
                   onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
                   child: child,
@@ -414,7 +397,7 @@ class _PinputState extends State<Pinput>
           autofillClient: this,
           showSelectionHandles: false,
           rendererIgnoresPointer: true,
-          enableInteractiveSelection: false,
+          enableInteractiveSelection: widget.enableInteractiveSelection,
           enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
           textInputAction: widget.textInputAction,
           textCapitalization: widget.textCapitalization,
@@ -427,7 +410,7 @@ class _PinputState extends State<Pinput>
           },
           onTapOutside: widget.onTapOutside,
           mouseCursor: MouseCursor.defer,
-          focusNode: effectiveFocusNode,
+          focusNode: _effectiveFocusNode,
           textAlign: TextAlign.center,
           autofocus: widget.autofocus,
           inputFormatters: formatters,
@@ -456,16 +439,25 @@ class _PinputState extends State<Pinput>
     );
   }
 
-  MouseCursor get _effectiveMouseCursor =>
-      MaterialStateProperty.resolveAs<MouseCursor>(
-        widget.mouseCursor ?? MaterialStateMouseCursor.textable,
-        <MaterialState>{
-          if (!isEnabled) MaterialState.disabled,
-          if (_isHovering) MaterialState.hovered,
-          if (effectiveFocusNode.hasFocus) MaterialState.focused,
-          if (hasError) MaterialState.error,
-        },
-      );
+  // TODO: Use WidgetStateProperty instead.
+  MouseCursor get _effectiveMouseCursor {
+    // ignore: deprecated_member_use
+    return MaterialStateProperty.resolveAs<MouseCursor>(
+      // ignore: deprecated_member_use
+      widget.mouseCursor ?? MaterialStateMouseCursor.textable,
+      // ignore: deprecated_member_use
+      <MaterialState>{
+        // ignore: deprecated_member_use
+        if (!isEnabled) MaterialState.disabled,
+        // ignore: deprecated_member_use
+        if (_isHovering) MaterialState.hovered,
+        // ignore: deprecated_member_use
+        if (_effectiveFocusNode.hasFocus) MaterialState.focused,
+        // ignore: deprecated_member_use
+        if (hasError) MaterialState.error,
+      },
+    );
+  }
 
   void _semanticsOnTap() {
     if (!_effectiveController.selection.isValid) {
@@ -475,12 +467,43 @@ class _PinputState extends State<Pinput>
     _requestKeyboard();
   }
 
+  PinItemStateType _getState(int index) {
+    if (!isEnabled) {
+      return PinItemStateType.disabled;
+    }
+
+    if (showErrorState) {
+      return PinItemStateType.error;
+    }
+
+    if (hasFocus && index == selectedIndex.clamp(0, widget.length - 1)) {
+      return PinItemStateType.focused;
+    }
+
+    if (index < selectedIndex) {
+      return PinItemStateType.submitted;
+    }
+
+    return PinItemStateType.following;
+  }
+
   Widget _buildFields() {
     Widget onlyFields() {
       return _SeparatedRaw(
         separatorBuilder: widget.separatorBuilder,
         mainAxisAlignment: widget.mainAxisAlignment,
         children: Iterable<int>.generate(widget.length).map<Widget>((index) {
+          if (widget._builder != null) {
+            return widget._builder!.itemBuilder.call(
+              context,
+              PinItemState(
+                value: pin.length > index ? pin[index] : '',
+                index: index,
+                type: _getState(index),
+              ),
+            );
+          }
+
           return _PinItem(state: this, index: index);
         }).toList(),
       );
@@ -489,7 +512,7 @@ class _PinputState extends State<Pinput>
     return Center(
       child: AnimatedBuilder(
         animation: Listenable.merge(
-          <Listenable>[effectiveFocusNode, _effectiveController],
+          <Listenable>[_effectiveFocusNode, _effectiveController],
         ),
         builder: (BuildContext context, Widget? child) {
           final shouldHideErrorContent =
@@ -516,7 +539,7 @@ class _PinputState extends State<Pinput>
   @protected
   bool get hasFocus {
     final isLastPin = selectedIndex == widget.length;
-    return effectiveFocusNode.hasFocus ||
+    return _effectiveFocusNode.hasFocus ||
         (!widget.useNativeKeyboard && !isLastPin);
   }
 
@@ -560,7 +583,6 @@ class _PinputState extends State<Pinput>
             uniqueIdentifier: autofillId,
             autofillHints: autofillHints,
             currentEditingValue: _effectiveController.value,
-            hintText: 'One Time Code',
           )
         : AutofillConfiguration.disabled;
 

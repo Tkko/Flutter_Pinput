@@ -25,8 +25,9 @@ dependencies:
 
   pinput:
     path: ../
-  google_fonts: ^4.0.4
-  cupertino_icons: ^1.0.5
+  smart_auth: 2.0.0
+  google_fonts: ^6.2.1
+  cupertino_icons: ^1.0.6
 
 dev_dependencies:
   flutter_test:

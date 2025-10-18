@@ -1,9 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pinput/pinput.dart';
+import 'package:smart_auth/smart_auth.dart';
 
 void main() {
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -18,6 +22,7 @@ void main() {
         ),
         body: const FractionallySizedBox(
           widthFactor: 1,
+          // You can also checkout the [PinputBuilderExample]
           child: PinputExample(),
         ),
       ),
@@ -35,12 +40,32 @@ class PinputExample extends StatefulWidget {
 }
 
 class _PinputExampleState extends State<PinputExample> {
-  final pinController = TextEditingController();
-  final focusNode = FocusNode();
-  final formKey = GlobalKey<FormState>();
+  late final SmsRetriever smsRetriever;
+  late final TextEditingController pinController;
+  late final FocusNode focusNode;
+  late final GlobalKey<FormState> formKey;
+
+  @override
+  void initState() {
+    super.initState();
+    // On web, disable the browser's context menu since this example uses a custom
+    // Flutter-rendered context menu.
+    if (kIsWeb) {
+      BrowserContextMenu.disableContextMenu();
+    }
+    formKey = GlobalKey<FormState>();
+    pinController = TextEditingController();
+    focusNode = FocusNode();
+
+    /// In case you need an SMS autofill feature
+    smsRetriever = SmsRetrieverImpl(SmartAuth());
+  }
 
   @override
   void dispose() {
+    if (kIsWeb) {
+      BrowserContextMenu.enableContextMenu();
+    }
     pinController.dispose();
     focusNode.dispose();
     super.dispose();
@@ -75,20 +100,17 @@ class _PinputExampleState extends State<PinputExample> {
             // Specify direction if desired
             textDirection: TextDirection.ltr,
             child: Pinput(
+              // You can pass your own SmsRetriever implementation based on any package
+              // in this example we are using the SmartAuth
+              enableInteractiveSelection: true,
+              smsRetriever: smsRetriever,
               controller: pinController,
               focusNode: focusNode,
-              androidSmsAutofillMethod:
-                  AndroidSmsAutofillMethod.smsUserConsentApi,
-              listenForMultipleSmsOnAndroid: true,
               defaultPinTheme: defaultPinTheme,
               separatorBuilder: (index) => const SizedBox(width: 8),
               validator: (value) {
                 return value == '2222' ? null : 'Pin is incorrect';
               },
-              // onClipboardFound: (value) {
-              //   debugPrint('onClipboardFound: $value');
-              //   pinController.setText(value);
-              // },
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) {
                 debugPrint('onCompleted: $pin');
@@ -136,4 +158,31 @@ class _PinputExampleState extends State<PinputExample> {
       ),
     );
   }
+}
+
+/// You, as a developer should implement this interface.
+/// You can use any package to retrieve the SMS code. in this example we are using SmartAuth
+class SmsRetrieverImpl implements SmsRetriever {
+  const SmsRetrieverImpl(this.smartAuth);
+
+  final SmartAuth smartAuth;
+
+  @override
+  Future<void> dispose() {
+    return smartAuth.removeSmsListener();
+  }
+
+  @override
+  Future<String?> getSmsCode() async {
+    final signature = await smartAuth.getAppSignature();
+    debugPrint('App Signature: $signature');
+    final res = await smartAuth.getSmsCode(useUserConsentApi: true);
+    if (res.succeed && res.codeFound) {
+      return res.code!;
+    }
+    return null;
+  }
+
+  @override
+  bool get listenForMultipleSms => false;
 }

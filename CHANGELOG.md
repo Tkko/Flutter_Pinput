@@ -1,3 +1,29 @@
+#### 5.0.2 ·01/09/2025
+
+- feat: add enableInteractiveSelection parameter
+  flag - [PR](https://github.com/Tkko/Flutter_Pinput/pull/216)
+  by [bybabek](https://github.com/bybabek)
+
+#### 5.0.1 ·15/01/2025
+
+- fix: makes Semantics responsive to `enabled`
+  flag - [PR](https://github.com/Tkko/Flutter_Pinput/pull/201)
+  by [sharabiddin](https://github.com/sharabiddin)
+
+#### 5.0.0 · 7/06/2024
+
+- Implemented Pinput.builder to build custom Pinput fields
+- Migrated deprecated imperative apply of Flutter's Gradle plugins example app
+- Removed smart_auth dependency which was responsible for SMS autofill (Not everyone might need it
+  and it was causing some issues)
+- [Migration guide](MIGRATION.md)
+
+#### 4.0.0 · 10/02/2024
+
+- Fixed RECEIVER_EXPORTED exception in android SDK 34 PR
+- Fix "Namespace not specified" error when upgrading to AGP 8.0 PR
+- Updated readme
+
 #### 3.0.1 · 25/08/2023
 
 - Fixed contextMenuBuilder
@@ -7,7 +33,7 @@
 - Replaced `separator` and `separatorPositions` with `separatorBuilder`
 
   | Property | Meaning/Default |
-  |--------------------------|:---------------:|
+        |--------------------------|:---------------:|
   | separatorBuilder | (_) => const SizedBox(width: 8)|
 
 #### 2.3.0 · 24/07/2023
@@ -16,29 +42,32 @@
 - Updated SDK constraints
 - Updated default SMS code matcher regex length to 8 digits
 
-
 #### 2.2.31 · 22/02/2023
 
 ### Added:
-| Property                 | Meaning/Default |
-|--------------------------|:---------------:|
+
+| Property                      | Meaning/Default |
+|-------------------------------|:---------------:|
 | enableIMEPersonalizedLearning |      false      |
 
-Whether to enable that the IME update personalized data such as typing history and user dictionary data.
+Whether to enable that the IME update personalized data such as typing history and user dictionary
+data.
 This flag only affects Android. On iOS, there is no equivalent flag.
 
 #### 2.2.30 · 15/02/2023
-- Fixed "TapDownDetails not match the corresponding type" on Flutter's master channel - [issue](https://github.com/Tkko/Flutter_Pinput/issues/124)
 
+- Fixed "TapDownDetails not match the corresponding type" on Flutter's master
+  channel - [issue](https://github.com/Tkko/Flutter_Pinput/issues/124)
 
 #### 2.2.30 · 15/02/2023
-- Fixed "TapDownDetails not match the corresponding type" on Flutter's master channel - [issue](https://github.com/Tkko/Flutter_Pinput/issues/124)
+
+- Fixed "TapDownDetails not match the corresponding type" on Flutter's master
+  channel - [issue](https://github.com/Tkko/Flutter_Pinput/issues/124)
 
 #### 2.2.23 · 25/01/2023
 
 - Added correct SDK constraints
 - Improved readme
-
 
 #### 2.2.22 · 25/01/2023
 

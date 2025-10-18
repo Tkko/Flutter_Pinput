@@ -4,7 +4,10 @@ class _PinItem extends StatelessWidget {
   final _PinputState state;
   final int index;
 
-  const _PinItem({required this.state, required this.index});
+  const _PinItem({
+    required this.state,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,28 +36,21 @@ class _PinItem extends StatelessWidget {
   }
 
   PinTheme _pinTheme(int index) {
-    /// Disabled pin or default
-    if (!state.isEnabled) {
-      return _pinThemeOrDefault(state.widget.disabledPinTheme);
+    final pintState = state._getState(index);
+    switch (pintState) {
+      case PinItemStateType.initial:
+        return _getDefaultPinTheme();
+      case PinItemStateType.focused:
+        return _pinThemeOrDefault(state.widget.focusedPinTheme);
+      case PinItemStateType.submitted:
+        return _pinThemeOrDefault(state.widget.submittedPinTheme);
+      case PinItemStateType.following:
+        return _pinThemeOrDefault(state.widget.followingPinTheme);
+      case PinItemStateType.disabled:
+        return _pinThemeOrDefault(state.widget.disabledPinTheme);
+      case PinItemStateType.error:
+        return _pinThemeOrDefault(state.widget.errorPinTheme);
     }
-
-    if (state.showErrorState) {
-      return _pinThemeOrDefault(state.widget.errorPinTheme);
-    }
-
-    /// Focused pin or default
-    if (state.hasFocus &&
-        index == state.selectedIndex.clamp(0, state.widget.length - 1)) {
-      return _pinThemeOrDefault(state.widget.focusedPinTheme);
-    }
-
-    /// Submitted pin or default
-    if (index < state.selectedIndex) {
-      return _pinThemeOrDefault(state.widget.submittedPinTheme);
-    }
-
-    /// Following pin or default
-    return _pinThemeOrDefault(state.widget.followingPinTheme);
   }
 
   PinTheme _getDefaultPinTheme() =>
@@ -82,7 +78,7 @@ class _PinItem extends StatelessWidget {
 
     final isActiveField = index == pin.length;
     final focused =
-        state.effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
+        state._effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
     final shouldShowCursor =
         state.widget.showCursor && state.isEnabled && isActiveField && focused;
 

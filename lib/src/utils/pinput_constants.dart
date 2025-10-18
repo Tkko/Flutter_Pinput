@@ -4,9 +4,6 @@ part of '../pinput.dart';
 class PinputConstants {
   const PinputConstants._();
 
-  /// The default value [Pinput.smsCodeMatcher]
-  static const defaultSmsCodeMatcher = '\\d{4,7}';
-
   /// The default value [Pinput.animationDuration]
   static const _animationDuration = Duration(milliseconds: 180);
 
