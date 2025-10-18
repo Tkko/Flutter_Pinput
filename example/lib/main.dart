@@ -100,6 +100,9 @@ class _PinputExampleState extends State<PinputExample> {
             // Specify direction if desired
             textDirection: TextDirection.ltr,
             child: Pinput(
+              onTapOutside: (_){
+                focusNode.unfocus();
+              },
               // You can pass your own SmsRetriever implementation based on any package
               // in this example we are using the SmartAuth
               enableInteractiveSelection: true,
@@ -118,15 +121,6 @@ class _PinputExampleState extends State<PinputExample> {
               },
               onChanged: (value) {
                 debugPrint('onChanged: $value');
-                debugPrint('Focus: ${focusNode.hasFocus}');
-                debugPrint('Can request focus: ${focusNode.canRequestFocus}');
-                debugPrint('Controller text: ${pinController.text}');
-                debugPrint('Controller selection: ${pinController.selection}');
-
-                // Focus ni saqlash
-                if (!focusNode.hasFocus && focusNode.canRequestFocus) {
-                  focusNode.requestFocus();
-                }
               },
               cursor: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
