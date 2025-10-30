@@ -8,15 +8,17 @@ class SmsRetrieverImpl implements SmsRetriever {
   final SmartAuth smartAuth;
 
   @override
-  Future<void> dispose() {
-    return smartAuth.removeSmsListener();
+  Future<void> dispose() async {
+    await smartAuth.removeUserConsentApiListener();
+    await smartAuth.removeSmsRetrieverApiListener();
+    return;
   }
 
   @override
   Future<String?> getSmsCode() async {
-    final res = await smartAuth.getSmsCode();
-    if (res.succeed && res.codeFound) {
-      return res.code!;
+    final res = await smartAuth.getSmsWithRetrieverApi();
+    if (res.hasData && res.requireData.code != null) {
+      return res.requireData.code!;
     }
     return null;
   }
@@ -37,7 +39,7 @@ class _SmsRetrieverApiExampleState extends State<SmsRetrieverApiExample> {
 
   @override
   void initState() {
-    smsRetrieverImpl = SmsRetrieverImpl(SmartAuth());
+    smsRetrieverImpl = SmsRetrieverImpl(SmartAuth.instance);
     super.initState();
   }
 
