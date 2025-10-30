@@ -15,35 +15,16 @@ class GalleryPage extends StatefulWidget {
   GalleryPageState createState() => GalleryPageState();
 }
 
-class GalleryPageState extends State<GalleryPage>
-    with SingleTickerProviderStateMixin {
+class GalleryPageState extends State<GalleryPage> with SingleTickerProviderStateMixin {
   TabController? _tabController;
 
   final backgroundColors = [
-    [
-      const Color.fromRGBO(255, 255, 255, 1),
-      const Color.fromRGBO(255, 255, 255, 1),
-    ], // All
-    [
-      const Color.fromRGBO(200, 255, 221, 1),
-      const Color.fromRGBO(255, 255, 255, 1),
-    ],
-    [
-      const Color.fromRGBO(255, 255, 255, 1),
-      const Color.fromRGBO(255, 255, 255, 1),
-    ],
-    [
-      const Color.fromRGBO(228, 217, 236, 1),
-      const Color.fromRGBO(255, 255, 255, 1),
-    ],
-    [
-      const Color.fromRGBO(255, 255, 255, 1),
-      const Color.fromRGBO(255, 255, 255, 1),
-    ],
-    [
-      const Color.fromRGBO(228, 217, 236, 1),
-      const Color.fromRGBO(255, 255, 255, 1),
-    ],
+    [const Color.fromRGBO(255, 255, 255, 1), const Color.fromRGBO(255, 255, 255, 1)], // All
+    [const Color.fromRGBO(200, 255, 221, 1), const Color.fromRGBO(255, 255, 255, 1)],
+    [const Color.fromRGBO(255, 255, 255, 1), const Color.fromRGBO(255, 255, 255, 1)],
+    [const Color.fromRGBO(228, 217, 236, 1), const Color.fromRGBO(255, 255, 255, 1)],
+    [const Color.fromRGBO(255, 255, 255, 1), const Color.fromRGBO(255, 255, 255, 1)],
+    [const Color.fromRGBO(228, 217, 236, 1), const Color.fromRGBO(255, 255, 255, 1)],
   ];
 
   final List<Widget> pinPuts = [];
@@ -58,13 +39,9 @@ class GalleryPageState extends State<GalleryPage>
       OtpPage(FilledRoundedPinPut()),
       OtpPage(Filled()),
     ];
-    pinPuts.addAll([
-      AllPinputs(otpPages.map((e) => e.pinPut).toList(), backgroundColors),
-      ...otpPages,
-    ]);
+    pinPuts.addAll([AllPinputs(otpPages.map((e) => e.pinPut).toList(), backgroundColors), ...otpPages]);
 
-    _tabController =
-        TabController(length: pinPuts.length, vsync: this, initialIndex: 1);
+    _tabController = TabController(length: pinPuts.length, vsync: this, initialIndex: 1);
     _tabController!.animation!.addListener(() {
       final focusScope = FocusScope.of(context);
       if (focusScope.hasFocus) {
@@ -115,10 +92,7 @@ class GalleryPageState extends State<GalleryPage>
                     }).toList(),
                   ),
                   Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: pinPuts,
-                    ),
+                    child: TabBarView(controller: _tabController, children: pinPuts),
                   ),
                 ],
               ),

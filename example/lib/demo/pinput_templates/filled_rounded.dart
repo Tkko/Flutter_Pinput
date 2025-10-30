@@ -34,10 +34,7 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 60,
-      textStyle: GoogleFonts.poppins(
-        fontSize: 22,
-        color: const Color.fromRGBO(30, 60, 87, 1),
-      ),
+      textStyle: GoogleFonts.poppins(fontSize: 22, color: const Color.fromRGBO(30, 60, 87, 1)),
       decoration: BoxDecoration(
         color: fillColor,
         borderRadius: BorderRadius.circular(8),
@@ -58,15 +55,10 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
         focusedPinTheme: defaultPinTheme.copyWith(
           height: 68,
           width: 64,
-          decoration: defaultPinTheme.decoration!.copyWith(
-            border: Border.all(color: borderColor),
-          ),
+          decoration: defaultPinTheme.decoration!.copyWith(border: Border.all(color: borderColor)),
         ),
         errorPinTheme: defaultPinTheme.copyWith(
-          decoration: BoxDecoration(
-            color: errorColor,
-            borderRadius: BorderRadius.circular(8),
-          ),
+          decoration: BoxDecoration(color: errorColor, borderRadius: BorderRadius.circular(8)),
         ),
       ),
     );

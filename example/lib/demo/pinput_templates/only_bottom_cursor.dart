@@ -30,10 +30,7 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
-      textStyle: GoogleFonts.poppins(
-        fontSize: 22,
-        color: const Color.fromRGBO(30, 60, 87, 1),
-      ),
+      textStyle: GoogleFonts.poppins(fontSize: 22, color: const Color.fromRGBO(30, 60, 87, 1)),
       decoration: const BoxDecoration(),
     );
 
@@ -43,10 +40,7 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
         Container(
           width: 56,
           height: 3,
-          decoration: BoxDecoration(
-            color: borderColor,
-            borderRadius: BorderRadius.circular(8),
-          ),
+          decoration: BoxDecoration(color: borderColor, borderRadius: BorderRadius.circular(8)),
         ),
       ],
     );
@@ -56,10 +50,7 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
         Container(
           width: 56,
           height: 3,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-          ),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8)),
         ),
       ],
     );

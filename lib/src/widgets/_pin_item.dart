@@ -4,10 +4,7 @@ class _PinItem extends StatelessWidget {
   final _PinputState state;
   final int index;
 
-  const _PinItem({
-    required this.state,
-    required this.index,
-  });
+  const _PinItem({required this.state, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +50,9 @@ class _PinItem extends StatelessWidget {
     }
   }
 
-  PinTheme _getDefaultPinTheme() =>
-      state.widget.defaultPinTheme ?? PinputConstants._defaultPinTheme;
+  PinTheme _getDefaultPinTheme() => state.widget.defaultPinTheme ?? PinputConstants._defaultPinTheme;
 
-  PinTheme _pinThemeOrDefault(PinTheme? theme) =>
-      theme ?? _getDefaultPinTheme();
+  PinTheme _pinThemeOrDefault(PinTheme? theme) => theme ?? _getDefaultPinTheme();
 
   Widget _buildFieldContent(int index, PinTheme pinTheme) {
     final pin = state.pin;
@@ -77,10 +72,8 @@ class _PinItem extends StatelessWidget {
     }
 
     final isActiveField = index == pin.length;
-    final focused =
-        state._effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
-    final shouldShowCursor =
-        state.widget.showCursor && state.isEnabled && isActiveField && focused;
+    final focused = state._effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
+    final shouldShowCursor = state.widget.showCursor && state.isEnabled && isActiveField && focused;
 
     if (shouldShowCursor) {
       return _buildCursor(pinTheme);
@@ -95,16 +88,10 @@ class _PinItem extends StatelessWidget {
 
   Widget _buildCursor(PinTheme pinTheme) {
     if (state.widget.isCursorAnimationEnabled) {
-      return _PinputAnimatedCursor(
-        textStyle: pinTheme.textStyle,
-        cursor: state.widget.cursor,
-      );
+      return _PinputAnimatedCursor(textStyle: pinTheme.textStyle, cursor: state.widget.cursor);
     }
 
-    return _PinputCursor(
-      textStyle: pinTheme.textStyle,
-      cursor: state.widget.cursor,
-    );
+    return _PinputCursor(textStyle: pinTheme.textStyle, cursor: state.widget.cursor);
   }
 
   Widget _getTransition(Widget child, Animation<double> animation) {
@@ -116,29 +103,19 @@ class _PinItem extends StatelessWidget {
       case PinAnimationType.none:
         return child;
       case PinAnimationType.fade:
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
+        return FadeTransition(opacity: animation, child: child);
       case PinAnimationType.scale:
-        return ScaleTransition(
-          scale: animation,
-          child: child,
-        );
+        return ScaleTransition(scale: animation, child: child);
       case PinAnimationType.slide:
         return SlideTransition(
           position: Tween<Offset>(
-            begin:
-                state.widget.slideTransitionBeginOffset ?? const Offset(0.8, 0),
+            begin: state.widget.slideTransitionBeginOffset ?? const Offset(0.8, 0),
             end: Offset.zero,
           ).animate(animation),
           child: child,
         );
       case PinAnimationType.rotation:
-        return RotationTransition(
-          turns: animation,
-          child: child,
-        );
+        return RotationTransition(turns: animation, child: child);
     }
   }
 }

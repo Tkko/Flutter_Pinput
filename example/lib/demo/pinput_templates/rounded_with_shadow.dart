@@ -28,10 +28,7 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
     final defaultPinTheme = PinTheme(
       width: 60,
       height: 64,
-      textStyle: GoogleFonts.poppins(
-        fontSize: 20,
-        color: const Color.fromRGBO(70, 69, 66, 1),
-      ),
+      textStyle: GoogleFonts.poppins(fontSize: 20, color: const Color.fromRGBO(70, 69, 66, 1)),
       decoration: BoxDecoration(
         color: const Color.fromRGBO(232, 235, 241, 0.37),
         borderRadius: BorderRadius.circular(24),
@@ -62,11 +59,7 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
           boxShadow: const [
-            BoxShadow(
-              color: Color.fromRGBO(0, 0, 0, 0.05999999865889549),
-              offset: Offset(0, 3),
-              blurRadius: 16,
-            ),
+            BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05999999865889549), offset: Offset(0, 3), blurRadius: 16),
           ],
         ),
       ),

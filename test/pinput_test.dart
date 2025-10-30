@@ -18,21 +18,11 @@ void main() {
     const length = 4;
     final focusNode = FocusNode();
     const defaultTheme = PinTheme(decoration: BoxDecoration(color: Colors.red));
-    final focusedTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withValues(alpha: .9),
-    );
-    final submittedTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withValues(alpha: .8),
-    );
-    final followingTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withValues(alpha: .7),
-    );
-    final disabledTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withValues(alpha: .6),
-    );
-    final errorTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withValues(alpha: .5),
-    );
+    final focusedTheme = defaultTheme.copyDecorationWith(color: Colors.greenAccent.withValues(alpha: .9));
+    final submittedTheme = defaultTheme.copyDecorationWith(color: Colors.greenAccent.withValues(alpha: .8));
+    final followingTheme = defaultTheme.copyDecorationWith(color: Colors.greenAccent.withValues(alpha: .7));
+    final disabledTheme = defaultTheme.copyDecorationWith(color: Colors.greenAccent.withValues(alpha: .6));
+    final errorTheme = defaultTheme.copyDecorationWith(color: Colors.greenAccent.withValues(alpha: .5));
 
     await tester.pumpApp(
       Pinput(
@@ -49,9 +39,7 @@ void main() {
 
     void testState(int count, PinTheme theme) {
       expect(
-        find.byWidgetPredicate(
-          (w) => w is AnimatedContainer && w.decoration == theme.decoration,
-        ),
+        find.byWidgetPredicate((w) => w is AnimatedContainer && w.decoration == theme.decoration),
         findsNWidgets(count),
       );
     }
@@ -94,18 +82,12 @@ void main() {
     testState(0, disabledTheme);
   });
 
-  testWidgets('Should properly handle focused state',
-      (WidgetTester tester) async {
+  testWidgets('Should properly handle focused state', (WidgetTester tester) async {
     final focusNode = FocusNode();
     const defaultTheme = PinTheme(decoration: BoxDecoration());
     final focusedTheme = defaultTheme.copyDecorationWith(color: Colors.red);
     await tester.pumpApp(
-      Pinput(
-        focusNode: focusNode,
-        autofocus: true,
-        defaultPinTheme: defaultTheme,
-        focusedPinTheme: focusedTheme,
-      ),
+      Pinput(focusNode: focusNode, autofocus: true, defaultPinTheme: defaultTheme, focusedPinTheme: focusedTheme),
     );
 
     expect(focusNode.hasFocus, isTrue);
@@ -115,29 +97,20 @@ void main() {
     expect(find.text('|'), findsOneWidget);
 
     expect(
-      find.byWidgetPredicate(
-        (w) =>
-            w is AnimatedContainer && w.decoration == focusedTheme.decoration,
-      ),
+      find.byWidgetPredicate((w) => w is AnimatedContainer && w.decoration == focusedTheme.decoration),
       findsOneWidget,
     );
   });
 
   testWidgets('Should display custom cursor', (WidgetTester tester) async {
-    await tester.pumpApp(
-      const Pinput(
-        autofocus: true,
-        cursor: FlutterLogo(),
-      ),
-    );
+    await tester.pumpApp(const Pinput(autofocus: true, cursor: FlutterLogo()));
 
     await tester.pump();
     expect(find.byType(FlutterLogo), findsOneWidget);
   });
 
   group('onChanged should work properly', () {
-    testWidgets('onChanged should work with controller',
-        (WidgetTester tester) async {
+    testWidgets('onChanged should work with controller', (WidgetTester tester) async {
       String? fieldValue;
       int called = 0;
 
@@ -168,8 +141,7 @@ void main() {
       expect(called, 2);
     });
 
-    testWidgets('onChanged should work with controller',
-        (WidgetTester tester) async {
+    testWidgets('onChanged should work with controller', (WidgetTester tester) async {
       String? fieldValue;
       int called = 0;
       final TextEditingController controller = TextEditingController();
@@ -206,8 +178,7 @@ void main() {
   });
 
   group('onCompleted should work properly', () {
-    testWidgets('onCompleted works without controller',
-        (WidgetTester tester) async {
+    testWidgets('onCompleted works without controller', (WidgetTester tester) async {
       String? fieldValue;
       int called = 0;
 
@@ -274,11 +245,7 @@ void main() {
   testWidgets('onTap is called upon tap', (WidgetTester tester) async {
     int tapCount = 0;
 
-    await tester.pumpApp(
-      Pinput(
-        onTap: () => ++tapCount,
-      ),
-    );
+    await tester.pumpApp(Pinput(onTap: () => ++tapCount));
 
     expect(tapCount, 0);
     await tester.tap(find.byType(EditableText));
@@ -291,16 +258,10 @@ void main() {
     expect(tapCount, 3);
   });
 
-  testWidgets('onTap is not called, field is disabled',
-      (WidgetTester tester) async {
+  testWidgets('onTap is not called, field is disabled', (WidgetTester tester) async {
     int tapCount = 0;
 
-    await tester.pumpApp(
-      Pinput(
-        enabled: false,
-        onTap: () => ++tapCount,
-      ),
-    );
+    await tester.pumpApp(Pinput(enabled: false, onTap: () => ++tapCount));
 
     expect(tapCount, 0);
     await tester.tap(find.byType(EditableText), warnIfMissed: false);
@@ -311,11 +272,7 @@ void main() {
   testWidgets('onLongPress is called', (WidgetTester tester) async {
     int tapCount = 0;
 
-    await tester.pumpApp(
-      Pinput(
-        onLongPress: () => ++tapCount,
-      ),
-    );
+    await tester.pumpApp(Pinput(onLongPress: () => ++tapCount));
 
     expect(tapCount, 0);
     await tester.longPress(find.byType(EditableText));
@@ -331,11 +288,7 @@ void main() {
   testWidgets('onSubmitted callback is called', (WidgetTester tester) async {
     String? fieldValue;
 
-    await tester.pumpApp(
-      Pinput(
-        onSubmitted: (value) => fieldValue = value,
-      ),
-    );
+    await tester.pumpApp(Pinput(onSubmitted: (value) => fieldValue = value));
 
     expect(fieldValue, isNull);
 

@@ -26,10 +26,7 @@ class _OtpPageState extends State<OtpPage> with AutomaticKeepAliveClientMixin {
           const SizedBox(height: 44),
           Text(
             'Didn’t receive code?',
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              color: const Color.fromRGBO(62, 116, 165, 1),
-            ),
+            style: GoogleFonts.poppins(fontSize: 16, color: const Color.fromRGBO(62, 116, 165, 1)),
           ),
           Text(
             'Resend',
@@ -67,19 +64,10 @@ class OtpHeader extends StatelessWidget {
         const SizedBox(height: 24),
         Text(
           'Enter the code sent to the number',
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            color: const Color.fromRGBO(133, 153, 170, 1),
-          ),
+          style: GoogleFonts.poppins(fontSize: 16, color: const Color.fromRGBO(133, 153, 170, 1)),
         ),
         const SizedBox(height: 16),
-        Text(
-          '+995 123 3456',
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            color: const Color.fromRGBO(30, 60, 87, 1),
-          ),
-        ),
+        Text('+995 123 3456', style: GoogleFonts.poppins(fontSize: 16, color: const Color.fromRGBO(30, 60, 87, 1))),
         const SizedBox(height: 64),
       ],
     );

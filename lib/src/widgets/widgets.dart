@@ -10,9 +10,7 @@ class _PinputFormField extends FormField<String> {
     required super.enabled,
     required super.initialValue,
     required super.builder,
-  }) : super(
-          autovalidateMode: AutovalidateMode.disabled,
-        );
+  }) : super(autovalidateMode: AutovalidateMode.disabled);
 }
 
 class _SeparatedRaw extends StatelessWidget {
@@ -20,11 +18,7 @@ class _SeparatedRaw extends StatelessWidget {
   final MainAxisAlignment mainAxisAlignment;
   final JustIndexedWidgetBuilder? separatorBuilder;
 
-  const _SeparatedRaw({
-    required this.children,
-    required this.mainAxisAlignment,
-    this.separatorBuilder,
-  });
+  const _SeparatedRaw({required this.children, required this.mainAxisAlignment, this.separatorBuilder});
 
   @override
   Widget build(BuildContext context) {
@@ -33,18 +27,17 @@ class _SeparatedRaw extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: mainAxisAlignment,
-      mainAxisSize: mainAxisAlignment == MainAxisAlignment.center
-          ? MainAxisSize.min
-          : MainAxisSize.max,
-      children: indexedList.map((index) {
-        final itemIndex = index ~/ 2;
-        return index.isEven ? children[itemIndex] : _separator(itemIndex);
-      }).toList(growable: false),
+      mainAxisSize: mainAxisAlignment == MainAxisAlignment.center ? MainAxisSize.min : MainAxisSize.max,
+      children: indexedList
+          .map((index) {
+            final itemIndex = index ~/ 2;
+            return index.isEven ? children[itemIndex] : _separator(itemIndex);
+          })
+          .toList(growable: false),
     );
   }
 
-  Widget _separator(int index) =>
-      separatorBuilder?.call(index) ?? PinputConstants._defaultSeparator;
+  Widget _separator(int index) => separatorBuilder?.call(index) ?? PinputConstants._defaultSeparator;
 }
 
 class _PinputCursor extends StatelessWidget {
@@ -61,17 +54,13 @@ class _PinputAnimatedCursor extends StatefulWidget {
   final Widget? cursor;
   final TextStyle? textStyle;
 
-  const _PinputAnimatedCursor({
-    required this.textStyle,
-    required this.cursor,
-  });
+  const _PinputAnimatedCursor({required this.textStyle, required this.cursor});
 
   @override
   State<_PinputAnimatedCursor> createState() => _PinputAnimatedCursorState();
 }
 
-class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor>
-    with SingleTickerProviderStateMixin {
+class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor> with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
 
   @override
@@ -81,10 +70,7 @@ class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor>
   }
 
   void _startCursorAnimation() {
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 450),
-    );
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 450));
 
     _animationController.addStatusListener((AnimationStatus status) {
       if (status == AnimationStatus.completed) {

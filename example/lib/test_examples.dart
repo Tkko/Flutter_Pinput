@@ -4,10 +4,7 @@ import 'package:pinput/pinput.dart';
 
 class Formatter extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.length <= 3) {
       return oldValue;
     }
@@ -66,10 +63,7 @@ class _ErrorStateExampleState extends State<ErrorStateExample> {
 
   @override
   Widget build(BuildContext context) {
-    return Pinput(
-      forceErrorState: _hasError,
-      onCompleted: _validate,
-    );
+    return Pinput(forceErrorState: _hasError, onCompleted: _validate);
   }
 }
 
@@ -81,37 +75,21 @@ class HeightExample extends StatelessWidget {
     final defaultPinTheme = PinTheme(
       width: 40,
       height: 105,
-      textStyle: const TextStyle(
-        fontSize: 22,
-        color: Color.fromRGBO(30, 60, 87, 1),
-        fontWeight: FontWeight.bold,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5.0),
-        color: Colors.black,
-      ),
+      textStyle: const TextStyle(fontSize: 22, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.bold),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.black),
     );
 
     return Pinput(
       length: 6,
       defaultPinTheme: defaultPinTheme,
       focusedPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Colors.red,
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.red),
       ),
       submittedPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Colors.green,
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.green),
       ),
       followingPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Colors.blue,
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.blue),
       ),
     );
   }

@@ -6,8 +6,7 @@ class RoundedWithCustomCursor extends StatefulWidget {
   const RoundedWithCustomCursor({super.key});
 
   @override
-  _RoundedWithCustomCursorState createState() =>
-      _RoundedWithCustomCursorState();
+  _RoundedWithCustomCursorState createState() => _RoundedWithCustomCursorState();
 
   @override
   String toStringShort() => 'Rounded With Cursor';
@@ -34,10 +33,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
-      textStyle: GoogleFonts.poppins(
-        fontSize: 22,
-        color: const Color.fromRGBO(30, 60, 87, 1),
-      ),
+      textStyle: GoogleFonts.poppins(fontSize: 22, color: const Color.fromRGBO(30, 60, 87, 1)),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(19),
         border: Border.all(color: borderColor),
@@ -68,12 +64,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
               cursor: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 9),
-                    width: 22,
-                    height: 1,
-                    color: focusedBorderColor,
-                  ),
+                  Container(margin: const EdgeInsets.only(bottom: 9), width: 22, height: 1, color: focusedBorderColor),
                 ],
               ),
               focusedPinTheme: defaultPinTheme.copyWith(
@@ -89,15 +80,10 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
                   border: Border.all(color: focusedBorderColor),
                 ),
               ),
-              errorPinTheme: defaultPinTheme.copyBorderWith(
-                border: Border.all(color: Colors.redAccent),
-              ),
+              errorPinTheme: defaultPinTheme.copyBorderWith(border: Border.all(color: Colors.redAccent)),
             ),
           ),
-          TextButton(
-            onPressed: () => formKey.currentState!.validate(),
-            child: const Text('Validate'),
-          ),
+          TextButton(onPressed: () => formKey.currentState!.validate(), child: const Text('Validate')),
         ],
       ),
     );

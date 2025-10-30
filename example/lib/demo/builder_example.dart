@@ -56,11 +56,7 @@ class _PinputBuilderExampleState extends State<PinputBuilderExample> {
                       );
                   }
                 }();
-                return Container(
-                  decoration: dec,
-                  padding: const EdgeInsets.all(16),
-                  child: Text(pinState.value),
-                );
+                return Container(decoration: dec, padding: const EdgeInsets.all(16), child: Text(pinState.value));
               },
               controller: pinController,
               focusNode: focusNode,

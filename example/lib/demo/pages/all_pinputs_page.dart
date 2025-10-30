@@ -13,8 +13,7 @@ class AllPinputs extends StatefulWidget {
   String toStringShort() => 'All';
 }
 
-class _AllPinputsState extends State<AllPinputs>
-    with AutomaticKeepAliveClientMixin {
+class _AllPinputsState extends State<AllPinputs> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -36,10 +35,7 @@ class _AllPinputsState extends State<AllPinputs>
             padding: EdgeInsets.all(20),
             child: TextField(
               autofillHints: [AutofillHints.oneTimeCode],
-              decoration: InputDecoration(
-                labelText: 'Standard TextField for Testing',
-                border: OutlineInputBorder(),
-              ),
+              decoration: InputDecoration(labelText: 'Standard TextField for Testing', border: OutlineInputBorder()),
             ),
           ),
         ],

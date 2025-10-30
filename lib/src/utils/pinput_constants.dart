@@ -8,13 +8,12 @@ class PinputConstants {
   static const _animationDuration = Duration(milliseconds: 180);
 
   /// The default value [Pinput.length]
-  static const _defaultLength = 4;
+  static const _defaultLength = 6;
 
   static const _defaultSeparator = SizedBox(width: 8);
 
   /// The hidden text under the Pinput
-  static const _hiddenTextStyle =
-      TextStyle(fontSize: 1, height: 1, color: Colors.transparent);
+  static const _hiddenTextStyle = TextStyle(fontSize: 1, height: 1, color: Colors.transparent);
 
   ///
   static const _defaultPinFillColor = Color.fromRGBO(222, 231, 240, .57);
