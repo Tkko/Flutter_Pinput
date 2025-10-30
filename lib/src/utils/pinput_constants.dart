@@ -1,7 +1,7 @@
 part of '../pinput.dart';
 
 /// The constant values for Pinput
-class PinputConstants {
+final class PinputConstants {
   const PinputConstants._();
 
   /// The default value [Pinput.animationDuration]
