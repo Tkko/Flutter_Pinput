@@ -64,6 +64,7 @@ class Pinput extends StatefulWidget {
     this.onTap,
     this.onLongPress,
     this.onTapOutside,
+    this.onTapUpOutside,
     this.controller,
     this.focusNode,
     this.preFilledWidget,
@@ -134,6 +135,7 @@ class Pinput extends StatefulWidget {
     this.onTap,
     this.onLongPress,
     this.onTapOutside,
+    this.onTapUpOutside,
     this.controller,
     this.focusNode,
     this.separatorBuilder,
@@ -438,6 +440,22 @@ class Pinput extends StatefulWidget {
   /// although it will be within the region of one of the group members.
   /// This is useful if you want to un-focus the [Pinput] when user taps outside of it
   final TapRegionCallback? onTapOutside;
+
+  /// Called for each tap up that occurs outside of the [TextFieldTapRegion]
+  /// group when the text field is focused.
+  ///
+  /// This is useful if you want to un-focus the [Pinput] when user taps outside of it,
+  /// but not when user scrolls outside of it :
+  /// ```dart
+  /// onTapOutside: (event) => tapPosition = event.position,
+  /// onTapUpOutside: (event) {
+  ///   if (event.position == tapPosition) _focusNode.unfocus();
+  ///   tapPosition = null;
+  /// },
+  /// ```
+  ///
+  /// See also: [EditableText.onTapUpOutside].
+  final TapRegionUpCallback? onTapUpOutside;
 
   static Widget _defaultContextMenuBuilder(
     BuildContext context,

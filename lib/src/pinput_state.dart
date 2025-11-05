@@ -409,6 +409,7 @@ class _PinputState extends State<Pinput>
             _maybeValidateForm();
           },
           onTapOutside: widget.onTapOutside,
+          onTapUpOutside: widget.onTapUpOutside,
           mouseCursor: MouseCursor.defer,
           focusNode: _effectiveFocusNode,
           textAlign: TextAlign.center,
