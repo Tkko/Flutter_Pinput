@@ -42,7 +42,7 @@ class _PinputState extends State<Pinput>
       case NavigationMode.traditional:
         return isEnabled && widget.useNativeKeyboard;
       case NavigationMode.directional:
-        return true && widget.useNativeKeyboard;
+        return widget.useNativeKeyboard;
     }
   }
 
