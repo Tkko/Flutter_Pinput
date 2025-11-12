@@ -266,7 +266,7 @@ class _PinputState extends State<Pinput>
   /// Toggle the toolbar when a selection handle is tapped.
   void _handleSelectionHandleTapped() {
     if (_effectiveController.selection.isCollapsed) {
-      _editableText!.toggleToolbar();
+      _editableText?.toggleToolbar();
     }
   }
 
