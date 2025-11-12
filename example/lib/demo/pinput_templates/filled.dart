@@ -6,7 +6,7 @@ class Filled extends StatefulWidget {
   const Filled({super.key});
 
   @override
-  _FilledState createState() => _FilledState();
+  State<Filled> createState() => _FilledState();
 
   @override
   String toStringShort() => 'Filled';
@@ -42,7 +42,6 @@ class _FilledState extends State<Filled> {
         focusNode: focusNode,
         separatorBuilder: (index) => Container(height: 64, width: 1, color: Colors.white),
         defaultPinTheme: defaultPinTheme,
-        showCursor: true,
         focusedPinTheme: defaultPinTheme.copyWith(
           decoration: const BoxDecoration(color: Color.fromRGBO(124, 102, 152, 1)),
         ),

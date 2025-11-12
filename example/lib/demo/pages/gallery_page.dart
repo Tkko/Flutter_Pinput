@@ -39,7 +39,7 @@ class GalleryPageState extends State<GalleryPage> with SingleTickerProviderState
       OtpPage(FilledRoundedPinPut()),
       OtpPage(Filled()),
     ];
-    pinPuts.addAll([AllPinputs(otpPages.map((e) => e.pinPut).toList(), backgroundColors), ...otpPages]);
+    pinPuts.addAll([AllPinput(otpPages.map((e) => e.pinPut).toList(), backgroundColors), ...otpPages]);
 
     _tabController = TabController(length: pinPuts.length, vsync: this, initialIndex: 1);
     _tabController!.animation!.addListener(() {
@@ -53,53 +53,49 @@ class GalleryPageState extends State<GalleryPage> with SingleTickerProviderState
   final controller = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
-    return ScrollConfiguration(
-      behavior: MyCustomScrollBehavior(),
-      child: AnimatedBuilder(
-        animation: _tabController!.animation!,
-        builder: (BuildContext context, Widget? child) {
-          final anim = _tabController!.animation!.value;
-          final Color fromColor = Color.lerp(
-            backgroundColors[anim.floor()].first,
-            backgroundColors[anim.ceil()].first,
-            anim - anim.floor(),
-          )!;
+  Widget build(BuildContext context) => ScrollConfiguration(
+    behavior: MyCustomScrollBehavior(),
+    child: AnimatedBuilder(
+      animation: _tabController!.animation!,
+      builder: (BuildContext context, Widget? child) {
+        final anim = _tabController!.animation!.value;
+        final Color fromColor = Color.lerp(
+          backgroundColors[anim.floor()].first,
+          backgroundColors[anim.ceil()].first,
+          anim - anim.floor(),
+        )!;
 
-          final Color toColor = Color.lerp(
-            backgroundColors[anim.floor()].last,
-            backgroundColors[anim.ceil()].last,
-            anim - anim.floor(),
-          )!;
+        final Color toColor = Color.lerp(
+          backgroundColors[anim.floor()].last,
+          backgroundColors[anim.ceil()].last,
+          anim - anim.floor(),
+        )!;
 
-          return Scaffold(
-            body: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [fromColor, toColor],
-                ),
-              ),
-              child: Column(
-                children: [
-                  SizedBox(height: MediaQuery.of(context).viewPadding.top),
-                  TabBar(
-                    controller: _tabController,
-                    isScrollable: true,
-                    tabs: pinPuts.map((item) {
-                      return Tab(text: '$item');
-                    }).toList(),
-                  ),
-                  Expanded(
-                    child: TabBarView(controller: _tabController, children: pinPuts),
-                  ),
-                ],
+        return Scaffold(
+          body: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [fromColor, toColor],
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
+            child: Column(
+              children: [
+                SizedBox(height: MediaQuery.of(context).viewPadding.top),
+                TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  tabs: pinPuts.map((item) => Tab(text: '$item')).toList(),
+                ),
+                Expanded(
+                  child: TabBarView(controller: _tabController, children: pinPuts),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
+  );
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: discarded_futures
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -109,9 +111,7 @@ class _PinputExampleState extends State<PinputExample> {
               closeKeyboardWhenCompleted: false,
               defaultPinTheme: defaultPinTheme,
               separatorBuilder: (index) => const SizedBox(width: 8),
-              validator: (value) {
-                return value == '2222' ? null : 'Pin is incorrect';
-              },
+              validator: (value) => value == '2222' ? null : 'Pin is incorrect',
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) {
                 debugPrint('onCompleted: $pin');

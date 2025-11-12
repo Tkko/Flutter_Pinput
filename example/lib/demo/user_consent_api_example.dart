@@ -43,7 +43,5 @@ class _UserConsentApiExampleState extends State<UserConsentApiExample> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Pinput(smsRetriever: smsRetrieverImpl);
-  }
+  Widget build(BuildContext context) => Pinput(smsRetriever: smsRetrieverImpl);
 }

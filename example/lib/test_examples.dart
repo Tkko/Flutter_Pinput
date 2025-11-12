@@ -35,15 +35,8 @@ class _ExampleState extends State<Example> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Pinput(
-      controller: pinController,
-      autofillHints: const [AutofillHints.oneTimeCode],
-      length: 10,
-      toolbarEnabled: false,
-      inputFormatters: [Formatter()],
-    );
-  }
+  Widget build(BuildContext context) =>
+      Pinput(controller: pinController, length: 10, toolbarEnabled: false, inputFormatters: [Formatter()]);
 }
 
 class ErrorStateExample extends StatefulWidget {
@@ -57,14 +50,12 @@ class _ErrorStateExampleState extends State<ErrorStateExample> {
   bool _hasError = false;
 
   Future<void> _validate(String value) async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future<void>.delayed(const Duration(seconds: 2));
     setState(() => _hasError = value == '1111');
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Pinput(forceErrorState: _hasError, onCompleted: _validate);
-  }
+  Widget build(BuildContext context) => Pinput(forceErrorState: _hasError, onCompleted: _validate);
 }
 
 class HeightExample extends StatelessWidget {
@@ -76,20 +67,19 @@ class HeightExample extends StatelessWidget {
       width: 40,
       height: 105,
       textStyle: const TextStyle(fontSize: 22, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.bold),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.black),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.black),
     );
 
     return Pinput(
-      length: 6,
       defaultPinTheme: defaultPinTheme,
       focusedPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.red),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.red),
       ),
       submittedPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.green),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.green),
       ),
       followingPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.blue),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Colors.blue),
       ),
     );
   }

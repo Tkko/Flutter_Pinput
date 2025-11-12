@@ -1,3 +1,5 @@
+// ignore_for_file: discarded_futures
+
 part of '../pinput.dart';
 
 class _PinputSelectionGestureDetectorBuilder extends TextSelectionGestureDetectorBuilder {
@@ -6,7 +8,7 @@ class _PinputSelectionGestureDetectorBuilder extends TextSelectionGestureDetecto
   final _PinputState _state;
 
   @override
-  void onForcePressStart(details) {
+  void onForcePressStart(ForcePressDetails details) {
     super.onForcePressStart(details);
     if (delegate.selectionEnabled && shouldShowSelectionToolbar) {
       editableText.showToolbar();
@@ -14,7 +16,7 @@ class _PinputSelectionGestureDetectorBuilder extends TextSelectionGestureDetecto
   }
 
   @override
-  void onSingleTapUp(details) {
+  void onSingleTapUp(TapDragUpDetails details) {
     super.onSingleTapUp(details);
     editableText.hideToolbar();
     _state._requestKeyboard();
@@ -28,7 +30,7 @@ class _PinputSelectionGestureDetectorBuilder extends TextSelectionGestureDetecto
   }
 
   @override
-  void onSingleLongTapStart(details) {
+  void onSingleLongTapStart(LongPressStartDetails details) {
     super.onSingleLongTapStart(details);
     if (delegate.selectionEnabled) {
       switch (Theme.of(_state.context).platform) {

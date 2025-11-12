@@ -6,7 +6,7 @@ class OnlyBottomCursor extends StatefulWidget {
   const OnlyBottomCursor({super.key});
 
   @override
-  _OnlyBottomCursorState createState() => _OnlyBottomCursorState();
+  State<OnlyBottomCursor> createState() => _OnlyBottomCursorState();
 
   @override
   String toStringShort() => 'With Bottom Cursor';
@@ -61,7 +61,6 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
       controller: controller,
       focusNode: focusNode,
       defaultPinTheme: defaultPinTheme,
-      showCursor: true,
       cursor: cursor,
       preFilledWidget: preFilledWidget,
     );

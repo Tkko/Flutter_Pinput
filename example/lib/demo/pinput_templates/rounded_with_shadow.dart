@@ -6,7 +6,7 @@ class RoundedWithShadow extends StatefulWidget {
   const RoundedWithShadow({super.key});
 
   @override
-  _RoundedWithShadowState createState() => _RoundedWithShadowState();
+  State<RoundedWithShadow> createState() => _RoundedWithShadowState();
 
   @override
   String toStringShort() => 'Rounded With Shadow';
@@ -63,11 +63,6 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
           ],
         ),
       ),
-      // onClipboardFound: (value) {
-      //   debugPrint('onClipboardFound: $value');
-      //   controller.setText(value);
-      // },
-      showCursor: true,
       cursor: cursor,
     );
   }

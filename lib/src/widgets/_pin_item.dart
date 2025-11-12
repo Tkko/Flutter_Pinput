@@ -1,10 +1,10 @@
 part of '../pinput.dart';
 
 class _PinItem extends StatelessWidget {
+  const _PinItem({required this.state, required this.index});
+
   final _PinputState state;
   final int index;
-
-  const _PinItem({required this.state, required this.index});
 
   @override
   Widget build(BuildContext context) {

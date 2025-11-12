@@ -6,7 +6,7 @@ class RoundedWithCustomCursor extends StatefulWidget {
   const RoundedWithCustomCursor({super.key});
 
   @override
-  _RoundedWithCustomCursorState createState() => _RoundedWithCustomCursorState();
+  State<RoundedWithCustomCursor> createState() => _RoundedWithCustomCursorState();
 
   @override
   String toStringShort() => 'Rounded With Cursor';
@@ -51,9 +51,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
               controller: pinController,
               focusNode: focusNode,
               defaultPinTheme: defaultPinTheme,
-              validator: (value) {
-                return value == '2222' ? null : 'Pin is incorrect';
-              },
+              validator: (value) => value == '2222' ? null : 'Pin is incorrect',
               hapticFeedbackType: HapticFeedbackType.lightImpact,
               onCompleted: (pin) {
                 debugPrint('onCompleted: $pin');

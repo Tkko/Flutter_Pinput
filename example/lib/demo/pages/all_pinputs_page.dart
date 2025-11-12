@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-class AllPinputs extends StatefulWidget {
+class AllPinput extends StatefulWidget {
+  const AllPinput(this.pinPuts, this.colors, {super.key});
+
   final List<Widget> pinPuts;
   final List<List<Color>> colors;
 
-  const AllPinputs(this.pinPuts, this.colors, {super.key});
-
   @override
-  _AllPinputsState createState() => _AllPinputsState();
+  State<AllPinput> createState() => _AllPinputState();
 
   @override
   String toStringShort() => 'All';
 }
 
-class _AllPinputsState extends State<AllPinputs> with AutomaticKeepAliveClientMixin {
+class _AllPinputState extends State<AllPinput> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);

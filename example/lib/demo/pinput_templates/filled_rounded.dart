@@ -6,7 +6,7 @@ class FilledRoundedPinPut extends StatefulWidget {
   const FilledRoundedPinPut({super.key});
 
   @override
-  _FilledRoundedPinPutState createState() => _FilledRoundedPinPutState();
+  State<FilledRoundedPinPut> createState() => _FilledRoundedPinPutState();
 
   @override
   String toStringShort() => 'Rounded Filled';

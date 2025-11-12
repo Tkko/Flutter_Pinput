@@ -44,7 +44,5 @@ class _SmsRetrieverApiExampleState extends State<SmsRetrieverApiExample> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Pinput(smsRetriever: smsRetrieverImpl);
-  }
+  Widget build(BuildContext context) => Pinput(smsRetriever: smsRetrieverImpl);
 }

@@ -23,7 +23,9 @@ extension PinputControllerExt on TextEditingController {
 
   /// Deletes the last character of Pinput value
   void delete() {
-    if (text.isEmpty) return;
+    if (text.isEmpty) {
+      return;
+    }
     final pin = text.substring(0, length - 1);
     text = pin;
     moveCursorToEnd();
@@ -31,7 +33,9 @@ extension PinputControllerExt on TextEditingController {
 
   /// Appends character at the end of the Pinput
   void append(String s, int maxLength) {
-    if (length == maxLength) return;
+    if (length == maxLength) {
+      return;
+    }
     text = '$text$s';
     moveCursorToEnd();
   }

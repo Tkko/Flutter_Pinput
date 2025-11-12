@@ -3,6 +3,18 @@ part of '../pinput.dart';
 /// Theme of the individual pin items for following states:
 /// default, focused pin, submitted pin, following pin, disabled pin and error pin
 class PinTheme {
+  /// Theme of the individual pin items for following states:
+  /// default, focused pin, submitted pin, following pin, disabled pin and error pin
+  const PinTheme({
+    this.width,
+    this.height,
+    this.margin,
+    this.padding,
+    this.textStyle,
+    this.decoration,
+    this.constraints,
+  });
+
   /// width of each [Pinput] field
   final double? width;
 
@@ -46,30 +58,16 @@ class PinTheme {
   /// The decoration of each [Pinput] submitted field
   final BoxDecoration? decoration;
 
-  /// Theme of the individual pin items for following states:
-  /// default, focused pin, submitted pin, following pin, disabled pin and error pin
-  const PinTheme({
-    this.width,
-    this.height,
-    this.margin,
-    this.padding,
-    this.textStyle,
-    this.decoration,
-    this.constraints,
-  });
-
   /// Merge two [PinTheme] into one
-  PinTheme apply({required PinTheme theme}) {
-    return PinTheme(
-      width: width ?? theme.width,
-      height: height ?? theme.height,
-      textStyle: textStyle ?? theme.textStyle,
-      constraints: constraints ?? theme.constraints,
-      decoration: decoration ?? theme.decoration,
-      padding: padding ?? theme.padding,
-      margin: margin ?? theme.margin,
-    );
-  }
+  PinTheme apply({required PinTheme theme}) => PinTheme(
+    width: width ?? theme.width,
+    height: height ?? theme.height,
+    textStyle: textStyle ?? theme.textStyle,
+    constraints: constraints ?? theme.constraints,
+    decoration: decoration ?? theme.decoration,
+    padding: padding ?? theme.padding,
+    margin: margin ?? theme.margin,
+  );
 
   /// Create a new [PinTheme] from the current instance
   PinTheme copyWith({
@@ -80,17 +78,15 @@ class PinTheme {
     BoxDecoration? decoration,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
-  }) {
-    return PinTheme(
-      width: width ?? this.width,
-      height: height ?? this.height,
-      textStyle: textStyle ?? this.textStyle,
-      constraints: constraints ?? this.constraints,
-      decoration: decoration ?? this.decoration,
-      padding: padding ?? this.padding,
-      margin: margin ?? this.margin,
-    );
-  }
+  }) => PinTheme(
+    width: width ?? this.width,
+    height: height ?? this.height,
+    textStyle: textStyle ?? this.textStyle,
+    constraints: constraints ?? this.constraints,
+    decoration: decoration ?? this.decoration,
+    padding: padding ?? this.padding,
+    margin: margin ?? this.margin,
+  );
 
   /// Create a new [PinTheme] from the current instance with new decoration
   PinTheme copyDecorationWith({
@@ -103,7 +99,7 @@ class PinTheme {
     BlendMode? backgroundBlendMode,
     BoxShape? shape,
   }) {
-    assert(decoration != null);
+    assert(decoration != null, 'decoration cannot be null');
     return copyWith(
       decoration: decoration?.copyWith(
         color: color,
@@ -120,7 +116,7 @@ class PinTheme {
 
   /// Create a new [PinTheme] from the current instance with new border
   PinTheme copyBorderWith({required Border border}) {
-    assert(decoration != null);
+    assert(decoration != null, 'decoration cannot be null');
     return copyWith(decoration: decoration?.copyWith(border: border));
   }
 }

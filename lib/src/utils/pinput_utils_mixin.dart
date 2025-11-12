@@ -1,3 +1,5 @@
+// ignore_for_file: discarded_futures
+
 part of '../pinput.dart';
 
 mixin _PinputUtilsMixin {
@@ -7,19 +9,14 @@ mixin _PinputUtilsMixin {
         break;
       case HapticFeedbackType.lightImpact:
         HapticFeedback.lightImpact();
-        break;
       case HapticFeedbackType.mediumImpact:
         HapticFeedback.mediumImpact();
-        break;
       case HapticFeedbackType.heavyImpact:
         HapticFeedback.heavyImpact();
-        break;
       case HapticFeedbackType.selectionClick:
         HapticFeedback.selectionClick();
-        break;
       case HapticFeedbackType.vibrate:
         HapticFeedback.vibrate();
-        break;
     }
   }
 

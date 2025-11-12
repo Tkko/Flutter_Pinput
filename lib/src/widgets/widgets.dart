@@ -1,3 +1,5 @@
+// ignore_for_file: discarded_futures
+
 part of '../pinput.dart';
 
 /// Signature for a function that creates a widget for a given index, e.g., in a
@@ -14,18 +16,17 @@ class _PinputFormField extends FormField<String> {
 }
 
 class _SeparatedRaw extends StatelessWidget {
+  const _SeparatedRaw({required this.children, required this.mainAxisAlignment, this.separatorBuilder});
+
   final List<Widget> children;
   final MainAxisAlignment mainAxisAlignment;
   final JustIndexedWidgetBuilder? separatorBuilder;
-
-  const _SeparatedRaw({required this.children, required this.mainAxisAlignment, this.separatorBuilder});
 
   @override
   Widget build(BuildContext context) {
     final itemCount = max(0, children.length * 2 - 1);
     final indexedList = [for (int i = 0; i < itemCount; i += 1) i];
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: mainAxisAlignment,
       mainAxisSize: mainAxisAlignment == MainAxisAlignment.center ? MainAxisSize.min : MainAxisSize.max,
       children: indexedList
@@ -41,20 +42,20 @@ class _SeparatedRaw extends StatelessWidget {
 }
 
 class _PinputCursor extends StatelessWidget {
+  const _PinputCursor({required this.textStyle, required this.cursor});
+
   final Widget? cursor;
   final TextStyle? textStyle;
-
-  const _PinputCursor({required this.textStyle, required this.cursor});
 
   @override
   Widget build(BuildContext context) => cursor ?? Text('|', style: textStyle);
 }
 
 class _PinputAnimatedCursor extends StatefulWidget {
+  const _PinputAnimatedCursor({required this.textStyle, required this.cursor});
+
   final Widget? cursor;
   final TextStyle? textStyle;
-
-  const _PinputAnimatedCursor({required this.textStyle, required this.cursor});
 
   @override
   State<_PinputAnimatedCursor> createState() => _PinputAnimatedCursorState();
@@ -72,12 +73,13 @@ class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor> with Singl
   void _startCursorAnimation() {
     _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 450));
 
-    _animationController.addStatusListener((AnimationStatus status) {
-      if (status == AnimationStatus.completed) {
-        _animationController.repeat(reverse: true);
-      }
-    });
-    _animationController.forward();
+    _animationController
+      ..addStatusListener((AnimationStatus status) {
+        if (status == AnimationStatus.completed) {
+          _animationController.repeat(reverse: true);
+        }
+      })
+      ..forward();
   }
 
   @override
@@ -87,10 +89,8 @@ class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor> with Singl
   }
 
   @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _animationController,
-      child: _PinputCursor(textStyle: widget.textStyle, cursor: widget.cursor),
-    );
-  }
+  Widget build(BuildContext context) => FadeTransition(
+    opacity: _animationController,
+    child: _PinputCursor(textStyle: widget.textStyle, cursor: widget.cursor),
+  );
 }
