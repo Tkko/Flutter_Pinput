@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_pinput/pinput.dart';
+import 'package:flutter_pinput/flutter_pinput.dart';
 
 class PinputBuilderExample extends StatefulWidget {
   const PinputBuilderExample({super.key});

@@ -3,7 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_pinput/pinput.dart';
+import 'package:flutter_pinput/flutter_pinput.dart';
 import 'package:smart_auth/smart_auth.dart';
 
 void main() {
