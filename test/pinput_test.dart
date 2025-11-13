@@ -212,6 +212,7 @@ void main() {
 
       await tester.pumpApp(
         Pinput(
+          length: 4,
           controller: controller,
           onCompleted: (value) {
             fieldValue = value;
@@ -224,10 +225,12 @@ void main() {
       expect(called, 0);
 
       controller.setText('1234');
+      await tester.pump();
       expect(fieldValue, equals('1234'));
       expect(called, 1);
 
       controller.clear();
+      await tester.pump();
       expect(fieldValue, equals('1234'));
       expect(called, 1);
 
@@ -237,6 +240,7 @@ void main() {
       expect(called, 1);
 
       controller.setText('12345');
+      await tester.pump();
       expect(fieldValue, isNull);
       expect(called, 1);
     });

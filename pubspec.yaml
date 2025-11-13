@@ -1,9 +1,9 @@
 name: flutter_pinput
-version: 1.0.0
-description: Pin code input (OTP) text field, iOS SMS autofill, Android SMS autofill One Time Code, Password, Passcode, Captcha, Security, Coupon, Wowcher, 2FA, Two step verification
-homepage: https://github.com/Tkko/Flutter_PinPut
-repository: https://github.com/Tkko/Flutter_PinPut
-issue_tracker: https://github.com/Tkko/Flutter_Pinput/issues
+version: 1.0.1
+description: "Pin code input (OTP) text field, iOS SMS autofill, Android SMS autofill One Time Code, Password, Passcode, Captcha, Security, Coupon, Wowcher, 2FA, Two step verification"
+homepage: https://github.com/SunnatilloShavkatov/flutter_pinput.git
+repository: https://github.com/SunnatilloShavkatov/flutter_pinput.git
+issue_tracker: https://github.com/SunnatilloShavkatov/flutter_pinput.gitissues
 topics:
   - otp
   - pin-input
