@@ -10,13 +10,6 @@ topics:
   - pin-code
   - passcode
   - sms-autofill
-screenshots:
-  - description: 'Pin input example'
-    path: example/pinput_demo_1.webp
-  - description: 'Pin code example'
-    path: example/pinput_demo_2.webp
-funding:
-  - https://ko-fi.com/flutterman
 
 environment:
   sdk: ">=3.9.0 <4.0.0"
