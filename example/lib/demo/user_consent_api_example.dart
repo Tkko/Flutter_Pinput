@@ -21,9 +21,6 @@ class SmsRetrieverImpl implements SmsRetriever {
     }
     return null;
   }
-
-  @override
-  bool get listenForMultipleSms => false;
 }
 
 class UserConsentApiExample extends StatefulWidget {

@@ -81,7 +81,6 @@ class _PinputState extends State<Pinput>
     _effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
     unawaited(_maybeInitSmartAuth());
     unawaited(_maybeCheckClipboard());
-    // https://github.com/Tkko/Flutter_Pinput/issues/89
     _ambiguate(WidgetsBinding.instance)!.addObserver(this);
   }
 
@@ -113,11 +112,6 @@ class _PinputState extends State<Pinput>
       if (res != null && res.length == widget.length) {
         _effectiveController.setText(res);
         return;
-      }
-
-      // Listen for multiple sms codes
-      if (_smsRetriever!.listenForMultipleSms && mounted) {
-        await _listenForSmsCode();
       }
     } catch (e) {
       // Handle error - don't continue recursion on error
