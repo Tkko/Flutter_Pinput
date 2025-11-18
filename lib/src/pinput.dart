@@ -83,7 +83,7 @@ class Pinput extends StatefulWidget {
     this.showCursor = true,
     this.isCursorAnimationEnabled = true,
     this.enableIMEPersonalizedLearning = false,
-    this.enableInteractiveSelection = true,
+    this.enableInteractiveSelection,
     this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
@@ -340,7 +340,7 @@ class Pinput extends StatefulWidget {
   /// On mobile, consider using SMS auto-fill or [onClipboardFound] callback instead.
   ///
   /// Defaults to false for security and UX reasons.
-  final bool enableInteractiveSelection;
+  final bool? enableInteractiveSelection;
 
   /// If [showCursor] true the focused field will show passed Widget
   final Widget? cursor;
@@ -477,7 +477,7 @@ class Pinput extends StatefulWidget {
       DiagnosticsProperty<bool>(
         'enableInteractiveSelection',
         enableInteractiveSelection,
-        defaultValue: false,
+        defaultValue: null,
       ),
     );
     properties.add(
