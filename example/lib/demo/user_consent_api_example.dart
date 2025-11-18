@@ -14,9 +14,7 @@ class SmsRetrieverImpl implements SmsRetriever {
 
   @override
   Future<String?> getSmsCode() async {
-    final res = await smartAuth.getSmsCode(
-      useUserConsentApi: true,
-    );
+    final res = await smartAuth.getSmsCode(useUserConsentApi: true);
     if (res.succeed && res.codeFound) {
       return res.code!;
     }
@@ -45,8 +43,6 @@ class _UserConsentApiExampleState extends State<UserConsentApiExample> {
 
   @override
   Widget build(BuildContext context) {
-    return Pinput(
-      smsRetriever: smsRetrieverImpl,
-    );
+    return Pinput(smsRetriever: smsRetrieverImpl);
   }
 }
