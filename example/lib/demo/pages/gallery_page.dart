@@ -63,8 +63,11 @@ class GalleryPageState extends State<GalleryPage>
       ...otpPages,
     ]);
 
-    _tabController =
-        TabController(length: pinPuts.length, vsync: this, initialIndex: 1);
+    _tabController = TabController(
+      length: pinPuts.length,
+      vsync: this,
+      initialIndex: 1,
+    );
     _tabController!.animation!.addListener(() {
       final focusScope = FocusScope.of(context);
       if (focusScope.hasFocus) {

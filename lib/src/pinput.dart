@@ -84,7 +84,7 @@ class Pinput extends StatefulWidget {
     this.showCursor = true,
     this.isCursorAnimationEnabled = true,
     this.enableIMEPersonalizedLearning = false,
-    this.enableInteractiveSelection = false,
+    this.enableInteractiveSelection,
     this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
@@ -113,6 +113,7 @@ class Pinput extends StatefulWidget {
     this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
+    this.hintLocales,
     Key? key,
   })  : assert(obscuringCharacter.length == 1),
         assert(length > 0),
@@ -167,6 +168,7 @@ class Pinput extends StatefulWidget {
     this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
+    this.hintLocales,
     Key? key,
   })  : assert(length > 0),
         assert(
@@ -340,7 +342,7 @@ class Pinput extends StatefulWidget {
   /// On mobile, consider using SMS auto-fill or [onClipboardFound] callback instead.
   ///
   /// Defaults to false for security and UX reasons.
-  final bool enableInteractiveSelection;
+  final bool? enableInteractiveSelection;
 
   /// If [showCursor] true the focused field will show passed Widget
   final Widget? cursor;
@@ -456,6 +458,9 @@ class Pinput extends StatefulWidget {
   ///
   /// See also: [EditableText.onTapUpOutside].
   final TapRegionUpCallback? onTapUpOutside;
+  
+  /// {@macro flutter.services.TextInputConfiguration.hintLocales}
+  final List<Locale>? hintLocales;
 
   static Widget _defaultContextMenuBuilder(
     BuildContext context,
@@ -490,7 +495,7 @@ class Pinput extends StatefulWidget {
       DiagnosticsProperty<bool>(
         'enableInteractiveSelection',
         enableInteractiveSelection,
-        defaultValue: false,
+        defaultValue: null,
       ),
     );
     properties.add(
@@ -830,6 +835,13 @@ class Pinput extends StatefulWidget {
         'contextMenuBuilder',
         contextMenuBuilder,
         defaultValue: _defaultContextMenuBuilder,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<List<Locale>?>(
+        'hintLocales',
+        hintLocales,
+        defaultValue: null,
       ),
     );
   }

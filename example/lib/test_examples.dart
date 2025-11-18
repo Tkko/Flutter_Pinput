@@ -66,10 +66,7 @@ class _ErrorStateExampleState extends State<ErrorStateExample> {
 
   @override
   Widget build(BuildContext context) {
-    return Pinput(
-      forceErrorState: _hasError,
-      onCompleted: _validate,
-    );
+    return Pinput(forceErrorState: _hasError, onCompleted: _validate);
   }
 }
 

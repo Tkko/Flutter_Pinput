@@ -8,9 +8,9 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
   Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-      };
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+  };
 }
 
 void main() => runApp(const AppView());
@@ -52,8 +52,10 @@ class _AppViewState extends State<AppView> {
           home: const GalleryPage(),
         );
 
-        final shortestSide =
-            min(constraints.maxWidth.abs(), constraints.maxHeight.abs());
+        final shortestSide = min(
+          constraints.maxWidth.abs(),
+          constraints.maxHeight.abs(),
+        );
         if (shortestSide > 600) {
           return Container(
             color: Colors.white,
