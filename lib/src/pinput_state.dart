@@ -357,9 +357,9 @@ class _PinputState extends State<Pinput>
                   onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
                   onFocus: isEnabled
                       ? () {
-                          if (effectiveFocusNode.canRequestFocus &&
-                              !effectiveFocusNode.hasFocus) {
-                            effectiveFocusNode.requestFocus();
+                          if (_effectiveFocusNode.canRequestFocus &&
+                              !_effectiveFocusNode.hasFocus) {
+                            _effectiveFocusNode.requestFocus();
                           } else if (!widget.readOnly) {
                             _requestKeyboard();
                           }
