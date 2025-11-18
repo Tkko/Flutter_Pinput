@@ -61,23 +61,25 @@ class _PinputState extends State<Pinput>
 
   EditableTextState? get _editableText => editableTextKey.currentState;
 
-  int get selectedIndex => pin.length;
+  int get selectedIndex => _currentLength;
 
   String get pin => _effectiveController.text;
 
-  bool get _completed => pin.length == widget.length;
+  bool get _completed => _currentLength == widget.length;
 
   @override
   void initState() {
     super.initState();
-    _gestureDetectorBuilder = _PinputSelectionGestureDetectorBuilder(state: this);
-    if (widget.controller == null) {
+    _gestureDetectorBuilder =
+        _PinputSelectionGestureDetectorBuilder(state: this);
+    if (widget.controller != null) {
+      _recentControllerValue = widget.controller!.value;
+      widget.controller!.addListener(_handleTextEditingControllerChanges);
+    } else {
       _createLocalController();
       _recentControllerValue = TextEditingValue.empty;
-    } else {
-      _recentControllerValue = _effectiveController.value;
-      widget.controller!.addListener(_handleTextEditingControllerChanges);
     }
+
     _effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
     unawaited(_maybeInitSmartAuth());
     unawaited(_maybeCheckClipboard());
@@ -214,20 +216,17 @@ class _PinputState extends State<Pinput>
     }
   }
 
-  void _handleSelectionChanged(TextSelection selection, SelectionChangedCause? cause) {
-    // Only adjust selection if it's beyond the text length
-    // This allows proper backspace behavior
-    final int textLength = pin.length;
-
-    // Don't force selection during keyboard input or deletion
-    if (cause == SelectionChangedCause.keyboard) {
-      // Let EditableText handle cursor positioning during typing/deletion
-      return;
-    }
-
-    // For other causes (tap, drag, etc.), ensure selection is valid
-    if (selection.baseOffset > textLength || selection.extentOffset > textLength) {
-      _effectiveController.selection = TextSelection.collapsed(offset: textLength);
+  void _handleSelectionChanged(
+    TextSelection selection,
+    SelectionChangedCause? cause,
+  ) {
+    // Selecting part of the text is not allowed.
+    final allSelected = selection.start == 0 && selection.end == _currentLength;
+    final lastCharSelected = selection.start == _currentLength - 1 &&
+        selection.end == _currentLength;
+    if (!allSelected && !lastCharSelected) {
+      _effectiveController.selection =
+          TextSelection.collapsed(offset: _currentLength);
     }
 
     switch (Theme.of(context).platform) {
@@ -342,28 +341,46 @@ class _PinputState extends State<Pinput>
       enabled: isEnabled,
       validator: _validator,
       initialValue: _effectiveController.text,
-      builder: (FormFieldState<String> field) => MouseRegion(
-        cursor: _effectiveMouseCursor,
-        onEnter: (PointerEnterEvent event) => _handleHover(true),
-        onExit: (PointerExitEvent event) => _handleHover(false),
-        child: TextFieldTapRegion(
-          child: IgnorePointer(
-            ignoring: !isEnabled || !widget.useNativeKeyboard,
-            child: AnimatedBuilder(
-              animation: _effectiveController,
-              builder: (_, Widget? child) => Semantics(
-                maxValueLength: widget.length,
-                currentValueLength: _currentLength,
-                enabled: isEnabled,
-                onTap: widget.readOnly ? null : _semanticsOnTap,
-                onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
-                child: child,
-              ),
-              child: _gestureDetectorBuilder.buildGestureDetector(
-                behavior: HitTestBehavior.translucent,
-                child: Stack(
-                  alignment: Alignment.topCenter,
-                  children: [_buildEditable(textSelectionControls, field), _buildFields()],
+      builder: (field) {
+        return MouseRegion(
+          cursor: _effectiveMouseCursor,
+          onEnter: (PointerEnterEvent event) => _handleHover(true),
+          onExit: (PointerExitEvent event) => _handleHover(false),
+          child: TextFieldTapRegion(
+            child: IgnorePointer(
+              ignoring: !isEnabled || !widget.useNativeKeyboard,
+              child: AnimatedBuilder(
+                animation: _effectiveController,
+                builder: (_, Widget? child) => Semantics(
+                  maxValueLength: widget.length,
+                  currentValueLength: _currentLength,
+                  enabled: isEnabled,
+                  onTap: widget.readOnly ? null : _semanticsOnTap,
+                  onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
+                  onFocus: isEnabled
+                      ? () {
+                          if (_effectiveFocusNode.canRequestFocus &&
+                              !_effectiveFocusNode.hasFocus) {
+                            _effectiveFocusNode.requestFocus();
+                          } else if (!widget.readOnly) {
+                            _requestKeyboard();
+                          }
+                        }
+                      : null,
+                  child: child,
+                ),
+                child: _gestureDetectorBuilder.buildGestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  child: Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      // the editable need to be the full size, otherwise the focus is not correct when getting the renderbox from the focus
+                      Positioned.fill(
+                        child: _buildEditable(textSelectionControls, field),
+                      ),
+                      _buildFields(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -405,6 +422,7 @@ class _PinputState extends State<Pinput>
             _maybeValidateForm();
           },
           onTapOutside: widget.onTapOutside,
+          onTapUpOutside: widget.onTapUpOutside,
           mouseCursor: MouseCursor.defer,
           focusNode: _effectiveFocusNode,
           textAlign: TextAlign.center,
@@ -425,8 +443,11 @@ class _PinputState extends State<Pinput>
           onSelectionChanged: _handleSelectionChanged,
           onSelectionHandleTapped: _handleSelectionHandleTapped,
           readOnly: widget.readOnly || !isEnabled || !widget.useNativeKeyboard,
-          selectionControls: widget.toolbarEnabled ? textSelectionControls : null,
-          keyboardAppearance: widget.keyboardAppearance ?? Theme.of(context).brightness,
+          selectionControls:
+              widget.toolbarEnabled ? textSelectionControls : null,
+          keyboardAppearance:
+              widget.keyboardAppearance ?? Theme.of(context).brightness,
+          hintLocales: widget.hintLocales,
         ),
       ),
     );
@@ -507,7 +528,10 @@ class _PinputState extends State<Pinput>
   }
 
   @protected
-  bool get showErrorState => hasError && (!hasFocus || widget.forceErrorState);
+  bool get showErrorState {
+    return hasError &&
+        (!hasFocus || widget.showErrorWhenFocused || widget.forceErrorState);
+  }
 
   Widget _buildError() {
     if (showErrorState) {

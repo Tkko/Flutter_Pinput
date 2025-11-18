@@ -104,7 +104,6 @@ class _PinputExampleState extends State<PinputExample> {
               },
               // You can pass your own SmsRetriever implementation based on any package
               // in this example we are using the SmartAuth
-              enableInteractiveSelection: true,
               smsRetriever: smsRetriever,
               controller: pinController,
               focusNode: focusNode,
@@ -162,16 +161,15 @@ class SmsRetrieverImpl implements SmsRetriever {
   final SmartAuth smartAuth;
 
   @override
-  Future<void> dispose() async {
-    await smartAuth.removeUserConsentApiListener();
+  Future<void> dispose() {
+    return smartAuth.removeUserConsentApiListener();
   }
 
   @override
   Future<String?> getSmsCode() async {
+    final signature = await smartAuth.getAppSignature();
+    debugPrint('App Signature: $signature');
     final res = await smartAuth.getSmsWithUserConsentApi();
-    if (res.hasData && res.requireData.code != null) {
-      return res.requireData.code;
-    }
-    return null;
+    return res.data?.code;
   }
 }

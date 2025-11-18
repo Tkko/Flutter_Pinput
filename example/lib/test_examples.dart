@@ -55,7 +55,9 @@ class _ErrorStateExampleState extends State<ErrorStateExample> {
   }
 
   @override
-  Widget build(BuildContext context) => Pinput(forceErrorState: _hasError, onCompleted: _validate);
+  Widget build(BuildContext context) {
+    return Pinput(forceErrorState: _hasError, onCompleted: _validate);
+  }
 }
 
 class HeightExample extends StatelessWidget {

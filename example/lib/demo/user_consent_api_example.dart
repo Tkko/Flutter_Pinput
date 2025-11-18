@@ -8,18 +8,14 @@ class SmsRetrieverImpl implements SmsRetriever {
   final SmartAuth smartAuth;
 
   @override
-  Future<void> dispose() async {
-    await smartAuth.removeUserConsentApiListener();
-    await smartAuth.removeSmsRetrieverApiListener();
+  Future<void> dispose() {
+    return smartAuth.removeUserConsentApiListener();
   }
 
   @override
   Future<String?> getSmsCode() async {
     final res = await smartAuth.getSmsWithUserConsentApi();
-    if (res.hasData && res.requireData.code != null) {
-      return res.requireData.code!;
-    }
-    return null;
+    return res.data?.code;
   }
 }
 
@@ -40,5 +36,7 @@ class _UserConsentApiExampleState extends State<UserConsentApiExample> {
   }
 
   @override
-  Widget build(BuildContext context) => Pinput(smsRetriever: smsRetrieverImpl);
+  Widget build(BuildContext context) {
+    return Pinput(smsRetriever: smsRetrieverImpl);
+  }
 }
