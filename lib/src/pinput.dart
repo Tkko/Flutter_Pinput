@@ -463,7 +463,7 @@ class Pinput extends StatefulWidget {
   ///
   /// See also: [EditableText.onTapUpOutside].
   final TapRegionUpCallback? onTapUpOutside;
-  
+
   /// {@macro flutter.services.TextInputConfiguration.hintLocales}
   final List<Locale>? hintLocales;
 
