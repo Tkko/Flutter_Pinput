@@ -1,5 +1,3 @@
-// ignore_for_file: discarded_futures
-
 part of '../pinput.dart';
 
 class _PinputSelectionGestureDetectorBuilder extends TextSelectionGestureDetectorBuilder {
@@ -41,7 +39,7 @@ class _PinputSelectionGestureDetectorBuilder extends TextSelectionGestureDetecto
         case TargetPlatform.fuchsia:
         case TargetPlatform.linux:
         case TargetPlatform.windows:
-          Feedback.forLongPress(_state.context);
+          unawaited(Feedback.forLongPress(_state.context));
       }
     }
   }

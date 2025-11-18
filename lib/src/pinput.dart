@@ -109,7 +109,7 @@ class Pinput extends StatefulWidget {
     this.validator,
     this.errorBuilder,
     this.errorTextStyle,
-    this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
+    this.pinputAutovalidateMode = PinputAutoValidateMode.onSubmit,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     super.key,
@@ -158,7 +158,7 @@ class Pinput extends StatefulWidget {
     this.mouseCursor,
     this.forceErrorState = false,
     this.validator,
-    this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
+    this.pinputAutovalidateMode = PinputAutoValidateMode.onSubmit,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     super.key,
@@ -404,7 +404,7 @@ class Pinput extends StatefulWidget {
   final FormFieldValidator<String>? validator;
 
   /// Return null if pin is valid or any String otherwise
-  final PinputAutovalidateMode pinputAutovalidateMode;
+  final PinputAutoValidateMode pinputAutovalidateMode;
 
   /// When this widget receives focus and is not completely visible (for example scrolled partially
   /// off the screen or overlapped by the keyboard)
@@ -536,10 +536,10 @@ class Pinput extends StatefulWidget {
       ..add(DiagnosticsProperty<PinputErrorBuilder?>('errorBuilder', errorBuilder, defaultValue: null))
       ..add(DiagnosticsProperty<FormFieldValidator<String>?>('validator', validator, defaultValue: null))
       ..add(
-        DiagnosticsProperty<PinputAutovalidateMode>(
-          'pinputAutovalidateMode',
+        DiagnosticsProperty<PinputAutoValidateMode>(
+          'pinputAutoValidateMode',
           pinputAutovalidateMode,
-          defaultValue: PinputAutovalidateMode.onSubmit,
+          defaultValue: PinputAutoValidateMode.onSubmit,
         ),
       )
       ..add(

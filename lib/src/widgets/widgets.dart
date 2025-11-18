@@ -1,5 +1,3 @@
-// ignore_for_file: discarded_futures
-
 part of '../pinput.dart';
 
 /// Signature for a function that creates a widget for a given index, e.g., in a
@@ -72,19 +70,21 @@ class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor> with Singl
 
   void _startCursorAnimation() {
     _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 450));
+    _animationController.addStatusListener(_statusListener);
+    unawaited(_animationController.forward());
+  }
 
-    _animationController
-      ..addStatusListener((AnimationStatus status) {
-        if (status == AnimationStatus.completed) {
-          _animationController.repeat(reverse: true);
-        }
-      })
-      ..forward();
+  Future<void> _statusListener(AnimationStatus status) async {
+    if (status == AnimationStatus.completed) {
+      await _animationController.repeat(reverse: true);
+    }
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _animationController
+      ..removeStatusListener(_statusListener)
+      ..dispose();
     super.dispose();
   }
 

@@ -137,7 +137,7 @@ class _PinputState extends State<Pinput>
   }
 
   void _maybeValidateForm() {
-    if (widget.pinputAutovalidateMode == PinputAutovalidateMode.onSubmit) {
+    if (widget.pinputAutovalidateMode == PinputAutoValidateMode.onSubmit) {
       _validator();
     }
   }
@@ -204,7 +204,6 @@ class _PinputState extends State<Pinput>
     if (_smsRetriever != null) {
       unawaited(_smsRetriever!.dispose());
     }
-    // https://github.com/Tkko/Flutter_Pinput/issues/89
     _ambiguate(WidgetsBinding.instance)!.removeObserver(this);
     super.dispose();
   }

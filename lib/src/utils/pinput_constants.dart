@@ -5,25 +5,25 @@ final class PinputConstants {
   const PinputConstants._();
 
   /// The default value [Pinput.animationDuration]
-  static const _animationDuration = Duration(milliseconds: 180);
+  static const Duration _animationDuration = Duration(milliseconds: 180);
 
   /// The default value [Pinput.length]
-  static const _defaultLength = 6;
+  static const int _defaultLength = 6;
 
-  static const _defaultSeparator = SizedBox(width: 8);
+  static const SizedBox _defaultSeparator = SizedBox(width: 8);
 
   /// The hidden text under the Pinput
-  static const _hiddenTextStyle = TextStyle(fontSize: 1, height: 1, color: Colors.transparent);
+  static const TextStyle _hiddenTextStyle = TextStyle(fontSize: 1, height: 1, color: Colors.transparent);
 
   ///
-  static const _defaultPinFillColor = Color.fromRGBO(222, 231, 240, .57);
-  static const _defaultPinputDecoration = BoxDecoration(
+  static const Color _defaultPinFillColor = Color.fromRGBO(222, 231, 240, .57);
+  static const BoxDecoration _defaultPinputDecoration = BoxDecoration(
     color: _defaultPinFillColor,
     borderRadius: BorderRadius.all(Radius.circular(8)),
   );
 
   /// The default value [Pinput.defaultPinTheme]
-  static const _defaultPinTheme = PinTheme(
+  static const PinTheme _defaultPinTheme = PinTheme(
     width: 56,
     height: 60,
     textStyle: TextStyle(),
