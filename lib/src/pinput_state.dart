@@ -339,7 +339,7 @@ class _PinputState extends State<Pinput>
       enabled: isEnabled,
       validator: _validator,
       initialValue: _effectiveController.text,
-      builder: (FormFieldState<String> field) {
+      builder: (field) {
         return MouseRegion(
           cursor: _effectiveMouseCursor,
           onEnter: (PointerEnterEvent event) => _handleHover(true),
@@ -372,7 +372,10 @@ class _PinputState extends State<Pinput>
                   child: Stack(
                     alignment: Alignment.topCenter,
                     children: [
-                      _buildEditable(textSelectionControls, field),
+                      // the editable need to be the full size, otherwise the focus is not correct when getting the renderbox from the focus
+                      Positioned.fill(
+                        child: _buildEditable(textSelectionControls, field),
+                      ),
                       _buildFields(),
                     ],
                   ),
@@ -563,7 +566,10 @@ class _PinputState extends State<Pinput>
   }
 
   @protected
-  bool get showErrorState => hasError && (!hasFocus || widget.forceErrorState);
+  bool get showErrorState {
+    return hasError &&
+        ((!hasFocus || (hasFocus && widget.showErrorWhenFocused)) || widget.forceErrorState);
+  }
 
   Widget _buildError() {
     if (showErrorState) {
