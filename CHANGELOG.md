@@ -1,3 +1,8 @@
+#### 5.1.0 ·18/11/2025
+
+- feat: add hintLocales
+- fixed ios deletion [issue](https://github.com/Tkko/Flutter_Pinput/issues/218)
+
 #### 5.0.2 ·01/09/2025
 
 - feat: add enableInteractiveSelection parameter
@@ -33,7 +38,7 @@
 - Replaced `separator` and `separatorPositions` with `separatorBuilder`
 
   | Property | Meaning/Default |
-        |--------------------------|:---------------:|
+          |--------------------------|:---------------:|
   | separatorBuilder | (_) => const SizedBox(width: 8)|
 
 #### 2.3.0 · 24/07/2023
