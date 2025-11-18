@@ -335,7 +335,13 @@ class _PinputState extends State<Pinput>
           newText.substring(firstDiff, firstDiff + insertedLen);
 
       // Map text index to visual start position
-      int visualStart = _getVisualPositionFromText(firstDiff);
+      // If the insertion matches the current cursor position, use it (handles gaps)
+      int visualStart;
+      if (_getCursorPositionInText(_cursorPosition) == firstDiff) {
+        visualStart = _cursorPosition;
+      } else {
+        visualStart = _getVisualPositionFromText(firstDiff);
+      }
 
       if (visualStart < 0) visualStart = 0;
       if (visualStart > _pinValues.length) visualStart = _pinValues.length;
@@ -383,21 +389,40 @@ class _PinputState extends State<Pinput>
       }
     } else if (newText.length < oldText.length) {
       // Character deleted
-      if (_cursorPosition >= 0 && _cursorPosition < _pinValues.length) {
-        if (_pinValues[_cursorPosition] != null) {
-          _pinValues[_cursorPosition] = null;
-        } else if (_cursorPosition > 0 &&
-            _pinValues[_cursorPosition - 1] != null) {
-          _cursorPosition = (_cursorPosition - 1).clamp(0, widget.length - 1);
-          _pinValues[_cursorPosition] = null;
-        }
-
-        // Reset completion flag when characters are deleted
-        if (widget.callOnCompletedOnlyOnUnfocus) {
-          _hasCalledOnCompleted = false;
-        }
-        _updateControllerText();
+      // Calculate the range of characters deleted from oldText
+      int start = 0;
+      while (start < newText.length && oldText[start] == newText[start]) {
+        start++;
       }
+
+      int diffLength = oldText.length - newText.length;
+      int end = start + diffLength;
+
+      // Map text indices to _pinValues indices and clear deleted characters
+      int currentTextIndex = 0;
+      int? firstDeletedVisualIndex;
+
+      for (int i = 0; i < _pinValues.length; i++) {
+        if (_pinValues[i] != null) {
+          if (currentTextIndex >= start && currentTextIndex < end) {
+            _pinValues[i] = null;
+            firstDeletedVisualIndex ??= i;
+          }
+          currentTextIndex++;
+        }
+      }
+
+      if (firstDeletedVisualIndex != null) {
+        _cursorPosition = firstDeletedVisualIndex;
+      } else {
+        _cursorPosition = _getVisualPositionFromText(start);
+      }
+
+      // Reset completion flag when characters are deleted
+      if (widget.callOnCompletedOnlyOnUnfocus) {
+        _hasCalledOnCompleted = false;
+      }
+      _updateControllerText();
       _isReplacing = false;
     } else if (newText.length == oldText.length) {
       // Direct character replacement (same length but different content)
