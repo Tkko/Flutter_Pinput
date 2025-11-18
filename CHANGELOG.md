@@ -1,4 +1,4 @@
-#### 5.1.0 ·18/11/2025
+#### 6.0.0 ·18/11/2025
 
 - feat: add hintLocales
 - fixed ios deletion [issue](https://github.com/Tkko/Flutter_Pinput/issues/218)
