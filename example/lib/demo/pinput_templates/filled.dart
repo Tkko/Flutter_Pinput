@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
 class Filled extends StatefulWidget {
-  const Filled({Key? key}) : super(key: key);
+  const Filled({super.key});
 
   @override
   _FilledState createState() => _FilledState();

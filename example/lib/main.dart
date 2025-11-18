@@ -33,7 +33,7 @@ void main() {
 /// This is the basic usage of Pinput
 /// For more examples check out the demo directory
 class PinputExample extends StatefulWidget {
-  const PinputExample({Key? key}) : super(key: key);
+  const PinputExample({super.key});
 
   @override
   State<PinputExample> createState() => _PinputExampleState();
@@ -58,7 +58,7 @@ class _PinputExampleState extends State<PinputExample> {
     focusNode = FocusNode();
 
     /// In case you need an SMS autofill feature
-    smsRetriever = SmsRetrieverImpl(SmartAuth());
+    smsRetriever = SmsRetrieverImpl(SmartAuth.instance);
   }
 
   @override
@@ -168,18 +168,15 @@ class SmsRetrieverImpl implements SmsRetriever {
 
   @override
   Future<void> dispose() {
-    return smartAuth.removeSmsListener();
+    return smartAuth.removeUserConsentApiListener();
   }
 
   @override
   Future<String?> getSmsCode() async {
     final signature = await smartAuth.getAppSignature();
     debugPrint('App Signature: $signature');
-    final res = await smartAuth.getSmsCode(useUserConsentApi: true);
-    if (res.succeed && res.codeFound) {
-      return res.code!;
-    }
-    return null;
+    final res = await smartAuth.getSmsWithUserConsentApi();
+    return res.data?.code;
   }
 
   @override

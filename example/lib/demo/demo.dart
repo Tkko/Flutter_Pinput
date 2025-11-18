@@ -16,7 +16,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
 void main() => runApp(const AppView());
 
 class AppView extends StatefulWidget {
-  const AppView({Key? key}) : super(key: key);
+  const AppView({super.key});
 
   @override
   State<AppView> createState() => _AppViewState();

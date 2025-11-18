@@ -4,7 +4,7 @@ class AllPinputs extends StatefulWidget {
   final List<Widget> pinPuts;
   final List<List<Color>> colors;
 
-  const AllPinputs(this.pinPuts, this.colors, {Key? key}) : super(key: key);
+  const AllPinputs(this.pinPuts, this.colors, {super.key});
 
   @override
   _AllPinputsState createState() => _AllPinputsState();

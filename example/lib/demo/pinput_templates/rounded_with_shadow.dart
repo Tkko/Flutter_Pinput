@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
 class RoundedWithShadow extends StatefulWidget {
-  const RoundedWithShadow({Key? key}) : super(key: key);
+  const RoundedWithShadow({super.key});
 
   @override
   _RoundedWithShadowState createState() => _RoundedWithShadowState();

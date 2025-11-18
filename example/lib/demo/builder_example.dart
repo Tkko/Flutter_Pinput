@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
 class PinputBuilderExample extends StatefulWidget {
-  const PinputBuilderExample({Key? key}) : super(key: key);
+  const PinputBuilderExample({super.key});
 
   @override
   State<PinputBuilderExample> createState() => _PinputBuilderExampleState();
