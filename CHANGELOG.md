@@ -1,6 +1,12 @@
 #### 6.0.0 ·18/11/2025
 
 - feat: add hintLocales
+- feat: add showErrorWhenFocused [PR](https://github.com/Tkko/Flutter_Pinput/pull/202)
+  by [stefanschaller](https://github.com/stefanschaller)
+- feat: add onTapUpOutside [PR](https://github.com/Tkko/Flutter_Pinput/pull/222)
+  by [ChreSyr](https://github.com/ChreSyr)
+- feat: add onFocus to Semantics widget [PR](https://github.com/Tkko/Flutter_Pinput/pull/214)
+  by [SebastianWaloszek](https://github.com/SebastianWaloszek)
 - fixed ios deletion [issue](https://github.com/Tkko/Flutter_Pinput/issues/218)
 
 #### 5.0.2 ·01/09/2025
