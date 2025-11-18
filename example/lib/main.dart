@@ -102,7 +102,6 @@ class _PinputExampleState extends State<PinputExample> {
             child: Pinput(
               // You can pass your own SmsRetriever implementation based on any package
               // in this example we are using the SmartAuth
-              enableInteractiveSelection: true,
               smsRetriever: smsRetriever,
               controller: pinController,
               focusNode: focusNode,

@@ -65,24 +65,25 @@ class _PinputState extends State<Pinput>
 
   EditableTextState? get _editableText => editableTextKey.currentState;
 
-  int get selectedIndex => pin.length;
+  int get selectedIndex => _currentLength;
 
   String get pin => _effectiveController.text;
 
-  bool get _completed => pin.length == widget.length;
+  bool get _completed => _currentLength == widget.length;
 
   @override
   void initState() {
     super.initState();
     _gestureDetectorBuilder =
         _PinputSelectionGestureDetectorBuilder(state: this);
-    if (widget.controller == null) {
+    if (widget.controller != null) {
+      _recentControllerValue = widget.controller!.value;
+      widget.controller!.addListener(_handleTextEditingControllerChanges);
+    } else {
       _createLocalController();
       _recentControllerValue = TextEditingValue.empty;
-    } else {
-      _recentControllerValue = _effectiveController.value;
-      widget.controller!.addListener(_handleTextEditingControllerChanges);
     }
+
     _effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
     _maybeInitSmartAuth();
     _maybeCheckClipboard();
@@ -210,8 +211,14 @@ class _PinputState extends State<Pinput>
     TextSelection selection,
     SelectionChangedCause? cause,
   ) {
-    _effectiveController.selection =
-        TextSelection.collapsed(offset: pin.length);
+    // Selecting part of the text is not allowed.
+    final allSelected = selection.start == 0 && selection.end == _currentLength;
+    final lastCharSelected = selection.start == _currentLength - 1 &&
+        selection.end == _currentLength;
+    if (!allSelected && !lastCharSelected) {
+      _effectiveController.selection =
+          TextSelection.collapsed(offset: _currentLength);
+    }
 
     switch (Theme.of(context).platform) {
       case TargetPlatform.iOS:
@@ -434,6 +441,7 @@ class _PinputState extends State<Pinput>
               widget.toolbarEnabled ? textSelectionControls : null,
           keyboardAppearance:
               widget.keyboardAppearance ?? Theme.of(context).brightness,
+          hintLocales: widget.hintLocales,
         ),
       ),
     );
