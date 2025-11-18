@@ -83,7 +83,7 @@ class Pinput extends StatefulWidget {
     this.showCursor = true,
     this.isCursorAnimationEnabled = true,
     this.enableIMEPersonalizedLearning = false,
-    this.enableInteractiveSelection = false,
+    this.enableInteractiveSelection = true,
     this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
