@@ -114,7 +114,6 @@ class Pinput extends StatefulWidget {
     this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
-    this.hintLocales,
     Key? key,
   })  : assert(obscuringCharacter.length == 1),
         assert(length > 0),
@@ -170,7 +169,6 @@ class Pinput extends StatefulWidget {
     this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
-    this.hintLocales,
     Key? key,
   })  : assert(length > 0),
         assert(
@@ -463,9 +461,6 @@ class Pinput extends StatefulWidget {
   ///
   /// See also: [EditableText.onTapUpOutside].
   final TapRegionUpCallback? onTapUpOutside;
-
-  /// {@macro flutter.services.TextInputConfiguration.hintLocales}
-  final List<Locale>? hintLocales;
 
   static Widget _defaultContextMenuBuilder(
     BuildContext context,
@@ -840,13 +835,6 @@ class Pinput extends StatefulWidget {
         'contextMenuBuilder',
         contextMenuBuilder,
         defaultValue: _defaultContextMenuBuilder,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<List<Locale>?>(
-        'hintLocales',
-        hintLocales,
-        defaultValue: null,
       ),
     );
   }
