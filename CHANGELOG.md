@@ -1,3 +1,7 @@
+#### 6.0.1 ·25/11/2025
+
+- fix: removed hintLocales [PR](https://github.com/Tkko/Flutter_Pinput/pull/224)
+
 #### 6.0.0 ·18/11/2025
 
 - feat: add hintLocales

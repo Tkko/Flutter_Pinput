@@ -372,7 +372,7 @@ class _PinputState extends State<Pinput>
                   child: Stack(
                     alignment: Alignment.topCenter,
                     children: [
-                      // the editable need to be the full size, otherwise the focus is not correct when getting the renderbox from the focus
+                      // the editable need to be the full size, otherwise the focus is not correct when getting the render box from the focus
                       Positioned.fill(
                         child: _buildEditable(textSelectionControls, field),
                       ),
@@ -455,7 +455,6 @@ class _PinputState extends State<Pinput>
               widget.toolbarEnabled ? textSelectionControls : null,
           keyboardAppearance:
               widget.keyboardAppearance ?? Theme.of(context).brightness,
-          hintLocales: widget.hintLocales,
         ),
       ),
     );
