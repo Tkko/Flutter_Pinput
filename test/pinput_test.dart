@@ -94,8 +94,9 @@ void main() {
     testState(0, disabledTheme);
   });
 
-  testWidgets('Should properly handle focused state',
-      (WidgetTester tester) async {
+  testWidgets('Should properly handle focused state', (
+    WidgetTester tester,
+  ) async {
     final focusNode = FocusNode();
     const defaultTheme = PinTheme(decoration: BoxDecoration());
     final focusedTheme = defaultTheme.copyDecorationWith(color: Colors.red);
@@ -124,20 +125,16 @@ void main() {
   });
 
   testWidgets('Should display custom cursor', (WidgetTester tester) async {
-    await tester.pumpApp(
-      const Pinput(
-        autofocus: true,
-        cursor: FlutterLogo(),
-      ),
-    );
+    await tester.pumpApp(const Pinput(autofocus: true, cursor: FlutterLogo()));
 
     await tester.pump();
     expect(find.byType(FlutterLogo), findsOneWidget);
   });
 
   group('onChanged should work properly', () {
-    testWidgets('onChanged should work with controller',
-        (WidgetTester tester) async {
+    testWidgets('onChanged should work with controller', (
+      WidgetTester tester,
+    ) async {
       String? fieldValue;
       int called = 0;
 
@@ -168,8 +165,9 @@ void main() {
       expect(called, 2);
     });
 
-    testWidgets('onChanged should work with controller',
-        (WidgetTester tester) async {
+    testWidgets('onChanged should work with controller', (
+      WidgetTester tester,
+    ) async {
       String? fieldValue;
       int called = 0;
       final TextEditingController controller = TextEditingController();
@@ -206,8 +204,9 @@ void main() {
   });
 
   group('onCompleted should work properly', () {
-    testWidgets('onCompleted works without controller',
-        (WidgetTester tester) async {
+    testWidgets('onCompleted works without controller', (
+      WidgetTester tester,
+    ) async {
       String? fieldValue;
       int called = 0;
 
@@ -274,11 +273,7 @@ void main() {
   testWidgets('onTap is called upon tap', (WidgetTester tester) async {
     int tapCount = 0;
 
-    await tester.pumpApp(
-      Pinput(
-        onTap: () => ++tapCount,
-      ),
-    );
+    await tester.pumpApp(Pinput(onTap: () => ++tapCount));
 
     expect(tapCount, 0);
     await tester.tap(find.byType(EditableText));
@@ -291,16 +286,12 @@ void main() {
     expect(tapCount, 3);
   });
 
-  testWidgets('onTap is not called, field is disabled',
-      (WidgetTester tester) async {
+  testWidgets('onTap is not called, field is disabled', (
+    WidgetTester tester,
+  ) async {
     int tapCount = 0;
 
-    await tester.pumpApp(
-      Pinput(
-        enabled: false,
-        onTap: () => ++tapCount,
-      ),
-    );
+    await tester.pumpApp(Pinput(enabled: false, onTap: () => ++tapCount));
 
     expect(tapCount, 0);
     await tester.tap(find.byType(EditableText), warnIfMissed: false);
@@ -311,11 +302,7 @@ void main() {
   testWidgets('onLongPress is called', (WidgetTester tester) async {
     int tapCount = 0;
 
-    await tester.pumpApp(
-      Pinput(
-        onLongPress: () => ++tapCount,
-      ),
-    );
+    await tester.pumpApp(Pinput(onLongPress: () => ++tapCount));
 
     expect(tapCount, 0);
     await tester.longPress(find.byType(EditableText));
@@ -331,16 +318,163 @@ void main() {
   testWidgets('onSubmitted callback is called', (WidgetTester tester) async {
     String? fieldValue;
 
-    await tester.pumpApp(
-      Pinput(
-        onSubmitted: (value) => fieldValue = value,
-      ),
-    );
+    await tester.pumpApp(Pinput(onSubmitted: (value) => fieldValue = value));
 
     expect(fieldValue, isNull);
 
     await tester.enterText(find.byType(EditableText), '123');
     await tester.testTextInput.receiveAction(TextInputAction.done);
     expect(fieldValue, equals('123'));
+  });
+
+  group('autovalidateMode should work properly', () {
+    testWidgets(
+      'validator is not called while typing when autovalidateMode is disabled',
+      (WidgetTester tester) async {
+        int validatorCalled = 0;
+
+        await tester.pumpApp(
+          Pinput(
+            length: 4,
+            autovalidateMode: AutovalidateMode.disabled,
+            validator: (value) {
+              validatorCalled++;
+              return value == null || value.length < 4 ? 'error' : null;
+            },
+          ),
+        );
+
+        await tester.enterText(find.byType(EditableText), '12');
+        await tester.pump();
+
+        expect(validatorCalled, 0);
+      },
+    );
+
+    testWidgets(
+      'validator is called on every keystroke with onUserInteraction',
+      (WidgetTester tester) async {
+        int validatorCalled = 0;
+
+        await tester.pumpApp(
+          Pinput(
+            length: 4,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) {
+              validatorCalled++;
+              return value == null || value.length < 4 ? 'error' : null;
+            },
+          ),
+        );
+
+        await tester.enterText(find.byType(EditableText), '1');
+        await tester.pump();
+
+        expect(validatorCalled, greaterThan(0));
+      },
+    );
+
+    testWidgets(
+      'error text is displayed after partial entry with onUserInteraction',
+      (WidgetTester tester) async {
+        const errorMessage = 'PIN must be 4 digits';
+
+        await tester.pumpApp(
+          Pinput(
+            length: 4,
+            autofocus: true,
+            showErrorWhenFocused: true,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) =>
+                (value == null || value.length < 4) ? errorMessage : null,
+          ),
+        );
+
+        await tester.enterText(find.byType(EditableText), '12');
+        // Two pumps needed: first runs FormField validation and the deferred
+        // postFrameCallback, second rebuilds _PinputState with the error text.
+        await tester.pump();
+        await tester.pump();
+
+        expect(find.text(errorMessage), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'error text disappears when PIN becomes valid with onUserInteraction',
+      (WidgetTester tester) async {
+        const errorMessage = 'PIN must be 4 digits';
+
+        await tester.pumpApp(
+          Pinput(
+            length: 4,
+            autofocus: true,
+            showErrorWhenFocused: true,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: (value) =>
+                (value == null || value.length < 4) ? errorMessage : null,
+          ),
+        );
+
+        await tester.enterText(find.byType(EditableText), '12');
+        await tester.pump();
+        await tester.pump();
+        expect(find.text(errorMessage), findsOneWidget);
+
+        await tester.enterText(find.byType(EditableText), '1234');
+        await tester.pump();
+        await tester.pump();
+        expect(find.text(errorMessage), findsNothing);
+      },
+    );
+
+    testWidgets('omitting autovalidateMode preserves legacy behavior', (
+      WidgetTester tester,
+    ) async {
+      int validatorCalled = 0;
+
+      await tester.pumpApp(
+        Pinput(
+          length: 4,
+          validator: (value) {
+            validatorCalled++;
+            return null;
+          },
+        ),
+      );
+
+      await tester.enterText(find.byType(EditableText), '12');
+      await tester.pump();
+
+      expect(validatorCalled, 0);
+    });
+
+    testWidgets('Pinput.builder respects autovalidateMode', (
+      WidgetTester tester,
+    ) async {
+      int validatorCalled = 0;
+
+      await tester.pumpApp(
+        Pinput.builder(
+          length: 4,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (value) {
+            validatorCalled++;
+            return value == null || value.length < 4 ? 'error' : null;
+          },
+          builder: (context, state) => Container(
+            key: ValueKey(state.index),
+            width: 40,
+            height: 40,
+            color: Colors.blue,
+          ),
+        ),
+      );
+
+      await tester.enterText(find.byType(EditableText), '1');
+      await tester.pump();
+
+      expect(validatorCalled, greaterThan(0));
+    });
   });
 }

@@ -10,9 +10,8 @@ class _PinputFormField extends FormField<String> {
     required super.enabled,
     required super.initialValue,
     required super.builder,
-  }) : super(
-          autovalidateMode: AutovalidateMode.disabled,
-        );
+    super.autovalidateMode = AutovalidateMode.disabled,
+  });
 }
 
 class _SeparatedRaw extends StatelessWidget {
@@ -36,10 +35,12 @@ class _SeparatedRaw extends StatelessWidget {
       mainAxisSize: mainAxisAlignment == MainAxisAlignment.center
           ? MainAxisSize.min
           : MainAxisSize.max,
-      children: indexedList.map((index) {
-        final itemIndex = index ~/ 2;
-        return index.isEven ? children[itemIndex] : _separator(itemIndex);
-      }).toList(growable: false),
+      children: indexedList
+          .map((index) {
+            final itemIndex = index ~/ 2;
+            return index.isEven ? children[itemIndex] : _separator(itemIndex);
+          })
+          .toList(growable: false),
     );
   }
 
@@ -61,10 +62,7 @@ class _PinputAnimatedCursor extends StatefulWidget {
   final Widget? cursor;
   final TextStyle? textStyle;
 
-  const _PinputAnimatedCursor({
-    required this.textStyle,
-    required this.cursor,
-  });
+  const _PinputAnimatedCursor({required this.textStyle, required this.cursor});
 
   @override
   State<_PinputAnimatedCursor> createState() => _PinputAnimatedCursorState();
