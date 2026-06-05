@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/scheduler.dart';
 
 part 'pinput_state.dart';
 
@@ -95,9 +96,7 @@ class Pinput extends StatefulWidget {
     this.keyboardAppearance,
     this.inputFormatters = const [],
     this.textInputAction,
-    this.autofillHints = const [
-      AutofillHints.oneTimeCode,
-    ],
+    this.autofillHints = const [AutofillHints.oneTimeCode],
     this.obscuringCharacter = '•',
     this.obscuringWidget,
     this.selectionControls,
@@ -112,16 +111,17 @@ class Pinput extends StatefulWidget {
     this.errorBuilder,
     this.errorTextStyle,
     this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
+    this.autovalidateMode = AutovalidateMode.disabled,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     super.key,
-  })  : assert(obscuringCharacter.length == 1),
-        assert(length > 0),
-        assert(
-          textInputAction != TextInputAction.newline,
-          'Pinput is not multiline',
-        ),
-        _builder = null;
+  }) : assert(obscuringCharacter.length == 1),
+       assert(length > 0),
+       assert(
+         textInputAction != TextInputAction.newline,
+         'Pinput is not multiline',
+       ),
+       _builder = null;
 
   /// Creates a PinPut widget with custom pin item builder
   /// This gives you full control over the pin item widget
@@ -166,38 +166,37 @@ class Pinput extends StatefulWidget {
     this.showErrorWhenFocused = false,
     this.validator,
     this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
+    this.autovalidateMode = AutovalidateMode.disabled,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     super.key,
-  })  : assert(length > 0),
-        assert(
-          textInputAction != TextInputAction.newline,
-          'Pinput is not multiline',
-        ),
-        _builder = _PinItemBuilder(
-          itemBuilder: builder,
-        ),
-        defaultPinTheme = null,
-        focusedPinTheme = null,
-        submittedPinTheme = null,
-        followingPinTheme = null,
-        disabledPinTheme = null,
-        errorPinTheme = null,
-        preFilledWidget = null,
-        pinContentAlignment = Alignment.center,
-        animationCurve = Curves.easeIn,
-        animationDuration = PinputConstants._animationDuration,
-        pinAnimationType = PinAnimationType.scale,
-        obscureText = false,
-        showCursor = false,
-        isCursorAnimationEnabled = false,
-        slideTransitionBeginOffset = null,
-        cursor = null,
-        obscuringCharacter = '•',
-        obscuringWidget = null,
-        errorText = null,
-        errorBuilder = null,
-        errorTextStyle = null;
+  }) : assert(length > 0),
+       assert(
+         textInputAction != TextInputAction.newline,
+         'Pinput is not multiline',
+       ),
+       _builder = _PinItemBuilder(itemBuilder: builder),
+       defaultPinTheme = null,
+       focusedPinTheme = null,
+       submittedPinTheme = null,
+       followingPinTheme = null,
+       disabledPinTheme = null,
+       errorPinTheme = null,
+       preFilledWidget = null,
+       pinContentAlignment = Alignment.center,
+       animationCurve = Curves.easeIn,
+       animationDuration = PinputConstants._animationDuration,
+       pinAnimationType = PinAnimationType.scale,
+       obscureText = false,
+       showCursor = false,
+       isCursorAnimationEnabled = false,
+       slideTransitionBeginOffset = null,
+       cursor = null,
+       obscuringCharacter = '•',
+       obscuringWidget = null,
+       errorText = null,
+       errorBuilder = null,
+       errorTextStyle = null;
 
   /// Theme of the pin in default state
   final PinTheme? defaultPinTheme;
@@ -421,6 +420,13 @@ class Pinput extends StatefulWidget {
   /// Return null if pin is valid or any String otherwise
   final PinputAutovalidateMode pinputAutovalidateMode;
 
+  /// Controls when the [validator] is automatically invoked.
+  ///
+  /// When set to [AutovalidateMode.onUserInteraction], the validator fires on
+  /// every keystroke so errors appear as the user types. Defaults to
+  /// [AutovalidateMode.disabled] to preserve existing behavior.
+  final AutovalidateMode autovalidateMode;
+
   /// When this widget receives focus and is not completely visible (for example scrolled partially
   /// off the screen or overlapped by the keyboard)
   /// then it will attempt to make itself visible by scrolling a surrounding [Scrollable], if one is present.
@@ -538,8 +544,9 @@ class Pinput extends StatefulWidget {
         defaultValue: null,
       ),
     );
-    properties
-        .add(DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true));
+    properties.add(
+      DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true),
+    );
     properties.add(
       DiagnosticsProperty<bool>(
         'closeKeyboardWhenCompleted',
@@ -666,8 +673,9 @@ class Pinput extends StatefulWidget {
         defaultValue: null,
       ),
     );
-    properties
-        .add(DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true));
+    properties.add(
+      DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true),
+    );
     properties.add(
       DiagnosticsProperty<bool>('readOnly', readOnly, defaultValue: false),
     );
@@ -696,11 +704,7 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<bool>(
-        'showCursor',
-        showCursor,
-        defaultValue: true,
-      ),
+      DiagnosticsProperty<bool>('showCursor', showCursor, defaultValue: true),
     );
     properties.add(
       DiagnosticsProperty<String>(
@@ -819,6 +823,13 @@ class Pinput extends StatefulWidget {
         'pinputAutovalidateMode',
         pinputAutovalidateMode,
         defaultValue: PinputAutovalidateMode.onSubmit,
+      ),
+    );
+    properties.add(
+      EnumProperty<AutovalidateMode>(
+        'autovalidateMode',
+        autovalidateMode,
+        defaultValue: AutovalidateMode.disabled,
       ),
     );
     properties.add(
