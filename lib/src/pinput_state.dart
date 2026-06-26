@@ -32,6 +32,7 @@ class _PinputState extends State<Pinput>
   RestorableTextEditingController? _controller;
   FocusNode? _focusNode;
   bool _isHovering = false;
+  bool _isToolbarVisible = false;
   String? _validatorErrorText;
   SmsRetriever? _smsRetriever;
 
@@ -85,6 +86,7 @@ class _PinputState extends State<Pinput>
     }
 
     _effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
+    _effectiveFocusNode.addListener(_handleFocusChange);
     _maybeInitSmartAuth();
     _maybeCheckClipboard();
     // https://github.com/Tkko/Flutter_Pinput/issues/89
@@ -191,6 +193,7 @@ class _PinputState extends State<Pinput>
 
   @override
   void dispose() {
+    _effectiveFocusNode.removeListener(_handleFocusChange);
     widget.controller?.removeListener(_handleTextEditingControllerChanges);
     _controller?.removeListener(_handleTextEditingControllerChanges);
     _controller?.dispose();
@@ -199,6 +202,12 @@ class _PinputState extends State<Pinput>
     // https://github.com/Tkko/Flutter_Pinput/issues/89
     _ambiguate(WidgetsBinding.instance)!.removeObserver(this);
     super.dispose();
+  }
+
+  void _handleFocusChange() {
+    if (!_effectiveFocusNode.hasFocus) {
+      _isToolbarVisible = false;
+    }
   }
 
   void _requestKeyboard() {
@@ -445,7 +454,12 @@ class _PinputState extends State<Pinput>
           backgroundCursorColor: Colors.transparent,
           selectionHeightStyle: BoxHeightStyle.tight,
           enableSuggestions: widget.enableSuggestions,
-          contextMenuBuilder: widget.contextMenuBuilder,
+          contextMenuBuilder: widget.contextMenuBuilder == null
+              ? null
+              : (context, editableTextState) {
+                  _isToolbarVisible = true;
+                  return widget.contextMenuBuilder!(context, editableTextState);
+                },
           obscuringCharacter: widget.obscuringCharacter,
           onAppPrivateCommand: widget.onAppPrivateCommand,
           onSelectionChanged: _handleSelectionChanged,

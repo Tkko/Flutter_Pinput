@@ -79,6 +79,7 @@ class Pinput extends StatefulWidget {
     this.readOnly = false,
     this.useNativeKeyboard = true,
     this.toolbarEnabled = true,
+    this.showToolbarOnTap = false,
     this.autofocus = false,
     this.obscureText = false,
     this.showCursor = true,
@@ -145,6 +146,7 @@ class Pinput extends StatefulWidget {
     this.readOnly = false,
     this.useNativeKeyboard = true,
     this.toolbarEnabled = true,
+    this.showToolbarOnTap = false,
     this.autofocus = false,
     this.enableIMEPersonalizedLearning = false,
     this.enableInteractiveSelection = false,
@@ -318,6 +320,13 @@ class Pinput extends StatefulWidget {
 
   /// If true, paste button will appear on longPress event
   final bool toolbarEnabled;
+
+  /// If true, a single tap on an already-focused Pinput will toggle the context
+  /// menu on iOS, matching the standard [TextField] behavior.
+  ///
+  /// Defaults to false to preserve the existing Pinput behavior.
+  /// Only affects iOS; other platforms are unaffected.
+  final bool showToolbarOnTap;
 
   /// Whether show cursor or not
   /// Default cursor '|' or [cursor]
@@ -693,6 +702,13 @@ class Pinput extends StatefulWidget {
         'toolbarEnabled',
         toolbarEnabled,
         defaultValue: true,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<bool>(
+        'showToolbarOnTap',
+        showToolbarOnTap,
+        defaultValue: false,
       ),
     );
     properties.add(

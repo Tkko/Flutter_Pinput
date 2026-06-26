@@ -291,6 +291,54 @@ void main() {
     expect(tapCount, 3);
   });
 
+  testWidgets(
+    'onSingleTapUp shows context menu on second tap on iOS (already focused)',
+    (WidgetTester tester) async {
+      final focusNode = FocusNode();
+      int tapCount = 0;
+
+      await tester.pumpApp(
+        Pinput(
+          focusNode: focusNode,
+          showToolbarOnTap: true,
+          onTap: () => ++tapCount,
+        ),
+      );
+
+      // First tap: gains focus, no menu
+      await tester.tap(find.byType(EditableText));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(tapCount, 1);
+      expect(focusNode.hasFocus, isTrue);
+
+      // Second tap while focused: onTap is still called
+      await tester.tap(find.byType(EditableText));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(tapCount, 2);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+  );
+
+  testWidgets(
+    'onSingleTapUp on non-iOS still calls onTap',
+    (WidgetTester tester) async {
+      int tapCount = 0;
+
+      await tester.pumpApp(
+        Pinput(
+          onTap: () => ++tapCount,
+        ),
+      );
+
+      await tester.tap(find.byType(EditableText));
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.byType(EditableText));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(tapCount, 2);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
   testWidgets('onTap is not called, field is disabled',
       (WidgetTester tester) async {
     int tapCount = 0;
