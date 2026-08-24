@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:pinput_example/demo/demo.dart';
 import 'package:pinput_example/demo/pages/all_pinputs_page.dart';
 import 'package:pinput_example/demo/pages/otp_page.dart';
