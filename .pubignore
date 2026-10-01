@@ -31,6 +31,8 @@ example/media/*
 .pub-cache/
 .pub/
 example/build/
+.fvm/
+build/
 
 # Web related
 lib/generated_plugin_registrant.dart

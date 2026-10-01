@@ -8,6 +8,13 @@ analyzer:
   exclude:
     - flutter/**
     - lib/api/*.dart
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
   language:
     strict-raw-types: true
 
