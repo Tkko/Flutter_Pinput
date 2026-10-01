@@ -3,8 +3,8 @@ part of '../pinput.dart';
 class _PinputSelectionGestureDetectorBuilder
     extends TextSelectionGestureDetectorBuilder {
   _PinputSelectionGestureDetectorBuilder({required _PinputState state})
-      : _state = state,
-        super(delegate: state);
+    : _state = state,
+      super(delegate: state);
 
   final _PinputState _state;
 

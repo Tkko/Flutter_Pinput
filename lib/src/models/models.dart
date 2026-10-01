@@ -1,10 +1,8 @@
 part of '../pinput.dart';
 
 /// A widget builder that represents a single pin field.
-typedef PinItemWidgetBuilder = Widget Function(
-  BuildContext context,
-  PinItemState pinItemBuilderState,
-);
+typedef PinItemWidgetBuilder =
+    Widget Function(BuildContext context, PinItemState pinItemBuilderState);
 
 /// An enum that represents the state of a pin item.
 enum PinItemStateType {
@@ -47,9 +45,7 @@ class PinItemState {
 }
 
 class _PinItemBuilder {
-  const _PinItemBuilder({
-    required this.itemBuilder,
-  });
+  const _PinItemBuilder({required this.itemBuilder});
 
   final PinItemWidgetBuilder itemBuilder;
 }

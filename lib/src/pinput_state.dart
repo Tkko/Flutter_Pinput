@@ -38,7 +38,8 @@ class _PinputState extends State<Pinput>
   String? get _errorText => widget.errorText ?? _validatorErrorText;
 
   bool get _canRequestFocus {
-    final NavigationMode mode = MediaQuery.maybeOf(context)?.navigationMode ??
+    final NavigationMode mode =
+        MediaQuery.maybeOf(context)?.navigationMode ??
         NavigationMode.traditional;
     switch (mode) {
       case NavigationMode.traditional:
@@ -74,8 +75,9 @@ class _PinputState extends State<Pinput>
   @override
   void initState() {
     super.initState();
-    _gestureDetectorBuilder =
-        _PinputSelectionGestureDetectorBuilder(state: this);
+    _gestureDetectorBuilder = _PinputSelectionGestureDetectorBuilder(
+      state: this,
+    );
     if (widget.controller != null) {
       _recentControllerValue = widget.controller!.value;
       widget.controller!.addListener(_handleTextEditingControllerChanges);
@@ -213,11 +215,13 @@ class _PinputState extends State<Pinput>
   ) {
     // Selecting part of the text is not allowed.
     final allSelected = selection.start == 0 && selection.end == _currentLength;
-    final lastCharSelected = selection.start == _currentLength - 1 &&
+    final lastCharSelected =
+        selection.start == _currentLength - 1 &&
         selection.end == _currentLength;
     if (!allSelected && !lastCharSelected) {
-      _effectiveController.selection =
-          TextSelection.collapsed(offset: _currentLength);
+      _effectiveController.selection = TextSelection.collapsed(
+        offset: _currentLength,
+      );
     }
 
     switch (Theme.of(context).platform) {
@@ -451,8 +455,9 @@ class _PinputState extends State<Pinput>
           onSelectionChanged: _handleSelectionChanged,
           onSelectionHandleTapped: _handleSelectionHandleTapped,
           readOnly: widget.readOnly || !isEnabled || !widget.useNativeKeyboard,
-          selectionControls:
-              widget.toolbarEnabled ? textSelectionControls : null,
+          selectionControls: widget.toolbarEnabled
+              ? textSelectionControls
+              : null,
           keyboardAppearance:
               widget.keyboardAppearance ?? Theme.of(context).brightness,
         ),
@@ -482,8 +487,9 @@ class _PinputState extends State<Pinput>
 
   void _semanticsOnTap() {
     if (!_effectiveController.selection.isValid) {
-      _effectiveController.selection =
-          TextSelection.collapsed(offset: _effectiveController.text.length);
+      _effectiveController.selection = TextSelection.collapsed(
+        offset: _effectiveController.text.length,
+      );
     }
     _requestKeyboard();
   }
@@ -532,9 +538,10 @@ class _PinputState extends State<Pinput>
 
     return Center(
       child: AnimatedBuilder(
-        animation: Listenable.merge(
-          <Listenable>[_effectiveFocusNode, _effectiveController],
-        ),
+        animation: Listenable.merge(<Listenable>[
+          _effectiveFocusNode,
+          _effectiveController,
+        ]),
         builder: (BuildContext context, Widget? child) {
           final shouldHideErrorContent =
               widget.validator == null && widget.errorText == null;
@@ -546,10 +553,7 @@ class _PinputState extends State<Pinput>
             alignment: Alignment.topCenter,
             child: Column(
               crossAxisAlignment: widget.crossAxisAlignment,
-              children: [
-                onlyFields(),
-                _buildError(),
-              ],
+              children: [onlyFields(), _buildError()],
             ),
           );
         },
@@ -582,9 +586,11 @@ class _PinputState extends State<Pinput>
           padding: const EdgeInsetsDirectional.only(start: 4, top: 8),
           child: Text(
             _errorText!,
-            style: widget.errorTextStyle ??
-                theme.textTheme.titleMedium
-                    ?.copyWith(color: theme.colorScheme.error),
+            style:
+                widget.errorTextStyle ??
+                theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.error,
+                ),
           ),
         );
       }
@@ -600,8 +606,9 @@ class _PinputState extends State<Pinput>
 
   @override
   TextInputConfiguration get textInputConfiguration {
-    final List<String>? autofillHints =
-        widget.autofillHints?.toList(growable: false);
+    final List<String>? autofillHints = widget.autofillHints?.toList(
+      growable: false,
+    );
     final AutofillConfiguration autofillConfiguration = autofillHints != null
         ? AutofillConfiguration(
             uniqueIdentifier: autofillId,
@@ -610,7 +617,8 @@ class _PinputState extends State<Pinput>
           )
         : AutofillConfiguration.disabled;
 
-    return _editableText!.textInputConfiguration
-        .copyWith(autofillConfiguration: autofillConfiguration);
+    return _editableText!.textInputConfiguration.copyWith(
+      autofillConfiguration: autofillConfiguration,
+    );
   }
 }

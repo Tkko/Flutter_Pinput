@@ -4,10 +4,7 @@ class _PinItem extends StatelessWidget {
   final _PinputState state;
   final int index;
 
-  const _PinItem({
-    required this.state,
-    required this.index,
-  });
+  const _PinItem({required this.state, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -116,15 +113,9 @@ class _PinItem extends StatelessWidget {
       case PinAnimationType.none:
         return child;
       case PinAnimationType.fade:
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
+        return FadeTransition(opacity: animation, child: child);
       case PinAnimationType.scale:
-        return ScaleTransition(
-          scale: animation,
-          child: child,
-        );
+        return ScaleTransition(scale: animation, child: child);
       case PinAnimationType.slide:
         return SlideTransition(
           position: Tween<Offset>(
@@ -135,10 +126,7 @@ class _PinItem extends StatelessWidget {
           child: child,
         );
       case PinAnimationType.rotation:
-        return RotationTransition(
-          turns: animation,
-          child: child,
-        );
+        return RotationTransition(turns: animation, child: child);
     }
   }
 }

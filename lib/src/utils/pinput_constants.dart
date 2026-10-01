@@ -13,8 +13,11 @@ class PinputConstants {
   static const _defaultSeparator = SizedBox(width: 8);
 
   /// The hidden text under the Pinput
-  static const _hiddenTextStyle =
-      TextStyle(fontSize: 1, height: 1, color: Colors.transparent);
+  static const _hiddenTextStyle = TextStyle(
+    fontSize: 1,
+    height: 1,
+    color: Colors.transparent,
+  );
 
   ///
   static const _defaultPinFillColor = Color.fromRGBO(222, 231, 240, .57);

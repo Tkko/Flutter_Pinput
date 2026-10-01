@@ -95,9 +95,7 @@ class Pinput extends StatefulWidget {
     this.keyboardAppearance,
     this.inputFormatters = const [],
     this.textInputAction,
-    this.autofillHints = const [
-      AutofillHints.oneTimeCode,
-    ],
+    this.autofillHints = const [AutofillHints.oneTimeCode],
     this.obscuringCharacter = '•',
     this.obscuringWidget,
     this.selectionControls,
@@ -115,13 +113,13 @@ class Pinput extends StatefulWidget {
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     super.key,
-  })  : assert(obscuringCharacter.length == 1),
-        assert(length > 0),
-        assert(
-          textInputAction != TextInputAction.newline,
-          'Pinput is not multiline',
-        ),
-        _builder = null;
+  }) : assert(obscuringCharacter.length == 1),
+       assert(length > 0),
+       assert(
+         textInputAction != TextInputAction.newline,
+         'Pinput is not multiline',
+       ),
+       _builder = null;
 
   /// Creates a PinPut widget with custom pin item builder
   /// This gives you full control over the pin item widget
@@ -169,35 +167,33 @@ class Pinput extends StatefulWidget {
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     super.key,
-  })  : assert(length > 0),
-        assert(
-          textInputAction != TextInputAction.newline,
-          'Pinput is not multiline',
-        ),
-        _builder = _PinItemBuilder(
-          itemBuilder: builder,
-        ),
-        defaultPinTheme = null,
-        focusedPinTheme = null,
-        submittedPinTheme = null,
-        followingPinTheme = null,
-        disabledPinTheme = null,
-        errorPinTheme = null,
-        preFilledWidget = null,
-        pinContentAlignment = Alignment.center,
-        animationCurve = Curves.easeIn,
-        animationDuration = PinputConstants._animationDuration,
-        pinAnimationType = PinAnimationType.scale,
-        obscureText = false,
-        showCursor = false,
-        isCursorAnimationEnabled = false,
-        slideTransitionBeginOffset = null,
-        cursor = null,
-        obscuringCharacter = '•',
-        obscuringWidget = null,
-        errorText = null,
-        errorBuilder = null,
-        errorTextStyle = null;
+  }) : assert(length > 0),
+       assert(
+         textInputAction != TextInputAction.newline,
+         'Pinput is not multiline',
+       ),
+       _builder = _PinItemBuilder(itemBuilder: builder),
+       defaultPinTheme = null,
+       focusedPinTheme = null,
+       submittedPinTheme = null,
+       followingPinTheme = null,
+       disabledPinTheme = null,
+       errorPinTheme = null,
+       preFilledWidget = null,
+       pinContentAlignment = Alignment.center,
+       animationCurve = Curves.easeIn,
+       animationDuration = PinputConstants._animationDuration,
+       pinAnimationType = PinAnimationType.scale,
+       obscureText = false,
+       showCursor = false,
+       isCursorAnimationEnabled = false,
+       slideTransitionBeginOffset = null,
+       cursor = null,
+       obscuringCharacter = '•',
+       obscuringWidget = null,
+       errorText = null,
+       errorBuilder = null,
+       errorTextStyle = null;
 
   /// Theme of the pin in default state
   final PinTheme? defaultPinTheme;
@@ -538,8 +534,9 @@ class Pinput extends StatefulWidget {
         defaultValue: null,
       ),
     );
-    properties
-        .add(DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true));
+    properties.add(
+      DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true),
+    );
     properties.add(
       DiagnosticsProperty<bool>(
         'closeKeyboardWhenCompleted',
@@ -666,8 +663,9 @@ class Pinput extends StatefulWidget {
         defaultValue: null,
       ),
     );
-    properties
-        .add(DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true));
+    properties.add(
+      DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true),
+    );
     properties.add(
       DiagnosticsProperty<bool>('readOnly', readOnly, defaultValue: false),
     );
@@ -696,11 +694,7 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<bool>(
-        'showCursor',
-        showCursor,
-        defaultValue: true,
-      ),
+      DiagnosticsProperty<bool>('showCursor', showCursor, defaultValue: true),
     );
     properties.add(
       DiagnosticsProperty<String>(
