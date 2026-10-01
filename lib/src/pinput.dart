@@ -29,7 +29,7 @@ part 'utils/pinput_utils_mixin.dart';
 
 part 'widgets/_pinput_selection_gesture_detector_builder.dart';
 
-/// Flutter package to create easily customizable Pin code input field, that your designers can't even draw in Figma 🤭
+/// Flutter package to create easily customizable Pin code input field.
 ///
 /// ## Features:
 /// - Animated Decoration Switching
