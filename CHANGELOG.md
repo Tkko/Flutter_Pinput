@@ -1,3 +1,15 @@
+#### 7.0.0 · 24/08/2026
+
+- **BREAKING**: migrated from `package:flutter/material.dart` to [`material_ui`](https://pub.dev/packages/material_ui).
+  Material was decoupled from the Flutter SDK; the in-SDK copy is frozen and scheduled for removal
+  ([flutter/flutter#184093](https://github.com/flutter/flutter/issues/184093),
+  [flutter/flutter#172942](https://github.com/flutter/flutter/issues/172942)).
+- Fixes "No Material widget found" on Flutter 3.47 for apps using `material_ui`
+  ([#237](https://github.com/Tkko/Flutter_Pinput/issues/237)) — `debugCheckHasMaterial` matches the ancestor by exact
+  type, so a `material_ui` `Scaffold` never satisfied the legacy check.
+- **BREAKING**: requires Flutter >= 3.44.0 and Dart >= 3.12.0 (the floor `material_ui` declares). Apps still on
+  `package:flutter/material.dart` should stay on 6.x.
+
 #### 6.0.2 · 4/01/2026
 
 - Added Prelude.so sponsorship badge
