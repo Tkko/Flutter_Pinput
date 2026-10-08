@@ -18,8 +18,25 @@ class _PinputSelectionGestureDetectorBuilder
 
   @override
   void onSingleTapUp(details) {
-    super.onSingleTapUp(details);
-    editableText.hideToolbar();
+    // pinput's _handleSelectionChanged forcibly rewrites the selection on every
+    // tap, so the framework's toggleToolbar logic (which compares previousSelection
+    // == currentSelection) always falls into hideToolbar instead of toggling.
+    // We bypass super and manually implement the iOS toggle behavior.
+    if (delegate.selectionEnabled &&
+        _state.widget.showToolbarOnTap &&
+        defaultTargetPlatform == TargetPlatform.iOS &&
+        _state._effectiveFocusNode.hasFocus) {
+      if (_state._isToolbarVisible) {
+        _state._isToolbarVisible = false;
+        editableText.hideToolbar(false);
+      } else {
+        // toggleToolbar creates _selectionOverlay if null, which showToolbar() alone cannot.
+        editableText.toggleToolbar(false);
+      }
+    } else {
+      super.onSingleTapUp(details);
+      editableText.hideToolbar();
+    }
     _state._requestKeyboard();
     _state.widget.onTap?.call();
   }
