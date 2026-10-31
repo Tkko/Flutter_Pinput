@@ -1,0 +1,52 @@
+name: create release
+description: Execute create release steps
+inputs:
+  dry_run:
+    description: Dry run (validate tests and pubspec without creating tag/release)
+    required: false
+    default: 'false'
+  release-tag:
+    description: release tag
+    required: true
+  release-sha:
+    description: release sha
+    required: true
+  publish-workflow:
+    description: Publishing workflow file to dispatch on the validated tag; empty
+      disables publishing
+    required: false
+    default: publish.yml
+runs:
+  using: composite
+  steps:
+  - name: Dry run exit
+    if: "${{ inputs.dry_run == 'true' }}"
+    env:
+      TAG: "${{ inputs.release-tag }}"
+    run: |
+      echo "Dry run successful. Tag $TAG is valid and ready to be created."
+      exit 0
+    shell: bash
+  - name: Create GitHub Release and Tag
+    if: "${{ inputs.dry_run != 'true' }}"
+    env:
+      GH_TOKEN: "${{ github.token }}"
+      TAG: "${{ inputs.release-tag }}"
+      TARGET_COMMIT: "${{ inputs.release-sha }}"
+    run: |
+      gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" \
+        -f ref="refs/tags/$TAG" \
+        -f sha="$TARGET_COMMIT"
+      gh release create "$TAG" \
+        --verify-tag \
+        --title "$TAG" \
+        --generate-notes
+    shell: bash
+  - name: Dispatch publishing on the release tag
+    if: "${{ inputs.dry_run != 'true' && inputs.publish-workflow != '' }}"
+    env:
+      GH_TOKEN: "${{ github.token }}"
+      TAG: "${{ inputs.release-tag }}"
+      PUBLISH_WORKFLOW: "${{ inputs.publish-workflow }}"
+    run: gh workflow run "$PUBLISH_WORKFLOW" --ref "$TAG"
+    shell: bash

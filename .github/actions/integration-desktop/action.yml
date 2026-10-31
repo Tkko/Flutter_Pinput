@@ -1,0 +1,45 @@
+name: Run desktop integration tests
+description: Run Flutter integration tests and upload failure diagnostics on desktop
+inputs:
+  integration-test-working-directory:
+    description: Directory containing the integration test Flutter app
+    required: false
+    default: example
+  integration-test-target:
+    description: Target test file path relative to integration-test-working-directory
+    required: false
+    default: integration_test/app_test.dart
+  platform:
+    description: Desktop platform (macos or windows)
+    required: true
+  flutter-channel:
+    description: Flutter SDK channel
+    required: false
+    default: stable
+  flutter-version:
+    description: Flutter SDK version
+    required: false
+    default: 3.47.8
+runs:
+  using: composite
+  steps:
+  - name: Set up Flutter package
+    uses: "./.github/workflow-actions/.github/actions/setup-flutter"
+    with:
+      flutter-channel: "${{ inputs.flutter-channel }}"
+      flutter-version: "${{ inputs.flutter-version }}"
+      working-directory: "${{ inputs.integration-test-working-directory }}"
+  - name: Run Desktop Integration Tests
+    shell: bash
+    run: flutter test ${{ inputs.integration-test-target }} -d "${{ inputs.platform
+      }}" --reporter expanded --verbose 2>&1 | tee "$RUNNER_TEMP/${{ inputs.platform
+      }}-tests.log"
+    working-directory: "${{ inputs.integration-test-working-directory }}"
+  - name: Upload failure diagnostics
+    if: "${{ failure() }}"
+    uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+    with:
+      name: "${{ inputs.platform }}-test-diagnostics"
+      path: "${{ runner.temp }}/${{ inputs.platform }}-tests.log"
+      retention-days: 7
+      if-no-files-found: warn

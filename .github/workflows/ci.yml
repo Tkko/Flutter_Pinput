@@ -5,14 +5,246 @@ on:
     branches:
       - master
   pull_request:
+  workflow_dispatch:
+    inputs:
+      full-matrix:
+        description: 'Also run Android, iOS, and macOS integration tests'
+        type: boolean
+        default: true
+      include-windows:
+        description: 'Also run Windows integration tests'
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
 
 jobs:
-  ci:
+  changes:
+    name: Detect Integration Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       contents: read
-    uses: ./.github/workflows/reusable-test.yml
-    with:
-      run-integration-tests: ${{ github.base_ref == 'master' || github.ref == 'refs/heads/master' }}
+      pull-requests: read
+    outputs:
+      integration: ${{ steps.filter.outputs.integration }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dorny/paths-filter@15192bc058cc28a13dbf6cde61f19e18988b7af6 # v3
+        id: filter
+        with:
+          predicate-quantifier: every
+          filters: |
+            integration:
+              - '**'
+              - '!**/*.md'
+              - '!docs/**'
+              - '!LICENSE'
+
+  test:
+    name: Test & Analyze
+    needs: changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Checkout shared actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: .github/workflow-actions
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: ./.github/workflow-actions/.github/actions/validate-package
+        with:
+          run-publish-dry-run: ${{ github.event_name == 'workflow_dispatch' }}
+          run-pana: ${{ github.event_name == 'workflow_dispatch' }}
+
+  integration-web:
+    name: Integration Tests (Web Chrome)
+    needs: changes
+    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.integration == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Checkout shared actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: .github/workflow-actions
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: ./.github/workflow-actions/.github/actions/integration-web
+
+  integration-linux:
+    name: Integration Tests (Linux)
+    needs: changes
+    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.integration == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Checkout shared actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: .github/workflow-actions
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: ./.github/workflow-actions/.github/actions/integration-linux
+
+  integration-android:
+    name: Integration Tests (Android Emulator)
+    needs: changes
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.full-matrix }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Checkout shared actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: .github/workflow-actions
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: ./.github/workflow-actions/.github/actions/integration-android
+
+  integration-ios:
+    name: Integration Tests (iOS Simulator)
+    needs: changes
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.full-matrix }}
+    runs-on: macos-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Checkout shared actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: .github/workflow-actions
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: ./.github/workflow-actions/.github/actions/integration-ios
+
+  integration-desktop:
+    name: Integration Tests (${{ matrix.platform }})
+    needs: changes
+    if: ${{ github.event_name == 'workflow_dispatch' && (inputs.full-matrix || inputs.include-windows) }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ${{ fromJSON(inputs.full-matrix && inputs.include-windows && '["macos","windows"]' || inputs.full-matrix && '["macos"]' || '["windows"]') }}
+    runs-on: ${{ format('{0}-latest', matrix.platform) }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Checkout shared actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: .github/workflow-actions
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: ./.github/workflow-actions/.github/actions/integration-desktop
+        with:
+          platform: ${{ matrix.platform }}
+
+  required:
+    name: CI required
+    needs: [changes, test, integration-web, integration-linux, integration-android, integration-ios, integration-desktop]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - name: Check required jobs
+        env:
+          JOB_RESULTS: ${{ toJSON(needs) }}
+          RUN_WEB_LINUX: ${{ github.event_name != 'pull_request' || needs.changes.outputs.integration == 'true' }}
+          RUN_MOBILE: ${{ github.event_name == 'workflow_dispatch' && inputs.full-matrix }}
+          RUN_DESKTOP: ${{ github.event_name == 'workflow_dispatch' && (inputs.full-matrix || inputs.include-windows) }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import sys
+
+          expected = {"changes": "success", "test": "success"}
+          for jobs, toggle in [
+              (["integration-web", "integration-linux"], "RUN_WEB_LINUX"),
+              (["integration-android", "integration-ios"], "RUN_MOBILE"),
+              (["integration-desktop"], "RUN_DESKTOP"),
+          ]:
+              expected.update(dict.fromkeys(jobs, "success" if os.environ[toggle] == "true" else "skipped"))
+          results = json.loads(os.environ["JOB_RESULTS"])
+          failed = False
+          for job, status in expected.items():
+              actual = results[job]["result"]
+              if actual != status:
+                  print(f"::error::{job}: expected {status}, got {actual}")
+                  failed = True
+          sys.exit(1 if failed else 0)
+          PY
+
+  demo-build:
+    name: Build Web Demo
+    needs: required
+    if: ${{ !cancelled() && needs.required.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - name: Checkout shared actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: .github/workflow-actions
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: ./.github/workflow-actions/.github/actions/build-pages-demo
+
+  demo-deploy:
+    name: Deploy Web Demo
+    needs: demo-build
+    if: ${{ !cancelled() && needs.demo-build.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page-url }}
+    steps:
+      - name: Checkout shared actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: .github/workflow-actions
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - id: deployment
+        uses: ./.github/workflow-actions/.github/actions/deploy-pages-demo
