@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pinput/pinput.dart';
 
@@ -329,6 +330,142 @@ void main() {
   });
 
   group('Edge cases / regressions', () {
+    testWidgets('Typing beyond a full PIN does not overwrite its last digit', (
+      WidgetTester tester,
+    ) async {
+      final controller = TextEditingController(text: '1234');
+      await tester.pumpApp(
+        Pinput(
+          controller: controller,
+          length: 4,
+          closeKeyboardWhenCompleted: false,
+        ),
+      );
+      await tester.tap(find.byType(AnimatedContainer).last);
+      await tester.pump();
+      controller.selection = const TextSelection.collapsed(offset: 4);
+      await tester.pump();
+
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: '12349',
+          selection: TextSelection.collapsed(offset: 5),
+        ),
+      );
+      await tester.pump();
+
+      expect(controller.text, '1234');
+      expect(controller.selection.baseOffset, 4);
+    });
+
+    testWidgets('A shorter whole-value replacement is not a slot deletion', (
+      WidgetTester tester,
+    ) async {
+      final controller = TextEditingController(text: '1234');
+      await tester.pumpApp(
+        Pinput(
+          controller: controller,
+          length: 4,
+          closeKeyboardWhenCompleted: false,
+        ),
+      );
+      await tester.tap(find.byType(AnimatedContainer).at(2));
+      await tester.pump();
+
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: '98',
+          selection: TextSelection.collapsed(offset: 2),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(controller.text, '98');
+      expect(controller.selection.baseOffset, 2);
+      expect(find.text('9'), findsOneWidget);
+      expect(find.text('8'), findsOneWidget);
+      expect(find.text('4'), findsNothing);
+    });
+
+    testWidgets('Active IME composition is preserved until commit', (
+      WidgetTester tester,
+    ) async {
+      final controller = TextEditingController();
+      await tester.pumpApp(
+        Pinput(
+          controller: controller,
+          length: 4,
+          closeKeyboardWhenCompleted: false,
+        ),
+      );
+      await tester.tap(find.byType(AnimatedContainer).first);
+      await tester.pump();
+
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: 'a',
+          selection: TextSelection.collapsed(offset: 1),
+          composing: TextRange(start: 0, end: 1),
+        ),
+      );
+      await tester.pump();
+      expect(controller.value.composing, const TextRange(start: 0, end: 1));
+
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: 'a',
+          selection: TextSelection.collapsed(offset: 1),
+        ),
+      );
+      await tester.pump(const Duration(seconds: 1));
+      expect(controller.text, 'a');
+      expect(controller.value.composing, TextRange.empty);
+      expect(
+        find.descendant(
+          of: find.byType(AnimatedContainer).first,
+          matching: find.text('a'),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    for (final mode in PinEditMode.values) {
+      testWidgets('UTF-16 selection offsets remain valid in $mode', (
+        WidgetTester tester,
+      ) async {
+        final controller = TextEditingController();
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            length: 4,
+            pinEditMode: mode,
+            closeKeyboardWhenCompleted: false,
+          ),
+        );
+        await tester.tap(find.byType(AnimatedContainer).first);
+        await tester.pump();
+        const text = '😀';
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: text,
+            selection: TextSelection.collapsed(offset: text.length),
+          ),
+        );
+        await tester.pump(const Duration(seconds: 1));
+
+        expect(controller.text, text);
+        expect(controller.selection.baseOffset, text.length);
+        expect(
+          find.descendant(
+            of: find.byType(AnimatedContainer).first,
+            matching: find.text(text),
+          ),
+          findsOneWidget,
+        );
+      });
+    }
+
     testWidgets(
       'Whole-value replacement (autofill) is not treated as an insertion',
       (WidgetTester tester) async {
@@ -429,7 +566,7 @@ void main() {
 
         tester.testTextInput.updateEditingValue(
           const TextEditingValue(
-            text: '91234',
+            text: '9234',
             selection: TextSelection.collapsed(offset: 1),
           ),
         );
@@ -472,6 +609,100 @@ void main() {
   });
 
   group('Selection edge cases', () {
+    for (final mode in [PinEditMode.overwrite, PinEditMode.clearFollowing]) {
+      testWidgets('Typing follows arrow-key navigation in $mode', (
+        WidgetTester tester,
+      ) async {
+        final controller = TextEditingController(text: '1234');
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            length: 4,
+            pinEditMode: mode,
+            closeKeyboardWhenCompleted: false,
+          ),
+        );
+        await tester.tap(find.byType(AnimatedContainer).at(2));
+        await tester.pump();
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+        await tester.pump();
+        expect(controller.selection.baseOffset, 1);
+
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '19234',
+            selection: TextSelection.collapsed(offset: 2),
+          ),
+        );
+        await tester.pump();
+
+        expect(controller.text, mode == PinEditMode.overwrite ? '1934' : '19');
+        expect(controller.selection.baseOffset, 2);
+      });
+
+      testWidgets('Deletion follows controller selection changes in $mode', (
+        WidgetTester tester,
+      ) async {
+        final controller = TextEditingController(text: '1234');
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            length: 4,
+            pinEditMode: mode,
+            closeKeyboardWhenCompleted: false,
+          ),
+        );
+        await tester.tap(find.byType(AnimatedContainer).at(3));
+        await tester.pump();
+        controller.selection = const TextSelection.collapsed(offset: 1);
+        await tester.pump();
+
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '234',
+            selection: TextSelection.collapsed(offset: 0),
+          ),
+        );
+        await tester.pump();
+
+        expect(controller.text, mode == PinEditMode.overwrite ? '134' : '1');
+        expect(controller.selection.baseOffset, 1);
+      });
+    }
+
+    testWidgets('Typing replaces a backwards selection from its leading edge', (
+      WidgetTester tester,
+    ) async {
+      final controller = TextEditingController(text: '1234');
+      await tester.pumpApp(
+        Pinput(
+          controller: controller,
+          length: 4,
+          enableInteractiveSelection: true,
+          closeKeyboardWhenCompleted: false,
+        ),
+      );
+      await tester.tap(find.byType(AnimatedContainer).at(3));
+      await tester.pump();
+      controller.selection = const TextSelection(
+        baseOffset: 3,
+        extentOffset: 1,
+      );
+      await tester.pump();
+
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: '194',
+          selection: TextSelection.collapsed(offset: 2),
+        ),
+      );
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(controller.text, '194');
+      expect(controller.selection.baseOffset, 2);
+      expect(find.text('9'), findsOneWidget);
+    });
+
     testWidgets('Range selection uses its leading edge, even when backwards', (
       WidgetTester tester,
     ) async {
@@ -552,6 +783,330 @@ void main() {
 
       // Selection must remain clamped to the end (4)
       expect(controller.selection.baseOffset, equals(4));
+    });
+  });
+
+  group('Mid-pin deletion (Backspace)', () {
+    testWidgets('A physical backspace key deletes the first tapped digit', (
+      tester,
+    ) async {
+      final controller = TextEditingController(text: '1234');
+      await tester.pumpApp(
+        Pinput(controller: controller, closeKeyboardWhenCompleted: false),
+      );
+      await tester.tap(find.byType(AnimatedContainer).first);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.backspace);
+      await tester.pump();
+
+      expect(controller.text, '234');
+      expect(controller.selection.baseOffset, 0);
+    });
+
+    testWidgets('A filled pin following a gap remains independently editable', (
+      tester,
+    ) async {
+      final controller = TextEditingController(text: '1234');
+      await tester.pumpApp(
+        Pinput(
+          controller: controller,
+          closeKeyboardWhenCompleted: false,
+          isCursorAnimationEnabled: false,
+          cursor: const SizedBox(key: ValueKey('active-cursor')),
+        ),
+      );
+      final containers = find.byType(AnimatedContainer);
+      await tester.tap(containers.at(1));
+      await tester.pump();
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: '234',
+          selection: TextSelection.collapsed(offset: 0),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      expect(controller.text, '134');
+
+      await tester.tap(containers.at(2));
+      await tester.pump();
+      expect(
+        find.descendant(
+          of: containers.at(2),
+          matching: find.byKey(const ValueKey('active-cursor')),
+        ),
+        findsOneWidget,
+      );
+      tester.testTextInput.updateEditingValue(
+        const TextEditingValue(
+          text: '1934',
+          selection: TextSelection.collapsed(offset: 2),
+        ),
+      );
+      await tester.pump();
+      expect(controller.text, '194');
+    });
+
+    for (final mode in [PinEditMode.overwrite, PinEditMode.clearFollowing]) {
+      testWidgets('Backspace can delete a selected first pin in $mode', (
+        tester,
+      ) async {
+        final controller = TextEditingController(text: '1234');
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            pinEditMode: mode,
+            closeKeyboardWhenCompleted: false,
+          ),
+        );
+        await tester.tap(find.byType(AnimatedContainer).first);
+        await tester.pump();
+        expect(
+          controller.selection,
+          const TextSelection(baseOffset: 0, extentOffset: 1),
+        );
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '234',
+            selection: TextSelection.collapsed(offset: 0),
+          ),
+        );
+        await tester.pump();
+        expect(controller.text, mode == PinEditMode.overwrite ? '234' : '');
+        expect(controller.selection.baseOffset, 0);
+      });
+    }
+
+    testWidgets(
+      'Refilling a gap preserves following pins and completes at end',
+      (WidgetTester tester) async {
+        final controller = TextEditingController(text: '1234');
+        var completed = 0;
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            length: 4,
+            closeKeyboardWhenCompleted: false,
+            onCompleted: (_) => completed++,
+          ),
+        );
+        await tester.tap(find.byType(AnimatedContainer).at(2));
+        await tester.pump();
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '134',
+            selection: TextSelection.collapsed(offset: 1),
+          ),
+        );
+        await tester.pump();
+
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '1294',
+            selection: TextSelection.collapsed(offset: 3),
+          ),
+        );
+        await tester.pump();
+        expect(controller.text, '1294');
+        expect(controller.selection.baseOffset, 3);
+        expect(completed, 0);
+
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '12984',
+            selection: TextSelection.collapsed(offset: 4),
+          ),
+        );
+        await tester.pump();
+        expect(controller.text, '1298');
+        expect(completed, 1);
+      },
+    );
+
+    testWidgets(
+      'Repeated backspace removes the digit preceding an empty slot',
+      (WidgetTester tester) async {
+        final controller = TextEditingController(text: '1234');
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            length: 4,
+            closeKeyboardWhenCompleted: false,
+          ),
+        );
+        final containers = find.byType(AnimatedContainer);
+        await tester.tap(containers.at(2));
+        await tester.pump();
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '134',
+            selection: TextSelection.collapsed(offset: 1),
+          ),
+        );
+        await tester.pump();
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '14',
+            selection: TextSelection.collapsed(offset: 1),
+          ),
+        );
+        await tester.pump(const Duration(seconds: 1));
+
+        expect(controller.text, '14');
+        expect(controller.selection.baseOffset, 1);
+        expect(
+          find.descendant(of: containers.at(3), matching: find.text('4')),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'Tapping a middle pin and pressing backspace deletes that pin and leaves following pins in place',
+      (WidgetTester tester) async {
+        final controller = TextEditingController(text: '1234');
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            length: 4,
+            pinEditMode: PinEditMode.overwrite,
+          ),
+        );
+
+        // Tap index 2 (which holds '3')
+        final containers = find.byType(AnimatedContainer);
+        await tester.tap(containers.at(2));
+        await tester.pump();
+        expect(controller.selection.baseOffset, equals(2));
+
+        // When user hits backspace at offset 2, platform sends '134' with offset 1
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '134',
+            selection: TextSelection.collapsed(offset: 1),
+          ),
+        );
+        await tester.pump(const Duration(seconds: 1));
+        await tester.pump(const Duration(seconds: 1));
+
+        // '3' is deleted, '4' remains in box 3, result has '124' with cursor at box 2
+        expect(controller.text, equals('124'));
+        expect(controller.selection.baseOffset, equals(2));
+        expect(
+          find.descendant(of: containers.at(0), matching: find.text('1')),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(of: containers.at(1), matching: find.text('2')),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(of: containers.at(2), matching: find.text('3')),
+          findsNothing,
+        );
+        expect(
+          find.descendant(of: containers.at(2), matching: find.text('4')),
+          findsNothing,
+        );
+        expect(
+          find.descendant(of: containers.at(3), matching: find.text('4')),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'Tapping a middle pin in clearFollowing mode and pressing backspace clears that pin and following pins',
+      (WidgetTester tester) async {
+        final controller = TextEditingController(text: '1234');
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            length: 4,
+            pinEditMode: PinEditMode.clearFollowing,
+          ),
+        );
+
+        // Tap index 2 (which holds '3')
+        final containers = find.byType(AnimatedContainer);
+        await tester.tap(containers.at(2));
+        await tester.pump();
+        expect(controller.selection.baseOffset, equals(2));
+
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '134',
+            selection: TextSelection.collapsed(offset: 1),
+          ),
+        );
+        await tester.pump(const Duration(seconds: 1));
+        await tester.pump(const Duration(seconds: 1));
+
+        // '3' and '4' are cleared, result is '12'
+        expect(controller.text, equals('12'));
+        expect(controller.selection.baseOffset, equals(2));
+      },
+    );
+  });
+
+  group('Slot synchronization', () {
+    testWidgets('Restores internally controlled text and its displayed pins', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpApp(
+        const RootRestorationScope(
+          restorationId: 'app',
+          child: Pinput(
+            restorationId: 'pin',
+            length: 4,
+            closeKeyboardWhenCompleted: false,
+          ),
+        ),
+      );
+      await tester.enterText(find.byType(EditableText), '123');
+      await tester.pump();
+      await tester.restartAndRestore();
+      await tester.pump(const Duration(seconds: 1));
+
+      final controller = tester
+          .widget<EditableText>(find.byType(EditableText))
+          .controller;
+      expect(controller.text, '123');
+      for (final digit in ['1', '2', '3']) {
+        expect(find.text(digit), findsOneWidget);
+      }
+    });
+
+    testWidgets('Retains internally controlled input when length changes', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpApp(const Pinput(length: 4));
+      tester.widget<EditableText>(find.byType(EditableText)).controller.text =
+          '1234';
+      await tester.pump();
+
+      await tester.pumpApp(const Pinput(length: 6));
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+      expect(find.text('3'), findsOneWidget);
+      expect(find.text('4'), findsOneWidget);
+    });
+
+    testWidgets('Retains input when switching to an internal controller', (
+      WidgetTester tester,
+    ) async {
+      final controller = TextEditingController(text: '1234');
+      await tester.pumpApp(Pinput(controller: controller, length: 4));
+
+      await tester.pumpApp(const Pinput(length: 4));
+      await tester.pump();
+
+      expect(find.text('1'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+      expect(find.text('3'), findsOneWidget);
+      expect(find.text('4'), findsOneWidget);
     });
   });
 }

@@ -100,9 +100,14 @@ typedef PinputErrorBuilder = Widget Function(String? errorText, String pin);
 /// How editing previous pins behaves when tapping on a filled pin slot.
 ///
 /// Notes that apply to [overwrite] and [clearFollowing]:
-/// - Pressing backspace in the middle removes that digit and shifts the
-///   following digits one slot to the left (a PIN is a contiguous string, so a
-///   slot cannot be left empty).
+/// - Pressing backspace removes the focused digit. [overwrite] leaves following
+///   digits in their original slots; [clearFollowing] also removes them.
+///   Backspace on an empty slot removes the preceding digit.
+/// - Replacing or deleting a range selection uses native text editing semantics;
+///   the resulting text is displayed in contiguous slots.
+/// - Tapping the first filled slot selects its digit so native keyboards can
+///   delete it with backspace at the start of the input. This tap-created
+///   selection retains the selected edit mode's slot behavior.
 /// - [Pinput.onCompleted] (and closing the keyboard with
 ///   [Pinput.closeKeyboardWhenCompleted]) only happens when the PIN is full and
 ///   the cursor is at the end. Editing a middle pin of a full PIN with

@@ -18,6 +18,40 @@ void main() {
     expect(find.byType(Text), findsNWidgets(length));
   });
 
+  testWidgets('Separators retain their indices and order', (
+    WidgetTester tester,
+  ) async {
+    final indices = <int>[];
+    await tester.pumpApp(
+      Pinput.builder(
+        length: 4,
+        builder: (_, item) => Text('pin-${item.index}'),
+        separatorBuilder: (index) {
+          indices.add(index);
+          return Text('separator-$index');
+        },
+      ),
+    );
+
+    expect(indices, [0, 1, 2]);
+    expect(
+      tester
+          .widgetList<Text>(
+            find.descendant(of: find.byType(Row), matching: find.byType(Text)),
+          )
+          .map((text) => text.data),
+      [
+        'pin-0',
+        'separator-0',
+        'pin-1',
+        'separator-1',
+        'pin-2',
+        'separator-2',
+        'pin-3',
+      ],
+    );
+  });
+
   testWidgets('Should properly handle states', (WidgetTester tester) async {
     const length = 4;
     final focusNode = FocusNode();

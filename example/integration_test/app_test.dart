@@ -226,6 +226,61 @@ void main() {
       );
 
       testWidgets(
+        'PinEditMode.overwrite: tap box 3 (digit 3) and backspace deletes digit 3 (not 2)',
+        (tester) async {
+          final controller = TextEditingController(text: '1234');
+
+          await tester.pumpWidget(
+            buildTestHarness(
+              Pinput(
+                key: const ValueKey('pinput_del_mid'),
+                length: 4,
+                controller: controller,
+                pinEditMode: PinEditMode.overwrite,
+                defaultPinTheme: defaultTheme,
+                isCursorAnimationEnabled: false,
+              ),
+            ),
+          );
+          await pumpFrames(tester);
+
+          // Tap index 2 (box 3, holding '3')
+          final pinItems = find.byType(AnimatedContainer);
+          await tester.tap(pinItems.at(2));
+          await pumpFrames(tester);
+          expect(controller.selection.baseOffset, 2);
+
+          // User hits backspace: platform deletes character before caret, sending '134'
+          await tester.enterText(find.byType(EditableText), '134');
+          await pumpFrames(tester);
+
+          // Intercepted: digit '3' deleted, '4' stays in box 3 (slot 3), and box 2 is empty pin
+          expect(controller.text, '124');
+          expect(controller.selection.baseOffset, 2);
+          expect(
+            find.descendant(of: pinItems.at(0), matching: find.text('1')),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(of: pinItems.at(1), matching: find.text('2')),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(of: pinItems.at(2), matching: find.text('3')),
+            findsNothing,
+          );
+          expect(
+            find.descendant(of: pinItems.at(2), matching: find.text('4')),
+            findsNothing,
+          );
+          expect(
+            find.descendant(of: pinItems.at(3), matching: find.text('4')),
+            findsOneWidget,
+          );
+        },
+      );
+
+      testWidgets(
         'PinEditMode.clearFollowing: editing middle pin truncates following pins',
         (tester) async {
           final controller = TextEditingController(text: '1234');
@@ -250,7 +305,8 @@ void main() {
           await tester.tap(pinItems.at(1));
           await pumpFrames(tester);
 
-          await tester.enterText(find.byType(EditableText), '17');
+          // Type '7' into slot 1 (keyboard sends '17234' with cursor at 2)
+          await tester.enterText(find.byType(EditableText), '17234');
           await pumpFrames(tester);
 
           expect(controller.text, '17');

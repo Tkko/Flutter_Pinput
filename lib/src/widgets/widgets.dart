@@ -36,20 +36,18 @@ class _SeparatedRaw extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itemCount = max(0, children.length * 2 - 1);
-    final indexedList = [for (int i = 0; i < itemCount; i += 1) i];
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: mainAxisAlignment,
       mainAxisSize: mainAxisAlignment == MainAxisAlignment.center
           ? MainAxisSize.min
           : MainAxisSize.max,
-      children: indexedList
-          .map((index) {
-            final itemIndex = index ~/ 2;
-            return index.isEven ? children[itemIndex] : _separator(itemIndex);
-          })
-          .toList(growable: false),
+      children: [
+        for (var index = 0; index < children.length; index++) ...[
+          if (index > 0) _separator(index - 1),
+          children[index],
+        ],
+      ],
     );
   }
 
@@ -131,11 +129,11 @@ class _PinputDefaultContextMenu extends StatelessWidget {
   final TextSelectionToolbarAnchors anchors;
   final List<ContextMenuButtonItem> buttonItems;
 
-  static String _getLabel(BuildContext context, ContextMenuButtonItem item) {
+  static String _getLabel(
+    WidgetsLocalizations localizations,
+    ContextMenuButtonItem item,
+  ) {
     if (item.label != null) return item.label!;
-    final localizations =
-        Localizations.of<WidgetsLocalizations>(context, WidgetsLocalizations) ??
-        const DefaultWidgetsLocalizations();
     return switch (item.type) {
       ContextMenuButtonType.cut => localizations.cutButtonLabel,
       ContextMenuButtonType.copy => localizations.copyButtonLabel,
@@ -157,8 +155,12 @@ class _PinputDefaultContextMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations =
+        Localizations.of<WidgetsLocalizations>(context, WidgetsLocalizations) ??
+        const DefaultWidgetsLocalizations();
     final visibleItems = buttonItems
-        .where((item) => _getLabel(context, item).isNotEmpty)
+        .map((item) => (item: item, label: _getLabel(localizations, item)))
+        .where((entry) => entry.label.isNotEmpty)
         .toList(growable: false);
     if (visibleItems.isEmpty) {
       return const SizedBox.shrink();
@@ -211,11 +213,11 @@ class _PinputDefaultContextMenu extends StatelessWidget {
               runSpacing: 2,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                for (final item in visibleItems)
+                for (final entry in visibleItems)
                   _PinputContextMenuButton(
-                    label: _getLabel(context, item),
+                    label: entry.label,
                     textColor: foregroundColor,
-                    onPressed: item.onPressed,
+                    onPressed: entry.item.onPressed,
                   ),
               ],
             ),

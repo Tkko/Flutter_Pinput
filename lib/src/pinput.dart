@@ -332,6 +332,8 @@ class Pinput extends StatefulWidget {
   /// - [PinEditMode.clearFollowing]: Tapping a previous pin focuses that slot. Typing replaces
   ///   the digit and clears all following pins (lazy clear on edit).
   /// - [PinEditMode.none]: Editing previous pins is disabled; cursor is locked to the end of the input (legacy behavior).
+  /// The first filled slot is selected on tap to make native backspace possible
+  /// at the start of the input. Other slots use a collapsed cursor.
   final PinEditMode pinEditMode;
 
   /// Whether to enable that the IME update personalized data such as typing history and user dictionary data.

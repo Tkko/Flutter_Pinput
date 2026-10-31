@@ -1,75 +1,86 @@
 part of '../pinput.dart';
 
 class _PinOverwriteTextInputFormatter extends TextInputFormatter {
-  final int maxLength;
-  final PinEditMode mode;
-  const _PinOverwriteTextInputFormatter(this.maxLength, this.mode);
+  final _PinputState state;
+  const _PinOverwriteTextInputFormatter(this.state);
 
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    if (mode == PinEditMode.none) return newValue;
+    // Range selections use native replacement semantics, not slot deletion.
+    if (state.widget.pinEditMode == PinEditMode.none ||
+        (newValue.composing.isValid && !newValue.composing.isCollapsed)) {
+      return newValue;
+    }
 
     final oldText = oldValue.text;
     final newText = newValue.text;
+    final length = state.widget.length;
+    final activeSlot = state.selectedIndex;
 
-    // Only handle insertions when text length has increased.
-    if (newText.length > oldText.length && oldValue.selection.isCollapsed) {
-      final insertIndex = oldValue.selection.baseOffset;
-      if (insertIndex >= 0 && insertIndex < oldText.length) {
-        final diff = newText.length - oldText.length;
-        final oldPrefix = oldText.substring(0, insertIndex);
-        final oldSuffix = oldText.substring(insertIndex);
-
-        // Only treat the update as a typed/pasted insertion at the cursor.
-        // Whole-value replacements (e.g. OTP autofill) must pass through untouched.
-        if (!newText.startsWith(oldPrefix) || !newText.endsWith(oldSuffix)) {
-          return newValue;
-        }
-        final insertedChars = newText.substring(
-          insertIndex,
-          insertIndex + diff,
-        );
-
-        // If user pasted a full code (>= maxLength), replace entire text from beginning.
-        if (insertedChars.characters.length >= maxLength) {
-          final clamped = insertedChars.characters.take(maxLength).string;
-          return TextEditingValue(
-            text: clamped,
-            selection: TextSelection.collapsed(offset: clamped.length),
-          );
-        }
-
-        final prefix = oldPrefix;
-
-        if (mode == PinEditMode.clearFollowing) {
-          // Truncate all characters after insertIndex.
-          final combined = prefix + insertedChars;
-          final clamped = combined.characters.length > maxLength
-              ? combined.characters.take(maxLength).string
-              : combined;
-          return TextEditingValue(
-            text: clamped,
-            selection: TextSelection.collapsed(offset: clamped.length),
-          );
-        }
-
-        // In-place overwrite starting at insertIndex.
-        final suffixStart = min(insertIndex + diff, oldText.length);
-        final suffix = oldText.substring(suffixStart);
-        final combinedAll = prefix + insertedChars + suffix;
-        final clamped = combinedAll.characters.length > maxLength
-            ? combinedAll.characters.take(maxLength).string
-            : combinedAll;
-
-        final newOffset = min(insertIndex + diff, clamped.length);
-        return TextEditingValue(
-          text: clamped,
-          selection: TextSelection.collapsed(offset: newOffset),
-        );
+    if (!oldValue.selection.isCollapsed) {
+      if (!state._hasPinTapSelection || oldText == newText) return newValue;
+      final start = oldValue.selection.start;
+      final prefix = oldText.substring(0, start);
+      final suffix = oldText.substring(oldValue.selection.end);
+      if (!newText.startsWith(prefix) ||
+          !newText.endsWith(suffix) ||
+          newText.length < prefix.length + suffix.length) {
+        return state._replacePinText(newText);
       }
+      final inserted = newText.substring(start, newText.length - suffix.length);
+      if (inserted.isEmpty) return state._deletePinAt(activeSlot);
+      if (inserted.characters.length >= length) {
+        return state._replacePinText(inserted);
+      }
+      return state._insertPinText(inserted, activeSlot);
+    }
+
+    if (newText.length > oldText.length) {
+      final diff = newText.length - oldText.length;
+      final insertOffset = oldValue.selection.start.clamp(0, oldText.length);
+      final oldPrefix = oldText.substring(0, insertOffset);
+      final oldSuffix = oldText.substring(insertOffset);
+
+      // Whole-value replacement (e.g. OTP autofill)
+      if (!newText.startsWith(oldPrefix) || !newText.endsWith(oldSuffix)) {
+        return state._replacePinText(newText);
+      }
+
+      final insertedChars = newText.substring(
+        insertOffset,
+        insertOffset + diff,
+      );
+      // Full paste (>= length): replace entire input from beginning.
+      if (insertedChars.characters.length >= length) {
+        return state._replacePinText(insertedChars);
+      }
+
+      return state._insertPinText(insertedChars, activeSlot);
+    }
+
+    if (newText.length < oldText.length) {
+      if (newText.isEmpty) {
+        state._syncSlotsFromExternalText('');
+        return TextEditingValue.empty;
+      }
+      // Only reinterpret a single-character deletion adjacent to the caret.
+      // Autofill and IMEs can replace the whole value with shorter text.
+      final offset = oldValue.selection.start.clamp(0, oldText.length);
+      final previous = oldText.substring(0, offset).characters;
+      final following = oldText.substring(offset).characters;
+      final backspaceText = previous.isEmpty
+          ? null
+          : previous.take(previous.length - 1).string + following.string;
+      final deleteText = following.isEmpty
+          ? null
+          : previous.string + following.skip(1).string;
+      if (newText != backspaceText && newText != deleteText) {
+        return state._replacePinText(newText);
+      }
+      return state._deletePinAt(activeSlot);
     }
 
     return newValue;

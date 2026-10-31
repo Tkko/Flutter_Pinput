@@ -10,67 +10,51 @@ class _PinItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final pinTheme = _pinTheme(index);
 
-    final item = AnimatedContainer(
-      height: pinTheme.height,
-      width: pinTheme.width,
-      constraints: pinTheme.constraints,
-      padding: pinTheme.padding,
-      margin: pinTheme.margin,
-      decoration: pinTheme.decoration,
-      alignment: state.widget.pinContentAlignment,
-      duration: state.widget.animationDuration,
-      curve: state.widget.animationCurve,
-      child: AnimatedSwitcher(
-        switchInCurve: state.widget.animationCurve,
-        switchOutCurve: state.widget.animationCurve,
-        duration: state.widget.animationDuration,
-        transitionBuilder: _getTransition,
-        child: _buildFieldContent(index, pinTheme),
-      ),
-    );
-
-    return Flexible(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        excludeFromSemantics: true,
-        onTap: () => state._onPinTap(index),
-        child: item,
+    return state._wrapWithPinTap(
+      index,
+      Flexible(
+        child: AnimatedContainer(
+          height: pinTheme.height,
+          width: pinTheme.width,
+          constraints: pinTheme.constraints,
+          padding: pinTheme.padding,
+          margin: pinTheme.margin,
+          decoration: pinTheme.decoration,
+          alignment: state.widget.pinContentAlignment,
+          duration: state.widget.animationDuration,
+          curve: state.widget.animationCurve,
+          child: AnimatedSwitcher(
+            switchInCurve: state.widget.animationCurve,
+            switchOutCurve: state.widget.animationCurve,
+            duration: state.widget.animationDuration,
+            transitionBuilder: _getTransition,
+            child: _buildFieldContent(index, pinTheme),
+          ),
+        ),
       ),
     );
   }
 
   PinTheme _pinTheme(int index) {
-    final pintState = state._getState(index);
-    switch (pintState) {
-      case PinItemStateType.initial:
-        return _getDefaultPinTheme();
-      case PinItemStateType.focused:
-        return _pinThemeOrDefault(state.widget.focusedPinTheme);
-      case PinItemStateType.submitted:
-        return _pinThemeOrDefault(state.widget.submittedPinTheme);
-      case PinItemStateType.following:
-        return _pinThemeOrDefault(state.widget.followingPinTheme);
-      case PinItemStateType.disabled:
-        return _pinThemeOrDefault(state.widget.disabledPinTheme);
-      case PinItemStateType.error:
-        return _pinThemeOrDefault(state.widget.errorPinTheme);
-    }
+    final theme = switch (state._getState(index)) {
+      PinItemStateType.initial => null,
+      PinItemStateType.focused => state.widget.focusedPinTheme,
+      PinItemStateType.submitted => state.widget.submittedPinTheme,
+      PinItemStateType.following => state.widget.followingPinTheme,
+      PinItemStateType.disabled => state.widget.disabledPinTheme,
+      PinItemStateType.error => state.widget.errorPinTheme,
+    };
+    return theme ??
+        state.widget.defaultPinTheme ??
+        PinputConstants._defaultPinTheme;
   }
 
-  PinTheme _getDefaultPinTheme() =>
-      state.widget.defaultPinTheme ?? PinputConstants._defaultPinTheme;
-
-  PinTheme _pinThemeOrDefault(PinTheme? theme) =>
-      theme ?? _getDefaultPinTheme();
-
   Widget _buildFieldContent(int index, PinTheme pinTheme) {
-    final pin = state.pin;
-    final key = ValueKey<String>(index < pin.length ? pin[index] : '');
-    final isSubmittedPin = index < pin.length;
+    final char = state._slotValue(index);
+    final key = ValueKey<String>('$index-$char');
+    final isSubmittedPin = char.isNotEmpty;
 
-    final isActiveField = state.widget.pinEditMode != PinEditMode.none
-        ? index == state.selectedIndex
-        : index == pin.length;
+    final isActiveField = index == state.selectedIndex;
     final focused =
         state._effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
     final shouldShowCursor =
@@ -85,9 +69,7 @@ class _PinItem extends StatelessWidget {
         );
       } else {
         characterWidget = Text(
-          state.widget.obscureText
-              ? state.widget.obscuringCharacter
-              : pin[index],
+          state.widget.obscureText ? state.widget.obscuringCharacter : char,
           key: key,
           style: pinTheme.textStyle,
         );
