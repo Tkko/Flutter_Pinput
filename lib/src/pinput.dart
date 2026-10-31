@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
-import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
@@ -343,7 +342,7 @@ class Pinput extends StatefulWidget {
 
   /// The appearance of the keyboard.
   /// This setting is only honored on iOS devices.
-  /// If unset, defaults to [ThemeData.brightness].
+  /// If unset, defaults to system brightness.
   final Brightness? keyboardAppearance;
 
   /// See [EditableText.inputFormatters]
@@ -425,11 +424,11 @@ class Pinput extends StatefulWidget {
 
   /// {@macro flutter.widgets.EditableText.contextMenuBuilder}
   ///
-  /// If not provided, will build a default menu based on the platform.
+  /// If not provided, builds a decoupled default menu with actions like Paste,
+  /// Copy, Cut, and Select All.
   ///
-  /// See also:
-  ///
-  ///  * [AdaptiveTextSelectionToolbar], which is built by default.
+  /// To use the platform's native Material or Cupertino context menu, pass
+  /// `AdaptiveTextSelectionToolbar.editableText(editableTextState: editableTextState)`.
   final EditableTextContextMenuBuilder? contextMenuBuilder;
 
   /// A callback to be invoked when a tap is detected outside of this [TapRegion]
@@ -460,8 +459,9 @@ class Pinput extends StatefulWidget {
     BuildContext context,
     EditableTextState editableTextState,
   ) {
-    return AdaptiveTextSelectionToolbar.editableText(
-      editableTextState: editableTextState,
+    return _PinputDefaultContextMenu(
+      anchors: editableTextState.contextMenuAnchors,
+      buttonItems: editableTextState.contextMenuButtonItems,
     );
   }
 

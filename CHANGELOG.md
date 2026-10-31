@@ -1,3 +1,23 @@
+#### 8.0.0 · 30/10/2026
+
+- **BREAKING**: Decoupled Pinput completely from `material_ui`, `cupertino_ui`, and `package:flutter/material.dart` ([#240](https://github.com/Tkko/Flutter_Pinput/issues/240)).
+  - Pinput now depends purely on `package:flutter/widgets.dart` with zero 3rd-party UI dependencies.
+  - Resolves "No Material widget found" assertion crash on Flutter Web (DDC) and in apps using standard `package:flutter/material.dart` ([#240](https://github.com/Tkko/Flutter_Pinput/issues/240)).
+  - Works seamlessly across all design systems: `package:flutter/material.dart`, `material_ui`, `cupertino`, `cupertino_ui`, Shadcn, or headless `WidgetsApp`.
+- **BREAKING (Context Menu)**: The default context menu is now a design-system-agnostic, lightweight toolbar.
+  - If you want to use your design system's native adaptive context menu, you can pass `contextMenuBuilder`:
+    ```dart
+    Pinput(
+      contextMenuBuilder: (context, editableTextState) {
+        return AdaptiveTextSelectionToolbar.editableText(
+          editableTextState: editableTextState,
+        );
+      },
+    )
+    ```
+- Removed decorative `debugCheckHasMaterial` and `debugCheckHasMaterialLocalizations` assertions.
+- Migrated internally from deprecated `MaterialStateProperty` to `WidgetStateProperty`.
+
 #### 7.0.0 · 24/08/2026
 
 - **BREAKING**: migrated from `package:flutter/material.dart` to [`material_ui`](https://pub.dev/packages/material_ui).

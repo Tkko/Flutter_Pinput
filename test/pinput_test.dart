@@ -1,8 +1,12 @@
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pinput/pinput.dart';
 
 import 'helpers/helpers.dart';
+
+const _red = Color(0xFFFF0000);
+const _greenAccent = Color(0xFF69F0AE);
 
 void main() {
   testWidgets('Pins are displayed', (WidgetTester tester) async {
@@ -17,21 +21,21 @@ void main() {
   testWidgets('Should properly handle states', (WidgetTester tester) async {
     const length = 4;
     final focusNode = FocusNode();
-    const defaultTheme = PinTheme(decoration: BoxDecoration(color: Colors.red));
+    const defaultTheme = PinTheme(decoration: BoxDecoration(color: _red));
     final focusedTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withValues(alpha: .9),
+      color: _greenAccent.withValues(alpha: .9),
     );
     final submittedTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withValues(alpha: .8),
+      color: _greenAccent.withValues(alpha: .8),
     );
     final followingTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withValues(alpha: .7),
+      color: _greenAccent.withValues(alpha: .7),
     );
     final disabledTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withValues(alpha: .6),
+      color: _greenAccent.withValues(alpha: .6),
     );
     final errorTheme = defaultTheme.copyDecorationWith(
-      color: Colors.greenAccent.withValues(alpha: .5),
+      color: _greenAccent.withValues(alpha: .5),
     );
 
     await tester.pumpApp(
@@ -99,7 +103,7 @@ void main() {
   ) async {
     final focusNode = FocusNode();
     const defaultTheme = PinTheme(decoration: BoxDecoration());
-    final focusedTheme = defaultTheme.copyDecorationWith(color: Colors.red);
+    final focusedTheme = defaultTheme.copyDecorationWith(color: _red);
     await tester.pumpApp(
       Pinput(
         focusNode: focusNode,
@@ -325,5 +329,38 @@ void main() {
     await tester.enterText(find.byType(EditableText), '123');
     await tester.testTextInput.receiveAction(TextInputAction.done);
     expect(fieldValue, equals('123'));
+  });
+
+  testWidgets('Context menu renders with decoupled default toolbar', (
+    WidgetTester tester,
+  ) async {
+    final controller = TextEditingController(text: '1234');
+    await tester.pumpApp(
+      Pinput(
+        controller: controller,
+        length: 4,
+        toolbarEnabled: true,
+        enableInteractiveSelection: true,
+      ),
+    );
+
+    // Focus the field
+    await tester.tap(find.byType(EditableText));
+    await tester.pump();
+
+    // Select text to make toolbar options (Copy, Cut, etc.) available
+    controller.selection = const TextSelection(baseOffset: 0, extentOffset: 4);
+    await tester.pump();
+
+    final editableTextState = tester.state<EditableTextState>(
+      find.byType(EditableText),
+    );
+    editableTextState.toggleToolbar();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // The decoupled toolbar displays contextual buttons (e.g. Copy, Cut, Select All)
+    expect(find.text('Copy'), findsOneWidget);
+    final copyText = tester.widget<Text>(find.text('Copy'));
+    expect(copyText.style?.decoration, equals(TextDecoration.none));
   });
 }
