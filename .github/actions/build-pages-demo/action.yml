@@ -28,7 +28,7 @@ runs:
   - name: Build demo
     env:
       BASE_PATH: "${{ steps.pages.outputs.base_path }}"
-    run: flutter build web --release --base-href="$BASE_PATH/"
+    run: flutter build web --release --target=lib/demo/demo.dart --base-href="$BASE_PATH/"
     working-directory: "${{ inputs.working-directory }}"
     shell: bash
   - name: Upload Pages artifact

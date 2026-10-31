@@ -64,9 +64,9 @@ Don't forget to give it a star ⭐
 
 ## Demo
 
-| [Live Demo](https://rebrand.ly/6390b8) | Rounded With Shadows | Rounded With Cursor |
+| [Live Demo](https://tkko.github.io/Flutter_Pinput/) | Rounded With Shadows | Rounded With Cursor |
 | - | - | - |
-| <a href="https://rebrand.ly/6390b8"><img width="300" src="https://user-images.githubusercontent.com/26390946/155666045-aa93bf48-f8e7-407c-bb19-bc247d9e12bd.png"/></a> | <img width="300" src="https://user-images.githubusercontent.com/26390946/155599527-fe934f2c-5124-4754-bbf6-bb97d55a77c0.gif"/> | <img width="300" src="https://user-images.githubusercontent.com/26390946/155599870-03387689-7be2-4a30-8e6f-90136a0515be.gif"/> |
+| <a href="https://tkko.github.io/Flutter_Pinput/"><img width="300" src="https://user-images.githubusercontent.com/26390946/155666045-aa93bf48-f8e7-407c-bb19-bc247d9e12bd.png"/></a> | <img width="300" src="https://user-images.githubusercontent.com/26390946/155599527-fe934f2c-5124-4754-bbf6-bb97d55a77c0.gif"/> | <img width="300" src="https://user-images.githubusercontent.com/26390946/155599870-03387689-7be2-4a30-8e6f-90136a0515be.gif"/> |
 
 | Rounded Filled | With Bottom Cursor | Filled |
 | - | - | - |
