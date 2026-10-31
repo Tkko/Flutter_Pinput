@@ -94,7 +94,3 @@ runs:
       print(f"Validated {tag} at {sha}")
       PY
     shell: bash
-  - name: Remove shared action checkout
-    if: "${{ always() }}"
-    shell: bash
-    run: rm -r -- .github/workflow-actions

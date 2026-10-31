@@ -59,6 +59,7 @@ jobs:
           ref: ${{ github.sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/validate-package
         with:
@@ -79,6 +80,7 @@ jobs:
           ref: ${{ github.sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-web
 
@@ -96,6 +98,7 @@ jobs:
           ref: ${{ github.sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-linux
 
@@ -113,10 +116,9 @@ jobs:
           ref: ${{ github.sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-android
-        with:
-          cleanup-shared-checkout: 'true'
 
   integration-ios:
     name: Integration Tests (iOS Simulator)
@@ -132,6 +134,7 @@ jobs:
           ref: ${{ github.sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-ios
 
@@ -153,6 +156,7 @@ jobs:
           ref: ${{ github.sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-desktop
         with:
@@ -213,6 +217,7 @@ jobs:
           ref: ${{ github.sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/build-pages-demo
 
@@ -239,6 +244,7 @@ jobs:
           ref: ${{ github.sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - id: deployment
         uses: ./.github/workflow-actions/.github/actions/deploy-pages-demo

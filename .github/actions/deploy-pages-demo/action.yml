@@ -10,7 +10,3 @@ runs:
   - name: Deploy Pages artifact
     id: deployment
     uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e
-  - name: Remove shared action checkout
-    if: "${{ always() }}"
-    shell: bash
-    run: rm -r -- .github/workflow-actions

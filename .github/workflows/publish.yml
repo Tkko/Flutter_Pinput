@@ -32,6 +32,7 @@ jobs:
           ref: ${{ github.sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - id: metadata
         uses: ./.github/workflow-actions/.github/actions/release-metadata
@@ -53,6 +54,7 @@ jobs:
           ref: ${{ github.sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/validate-package
         with:
@@ -79,5 +81,6 @@ jobs:
           ref: ${{ github.sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/publish-package

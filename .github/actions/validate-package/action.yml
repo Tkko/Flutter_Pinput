@@ -42,9 +42,6 @@ runs:
       flutter-channel: "${{ inputs.flutter-channel }}"
       flutter-version: "${{ inputs.flutter-version }}"
       working-directory: "${{ inputs.working-directory }}"
-  - name: Remove shared action checkout
-    shell: bash
-    run: rm -r -- .github/workflow-actions
   - name: Verify formatting
     if: "${{ inputs.run-format == 'true' }}"
     run: dart format --output=none --set-exit-if-changed .

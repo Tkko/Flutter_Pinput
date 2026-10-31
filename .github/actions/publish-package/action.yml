@@ -26,9 +26,6 @@ runs:
       flutter-channel: "${{ inputs.flutter-channel }}"
       flutter-version: "${{ inputs.flutter-version }}"
       working-directory: "${{ inputs.working-directory }}"
-  - name: Remove shared action checkout
-    shell: bash
-    run: rm -r -- .github/workflow-actions
   - name: Publish dry run
     run: flutter pub publish --dry-run
     working-directory: "${{ inputs.working-directory }}"
