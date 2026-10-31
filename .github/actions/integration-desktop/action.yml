@@ -31,9 +31,10 @@ runs:
       working-directory: "${{ inputs.integration-test-working-directory }}"
   - name: Run Desktop Integration Tests
     shell: bash
-    run: flutter test ${{ inputs.integration-test-target }} -d "${{ inputs.platform
-      }}" --reporter expanded --verbose 2>&1 | tee "$RUNNER_TEMP/${{ inputs.platform
-      }}-tests.log"
+    env:
+      INTEGRATION_TEST_TARGET: ${{ inputs.integration-test-target }}
+      PLATFORM: ${{ inputs.platform }}
+    run: flutter test "$INTEGRATION_TEST_TARGET" -d "$PLATFORM" --reporter expanded --verbose 2>&1 | tee "$RUNNER_TEMP/$PLATFORM-tests.log"
     working-directory: "${{ inputs.integration-test-working-directory }}"
   - name: Upload failure diagnostics
     if: "${{ failure() }}"

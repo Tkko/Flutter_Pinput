@@ -4,6 +4,20 @@ on:
   push:
     branches:
       - master
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Directory containing the Flutter demo app
+        type: string
+        default: example
+      flutter-channel:
+        description: Flutter SDK channel
+        type: string
+        default: stable
+      flutter-version:
+        description: Flutter SDK version
+        type: string
+        default: 3.47.8
 
 concurrency:
   group: github-pages
@@ -22,15 +36,22 @@ jobs:
       pages: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/build-pages-demo
+        with:
+          working-directory: ${{ inputs.working-directory || 'example' }}
+          flutter-channel: ${{ inputs.flutter-channel || 'stable' }}
+          flutter-version: ${{ inputs.flutter-version || '3.47.8' }}
 
   deploy:
     name: Deploy Web Demo
@@ -48,7 +69,8 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false

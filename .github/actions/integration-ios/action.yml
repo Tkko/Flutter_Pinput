@@ -40,8 +40,9 @@ runs:
       echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
   - name: Run iOS Simulator Integration Tests
     shell: bash
-    run: flutter test ${{ inputs.integration-test-target }} -d "$SIMULATOR_UDID" --reporter
-      expanded --verbose 2>&1 | tee "$RUNNER_TEMP/ios-tests.log"
+    env:
+      INTEGRATION_TEST_TARGET: ${{ inputs.integration-test-target }}
+    run: flutter test "$INTEGRATION_TEST_TARGET" -d "$SIMULATOR_UDID" --reporter expanded --verbose 2>&1 | tee "$RUNNER_TEMP/ios-tests.log"
     working-directory: "${{ inputs.integration-test-working-directory }}"
   - name: Capture simulator failure screenshot
     if: "${{ failure() && env.SIMULATOR_UDID != '' }}"

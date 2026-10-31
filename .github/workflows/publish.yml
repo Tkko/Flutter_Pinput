@@ -5,6 +5,20 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+*'
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: Directory containing the Flutter package
+        type: string
+        default: .
+      flutter-channel:
+        description: Flutter SDK channel
+        type: string
+        default: stable
+      flutter-version:
+        description: Flutter SDK version
+        type: string
+        default: 3.47.8
 
 permissions:
   contents: read
@@ -26,10 +40,12 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
@@ -38,6 +54,7 @@ jobs:
         uses: ./.github/workflow-actions/.github/actions/release-metadata
         with:
           existing-tag: 'true'
+          working-directory: ${{ inputs.working-directory || '.' }}
 
   test:
     name: Test & Validate
@@ -48,16 +65,19 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ needs.metadata.outputs.sha }}
+          persist-credentials: false
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/validate-package
         with:
+          working-directory: ${{ inputs.working-directory || '.' }}
           run-publish-dry-run: 'true'
           run-pana: 'true'
 
@@ -78,9 +98,14 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/publish-package
+        with:
+          working-directory: ${{ inputs.working-directory || '.' }}
+          flutter-channel: ${{ inputs.flutter-channel || 'stable' }}
+          flutter-version: ${{ inputs.flutter-version || '3.47.8' }}

@@ -31,7 +31,7 @@ runs:
       flutter-version: "${{ inputs.flutter-version }}"
       working-directory: "${{ inputs.integration-test-working-directory }}"
   - name: Setup Chrome & Chromedriver
-    uses: nanasess/setup-chromedriver@v2
+    uses: nanasess/setup-chromedriver@c75c3d53d445b96d41dbf2355797b470953c6c30 # v2.4.0
   - name: Launch Chromedriver
     shell: bash
     run: |
@@ -40,9 +40,10 @@ runs:
         http://127.0.0.1:4444/status | jq -e '.value.ready == true'
   - name: Run Web Integration Tests
     shell: bash
-    run: flutter drive --driver=${{ inputs.integration-test-driver }} --target=${{
-      inputs.integration-test-target }} -d web-server --headless --browser-name=chrome
-      --timeout=120 --verbose 2>&1 | tee "$RUNNER_TEMP/web-tests.log"
+    env:
+      INTEGRATION_TEST_DRIVER: ${{ inputs.integration-test-driver }}
+      INTEGRATION_TEST_TARGET: ${{ inputs.integration-test-target }}
+    run: flutter drive --driver="$INTEGRATION_TEST_DRIVER" --target="$INTEGRATION_TEST_TARGET" -d web-server --headless --browser-name=chrome --timeout=120 --verbose 2>&1 | tee "$RUNNER_TEMP/web-tests.log"
     working-directory: "${{ inputs.integration-test-working-directory }}"
   - name: Upload failure diagnostics
     if: "${{ failure() }}"
