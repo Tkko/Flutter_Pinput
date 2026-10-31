@@ -10,24 +10,31 @@ class _PinItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final pinTheme = _pinTheme(index);
 
-    return Flexible(
-      child: AnimatedContainer(
-        height: pinTheme.height,
-        width: pinTheme.width,
-        constraints: pinTheme.constraints,
-        padding: pinTheme.padding,
-        margin: pinTheme.margin,
-        decoration: pinTheme.decoration,
-        alignment: state.widget.pinContentAlignment,
+    final item = AnimatedContainer(
+      height: pinTheme.height,
+      width: pinTheme.width,
+      constraints: pinTheme.constraints,
+      padding: pinTheme.padding,
+      margin: pinTheme.margin,
+      decoration: pinTheme.decoration,
+      alignment: state.widget.pinContentAlignment,
+      duration: state.widget.animationDuration,
+      curve: state.widget.animationCurve,
+      child: AnimatedSwitcher(
+        switchInCurve: state.widget.animationCurve,
+        switchOutCurve: state.widget.animationCurve,
         duration: state.widget.animationDuration,
-        curve: state.widget.animationCurve,
-        child: AnimatedSwitcher(
-          switchInCurve: state.widget.animationCurve,
-          switchOutCurve: state.widget.animationCurve,
-          duration: state.widget.animationDuration,
-          transitionBuilder: _getTransition,
-          child: _buildFieldContent(index, pinTheme),
-        ),
+        transitionBuilder: _getTransition,
+        child: _buildFieldContent(index, pinTheme),
+      ),
+    );
+
+    return Flexible(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        excludeFromSemantics: true,
+        onTap: () => state._onPinTap(index),
+        child: item,
       ),
     );
   }
@@ -61,23 +68,41 @@ class _PinItem extends StatelessWidget {
     final key = ValueKey<String>(index < pin.length ? pin[index] : '');
     final isSubmittedPin = index < pin.length;
 
-    if (isSubmittedPin) {
-      if (state.widget.obscureText && state.widget.obscuringWidget != null) {
-        return SizedBox(key: key, child: state.widget.obscuringWidget);
-      }
-
-      return Text(
-        state.widget.obscureText ? state.widget.obscuringCharacter : pin[index],
-        key: key,
-        style: pinTheme.textStyle,
-      );
-    }
-
-    final isActiveField = index == pin.length;
+    final isActiveField = state.widget.pinEditMode != PinEditMode.none
+        ? index == state.selectedIndex
+        : index == pin.length;
     final focused =
         state._effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
     final shouldShowCursor =
         state.widget.showCursor && state.isEnabled && isActiveField && focused;
+
+    if (isSubmittedPin) {
+      final Widget characterWidget;
+      if (state.widget.obscureText && state.widget.obscuringWidget != null) {
+        characterWidget = SizedBox(key: key, child: state.widget.obscuringWidget);
+      } else {
+        characterWidget = Text(
+          state.widget.obscureText ? state.widget.obscuringCharacter : pin[index],
+          key: key,
+          style: pinTheme.textStyle,
+        );
+      }
+
+      // With pin editing the filled pin always uses the same wrapper, so moving
+      // the cursor on/off a pin does not replay the AnimatedSwitcher transition.
+      if (state.widget.pinEditMode != PinEditMode.none) {
+        return Stack(
+          key: key,
+          alignment: state.widget.pinContentAlignment,
+          children: [
+            characterWidget,
+            if (shouldShowCursor) _buildCursor(pinTheme),
+          ],
+        );
+      }
+
+      return characterWidget;
+    }
 
     if (shouldShowCursor) {
       return _buildCursor(pinTheme);

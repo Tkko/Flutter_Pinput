@@ -1,5 +1,14 @@
 #### 8.0.0 · 30/10/2026
 
+- **feat**: Added cursor navigation and previous pin editing via `pinEditMode`:
+  - Users can now tap any previous pin to move the cursor and edit digits.
+  - Tapping empty slots beyond the current input clamps to the first available empty slot.
+  - Added `PinEditMode` enum:
+    - `PinEditMode.overwrite` (default): In-place digit replacement while preserving following pins.
+    - `PinEditMode.clearFollowing`: Preserves pins visually on tap, and clears following pins upon typing a new digit (lazy clear on edit).
+    - `PinEditMode.none`: Disables previous pin editing; cursor remains locked to the end (legacy behavior).
+  - `onCompleted` and `closeKeyboardWhenCompleted` only trigger when the PIN is full **and** the cursor is at the end, so editing a middle pin never submits or dismisses the keyboard prematurely. Validation still runs on every full-PIN change.
+  - Added tap-to-focus support for custom pin builders (`Pinput.builder`).
 - **BREAKING**: Decoupled Pinput completely from `material_ui`, `cupertino_ui`, and `package:flutter/material.dart` ([#240](https://github.com/Tkko/Flutter_Pinput/issues/240)).
   - Pinput now depends purely on `package:flutter/widgets.dart` with zero 3rd-party UI dependencies.
   - Resolves "No Material widget found" assertion crash on Flutter Web (DDC) and in apps using standard `package:flutter/material.dart` ([#240](https://github.com/Tkko/Flutter_Pinput/issues/240)).

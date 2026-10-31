@@ -66,7 +66,26 @@ class _PinputState extends State<Pinput>
 
   EditableTextState? get _editableText => editableTextKey.currentState;
 
-  int get selectedIndex => _currentLength;
+  /// Index of the active pin. Converts the controller's UTF-16 selection offset
+  /// to a grapheme index so it stays consistent with [_currentLength].
+  int get selectedIndex {
+    if (widget.pinEditMode == PinEditMode.none) return _currentLength;
+    final selection = _effectiveController.selection;
+    if (!selection.isValid || selection.baseOffset < 0) {
+      return _currentLength;
+    }
+    final text = _effectiveController.text;
+    // For ranges (e.g. desktop drag selection) always use the leading edge.
+    final offset = min(selection.start, text.length);
+    return text.substring(0, offset).characters.length.clamp(
+      0,
+      _currentLength,
+    );
+  }
+
+  /// Converts a grapheme index to a UTF-16 offset in the controller text.
+  int _offsetOfIndex(int index) =>
+      _effectiveController.text.characters.take(index).string.length;
 
   String get pin => _effectiveController.text;
 
@@ -124,9 +143,13 @@ class _PinputState extends State<Pinput>
   void _onChanged(String pin) {
     widget.onChanged?.call(pin);
     if (_completed) {
-      widget.onCompleted?.call(pin);
+      // While the user edits a pin in the middle, the PIN is only "completed"
+      // once the cursor reaches the end, so auto-submitting apps never receive
+      // a half-edited code. Validation still runs to keep the error state fresh.
+      final cursorAtEnd = selectedIndex == widget.length;
+      if (cursorAtEnd) widget.onCompleted?.call(pin);
       _maybeValidateForm();
-      _maybeCloseKeyboard();
+      if (cursorAtEnd) _maybeCloseKeyboard();
     }
   }
 
@@ -138,7 +161,9 @@ class _PinputState extends State<Pinput>
 
   void _maybeCloseKeyboard() {
     if (widget.closeKeyboardWhenCompleted) {
-      _effectiveFocusNode.unfocus();
+      if (selectedIndex == widget.length) {
+        _effectiveFocusNode.unfocus();
+      }
     }
   }
 
@@ -213,15 +238,23 @@ class _PinputState extends State<Pinput>
     TextSelection selection,
     SelectionChangedCause? cause,
   ) {
-    // Selecting part of the text is not allowed.
-    final allSelected = selection.start == 0 && selection.end == _currentLength;
-    final lastCharSelected =
-        selection.start == _currentLength - 1 &&
-        selection.end == _currentLength;
-    if (!allSelected && !lastCharSelected) {
-      _effectiveController.selection = TextSelection.collapsed(
-        offset: _currentLength,
-      );
+    if (widget.pinEditMode != PinEditMode.none) {
+      if (selection.isCollapsed && selection.baseOffset > _currentLength) {
+        _effectiveController.selection = TextSelection.collapsed(
+          offset: _currentLength,
+        );
+      }
+    } else {
+      // Selecting part of the text is not allowed.
+      final allSelected = selection.start == 0 && selection.end == _currentLength;
+      final lastCharSelected =
+          selection.start == _currentLength - 1 &&
+          selection.end == _currentLength;
+      if (!allSelected && !lastCharSelected) {
+        _effectiveController.selection = TextSelection.collapsed(
+          offset: _currentLength,
+        );
+      }
     }
 
     switch (defaultTargetPlatform) {
@@ -395,6 +428,8 @@ class _PinputState extends State<Pinput>
   ) {
     final formatters = <TextInputFormatter>[
       ...widget.inputFormatters,
+      if (widget.pinEditMode != PinEditMode.none)
+        _PinOverwriteTextInputFormatter(widget.length, widget.pinEditMode),
       LengthLimitingTextInputFormatter(
         widget.length,
         maxLengthEnforcement: MaxLengthEnforcement.enforced,
@@ -498,11 +533,54 @@ class _PinputState extends State<Pinput>
       return PinItemStateType.focused;
     }
 
+    if (widget.pinEditMode != PinEditMode.none) {
+      if (index < _currentLength) {
+        return PinItemStateType.submitted;
+      }
+      return PinItemStateType.following;
+    }
+
     if (index < selectedIndex) {
       return PinItemStateType.submitted;
     }
 
     return PinItemStateType.following;
+  }
+
+  void _onPinTap(int index) {
+    if (!isEnabled) return;
+
+    // Mirrors the legacy tap behavior (hide toolbar, request keyboard, onTap)
+    // and additionally moves the cursor when pin editing is available.
+    if (widget.pinEditMode != PinEditMode.none && !widget.readOnly) {
+      _effectiveController.selection = TextSelection.collapsed(
+        offset: _offsetOfIndex(min(index, _currentLength)),
+      );
+    }
+    _editableText?.hideToolbar();
+    _requestKeyboard();
+    widget.onTap?.call();
+  }
+
+  /// Adds tap handling to a pin item without breaking [Flex] parent data when
+  /// a custom builder returns [Flexible] / [Expanded].
+  Widget _wrapWithPinTap(int index, Widget child) {
+    Widget detector(Widget c) => GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      excludeFromSemantics: true,
+      onTap: () => _onPinTap(index),
+      child: c,
+    );
+
+    if (child is Flexible) {
+      return Flexible(
+        key: child.key,
+        flex: child.flex,
+        fit: child.fit,
+        child: detector(child.child),
+      );
+    }
+    return detector(child);
   }
 
   Widget _buildFields() {
@@ -512,7 +590,7 @@ class _PinputState extends State<Pinput>
         mainAxisAlignment: widget.mainAxisAlignment,
         children: Iterable<int>.generate(widget.length).map<Widget>((index) {
           if (widget._builder != null) {
-            return widget._builder!.itemBuilder.call(
+            final child = widget._builder!.itemBuilder.call(
               context,
               PinItemState(
                 value: pin.length > index ? pin[index] : '',
@@ -520,6 +598,7 @@ class _PinputState extends State<Pinput>
                 type: _getState(index),
               ),
             );
+            return _wrapWithPinTap(index, child);
           }
 
           return _PinItem(state: this, index: index);

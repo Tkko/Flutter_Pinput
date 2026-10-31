@@ -22,6 +22,8 @@ part 'models/sms_retriever.dart';
 
 part 'utils/extensions.dart';
 
+part 'utils/_pin_overwrite_text_input_formatter.dart';
+
 part 'widgets/_pin_item.dart';
 
 part 'utils/pinput_utils_mixin.dart';
@@ -82,6 +84,7 @@ class Pinput extends StatefulWidget {
     this.obscureText = false,
     this.showCursor = true,
     this.isCursorAnimationEnabled = true,
+    this.pinEditMode = PinEditMode.overwrite,
     this.enableIMEPersonalizedLearning = false,
     this.enableInteractiveSelection,
     this.enableSuggestions = true,
@@ -143,6 +146,7 @@ class Pinput extends StatefulWidget {
     this.useNativeKeyboard = true,
     this.toolbarEnabled = true,
     this.autofocus = false,
+    this.pinEditMode = PinEditMode.overwrite,
     this.enableIMEPersonalizedLearning = false,
     this.enableInteractiveSelection = false,
     this.enableSuggestions = true,
@@ -321,6 +325,15 @@ class Pinput extends StatefulWidget {
   /// Whether to enable cursor animation
   final bool isCursorAnimationEnabled;
 
+  /// How editing previous pins behaves when tapping on a filled slot.
+  ///
+  /// - [PinEditMode.overwrite] (default): Tapping a previous pin focuses that slot. Typing replaces
+  ///   the digit in-place and preserves following pins.
+  /// - [PinEditMode.clearFollowing]: Tapping a previous pin focuses that slot. Typing replaces
+  ///   the digit and clears all following pins (lazy clear on edit).
+  /// - [PinEditMode.none]: Editing previous pins is disabled; cursor is locked to the end of the input (legacy behavior).
+  final PinEditMode pinEditMode;
+
   /// Whether to enable that the IME update personalized data such as typing history and user dictionary data.
   //
   // This flag only affects Android. On iOS, there is no equivalent flag.
@@ -490,6 +503,13 @@ class Pinput extends StatefulWidget {
         'enableInteractiveSelection',
         enableInteractiveSelection,
         defaultValue: null,
+      ),
+    );
+    properties.add(
+      EnumProperty<PinEditMode>(
+        'pinEditMode',
+        pinEditMode,
+        defaultValue: PinEditMode.overwrite,
       ),
     );
     properties.add(
