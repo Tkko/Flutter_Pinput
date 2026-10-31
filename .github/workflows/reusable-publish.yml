@@ -1,0 +1,76 @@
+name: Reusable Publish to pub.dev
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: 'Directory containing the package'
+        required: false
+        default: '.'
+        type: string
+      environment:
+        description: 'Pub.dev environment (optional)'
+        required: false
+        type: string
+      run-pana:
+        description: 'Whether to verify pana score'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test:
+    name: Test & Validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Analyze code
+        run: flutter analyze
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Run tests
+        run: flutter test
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Install webp (for pana screenshot validation)
+        if: ${{ inputs.run-pana }}
+        run: sudo apt-get update && sudo apt-get install -y webp
+
+      - name: Verify all points from pana
+        if: ${{ inputs.run-pana }}
+        run: |
+          flutter pub global activate pana
+          flutter packages pub global run pana --exit-code-threshold 0 .
+        working-directory: ${{ inputs.working-directory }}
+
+  publish:
+    name: Publish package
+    needs: test
+    permissions:
+      id-token: write
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@6afc89df92d6eb3834022f73cd65adc8cdfcb92d # v1.8.1
+    with:
+      working-directory: ${{ inputs.working-directory }}
+      environment: ${{ inputs.environment }}

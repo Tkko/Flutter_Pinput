@@ -1,0 +1,140 @@
+name: Reusable Create Release & Tag
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        description: 'Branch to target for release tag'
+        required: false
+        default: 'master'
+        type: string
+      tag_name:
+        description: 'Tag name (e.g. v7.0.1). Leave empty to use version from pubspec.yaml'
+        required: false
+        type: string
+      dry_run:
+        description: 'Dry run (validate tests and pubspec without creating tag/release)'
+        required: false
+        default: false
+        type: boolean
+      working-directory:
+        description: 'Directory containing pubspec.yaml'
+        required: false
+        default: '.'
+        type: string
+      run-pana:
+        description: 'Whether to verify pana score'
+        required: false
+        default: true
+        type: boolean
+    secrets:
+      release_pat:
+        description: 'Personal Access Token to push tag and trigger subsequent publish workflow'
+        required: false
+
+jobs:
+  release:
+    name: Verify & Create Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.branch }}
+          fetch-depth: 0
+          token: ${{ secrets.release_pat || github.token }}
+
+      - name: Record checked-out commit SHA
+        id: get_commit
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Determine tag name
+        id: get_tag
+        env:
+          INPUT_TAG: ${{ inputs.tag_name }}
+          WORKING_DIR: ${{ inputs.working-directory }}
+        run: |
+          if [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"
+          else
+            VERSION=$(grep '^version:' "$WORKING_DIR/pubspec.yaml" | awk '{print $2}' | tr -d '\r')
+            TAG="v$VERSION"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Target release tag: $TAG"
+
+      - name: Check if tag already exists
+        env:
+          TAG: ${{ steps.get_tag.outputs.tag }}
+        run: |
+          git fetch --tags
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Error: Tag $TAG already exists! Did you bump version in pubspec.yaml?"
+            exit 1
+          fi
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Analyze code
+        run: flutter analyze
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Run tests
+        run: flutter test
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Pub publish dry run
+        run: flutter pub publish --dry-run
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Install webp (for pana screenshot validation)
+        if: ${{ inputs.run-pana }}
+        run: sudo apt-get update && sudo apt-get install -y webp
+
+      - name: Verify all points from pana
+        if: ${{ inputs.run-pana }}
+        run: |
+          flutter pub global activate pana
+          flutter packages pub global run pana --exit-code-threshold 0 .
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Dry run exit
+        if: ${{ inputs.dry_run }}
+        env:
+          TAG: ${{ steps.get_tag.outputs.tag }}
+        run: |
+          echo "Dry run successful. Tag $TAG is valid and ready to be created."
+          exit 0
+
+      - name: Warn if release_pat is missing
+        if: ${{ !inputs.dry_run && env.HAS_PAT == 'false' }}
+        env:
+          HAS_PAT: ${{ secrets.release_pat != '' }}
+        run: |
+          echo "::warning::release_pat secret was not provided. Using default GITHUB_TOKEN to create the release. Note: GitHub Actions does not trigger subsequent workflows (like publish.yml) when events are created by the default GITHUB_TOKEN. To enable automatic publishing on release, configure a Personal Access Token as a secret."
+
+      - name: Create GitHub Release and Tag
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ secrets.release_pat || github.token }}
+          TAG: ${{ steps.get_tag.outputs.tag }}
+          TARGET_COMMIT: ${{ steps.get_commit.outputs.sha }}
+        run: |
+          gh release create "$TAG" \
+            --target "$TARGET_COMMIT" \
+            --title "$TAG" \
+            --generate-notes
