@@ -11,6 +11,16 @@ class _PinputFormField extends FormField<String> {
     required super.initialValue,
     required super.builder,
   }) : super(autovalidateMode: AutovalidateMode.disabled);
+
+  @override
+  FormFieldState<String> createState() => _PinputFormFieldState();
+}
+
+class _PinputFormFieldState extends FormFieldState<String> {
+  @override
+  void didChange(String? value) {
+    setValue(value);
+  }
 }
 
 class _SeparatedRaw extends StatelessWidget {

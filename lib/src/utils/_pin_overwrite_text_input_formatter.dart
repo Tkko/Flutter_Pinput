@@ -28,7 +28,10 @@ class _PinOverwriteTextInputFormatter extends TextInputFormatter {
         if (!newText.startsWith(oldPrefix) || !newText.endsWith(oldSuffix)) {
           return newValue;
         }
-        final insertedChars = newText.substring(insertIndex, insertIndex + diff);
+        final insertedChars = newText.substring(
+          insertIndex,
+          insertIndex + diff,
+        );
 
         // If user pasted a full code (>= maxLength), replace entire text from beginning.
         if (insertedChars.characters.length >= maxLength) {

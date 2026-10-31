@@ -5,8 +5,6 @@ on:
     branches:
       - master
   pull_request:
-    branches:
-      - master
 
 permissions:
   contents: read
@@ -15,4 +13,6 @@ jobs:
   ci:
     permissions:
       contents: read
-    uses: ./.github/workflows/reusable-ci.yml
+    uses: ./.github/workflows/reusable-test.yml
+    with:
+      run-integration-tests: ${{ github.base_ref == 'master' || github.ref == 'refs/heads/master' }}

@@ -51,34 +51,35 @@ void main() {
       expect(controller.selection.isCollapsed, isTrue);
     });
 
-    testWidgets('Typing on a selected previous pin overwrites in-place and advances', (
-      WidgetTester tester,
-    ) async {
-      final controller = TextEditingController(text: '1234');
-      await tester.pumpApp(
-        Pinput(
-          controller: controller,
-          length: 4,
-          pinEditMode: PinEditMode.overwrite,
-        ),
-      );
+    testWidgets(
+      'Typing on a selected previous pin overwrites in-place and advances',
+      (WidgetTester tester) async {
+        final controller = TextEditingController(text: '1234');
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            length: 4,
+            pinEditMode: PinEditMode.overwrite,
+          ),
+        );
 
-      final containers = find.byType(AnimatedContainer);
+        final containers = find.byType(AnimatedContainer);
 
-      // Tap index 1 (which holds '2')
-      await tester.tap(containers.at(1));
-      await tester.pump();
-      expect(controller.selection.baseOffset, equals(1));
+        // Tap index 1 (which holds '2')
+        await tester.tap(containers.at(1));
+        await tester.pump();
+        expect(controller.selection.baseOffset, equals(1));
 
-      // Type '9' via enterText
-      await tester.enterText(find.byType(EditableText), '1934');
-      await tester.pump();
-      await tester.pump(const Duration(seconds: 1));
+        // Type '9' via enterText
+        await tester.enterText(find.byType(EditableText), '1934');
+        await tester.pump();
+        await tester.pump(const Duration(seconds: 1));
 
-      expect(controller.text, equals('1934'));
-      expect(find.text('9'), findsOneWidget);
-      expect(find.text('2'), findsNothing);
-    });
+        expect(controller.text, equals('1934'));
+        expect(find.text('9'), findsOneWidget);
+        expect(find.text('2'), findsNothing);
+      },
+    );
 
     testWidgets('Pin theme states when editing a previous pin', (
       WidgetTester tester,
@@ -256,95 +257,97 @@ void main() {
   });
 
   group('PinEditMode.clearFollowing', () {
-    testWidgets('Preserves pins on tap, but truncates following pins upon typing', (
-      WidgetTester tester,
-    ) async {
-      final controller = TextEditingController(text: '1234');
-      final focusNode = FocusNode();
-      int completedCount = 0;
+    testWidgets(
+      'Preserves pins on tap, but truncates following pins upon typing',
+      (WidgetTester tester) async {
+        final controller = TextEditingController(text: '1234');
+        final focusNode = FocusNode();
+        int completedCount = 0;
 
-      await tester.pumpApp(
-        Pinput(
-          controller: controller,
-          focusNode: focusNode,
-          length: 4,
-          pinEditMode: PinEditMode.clearFollowing,
-          onCompleted: (_) => completedCount++,
-        ),
-      );
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            focusNode: focusNode,
+            length: 4,
+            pinEditMode: PinEditMode.clearFollowing,
+            onCompleted: (_) => completedCount++,
+          ),
+        );
 
-      final containers = find.byType(AnimatedContainer);
+        final containers = find.byType(AnimatedContainer);
 
-      // Tap slot 1 ('2')
-      await tester.tap(containers.at(1));
-      await tester.pump();
+        // Tap slot 1 ('2')
+        await tester.tap(containers.at(1));
+        await tester.pump();
 
-      // On tap: digits are still preserved!
-      expect(controller.text, equals('1234'));
-      expect(controller.selection.baseOffset, equals(1));
-      expect(completedCount, equals(0));
+        // On tap: digits are still preserved!
+        expect(controller.text, equals('1234'));
+        expect(controller.selection.baseOffset, equals(1));
+        expect(completedCount, equals(0));
 
-      // Type '9' into slot 1
-      tester.testTextInput.updateEditingValue(
-        const TextEditingValue(
-          text: '19234',
-          selection: TextSelection.collapsed(offset: 2),
-        ),
-      );
-      await tester.pump(const Duration(milliseconds: 300));
+        // Type '9' into slot 1
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '19234',
+            selection: TextSelection.collapsed(offset: 2),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 300));
 
-      // Following digits '3' and '4' were cleared! Text is now '19'
-      expect(controller.text, equals('19'));
-      expect(controller.selection.baseOffset, equals(2));
+        // Following digits '3' and '4' were cleared! Text is now '19'
+        expect(controller.text, equals('19'));
+        expect(controller.selection.baseOffset, equals(2));
 
-      // onCompleted did NOT fire because length is only 2 of 4!
-      expect(completedCount, equals(0));
+        // onCompleted did NOT fire because length is only 2 of 4!
+        expect(completedCount, equals(0));
 
-      // Now type '5' into slot 2
-      tester.testTextInput.updateEditingValue(
-        const TextEditingValue(
-          text: '195',
-          selection: TextSelection.collapsed(offset: 3),
-        ),
-      );
-      await tester.pump(const Duration(milliseconds: 300));
-      expect(controller.text, equals('195'));
-      expect(completedCount, equals(0));
+        // Now type '5' into slot 2
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '195',
+            selection: TextSelection.collapsed(offset: 3),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(controller.text, equals('195'));
+        expect(completedCount, equals(0));
 
-      // Now type '6' into slot 3 (final slot)
-      tester.testTextInput.updateEditingValue(
-        const TextEditingValue(
-          text: '1956',
-          selection: TextSelection.collapsed(offset: 4),
-        ),
-      );
-      await tester.pump(const Duration(milliseconds: 300));
+        // Now type '6' into slot 3 (final slot)
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '1956',
+            selection: TextSelection.collapsed(offset: 4),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 300));
 
-      // Now onCompleted fires naturally!
-      expect(controller.text, equals('1956'));
-      expect(completedCount, equals(1));
-    });
+        // Now onCompleted fires naturally!
+        expect(controller.text, equals('1956'));
+        expect(completedCount, equals(1));
+      },
+    );
   });
 
   group('Edge cases / regressions', () {
-    testWidgets('Whole-value replacement (autofill) is not treated as an insertion', (
-      WidgetTester tester,
-    ) async {
-      final controller = TextEditingController(text: '1234');
-      await tester.pumpApp(Pinput(controller: controller, length: 6));
-      await tester.tap(find.byType(AnimatedContainer).at(1));
-      await tester.pump();
+    testWidgets(
+      'Whole-value replacement (autofill) is not treated as an insertion',
+      (WidgetTester tester) async {
+        final controller = TextEditingController(text: '1234');
+        await tester.pumpApp(Pinput(controller: controller, length: 6));
+        await tester.tap(find.byType(AnimatedContainer).at(1));
+        await tester.pump();
 
-      tester.testTextInput.updateEditingValue(
-        const TextEditingValue(
-          text: '567890',
-          selection: TextSelection.collapsed(offset: 6),
-        ),
-      );
-      await tester.pump(const Duration(seconds: 1));
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '567890',
+            selection: TextSelection.collapsed(offset: 6),
+          ),
+        );
+        await tester.pump(const Duration(seconds: 1));
 
-      expect(controller.text, equals('567890'));
-    });
+        expect(controller.text, equals('567890'));
+      },
+    );
 
     testWidgets('readOnly pin tap still calls onTap and keeps the selection', (
       WidgetTester tester,
@@ -402,42 +405,43 @@ void main() {
   });
 
   group('onCompleted only when the cursor is at the end', () {
-    testWidgets('Editing a middle pin of a full PIN does not call onCompleted', (
-      WidgetTester tester,
-    ) async {
-      final controller = TextEditingController(text: '1234');
-      final focusNode = FocusNode();
-      int completed = 0;
-      String? validated;
-      await tester.pumpApp(
-        Pinput(
-          controller: controller,
-          focusNode: focusNode,
-          length: 4,
-          onCompleted: (_) => completed++,
-          validator: (v) {
-            validated = v;
-            return null;
-          },
-        ),
-      );
-      await tester.tap(find.byType(AnimatedContainer).at(0));
-      await tester.pump();
+    testWidgets(
+      'Editing a middle pin of a full PIN does not call onCompleted',
+      (WidgetTester tester) async {
+        final controller = TextEditingController(text: '1234');
+        final focusNode = FocusNode();
+        int completed = 0;
+        String? validated;
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            focusNode: focusNode,
+            length: 4,
+            onCompleted: (_) => completed++,
+            validator: (v) {
+              validated = v;
+              return null;
+            },
+          ),
+        );
+        await tester.tap(find.byType(AnimatedContainer).at(0));
+        await tester.pump();
 
-      tester.testTextInput.updateEditingValue(
-        const TextEditingValue(
-          text: '91234',
-          selection: TextSelection.collapsed(offset: 1),
-        ),
-      );
-      await tester.pump(const Duration(milliseconds: 300));
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '91234',
+            selection: TextSelection.collapsed(offset: 1),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 300));
 
-      expect(controller.text, equals('9234'));
-      expect(completed, equals(0));
-      // Validation still runs so the error state does not go stale.
-      expect(validated, equals('9234'));
-      expect(focusNode.hasFocus, isTrue);
-    });
+        expect(controller.text, equals('9234'));
+        expect(completed, equals(0));
+        // Validation still runs so the error state does not go stale.
+        expect(validated, equals('9234'));
+        expect(focusNode.hasFocus, isTrue);
+      },
+    );
 
     testWidgets('Editing the last pin of a full PIN calls onCompleted', (
       WidgetTester tester,
@@ -491,7 +495,10 @@ void main() {
       await tester.pump();
 
       // Backwards range 3 -> 1: leading edge is 1.
-      controller.selection = const TextSelection(baseOffset: 3, extentOffset: 1);
+      controller.selection = const TextSelection(
+        baseOffset: 3,
+        extentOffset: 1,
+      );
       await tester.pump();
 
       final pin1 = tester.widget<AnimatedContainer>(
@@ -505,7 +512,11 @@ void main() {
     ) async {
       final controller = TextEditingController(text: '1234');
       await tester.pumpApp(
-        Pinput(controller: controller, length: 4, closeKeyboardWhenCompleted: false),
+        Pinput(
+          controller: controller,
+          length: 4,
+          closeKeyboardWhenCompleted: false,
+        ),
       );
       final containers = find.byType(AnimatedContainer);
       await tester.tap(containers.at(0));

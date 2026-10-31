@@ -79,10 +79,15 @@ class _PinItem extends StatelessWidget {
     if (isSubmittedPin) {
       final Widget characterWidget;
       if (state.widget.obscureText && state.widget.obscuringWidget != null) {
-        characterWidget = SizedBox(key: key, child: state.widget.obscuringWidget);
+        characterWidget = SizedBox(
+          key: key,
+          child: state.widget.obscuringWidget,
+        );
       } else {
         characterWidget = Text(
-          state.widget.obscureText ? state.widget.obscuringCharacter : pin[index],
+          state.widget.obscureText
+              ? state.widget.obscuringCharacter
+              : pin[index],
           key: key,
           style: pinTheme.textStyle,
         );

@@ -77,10 +77,7 @@ class _PinputState extends State<Pinput>
     final text = _effectiveController.text;
     // For ranges (e.g. desktop drag selection) always use the leading edge.
     final offset = min(selection.start, text.length);
-    return text.substring(0, offset).characters.length.clamp(
-      0,
-      _currentLength,
-    );
+    return text.substring(0, offset).characters.length.clamp(0, _currentLength);
   }
 
   /// Converts a grapheme index to a UTF-16 offset in the controller text.
@@ -141,6 +138,9 @@ class _PinputState extends State<Pinput>
   }
 
   void _onChanged(String pin) {
+    if (_validatorErrorText != null) {
+      setState(() => _validatorErrorText = null);
+    }
     widget.onChanged?.call(pin);
     if (_completed) {
       // While the user edits a pin in the middle, the PIN is only "completed"
@@ -246,7 +246,8 @@ class _PinputState extends State<Pinput>
       }
     } else {
       // Selecting part of the text is not allowed.
-      final allSelected = selection.start == 0 && selection.end == _currentLength;
+      final allSelected =
+          selection.start == 0 && selection.end == _currentLength;
       final lastCharSelected =
           selection.start == _currentLength - 1 &&
           selection.end == _currentLength;

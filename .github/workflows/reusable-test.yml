@@ -1,0 +1,289 @@
+name: Reusable Flutter Tests
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: 'Working directory of the primary Flutter package'
+        required: false
+        default: '.'
+        type: string
+      flutter-channel:
+        description: 'Flutter SDK channel to use (stable, beta, master)'
+        required: false
+        default: 'stable'
+        type: string
+      flutter-version:
+        description: 'Specific Flutter SDK version (optional, empty uses channel latest)'
+        required: false
+        default: ''
+        type: string
+      run-format:
+        description: 'Whether to verify code formatting with dart format'
+        required: false
+        default: true
+        type: boolean
+      run-analyze:
+        description: 'Whether to run flutter analyze'
+        required: false
+        default: true
+        type: boolean
+      run-test:
+        description: 'Whether to run flutter test unit/widget tests'
+        required: false
+        default: true
+        type: boolean
+      run-publish-dry-run:
+        description: 'Whether to run dart pub publish --dry-run'
+        required: false
+        default: true
+        type: boolean
+      run-pana:
+        description: 'Whether to verify pana score'
+        required: false
+        default: true
+        type: boolean
+      run-integration-tests:
+        description: 'Master toggle: whether to run cross-platform integration tests'
+        required: false
+        default: true
+        type: boolean
+      run-integration-tests-web:
+        description: 'Whether to run integration tests on Web (Chrome)'
+        required: false
+        default: true
+        type: boolean
+      run-integration-tests-linux:
+        description: 'Whether to run integration tests on Linux Desktop'
+        required: false
+        default: true
+        type: boolean
+      run-integration-tests-macos:
+        description: 'Whether to run integration tests on macOS Desktop'
+        required: false
+        default: true
+        type: boolean
+      run-integration-tests-ios:
+        description: 'Whether to run integration tests on iOS Simulator'
+        required: false
+        default: true
+        type: boolean
+      run-integration-tests-windows:
+        description: 'Whether to run integration tests on Windows Desktop'
+        required: false
+        default: false
+        type: boolean
+      integration-test-working-directory:
+        description: 'Directory containing the integration test Flutter app'
+        required: false
+        default: 'example'
+        type: string
+      integration-test-target:
+        description: 'Target test file path relative to integration-test-working-directory'
+        required: false
+        default: 'integration_test/app_test.dart'
+        type: string
+      integration-test-driver:
+        description: 'Driver file path relative to integration-test-working-directory'
+        required: false
+        default: 'test_driver/integration_test.dart'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test & Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: ${{ inputs.flutter-channel }}
+          flutter-version: ${{ inputs.flutter-version }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Verify formatting
+        if: ${{ inputs.run-format }}
+        run: dart format --output=none --set-exit-if-changed .
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Analyze code
+        if: ${{ inputs.run-analyze }}
+        run: flutter analyze
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Run tests
+        if: ${{ inputs.run-test }}
+        run: flutter test
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Pub publish dry-run
+        if: ${{ inputs.run-publish-dry-run }}
+        run: flutter pub publish --dry-run
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Install webp (for pana screenshot validation)
+        if: ${{ inputs.run-pana }}
+        run: sudo apt-get update && sudo apt-get install -y webp
+
+      - name: Verify all points from pana
+        if: ${{ inputs.run-pana }}
+        run: |
+          flutter pub global activate pana
+          flutter packages pub global run pana --exit-code-threshold 0 .
+        working-directory: ${{ inputs.working-directory }}
+
+  integration-test-web:
+    name: Integration Tests (Web Chrome)
+    runs-on: ubuntu-latest
+    if: ${{ inputs.run-integration-tests && inputs.run-integration-tests-web }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: ${{ inputs.flutter-channel }}
+          flutter-version: ${{ inputs.flutter-version }}
+          cache: true
+
+      - name: Setup Chrome & Chromedriver
+        uses: nanasess/setup-chromedriver@v2
+
+      - name: Launch Chromedriver
+        run: chromedriver --port=4444 &
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ inputs.integration-test-working-directory }}
+
+      - name: Run Web Integration Tests
+        run: flutter drive --driver=${{ inputs.integration-test-driver }} --target=${{ inputs.integration-test-target }} -d chrome
+        working-directory: ${{ inputs.integration-test-working-directory }}
+
+  integration-test-linux:
+    name: Integration Tests (Linux)
+    runs-on: ubuntu-latest
+    if: ${{ inputs.run-integration-tests && inputs.run-integration-tests-linux }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: ${{ inputs.flutter-channel }}
+          flutter-version: ${{ inputs.flutter-version }}
+          cache: true
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ inputs.integration-test-working-directory }}
+
+      - name: Run Linux Integration Tests
+        run: xvfb-run --auto-servernum flutter test ${{ inputs.integration-test-target }} -d linux
+        working-directory: ${{ inputs.integration-test-working-directory }}
+
+  integration-test-macos:
+    name: Integration Tests (macOS)
+    runs-on: macos-latest
+    if: ${{ inputs.run-integration-tests && inputs.run-integration-tests-macos }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: ${{ inputs.flutter-channel }}
+          flutter-version: ${{ inputs.flutter-version }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ inputs.integration-test-working-directory }}
+
+      - name: Run macOS Integration Tests
+        run: flutter test ${{ inputs.integration-test-target }} -d macos
+        working-directory: ${{ inputs.integration-test-working-directory }}
+
+  integration-test-ios:
+    name: Integration Tests (iOS Simulator)
+    runs-on: macos-latest
+    if: ${{ inputs.run-integration-tests && inputs.run-integration-tests-ios }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: ${{ inputs.flutter-channel }}
+          flutter-version: ${{ inputs.flutter-version }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ inputs.integration-test-working-directory }}
+
+      - name: Boot iOS Simulator
+        run: |
+          UDID=$(xcrun simctl list devices available 'iPhone' | grep -m 1 -E 'iPhone [0-9]+' | awk -F '[()]' '{print $2}')
+          echo "Booting iOS Simulator with UDID: $UDID"
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID"
+          echo "SIMULATOR_UDID=$UDID" >> $GITHUB_ENV
+
+      - name: Run iOS Simulator Integration Tests
+        run: flutter test ${{ inputs.integration-test-target }} -d "$SIMULATOR_UDID"
+        working-directory: ${{ inputs.integration-test-working-directory }}
+
+  integration-test-windows:
+    name: Integration Tests (Windows)
+    runs-on: windows-latest
+    if: ${{ inputs.run-integration-tests && inputs.run-integration-tests-windows }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: ${{ inputs.flutter-channel }}
+          flutter-version: ${{ inputs.flutter-version }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ inputs.integration-test-working-directory }}
+
+      - name: Run Windows Integration Tests
+        run: flutter test ${{ inputs.integration-test-target }} -d windows
+        working-directory: ${{ inputs.integration-test-working-directory }}
