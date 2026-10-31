@@ -175,9 +175,10 @@ void main() {
           (w) =>
               w is Semantics &&
               w.properties.button == true &&
+              w.properties.label == 'Copy' &&
               w.properties.onTap != null,
         ),
-        findsWidgets,
+        findsOneWidget,
       );
     });
 

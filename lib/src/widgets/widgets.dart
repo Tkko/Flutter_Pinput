@@ -246,6 +246,8 @@ class _PinputContextMenuButtonState extends State<_PinputContextMenuButton> {
     return Semantics(
       button: true,
       enabled: widget.onPressed != null,
+      label: widget.label,
+      excludeSemantics: true,
       onTap: widget.onPressed,
       child: MouseRegion(
         cursor: widget.onPressed != null
