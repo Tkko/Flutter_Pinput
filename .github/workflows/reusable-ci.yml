@@ -56,9 +56,7 @@ jobs:
 
       - name: Pub publish dry-run
         if: ${{ inputs.run-publish-dry-run }}
-        run: |
-          git checkout -- .
-          flutter pub publish --dry-run
+        run: flutter pub publish --dry-run
         working-directory: ${{ inputs.working-directory }}
 
       - name: Install webp (for pana screenshot validation)
