@@ -165,6 +165,9 @@ class _PinputDefaultContextMenu extends StatelessWidget {
     final shadowColor = isDark
         ? PinputConstants._menuDarkShadow
         : PinputConstants._menuLightShadow;
+    final borderColor = isDark
+        ? PinputConstants._menuDarkBorder
+        : PinputConstants._menuLightBorder;
 
     return CustomSingleChildLayout(
       delegate: TextSelectionToolbarLayoutDelegate(
@@ -182,10 +185,11 @@ class _PinputDefaultContextMenu extends StatelessWidget {
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: const BorderRadius.all(Radius.circular(8)),
+            border: Border.all(color: borderColor, width: 0.5),
             boxShadow: [
               BoxShadow(
                 color: shadowColor,
-                blurRadius: 10,
+                blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
             ],

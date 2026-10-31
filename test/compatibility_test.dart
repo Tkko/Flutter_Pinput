@@ -80,7 +80,7 @@ void main() {
 
         expect(find.text('PIN too short'), findsOneWidget);
         final errorText = tester.widget<Text>(find.text('PIN too short'));
-        expect(errorText.style?.color, const Color(0xFFB00020));
+        expect(errorText.style?.color, const Color(0xFFDC2626));
         expect(errorText.style?.fontSize, 12);
         expect(errorText.style?.decoration, TextDecoration.none);
       },
@@ -121,7 +121,7 @@ void main() {
 
         expect(find.text('PIN too short'), findsOneWidget);
         final errorText = tester.widget<Text>(find.text('PIN too short'));
-        expect(errorText.style?.color, const Color(0xFFCF6679));
+        expect(errorText.style?.color, const Color(0xFFF87171));
         expect(errorText.style?.fontSize, 12);
         expect(errorText.style?.decoration, TextDecoration.none);
       },
