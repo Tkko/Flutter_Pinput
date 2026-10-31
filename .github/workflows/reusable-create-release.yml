@@ -46,11 +46,14 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.release_pat || github.token }}
 
+      - name: Record checked-out commit SHA
+        id: get_commit
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Set up Flutter
         uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
         with:
           channel: stable
-          flutter-version-file: ${{ inputs.working-directory }}/pubspec.yaml
           cache: true
 
       - name: Install dependencies
@@ -59,21 +62,26 @@ jobs:
 
       - name: Determine tag name
         id: get_tag
+        env:
+          INPUT_TAG: ${{ inputs.tag_name }}
+          WORKING_DIR: ${{ inputs.working-directory }}
         run: |
-          if [ -n "${{ inputs.tag_name }}" ]; then
-            TAG="${{ inputs.tag_name }}"
+          if [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"
           else
-            VERSION=$(grep '^version:' "${{ inputs.working-directory }}/pubspec.yaml" | awk '{print $2}' | tr -d '\r')
+            VERSION=$(grep '^version:' "$WORKING_DIR/pubspec.yaml" | awk '{print $2}' | tr -d '\r')
             TAG="v$VERSION"
           fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "Target release tag: $TAG"
 
       - name: Check if tag already exists
+        env:
+          TAG: ${{ steps.get_tag.outputs.tag }}
         run: |
           git fetch --tags
-          if git rev-parse "${{ steps.get_tag.outputs.tag }}" >/dev/null 2>&1; then
-            echo "Error: Tag ${{ steps.get_tag.outputs.tag }} already exists! Did you bump version in pubspec.yaml?"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Error: Tag $TAG already exists! Did you bump version in pubspec.yaml?"
             exit 1
           fi
 
@@ -106,8 +114,10 @@ jobs:
 
       - name: Dry run exit
         if: ${{ inputs.dry_run }}
+        env:
+          TAG: ${{ steps.get_tag.outputs.tag }}
         run: |
-          echo "Dry run successful. Tag ${{ steps.get_tag.outputs.tag }} is valid and ready to be created."
+          echo "Dry run successful. Tag $TAG is valid and ready to be created."
           exit 0
 
       - name: Warn if release_pat is missing
@@ -121,8 +131,10 @@ jobs:
         if: ${{ !inputs.dry_run }}
         env:
           GH_TOKEN: ${{ secrets.release_pat || github.token }}
+          TAG: ${{ steps.get_tag.outputs.tag }}
+          TARGET_COMMIT: ${{ steps.get_commit.outputs.sha }}
         run: |
-          gh release create "${{ steps.get_tag.outputs.tag }}" \
-            --target "${{ inputs.branch }}" \
-            --title "${{ steps.get_tag.outputs.tag }}" \
+          gh release create "$TAG" \
+            --target "$TARGET_COMMIT" \
+            --title "$TAG" \
             --generate-notes
