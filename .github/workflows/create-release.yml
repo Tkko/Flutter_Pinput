@@ -17,6 +17,73 @@ on:
         required: false
         default: false
         type: boolean
+      working-directory:
+        description: Directory containing pubspec.yaml
+        required: false
+        default: .
+        type: string
+      integration-test-working-directory:
+        description: Directory containing the integration test Flutter app
+        required: false
+        default: example
+        type: string
+      integration-test-target:
+        description: Integration test file relative to the working directory
+        required: false
+        default: integration_test/app_test.dart
+        type: string
+      integration-test-driver:
+        description: Web integration test driver file
+        required: false
+        default: test_driver/integration_test.dart
+        type: string
+      publish-workflow:
+        description: Publishing workflow file to dispatch after creating the release
+        required: false
+        default: publish.yml
+        type: string
+  workflow_call:
+    inputs:
+      tag_name:
+        description: Requested release tag; empty derives it from pubspec.yaml
+        required: false
+        type: string
+        default: ''
+      dry_run:
+        description: Validate without creating a tag or release
+        required: false
+        type: boolean
+        default: false
+      include-windows:
+        description: Also validate Windows before creating the release
+        required: false
+        type: boolean
+        default: false
+      working-directory:
+        description: Directory containing pubspec.yaml
+        required: false
+        type: string
+        default: .
+      integration-test-working-directory:
+        description: Directory containing the integration test Flutter app
+        required: false
+        type: string
+        default: example
+      integration-test-target:
+        description: Integration test file relative to the working directory
+        required: false
+        type: string
+        default: integration_test/app_test.dart
+      integration-test-driver:
+        description: Web integration test driver file
+        required: false
+        type: string
+        default: test_driver/integration_test.dart
+      publish-workflow:
+        description: Publishing workflow file to dispatch after creating the release
+        required: false
+        type: string
+        default: publish.yml
 
 concurrency:
   group: create-release-${{ github.repository }}
@@ -42,7 +109,8 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
@@ -51,6 +119,7 @@ jobs:
         uses: ./.github/workflow-actions/.github/actions/release-metadata
         with:
           tag-name: ${{ inputs.tag_name }}
+          working-directory: ${{ inputs.working-directory }}
 
   validate:
     name: Validate Release Commit
@@ -64,13 +133,15 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/validate-package
         with:
+          working-directory: ${{ inputs.working-directory }}
           run-publish-dry-run: 'true'
           run-pana: 'true'
 
@@ -86,12 +157,17 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-web
+        with:
+          integration-test-working-directory: ${{ inputs.integration-test-working-directory }}
+          integration-test-target: ${{ inputs.integration-test-target }}
+          integration-test-driver: ${{ inputs.integration-test-driver }}
 
   integration-linux:
     name: Integration Tests (Linux)
@@ -105,12 +181,16 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-linux
+        with:
+          integration-test-working-directory: ${{ inputs.integration-test-working-directory }}
+          integration-test-target: ${{ inputs.integration-test-target }}
 
   integration-android:
     name: Integration Tests (Android Emulator)
@@ -124,12 +204,16 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-android
+        with:
+          integration-test-working-directory: ${{ inputs.integration-test-working-directory }}
+          integration-test-target: ${{ inputs.integration-test-target }}
 
   integration-ios:
     name: Integration Tests (iOS Simulator)
@@ -143,12 +227,16 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-ios
+        with:
+          integration-test-working-directory: ${{ inputs.integration-test-working-directory }}
+          integration-test-target: ${{ inputs.integration-test-target }}
 
   integration-desktop:
     name: Integration Tests (${{ matrix.platform }})
@@ -166,7 +254,8 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
@@ -174,6 +263,8 @@ jobs:
       - uses: ./.github/workflow-actions/.github/actions/integration-desktop
         with:
           platform: ${{ matrix.platform }}
+          integration-test-working-directory: ${{ inputs.integration-test-working-directory }}
+          integration-test-target: ${{ inputs.integration-test-target }}
 
   release:
     name: Create Release & Tag
@@ -192,7 +283,8 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
@@ -202,3 +294,4 @@ jobs:
           release-tag: ${{ needs.prepare.outputs.tag }}
           release-sha: ${{ needs.prepare.outputs.sha }}
           dry_run: ${{ inputs.dry_run }}
+          publish-workflow: ${{ inputs.publish-workflow }}

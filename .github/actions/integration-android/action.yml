@@ -48,6 +48,8 @@ runs:
 
     - name: Run Android Integration Tests
       uses: ReactiveCircus/android-emulator-runner@4c44018e59b437e86cdfc41da381398f93ed8808 # v2
+      env:
+        INTEGRATION_TEST_TARGET: ${{ inputs.integration-test-target }}
       with:
         api-level: ${{ inputs.android-api-level }}
         arch: x86_64
@@ -55,7 +57,7 @@ runs:
         working-directory: ${{ inputs.integration-test-working-directory }}
         script: >-
           bash -o pipefail -c '
-          flutter test ${{ inputs.integration-test-target }} -d emulator-5554 --reporter expanded --verbose 2>&1 | tee "$RUNNER_TEMP/android-tests.log";
+          flutter test "$INTEGRATION_TEST_TARGET" -d emulator-5554 --reporter expanded --verbose 2>&1 | tee "$RUNNER_TEMP/android-tests.log";
           status=$?;
           if [ "$status" -ne 0 ]; then
           adb -s emulator-5554 exec-out screencap -p > "$RUNNER_TEMP/android-failure.png";

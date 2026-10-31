@@ -14,6 +14,40 @@ on:
         description: 'Also run Windows integration tests'
         type: boolean
         default: false
+      integration-test-working-directory:
+        description: 'Directory containing the integration test Flutter app'
+        type: string
+        default: example
+      integration-test-target:
+        description: 'Integration test file relative to the working directory'
+        type: string
+        default: integration_test/app_test.dart
+      integration-test-driver:
+        description: 'Web integration test driver file'
+        type: string
+        default: test_driver/integration_test.dart
+  workflow_call:
+    inputs:
+      full-matrix:
+        description: 'Also run Android, iOS, and macOS integration tests'
+        type: boolean
+        default: false
+      include-windows:
+        description: 'Also run Windows integration tests'
+        type: boolean
+        default: false
+      integration-test-working-directory:
+        description: 'Directory containing the integration test Flutter app'
+        type: string
+        default: example
+      integration-test-target:
+        description: 'Integration test file relative to the working directory'
+        type: string
+        default: integration_test/app_test.dart
+      integration-test-driver:
+        description: 'Web integration test driver file'
+        type: string
+        default: test_driver/integration_test.dart
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -55,7 +89,8 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
@@ -76,12 +111,17 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-web
+        with:
+          integration-test-working-directory: ${{ inputs.integration-test-working-directory || 'example' }}
+          integration-test-target: ${{ inputs.integration-test-target || 'integration_test/app_test.dart' }}
+          integration-test-driver: ${{ inputs.integration-test-driver || 'test_driver/integration_test.dart' }}
 
   integration-linux:
     name: Integration Tests (Linux)
@@ -94,17 +134,21 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-linux
+        with:
+          integration-test-working-directory: ${{ inputs.integration-test-working-directory || 'example' }}
+          integration-test-target: ${{ inputs.integration-test-target || 'integration_test/app_test.dart' }}
 
   integration-android:
     name: Integration Tests (Android Emulator)
     needs: changes
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.full-matrix }}
+    if: ${{ inputs.full-matrix }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -112,17 +156,21 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-android
+        with:
+          integration-test-working-directory: ${{ inputs.integration-test-working-directory || 'example' }}
+          integration-test-target: ${{ inputs.integration-test-target || 'integration_test/app_test.dart' }}
 
   integration-ios:
     name: Integration Tests (iOS Simulator)
     needs: changes
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.full-matrix }}
+    if: ${{ inputs.full-matrix }}
     runs-on: macos-latest
     timeout-minutes: 25
     steps:
@@ -130,17 +178,21 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
           persist-credentials: false
       - uses: ./.github/workflow-actions/.github/actions/integration-ios
+        with:
+          integration-test-working-directory: ${{ inputs.integration-test-working-directory || 'example' }}
+          integration-test-target: ${{ inputs.integration-test-target || 'integration_test/app_test.dart' }}
 
   integration-desktop:
     name: Integration Tests (${{ matrix.platform }})
     needs: changes
-    if: ${{ github.event_name == 'workflow_dispatch' && (inputs.full-matrix || inputs.include-windows) }}
+    if: ${{ inputs.full-matrix || inputs.include-windows }}
     strategy:
       fail-fast: false
       matrix:
@@ -152,7 +204,8 @@ jobs:
       - name: Checkout shared actions
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.sha }}
+          repository: Tkko/Flutter_Pinput
+          ref: ${{ job.workflow_sha }}
           path: .github/workflow-actions
           sparse-checkout: .github/actions
           sparse-checkout-cone-mode: false
@@ -160,6 +213,8 @@ jobs:
       - uses: ./.github/workflow-actions/.github/actions/integration-desktop
         with:
           platform: ${{ matrix.platform }}
+          integration-test-working-directory: ${{ inputs.integration-test-working-directory || 'example' }}
+          integration-test-target: ${{ inputs.integration-test-target || 'integration_test/app_test.dart' }}
 
   required:
     name: CI required
@@ -173,8 +228,8 @@ jobs:
         env:
           JOB_RESULTS: ${{ toJSON(needs) }}
           RUN_WEB_LINUX: ${{ github.event_name != 'pull_request' || needs.changes.outputs.integration == 'true' }}
-          RUN_MOBILE: ${{ github.event_name == 'workflow_dispatch' && inputs.full-matrix }}
-          RUN_DESKTOP: ${{ github.event_name == 'workflow_dispatch' && (inputs.full-matrix || inputs.include-windows) }}
+          RUN_MOBILE: ${{ inputs.full-matrix }}
+          RUN_DESKTOP: ${{ inputs.full-matrix || inputs.include-windows }}
         shell: bash
         run: |
           python3 - <<'PY'
