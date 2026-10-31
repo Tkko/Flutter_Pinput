@@ -274,13 +274,21 @@ class _PinputContextMenuButtonState extends State<_PinputContextMenuButton> {
               borderRadius: const BorderRadius.all(Radius.circular(6)),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Text(
-              widget.label,
-              style: TextStyle(
-                color: widget.textColor,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                decoration: TextDecoration.none,
+            child: Align(
+              alignment: Alignment.center,
+              widthFactor: 1.0,
+              heightFactor: 1.0,
+              child: Text(
+                widget.label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: widget.textColor,
+                  fontSize: 14,
+                  height: 1.0,
+                  leadingDistribution: TextLeadingDistribution.even,
+                  fontWeight: FontWeight.w500,
+                  decoration: TextDecoration.none,
+                ),
               ),
             ),
           ),
