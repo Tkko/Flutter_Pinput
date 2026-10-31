@@ -1,0 +1,50 @@
+name: Run Linux integration tests
+description: Run Flutter integration tests and upload failure diagnostics on linux
+inputs:
+  integration-test-working-directory:
+    description: Directory containing the integration test Flutter app
+    required: false
+    default: example
+  integration-test-target:
+    description: Target test file path relative to integration-test-working-directory
+    required: false
+    default: integration_test/app_test.dart
+  flutter-channel:
+    description: Flutter SDK channel
+    required: false
+    default: stable
+  flutter-version:
+    description: Flutter SDK version
+    required: false
+    default: 3.47.8
+runs:
+  using: composite
+  steps:
+  - name: Set up Flutter package
+    uses: "./.github/workflow-actions/.github/actions/setup-flutter"
+    with:
+      flutter-channel: "${{ inputs.flutter-channel }}"
+      flutter-version: "${{ inputs.flutter-version }}"
+      working-directory: "${{ inputs.integration-test-working-directory }}"
+  - name: Install Linux build dependencies
+    shell: bash
+    run: |
+      sudo apt-get update
+      sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb
+  - name: Run Linux Integration Tests
+    shell: bash
+    run: xvfb-run --auto-servernum flutter test ${{ inputs.integration-test-target
+      }} -d linux --reporter expanded --verbose 2>&1 | tee "$RUNNER_TEMP/linux-tests.log"
+    working-directory: "${{ inputs.integration-test-working-directory }}"
+  - name: Upload failure diagnostics
+    if: "${{ failure() }}"
+    uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+    with:
+      name: linux-test-diagnostics
+      path: "${{ runner.temp }}/linux-tests.log"
+      retention-days: 7
+      if-no-files-found: warn
+  - name: Remove shared action checkout
+    if: "${{ always() }}"
+    shell: bash
+    run: rm -r -- .github/workflow-actions

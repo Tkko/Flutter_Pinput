@@ -37,8 +37,13 @@ run_ios() {
   fi
 
   echo "Booting simulator ($UDID)..."
-  xcrun simctl boot "$UDID" 2>/dev/null || true
-  open -a Simulator 2>/dev/null || true
+  SIMULATOR_APP="$(xcode-select -p)/Applications/Simulator.app"
+  if [ -d "$SIMULATOR_APP" ]; then
+    open "$SIMULATOR_APP" --args -CurrentDeviceUDID "$UDID"
+  else
+    echo -e "${YELLOW}Simulator UI is not installed; booting with simctl only.${NC}"
+  fi
+  xcrun simctl bootstatus "$UDID" -b
 
   echo -e "${YELLOW}▶ Running integration tests on iOS Simulator...${NC}"
   flutter test "$TEST_TARGET" -d "$UDID"
@@ -56,15 +61,17 @@ run_web() {
   echo -e "${YELLOW}▶ Starting Chromedriver on port 4444...${NC}"
   chromedriver --port=4444 &
   CHROMEDRIVER_PID=$!
-  sleep 1
 
   cleanup_chromedriver() {
     kill "$CHROMEDRIVER_PID" 2>/dev/null || true
   }
   trap cleanup_chromedriver EXIT
 
+  curl --fail --silent --show-error --retry 10 --retry-connrefused --retry-delay 1 --max-time 2 \
+    http://127.0.0.1:4444/status
+
   echo -e "${YELLOW}▶ Running integration tests on Chrome Web...${NC}"
-  flutter drive --driver=test_driver/integration_test.dart --target="$TEST_TARGET" -d chrome
+  flutter drive --driver=test_driver/integration_test.dart --target="$TEST_TARGET" -d web-server --headless --browser-name=chrome --timeout=120
   echo -e "${GREEN}✓ Chrome Web tests passed!${NC}\n"
 
   cleanup_chromedriver
@@ -87,7 +94,7 @@ case "$TARGET" in
   --all)
     run_macos
     if command -v xcrun &> /dev/null; then
-      run_ios || true
+      run_ios
     fi
     run_web
     ;;

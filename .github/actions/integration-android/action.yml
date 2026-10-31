@@ -1,0 +1,84 @@
+name: Run Android integration tests
+description: Run Flutter integration tests and upload failure diagnostics on android
+
+inputs:
+  flutter-channel:
+    description: Flutter SDK channel
+    required: false
+    default: stable
+  flutter-version:
+    description: Flutter SDK version; empty uses channel latest
+    required: false
+    default: '3.47.8'
+  cleanup-shared-checkout:
+    description: Remove the wrapper's temporary shared action checkout after execution
+    required: false
+    default: 'false'
+  integration-test-working-directory:
+    description: 'Directory containing the integration test Flutter app'
+    required: false
+    default: 'example'
+  integration-test-target:
+    description: 'Target test file path relative to integration-test-working-directory'
+    required: false
+    default: 'integration_test/app_test.dart'
+  android-api-level:
+    description: 'Android emulator API level'
+    required: false
+    default: '35'
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Flutter package
+      uses: ./.github/workflow-actions/.github/actions/setup-flutter
+      with:
+        flutter-channel: ${{ inputs.flutter-channel }}
+        flutter-version: ${{ inputs.flutter-version }}
+        working-directory: ${{ inputs.integration-test-working-directory }}
+
+    - name: Set up Java
+      uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+      with:
+        distribution: temurin
+        java-version: '17'
+
+    - name: Enable KVM access
+      shell: bash
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+
+    - name: Run Android Integration Tests
+      uses: ReactiveCircus/android-emulator-runner@4c44018e59b437e86cdfc41da381398f93ed8808 # v2
+      with:
+        api-level: ${{ inputs.android-api-level }}
+        arch: x86_64
+        disable-animations: true
+        working-directory: ${{ inputs.integration-test-working-directory }}
+        script: >-
+          bash -o pipefail -c '
+          flutter test ${{ inputs.integration-test-target }} -d emulator-5554 --reporter expanded --verbose 2>&1 | tee "$RUNNER_TEMP/android-tests.log";
+          status=$?;
+          if [ "$status" -ne 0 ]; then
+          adb -s emulator-5554 exec-out screencap -p > "$RUNNER_TEMP/android-failure.png";
+          fi;
+          exit "$status"
+          '
+
+    - name: Upload failure diagnostics
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      with:
+        name: android-test-diagnostics
+        path: |
+          ${{ runner.temp }}/android-tests.log
+          ${{ runner.temp }}/android-failure.png
+        retention-days: 7
+        if-no-files-found: warn
+
+    - name: Remove shared action checkout
+      if: ${{ always() && inputs.cleanup-shared-checkout == 'true' }}
+      shell: bash
+      run: rm -r -- .github/workflow-actions

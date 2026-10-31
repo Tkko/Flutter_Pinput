@@ -1,0 +1,40 @@
+name: build pages demo
+description: Execute build pages demo steps
+inputs:
+  flutter-channel:
+    description: Flutter SDK channel to use
+    required: false
+    default: stable
+  flutter-version:
+    description: Specific Flutter SDK version; empty uses channel latest
+    required: false
+    default: 3.47.8
+  working-directory:
+    description: Directory containing the Flutter demo app
+    required: false
+    default: example
+runs:
+  using: composite
+  steps:
+  - name: Configure Pages
+    id: pages
+    uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b
+  - name: Set up Flutter package
+    uses: "./.github/workflow-actions/.github/actions/setup-flutter"
+    with:
+      flutter-channel: "${{ inputs.flutter-channel }}"
+      flutter-version: "${{ inputs.flutter-version }}"
+      working-directory: "${{ inputs.working-directory }}"
+  - name: Remove shared action checkout
+    shell: bash
+    run: rm -r -- .github/workflow-actions
+  - name: Build demo
+    env:
+      BASE_PATH: "${{ steps.pages.outputs.base_path }}"
+    run: flutter build web --release --base-href="$BASE_PATH/"
+    working-directory: "${{ inputs.working-directory }}"
+    shell: bash
+  - name: Upload Pages artifact
+    uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b
+    with:
+      path: "${{ inputs.working-directory }}/build/web"

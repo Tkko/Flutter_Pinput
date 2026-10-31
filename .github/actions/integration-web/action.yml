@@ -1,0 +1,60 @@
+name: Run Web integration tests
+description: Run Flutter integration tests and upload failure diagnostics on web
+inputs:
+  integration-test-working-directory:
+    description: Directory containing the integration test Flutter app
+    required: false
+    default: example
+  integration-test-target:
+    description: Target test file path relative to integration-test-working-directory
+    required: false
+    default: integration_test/app_test.dart
+  integration-test-driver:
+    description: Driver file path relative to integration-test-working-directory
+    required: false
+    default: test_driver/integration_test.dart
+  flutter-channel:
+    description: Flutter SDK channel
+    required: false
+    default: stable
+  flutter-version:
+    description: Flutter SDK version
+    required: false
+    default: 3.47.8
+runs:
+  using: composite
+  steps:
+  - name: Set up Flutter package
+    uses: "./.github/workflow-actions/.github/actions/setup-flutter"
+    with:
+      flutter-channel: "${{ inputs.flutter-channel }}"
+      flutter-version: "${{ inputs.flutter-version }}"
+      working-directory: "${{ inputs.integration-test-working-directory }}"
+  - name: Setup Chrome & Chromedriver
+    uses: nanasess/setup-chromedriver@v2
+  - name: Launch Chromedriver
+    shell: bash
+    run: |
+      chromedriver --port=4444 > "$RUNNER_TEMP/chromedriver.log" 2>&1 &
+      curl --fail --silent --show-error --retry 10 --retry-connrefused --retry-delay 1 --max-time 2 \
+        http://127.0.0.1:4444/status | jq -e '.value.ready == true'
+  - name: Run Web Integration Tests
+    shell: bash
+    run: flutter drive --driver=${{ inputs.integration-test-driver }} --target=${{
+      inputs.integration-test-target }} -d web-server --headless --browser-name=chrome
+      --timeout=120 --verbose 2>&1 | tee "$RUNNER_TEMP/web-tests.log"
+    working-directory: "${{ inputs.integration-test-working-directory }}"
+  - name: Upload failure diagnostics
+    if: "${{ failure() }}"
+    uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+    with:
+      name: web-test-diagnostics
+      path: |
+        ${{ runner.temp }}/web-tests.log
+        ${{ runner.temp }}/chromedriver.log
+      retention-days: 7
+      if-no-files-found: warn
+  - name: Remove shared action checkout
+    if: "${{ always() }}"
+    shell: bash
+    run: rm -r -- .github/workflow-actions
