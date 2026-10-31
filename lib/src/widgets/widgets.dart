@@ -234,7 +234,6 @@ class _PinputContextMenuButton extends StatefulWidget {
 
 class _PinputContextMenuButtonState extends State<_PinputContextMenuButton> {
   bool _isHovered = false;
-  bool _isFocused = false;
 
   @override
   Widget build(BuildContext context) {
@@ -244,33 +243,22 @@ class _PinputContextMenuButtonState extends State<_PinputContextMenuButton> {
         ? PinputConstants._menuDarkHighlight
         : PinputConstants._menuLightHighlight;
 
-    return FocusableActionDetector(
+    return Semantics(
+      button: true,
       enabled: widget.onPressed != null,
-      mouseCursor: widget.onPressed != null
-          ? SystemMouseCursors.click
-          : SystemMouseCursors.basic,
-      onShowHoverHighlight: (value) => setState(() => _isHovered = value),
-      onShowFocusHighlight: (value) => setState(() => _isFocused = value),
-      actions: <Type, Action<Intent>>{
-        ActivateIntent: CallbackAction<ActivateIntent>(
-          onInvoke: (intent) {
-            widget.onPressed?.call();
-            return null;
-          },
-        ),
-      },
-      child: Semantics(
-        button: true,
-        label: widget.label,
-        enabled: widget.onPressed != null,
+      onTap: widget.onPressed,
+      child: MouseRegion(
+        cursor: widget.onPressed != null
+            ? SystemMouseCursors.click
+            : SystemMouseCursors.basic,
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: widget.onPressed,
           child: Container(
             decoration: BoxDecoration(
-              color: (_isHovered || _isFocused)
-                  ? highlightColor
-                  : PinputConstants._transparent,
+              color: _isHovered ? highlightColor : PinputConstants._transparent,
               borderRadius: const BorderRadius.all(Radius.circular(6)),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

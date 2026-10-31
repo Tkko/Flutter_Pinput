@@ -169,17 +169,69 @@ void main() {
 
       expect(find.text('Copy'), findsOneWidget);
       expect(find.byType(Wrap), findsOneWidget);
-      expect(find.byType(FocusableActionDetector), findsWidgets);
+      expect(find.byType(MouseRegion), findsWidgets);
       expect(
         find.byWidgetPredicate(
           (w) =>
               w is Semantics &&
               w.properties.button == true &&
-              w.properties.label == 'Copy',
+              w.properties.onTap != null,
         ),
-        findsOneWidget,
+        findsWidgets,
       );
     });
+
+    testWidgets(
+      'Context menu toolbar buttons do not steal focus or dismiss on Tab',
+      (WidgetTester tester) async {
+        final controller = TextEditingController(text: '1234');
+
+        await tester.pumpWidget(
+          WidgetsApp(
+            color: const Color(0xFFFFFFFF),
+            pageRouteBuilder:
+                <T>(RouteSettings settings, WidgetBuilder builder) {
+                  return PageRouteBuilder<T>(
+                    settings: settings,
+                    pageBuilder: (context, _, _) => builder(context),
+                  );
+                },
+            home: Center(
+              child: Pinput(
+                controller: controller,
+                length: 4,
+                toolbarEnabled: true,
+                enableInteractiveSelection: true,
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.byType(EditableText), warnIfMissed: false);
+        await tester.pump();
+
+        controller.selection = const TextSelection(
+          baseOffset: 0,
+          extentOffset: 4,
+        );
+        await tester.pump();
+
+        final editableTextState = tester.state<EditableTextState>(
+          find.byType(EditableText),
+        );
+        editableTextState.toggleToolbar();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(find.text('Copy'), findsOneWidget);
+
+        // Send Tab key
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump(const Duration(milliseconds: 100));
+
+        // Toolbar remains stable and does not dispose overlay
+        expect(find.byType(Wrap), findsOneWidget);
+      },
+    );
 
     testWidgets('Respects WidgetsLocalizations labels for context menu', (
       WidgetTester tester,
