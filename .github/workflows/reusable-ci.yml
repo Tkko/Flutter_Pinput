@@ -1,0 +1,72 @@
+name: Reusable Flutter CI
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        description: 'Working directory of the Flutter package'
+        required: false
+        default: '.'
+        type: string
+      run-publish-dry-run:
+        description: 'Whether to run dart pub publish --dry-run'
+        required: false
+        default: true
+        type: boolean
+      run-pana:
+        description: 'Whether to verify pana score'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test & Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: stable
+          flutter-version-file: ${{ inputs.working-directory }}/pubspec.yaml
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Analyze code
+        run: flutter analyze
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Run tests
+        run: flutter test
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Pub publish dry-run
+        if: ${{ inputs.run-publish-dry-run }}
+        run: dart pub publish --dry-run
+        working-directory: ${{ inputs.working-directory }}
+
+      - name: Install webp (for pana screenshot validation)
+        if: ${{ inputs.run-pana }}
+        run: sudo apt-get update && sudo apt-get install -y webp
+
+      - name: Verify all points from pana
+        if: ${{ inputs.run-pana }}
+        run: |
+          flutter pub global activate pana
+          flutter packages pub global run pana --exit-code-threshold 0 .
+        working-directory: ${{ inputs.working-directory }}

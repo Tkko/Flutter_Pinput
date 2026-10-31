@@ -1,0 +1,25 @@
+name: Create Release & Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name (e.g. v7.0.1). Leave empty to use version from pubspec.yaml'
+        required: false
+        type: string
+      dry_run:
+        description: 'Dry run (validate tests and pubspec without creating tag/release)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    permissions:
+      contents: write
+    uses: ./.github/workflows/reusable-create-release.yml
+    with:
+      tag_name: ${{ inputs.tag_name }}
+      dry_run: ${{ inputs.dry_run }}
+    secrets:
+      release_pat: ${{ secrets.RELEASE_PAT }}
