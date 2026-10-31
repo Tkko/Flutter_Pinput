@@ -105,3 +105,127 @@ class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor>
     );
   }
 }
+
+class _PinputSelectionControls extends EmptyTextSelectionControls
+    with TextSelectionHandleControls {}
+
+final TextSelectionControls _pinputSelectionControls =
+    _PinputSelectionControls();
+
+class _PinputDefaultContextMenu extends StatelessWidget {
+  const _PinputDefaultContextMenu({
+    required this.anchors,
+    required this.buttonItems,
+  });
+
+  final TextSelectionToolbarAnchors anchors;
+  final List<ContextMenuButtonItem> buttonItems;
+
+  static String _getLabel(BuildContext context, ContextMenuButtonItem item) {
+    if (item.label != null) return item.label!;
+    final localizations =
+        Localizations.of<WidgetsLocalizations>(context, WidgetsLocalizations) ??
+        const DefaultWidgetsLocalizations();
+    return switch (item.type) {
+      ContextMenuButtonType.cut => localizations.cutButtonLabel,
+      ContextMenuButtonType.copy => localizations.copyButtonLabel,
+      ContextMenuButtonType.paste => localizations.pasteButtonLabel,
+      ContextMenuButtonType.selectAll => localizations.selectAllButtonLabel,
+      ContextMenuButtonType.lookUp => localizations.lookUpButtonLabel,
+      ContextMenuButtonType.searchWeb => localizations.searchWebButtonLabel,
+      ContextMenuButtonType.share => localizations.shareButtonLabel,
+      // Matches Flutter's CupertinoTextSelectionToolbarButton and SystemContextMenu:
+      // - [custom] items supply their own [item.label] above.
+      // - [delete] is only used in spell check suggestions, not text selection.
+      // - [liveTextInput] is platform-specific and has no generic text label.
+      // Unlabeled items return an empty string and are filtered out in [build].
+      ContextMenuButtonType.liveTextInput ||
+      ContextMenuButtonType.delete ||
+      ContextMenuButtonType.custom => '',
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final visibleItems = buttonItems
+        .where((item) => _getLabel(context, item).isNotEmpty)
+        .toList(growable: false);
+    if (visibleItems.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final isDark =
+        MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
+    final backgroundColor = isDark
+        ? PinputConstants._menuDarkBackground
+        : PinputConstants._menuLightBackground;
+    final foregroundColor = isDark
+        ? PinputConstants._menuDarkForeground
+        : PinputConstants._menuLightForeground;
+    final shadowColor = isDark
+        ? PinputConstants._menuDarkShadow
+        : PinputConstants._menuLightShadow;
+    final dividerColor = isDark
+        ? PinputConstants._menuDarkDivider
+        : PinputConstants._menuLightDivider;
+
+    return CustomSingleChildLayout(
+      delegate: TextSelectionToolbarLayoutDelegate(
+        anchorAbove: anchors.primaryAnchor,
+        anchorBelow: anchors.secondaryAnchor ?? anchors.primaryAnchor,
+      ),
+      child: DefaultTextStyle(
+        style: TextStyle(
+          color: foregroundColor,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          decoration: TextDecoration.none,
+        ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            boxShadow: [
+              BoxShadow(
+                color: shadowColor,
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (int i = 0; i < visibleItems.length; i++) ...[
+                  if (i > 0)
+                    Container(width: 1, height: 20, color: dividerColor),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: visibleItems[i].onPressed,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      child: Text(
+                        _getLabel(context, visibleItems[i]),
+                        style: TextStyle(
+                          color: foregroundColor,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

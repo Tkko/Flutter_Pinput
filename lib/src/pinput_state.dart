@@ -224,7 +224,7 @@ class _PinputState extends State<Pinput>
       );
     }
 
-    switch (Theme.of(context).platform) {
+    switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:
       case TargetPlatform.macOS:
       case TargetPlatform.linux:
@@ -238,7 +238,7 @@ class _PinputState extends State<Pinput>
         break;
     }
 
-    switch (Theme.of(context).platform) {
+    switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:
       case TargetPlatform.fuchsia:
       case TargetPlatform.android:
@@ -290,8 +290,6 @@ class _PinputState extends State<Pinput>
 
   @override
   Widget build(BuildContext context) {
-    assert(debugCheckHasMaterial(context));
-    assert(debugCheckHasMaterialLocalizations(context));
     assert(debugCheckHasDirectionality(context));
     final isDense = widget.mainAxisAlignment == MainAxisAlignment.center;
 
@@ -299,18 +297,17 @@ class _PinputState extends State<Pinput>
   }
 
   Widget _buildPinput() {
-    final theme = Theme.of(context);
     VoidCallback? handleDidGainAccessibilityFocus;
     TextSelectionControls? textSelectionControls = widget.selectionControls;
 
-    switch (theme.platform) {
+    switch (defaultTargetPlatform) {
       case TargetPlatform.iOS:
         forcePressEnabled = true;
-        textSelectionControls ??= cupertinoTextSelectionHandleControls;
+        textSelectionControls ??= _pinputSelectionControls;
         break;
       case TargetPlatform.macOS:
         forcePressEnabled = false;
-        textSelectionControls ??= cupertinoDesktopTextSelectionHandleControls;
+        textSelectionControls ??= _pinputSelectionControls;
         handleDidGainAccessibilityFocus = () {
           if (!_effectiveFocusNode.hasFocus &&
               _effectiveFocusNode.canRequestFocus) {
@@ -321,15 +318,15 @@ class _PinputState extends State<Pinput>
       case TargetPlatform.android:
       case TargetPlatform.fuchsia:
         forcePressEnabled = false;
-        textSelectionControls ??= materialTextSelectionHandleControls;
+        textSelectionControls ??= _pinputSelectionControls;
         break;
       case TargetPlatform.linux:
         forcePressEnabled = false;
-        textSelectionControls ??= desktopTextSelectionHandleControls;
+        textSelectionControls ??= _pinputSelectionControls;
         break;
       case TargetPlatform.windows:
         forcePressEnabled = false;
-        textSelectionControls ??= desktopTextSelectionHandleControls;
+        textSelectionControls ??= _pinputSelectionControls;
         handleDidGainAccessibilityFocus = () {
           if (!_effectiveFocusNode.hasFocus &&
               _effectiveFocusNode.canRequestFocus) {
@@ -425,7 +422,7 @@ class _PinputState extends State<Pinput>
           enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
           textInputAction: widget.textInputAction,
           textCapitalization: widget.textCapitalization,
-          selectionColor: Colors.transparent,
+          selectionColor: PinputConstants._transparent,
           keyboardType: widget.keyboardType,
           obscureText: widget.obscureText,
           onSubmitted: (s) {
@@ -441,12 +438,12 @@ class _PinputState extends State<Pinput>
           inputFormatters: formatters,
           restorationId: 'pinput',
           clipBehavior: Clip.hardEdge,
-          cursorColor: Colors.transparent,
+          cursorColor: PinputConstants._transparent,
           controller: _effectiveController,
           autofillHints: widget.autofillHints,
           scrollPadding: widget.scrollPadding,
           selectionWidthStyle: BoxWidthStyle.tight,
-          backgroundCursorColor: Colors.transparent,
+          backgroundCursorColor: PinputConstants._transparent,
           selectionHeightStyle: BoxHeightStyle.tight,
           enableSuggestions: widget.enableSuggestions,
           contextMenuBuilder: widget.contextMenuBuilder,
@@ -459,28 +456,22 @@ class _PinputState extends State<Pinput>
               ? textSelectionControls
               : null,
           keyboardAppearance:
-              widget.keyboardAppearance ?? Theme.of(context).brightness,
+              widget.keyboardAppearance ??
+              MediaQuery.maybePlatformBrightnessOf(context) ??
+              Brightness.light,
         ),
       ),
     );
   }
 
-  // TODO: Use WidgetStateProperty instead.
   MouseCursor get _effectiveMouseCursor {
-    // ignore: deprecated_member_use
-    return MaterialStateProperty.resolveAs<MouseCursor>(
-      // ignore: deprecated_member_use
-      widget.mouseCursor ?? MaterialStateMouseCursor.textable,
-      // ignore: deprecated_member_use
-      <MaterialState>{
-        // ignore: deprecated_member_use
-        if (!isEnabled) MaterialState.disabled,
-        // ignore: deprecated_member_use
-        if (_isHovering) MaterialState.hovered,
-        // ignore: deprecated_member_use
-        if (_effectiveFocusNode.hasFocus) MaterialState.focused,
-        // ignore: deprecated_member_use
-        if (hasError) MaterialState.error,
+    return WidgetStateProperty.resolveAs<MouseCursor>(
+      widget.mouseCursor ?? SystemMouseCursors.text,
+      <WidgetState>{
+        if (!isEnabled) WidgetState.disabled,
+        if (_isHovering) WidgetState.hovered,
+        if (_effectiveFocusNode.hasFocus) WidgetState.focused,
+        if (hasError) WidgetState.error,
       },
     );
   }
@@ -580,17 +571,15 @@ class _PinputState extends State<Pinput>
         return widget.errorBuilder!.call(_errorText, pin);
       }
 
-      final theme = Theme.of(context);
       if (_errorText != null) {
+        final defaultErrorStyle = DefaultTextStyle.of(
+          context,
+        ).style.copyWith(color: PinputConstants._defaultErrorColor);
         return Padding(
           padding: const EdgeInsetsDirectional.only(start: 4, top: 8),
           child: Text(
             _errorText!,
-            style:
-                widget.errorTextStyle ??
-                theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.error,
-                ),
+            style: widget.errorTextStyle ?? defaultErrorStyle,
           ),
         );
       }

@@ -34,7 +34,7 @@ class _PinputSelectionGestureDetectorBuilder
   void onSingleLongTapStart(details) {
     super.onSingleLongTapStart(details);
     if (delegate.selectionEnabled) {
-      switch (Theme.of(_state.context).platform) {
+      switch (defaultTargetPlatform) {
         case TargetPlatform.iOS:
         case TargetPlatform.macOS:
           break;
