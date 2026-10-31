@@ -1,10 +1,9 @@
 name: CI
 
 on:
-  push:
+  pull_request:
     branches:
       - master
-  pull_request:
   workflow_dispatch:
     inputs:
       full-matrix:
@@ -199,52 +198,3 @@ jobs:
                   failed = True
           sys.exit(1 if failed else 0)
           PY
-
-  demo-build:
-    name: Build Web Demo
-    needs: required
-    if: ${{ !cancelled() && needs.required.result == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: read
-      pages: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-      - name: Checkout shared actions
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref: ${{ github.sha }}
-          path: .github/workflow-actions
-          sparse-checkout: .github/actions
-          sparse-checkout-cone-mode: false
-          persist-credentials: false
-      - uses: ./.github/workflow-actions/.github/actions/build-pages-demo
-
-  demo-deploy:
-    name: Deploy Web Demo
-    needs: demo-build
-    if: ${{ !cancelled() && needs.demo-build.result == 'success' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    concurrency:
-      group: github-pages
-      cancel-in-progress: false
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page-url }}
-    steps:
-      - name: Checkout shared actions
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref: ${{ github.sha }}
-          path: .github/workflow-actions
-          sparse-checkout: .github/actions
-          sparse-checkout-cone-mode: false
-          persist-credentials: false
-      - id: deployment
-        uses: ./.github/workflow-actions/.github/actions/deploy-pages-demo
