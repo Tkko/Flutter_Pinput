@@ -59,7 +59,8 @@ jobs:
         run: |
           if ! OUTPUT=$(flutter pub publish --dry-run 2>&1); then
             echo "$OUTPUT"
-            ESCAPED="${OUTPUT//$'\n'/%0A}"
+            TAIL_OUTPUT=$(echo "$OUTPUT" | tail -n 25)
+            ESCAPED="${TAIL_OUTPUT//$'\n'/%0A}"
             echo "::error title=Pub Dry Run Failed::$ESCAPED"
             exit 1
           fi
