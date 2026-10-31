@@ -84,6 +84,7 @@ jobs:
   test:
     name: Test & Analyze
     needs: changes
+    if: ${{ github.event_name != 'pull_request' || needs.changes.outputs.integration == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -241,6 +242,7 @@ jobs:
       - name: Check required jobs
         env:
           JOB_RESULTS: ${{ toJSON(needs) }}
+          RUN_TEST: ${{ github.event_name != 'pull_request' || needs.changes.outputs.integration == 'true' }}
           RUN_WEB_LINUX: ${{ github.event_name != 'pull_request' || needs.changes.outputs.integration == 'true' }}
           RUN_MOBILE: ${{ inputs.full-matrix }}
           RUN_DESKTOP: ${{ inputs.full-matrix || inputs.include-windows }}
@@ -251,8 +253,9 @@ jobs:
           import os
           import sys
 
-          expected = {"changes": "success", "test": "success"}
+          expected = {"changes": "success"}
           for jobs, toggle in [
+              (["test"], "RUN_TEST"),
               (["integration-web", "integration-linux"], "RUN_WEB_LINUX"),
               (["integration-android", "integration-ios"], "RUN_MOBILE"),
               (["integration-desktop"], "RUN_DESKTOP"),
