@@ -56,7 +56,14 @@ jobs:
 
       - name: Pub publish dry-run
         if: ${{ inputs.run-publish-dry-run }}
-        run: flutter pub publish --dry-run
+        run: |
+          if ! OUTPUT=$(flutter pub publish --dry-run 2>&1); then
+            echo "$OUTPUT"
+            ESCAPED="${OUTPUT//$'\n'/%0A}"
+            echo "::error title=Pub Dry Run Failed::$ESCAPED"
+            exit 1
+          fi
+          echo "$OUTPUT"
         working-directory: ${{ inputs.working-directory }}
 
       - name: Install webp (for pana screenshot validation)
