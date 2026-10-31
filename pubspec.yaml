@@ -12,9 +12,9 @@ topics:
   - sms-autofill
 screenshots:
   - description: 'Pin input example'
-    path: example/pinput_demo_1.webp
+    path: screenshots/pinput_demo_1.webp
   - description: 'Pin code example'
-    path: example/pinput_demo_2.webp
+    path: screenshots/pinput_demo_2.webp
 funding:
   - https://ko-fi.com/flutterman
 
