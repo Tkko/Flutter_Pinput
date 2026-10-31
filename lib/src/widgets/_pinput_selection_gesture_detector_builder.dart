@@ -34,16 +34,7 @@ class _PinputSelectionGestureDetectorBuilder
   void onSingleLongTapStart(details) {
     super.onSingleLongTapStart(details);
     if (delegate.selectionEnabled) {
-      switch (defaultTargetPlatform) {
-        case TargetPlatform.iOS:
-        case TargetPlatform.macOS:
-          break;
-        case TargetPlatform.android:
-        case TargetPlatform.fuchsia:
-        case TargetPlatform.linux:
-        case TargetPlatform.windows:
-          Feedback.forLongPress(_state.context);
-      }
+      Feedback.forLongPress(_state.context);
     }
   }
 }

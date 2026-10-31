@@ -14,7 +14,9 @@ class PinputConstants {
 
   static const _transparent = Color(0x00000000);
 
-  static const _defaultErrorColor = Color(0xFFB00020);
+  // Error text colors
+  static const _defaultLightErrorColor = Color(0xFFB00020);
+  static const _defaultDarkErrorColor = Color(0xFFCF6679);
 
   // Context menu colors
   static const _menuDarkBackground = Color(0xFF2A2A2A);
@@ -23,8 +25,8 @@ class PinputConstants {
   static const _menuLightForeground = Color(0xFF000000);
   static const _menuDarkShadow = Color(0x66000000);
   static const _menuLightShadow = Color(0x26000000);
-  static const _menuDarkDivider = Color(0xFF3F3F3F);
-  static const _menuLightDivider = Color(0xFFE0E0E0);
+  static const _menuDarkHighlight = Color(0x1FFFFFFF);
+  static const _menuLightHighlight = Color(0x14000000);
 
   /// The hidden text under the Pinput
   static const _hiddenTextStyle = TextStyle(

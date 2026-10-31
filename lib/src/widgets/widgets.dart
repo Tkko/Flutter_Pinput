@@ -165,9 +165,6 @@ class _PinputDefaultContextMenu extends StatelessWidget {
     final shadowColor = isDark
         ? PinputConstants._menuDarkShadow
         : PinputConstants._menuLightShadow;
-    final dividerColor = isDark
-        ? PinputConstants._menuDarkDivider
-        : PinputConstants._menuLightDivider;
 
     return CustomSingleChildLayout(
       delegate: TextSelectionToolbarLayoutDelegate(
@@ -193,35 +190,94 @@ class _PinputDefaultContextMenu extends StatelessWidget {
               ),
             ],
           ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(8)),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Wrap(
+              spacing: 2,
+              runSpacing: 2,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                for (int i = 0; i < visibleItems.length; i++) ...[
-                  if (i > 0)
-                    Container(width: 1, height: 20, color: dividerColor),
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: visibleItems[i].onPressed,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 10,
-                      ),
-                      child: Text(
-                        _getLabel(context, visibleItems[i]),
-                        style: TextStyle(
-                          color: foregroundColor,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.none,
-                        ),
-                      ),
-                    ),
+                for (final item in visibleItems)
+                  _PinputContextMenuButton(
+                    label: _getLabel(context, item),
+                    textColor: foregroundColor,
+                    onPressed: item.onPressed,
                   ),
-                ],
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PinputContextMenuButton extends StatefulWidget {
+  const _PinputContextMenuButton({
+    required this.label,
+    required this.onPressed,
+    required this.textColor,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+  final Color textColor;
+
+  @override
+  State<_PinputContextMenuButton> createState() =>
+      _PinputContextMenuButtonState();
+}
+
+class _PinputContextMenuButtonState extends State<_PinputContextMenuButton> {
+  bool _isHovered = false;
+  bool _isFocused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark =
+        MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
+    final highlightColor = isDark
+        ? PinputConstants._menuDarkHighlight
+        : PinputConstants._menuLightHighlight;
+
+    return FocusableActionDetector(
+      enabled: widget.onPressed != null,
+      mouseCursor: widget.onPressed != null
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.basic,
+      onShowHoverHighlight: (value) => setState(() => _isHovered = value),
+      onShowFocusHighlight: (value) => setState(() => _isFocused = value),
+      actions: <Type, Action<Intent>>{
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (intent) {
+            widget.onPressed?.call();
+            return null;
+          },
+        ),
+      },
+      child: Semantics(
+        button: true,
+        label: widget.label,
+        enabled: widget.onPressed != null,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: widget.onPressed,
+          child: Container(
+            decoration: BoxDecoration(
+              color: (_isHovered || _isFocused)
+                  ? highlightColor
+                  : PinputConstants._transparent,
+              borderRadius: const BorderRadius.all(Radius.circular(6)),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Text(
+              widget.label,
+              style: TextStyle(
+                color: widget.textColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                decoration: TextDecoration.none,
+              ),
             ),
           ),
         ),

@@ -79,6 +79,51 @@ void main() {
         await tester.pump();
 
         expect(find.text('PIN too short'), findsOneWidget);
+        final errorText = tester.widget<Text>(find.text('PIN too short'));
+        expect(errorText.style?.color, const Color(0xFFB00020));
+        expect(errorText.style?.fontSize, 12);
+        expect(errorText.style?.decoration, TextDecoration.none);
+      },
+    );
+
+    testWidgets(
+      'Displays dark-mode-safe validator error text with adequate contrast',
+      (WidgetTester tester) async {
+        final formKey = GlobalKey<FormState>();
+
+        await tester.pumpWidget(
+          MediaQuery(
+            data: const MediaQueryData(platformBrightness: Brightness.dark),
+            child: WidgetsApp(
+              color: const Color(0xFF000000),
+              pageRouteBuilder:
+                  <T>(RouteSettings settings, WidgetBuilder builder) {
+                    return PageRouteBuilder<T>(
+                      settings: settings,
+                      pageBuilder: (context, _, _) => builder(context),
+                    );
+                  },
+              home: Center(
+                child: Form(
+                  key: formKey,
+                  child: Pinput(
+                    validator: (val) =>
+                        (val?.length ?? 0) < 4 ? 'PIN too short' : null,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        formKey.currentState!.validate();
+        await tester.pump();
+
+        expect(find.text('PIN too short'), findsOneWidget);
+        final errorText = tester.widget<Text>(find.text('PIN too short'));
+        expect(errorText.style?.color, const Color(0xFFCF6679));
+        expect(errorText.style?.fontSize, 12);
+        expect(errorText.style?.decoration, TextDecoration.none);
       },
     );
 
@@ -123,6 +168,17 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Copy'), findsOneWidget);
+      expect(find.byType(Wrap), findsOneWidget);
+      expect(find.byType(FocusableActionDetector), findsWidgets);
+      expect(
+        find.byWidgetPredicate(
+          (w) =>
+              w is Semantics &&
+              w.properties.button == true &&
+              w.properties.label == 'Copy',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Respects WidgetsLocalizations labels for context menu', (

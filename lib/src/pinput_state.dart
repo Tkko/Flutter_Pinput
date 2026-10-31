@@ -572,9 +572,15 @@ class _PinputState extends State<Pinput>
       }
 
       if (_errorText != null) {
-        final defaultErrorStyle = DefaultTextStyle.of(
-          context,
-        ).style.copyWith(color: PinputConstants._defaultErrorColor);
+        final isDark =
+            MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
+        final defaultErrorStyle = TextStyle(
+          color: isDark
+              ? PinputConstants._defaultDarkErrorColor
+              : PinputConstants._defaultLightErrorColor,
+          fontSize: 12,
+          decoration: TextDecoration.none,
+        );
         return Padding(
           padding: const EdgeInsetsDirectional.only(start: 4, top: 8),
           child: Text(
