@@ -96,3 +96,34 @@ enum HapticFeedbackType {
 
 /// Error widget builder of Pinput
 typedef PinputErrorBuilder = Widget Function(String? errorText, String pin);
+
+/// How editing previous pins behaves when tapping on a filled pin slot.
+///
+/// Notes that apply to [overwrite] and [clearFollowing]:
+/// - Pressing backspace removes the focused digit. [overwrite] leaves following
+///   digits in their original slots; [clearFollowing] also removes them.
+///   Backspace on an empty slot removes the preceding digit.
+/// - Replacing or deleting a range selection uses native text editing semantics;
+///   the resulting text is displayed in contiguous slots.
+/// - Tapping the first filled slot selects its digit so native keyboards can
+///   delete it with backspace at the start of the input. This tap-created
+///   selection retains the selected edit mode's slot behavior.
+/// - [Pinput.onCompleted] (and closing the keyboard with
+///   [Pinput.closeKeyboardWhenCompleted]) only happens when the PIN is full and
+///   the cursor is at the end. Editing a middle pin of a full PIN with
+///   [overwrite] therefore does not call it until the user types the last pin;
+///   read the value from [Pinput.onChanged] or the controller to submit
+///   explicitly (e.g. a "Continue" button).
+/// - Pin taps are not available with `useNativeKeyboard: false`; a custom
+///   keyboard can move the cursor by setting `controller.selection`, and the
+///   `append`/`delete` helpers always work at the end of the input.
+enum PinEditMode {
+  /// Editing previous pins is disabled; the cursor is locked to the end of the input.
+  none,
+
+  /// Tapping a previous pin focuses that slot. Typing replaces that digit in-place and preserves following pins.
+  overwrite,
+
+  /// Tapping a previous pin focuses that slot. Typing replaces that digit and clears following pins.
+  clearFollowing,
+}
