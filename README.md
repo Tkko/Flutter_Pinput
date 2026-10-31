@@ -2,10 +2,6 @@
  <h1 align="center" style="font-size: 70px;">Flutter pin code input</h1>
 
 <div align="center">
-    <a href="https://just-url.short.gy/prelude">
-        <img width="301" alt="Prelude SMS API"
-            src="https://github.com/user-attachments/assets/a8f90a17-8c2f-4392-a6ad-665cf1d57809">
-    </a>
     <br>
     <a href="https://ko-fi.com/flutterman">
         <img width="300"
