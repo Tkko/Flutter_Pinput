@@ -64,7 +64,7 @@ runs:
     shell: bash
   - name: Install webp (for pana screenshot validation)
     if: "${{ inputs.run-pana == 'true' }}"
-    run: sudo apt-get update && sudo apt-get install -y webp
+    run: sudo apt-get update && sudo apt-get install -y --no-install-recommends webp
     shell: bash
   - name: Verify all points from pana
     if: "${{ inputs.run-pana == 'true' }}"
