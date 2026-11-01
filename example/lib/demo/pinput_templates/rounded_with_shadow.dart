@@ -74,7 +74,7 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
       //   debugPrint('onClipboardFound: $value');
       //   controller.setText(value);
       // },
-      showCursor: true,
+      cursorBehavior: CursorBehavior.blinking,
       cursor: cursor,
     );
   }

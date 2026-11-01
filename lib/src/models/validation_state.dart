@@ -9,7 +9,7 @@ sealed class PinputValidationState {
   const factory PinputValidationState.idle() = PinputValidationIdle;
 
   /// Validation is pending. Does not disable input or display an error.
-  const factory PinputValidationState.validating() = PinputValidationPending;
+  const factory PinputValidationState.validating() = PinputValidationValidating;
 
   /// Validation passed for the current PIN.
   const factory PinputValidationState.valid() = PinputValidationValid;
@@ -36,9 +36,9 @@ final class PinputValidationIdle extends PinputValidationState {
 }
 
 /// Validation is pending.
-final class PinputValidationPending extends PinputValidationState {
+final class PinputValidationValidating extends PinputValidationState {
   /// Creates feedback for a pending check.
-  const PinputValidationPending() : super._();
+  const PinputValidationValidating() : super._();
 }
 
 /// Validation passed for the current PIN.

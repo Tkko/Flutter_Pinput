@@ -23,7 +23,7 @@ class _AsyncValidationExampleState extends State<AsyncValidationExample> {
   }
 
   Future<void> _verify(String pin) async {
-    if (_validation is PinputValidationPending) return;
+    if (_validation is PinputValidationValidating) return;
     if (pin.length != 4) {
       setState(() {
         _validation = const PinputValidationState.invalid('Enter all 4 digits');
@@ -53,7 +53,7 @@ class _AsyncValidationExampleState extends State<AsyncValidationExample> {
 
   @override
   Widget build(BuildContext context) {
-    final pending = _validation is PinputValidationPending;
+    final pending = _validation is PinputValidationValidating;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(

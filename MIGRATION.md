@@ -1,3 +1,29 @@
+### Migration to consolidated presentation options
+
+| Previous options | Replacement |
+| --- | --- |
+| `showCursor: false` | `cursorBehavior: CursorBehavior.hidden` |
+| `showCursor: true`, `isCursorAnimationEnabled: false` | `cursorBehavior: CursorBehavior.static` |
+| Default visible animated cursor | `cursorBehavior: CursorBehavior.blinking` (default) |
+| `obscureText: false` | `obscuring: null` (default) |
+| `obscureText: true`, `obscuringCharacter: '*'` | `obscuring: const PinObscuring.character('*')` |
+| `obscureText: true`, `obscuringWidget: widget` | `obscuring: PinObscuring.widget(widget)` |
+| `pinAnimationType: PinAnimationType.slide`, `slideTransitionBeginOffset: offset` | `pinAnimation: PinAnimation.slide(beginOffset: offset)` |
+| Other `PinAnimationType` values | Corresponding `PinAnimation.none/scale/fade/rotation()` constructor |
+| `toolbarEnabled: false` | `enableInteractiveSelection: false` for no selection, or `contextMenuBuilder: null` for no modern menu |
+
+`cursor` still customizes cursor content. `animationDuration` and `animationCurve`
+remain shared animation settings. `Pinput.builder` accepts `obscuring` for native
+text masking; its item builder is responsible for masking visible content.
+
+There is now one selection enablement policy: `enableInteractiveSelection`.
+When omitted, each constructor retains its existing default and the default
+constructor uses Flutter's effective selection policy. The removed toolbar flag
+no longer independently gates selection gestures.
+Legacy custom `selectionControls` that build toolbars can ignore
+`contextMenuBuilder`, as in Flutter; use `TextSelectionHandleControls` for modern
+handle customization.
+
 ### Migration to app-owned validation
 
 Pinput no longer runs validators or registers an internal Flutter `FormField`.

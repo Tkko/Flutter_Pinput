@@ -66,11 +66,11 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
 
     return Pinput(
       length: 5,
-      pinAnimationType: PinAnimationType.slide,
+      pinAnimation: const PinAnimation.slide(),
       controller: controller,
       focusNode: focusNode,
       defaultPinTheme: defaultPinTheme,
-      showCursor: true,
+      cursorBehavior: CursorBehavior.blinking,
       cursor: cursor,
       preFilledWidget: preFilledWidget,
     );

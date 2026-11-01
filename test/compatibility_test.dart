@@ -157,7 +157,6 @@ void main() {
             child: Pinput(
               controller: controller,
               length: 4,
-              toolbarEnabled: true,
               enableInteractiveSelection: true,
             ),
           ),
@@ -213,7 +212,6 @@ void main() {
               child: Pinput(
                 controller: controller,
                 length: 4,
-                toolbarEnabled: true,
                 enableInteractiveSelection: true,
               ),
             ),
@@ -266,7 +264,6 @@ void main() {
             child: Pinput(
               controller: controller,
               length: 4,
-              toolbarEnabled: true,
               enableInteractiveSelection: true,
             ),
           ),
@@ -373,7 +370,6 @@ void main() {
               body: Pinput(
                 controller: controller,
                 length: 4,
-                toolbarEnabled: true,
                 enableInteractiveSelection: true,
                 contextMenuBuilder: (context, editableTextState) {
                   return flutter_material
@@ -487,7 +483,6 @@ void main() {
               body: Pinput(
                 controller: controller,
                 length: 4,
-                toolbarEnabled: true,
                 enableInteractiveSelection: true,
                 contextMenuBuilder: (context, editableTextState) {
                   return material_ui.AdaptiveTextSelectionToolbar.editableText(
@@ -597,7 +592,6 @@ void main() {
               child: Pinput(
                 controller: controller,
                 length: 4,
-                toolbarEnabled: true,
                 enableInteractiveSelection: true,
                 contextMenuBuilder: (context, editableTextState) {
                   return flutter_cupertino
@@ -707,7 +701,6 @@ void main() {
               child: Pinput(
                 controller: controller,
                 length: 4,
-                toolbarEnabled: true,
                 enableInteractiveSelection: true,
                 contextMenuBuilder: (context, editableTextState) {
                   return cupertino_ui

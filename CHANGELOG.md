@@ -1,5 +1,14 @@
 #### Unreleased
 
+- Aligned the `validating()` subtype name as `PinputValidationValidating`.
+- Added value equality to `PinAnimation` and `PinObscuring`, and documented
+  the shared GlobalKey restriction for masking widgets.
+- **BREAKING**: Consolidated cursor visibility/motion into `CursorBehavior`,
+  masking into optional `PinObscuring`, and content transitions into
+  `PinAnimation` (including slide offset).
+- Removed `toolbarEnabled`; `enableInteractiveSelection` now controls selection
+  gestures consistently with native editing. Use `contextMenuBuilder: null` to
+  hide the modern menu without disabling selection.
 - **BREAKING**: Validation is app-owned through `PinputValidationState`:
   `idle`, `validating`, `valid`, or `invalid(message)`.
 - Removed `validator`, `pinputAutovalidateMode`, `errorText`, `forceErrorState`,

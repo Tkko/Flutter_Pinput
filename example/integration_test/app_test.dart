@@ -56,7 +56,7 @@ void main() {
                 length: 4,
                 controller: controller,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
                 onChanged: (val) => changedValues.add(val),
                 onCompleted: (val) => completedValue = val,
               ),
@@ -131,7 +131,7 @@ void main() {
                 length: 4,
                 controller: controller,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
                 onChanged: (val) => changedValues.add(val),
               ),
             ),
@@ -183,7 +183,7 @@ void main() {
                 controller: controller,
                 pinEditMode: PinEditMode.overwrite,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
                 onCompleted: (val) {
                   completedCount++;
                   lastCompleted = val;
@@ -238,7 +238,7 @@ void main() {
                 controller: controller,
                 pinEditMode: PinEditMode.overwrite,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
               ),
             ),
           );
@@ -294,7 +294,7 @@ void main() {
                 controller: controller,
                 pinEditMode: PinEditMode.clearFollowing,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
                 onCompleted: (_) => completedCount++,
               ),
             ),
@@ -336,7 +336,7 @@ void main() {
                 length: 4,
                 controller: controller,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
                 onCompleted: (val) => completed = val,
               ),
             ),
@@ -368,7 +368,7 @@ void main() {
                 length: 4,
                 controller: controller,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
                 onCompleted: (val) => completed = val,
               ),
             ),
@@ -403,7 +403,7 @@ void main() {
                 length: 4,
                 controller: controller,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
                 onChanged: (val) => changed = val,
                 onCompleted: (val) => completed = val,
               ),
@@ -435,7 +435,7 @@ void main() {
                 length: 4,
                 controller: controller,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
                 onCompleted: (val) => completed = val,
               ),
             ),
@@ -476,7 +476,7 @@ void main() {
                       controller: controller,
                       defaultPinTheme: defaultTheme,
                       errorPinTheme: errorTheme,
-                      isCursorAnimationEnabled: false,
+                      cursorBehavior: CursorBehavior.static,
                       onChanged: field.didChange,
                       validationState: field.errorText == null
                           ? const PinputValidationState.idle()
@@ -535,7 +535,7 @@ void main() {
                       controller: controller,
                       defaultPinTheme: defaultTheme,
                       errorPinTheme: errorTheme,
-                      isCursorAnimationEnabled: false,
+                      cursorBehavior: CursorBehavior.static,
                       onChanged: (value) {
                         field.reset();
                         field.didChange(value);
@@ -604,7 +604,7 @@ void main() {
               controller: controller,
               defaultPinTheme: defaultTheme,
               disabledPinTheme: disabledTheme,
-              isCursorAnimationEnabled: false,
+              cursorBehavior: CursorBehavior.static,
             ),
           ),
         );
@@ -643,7 +643,7 @@ void main() {
                 focusNode: focusNode,
                 controller: controller,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
               ),
             ),
           );
@@ -676,11 +676,10 @@ void main() {
               Pinput(
                 key: const ValueKey('pinput_obscure'),
                 length: 4,
-                obscureText: true,
-                obscuringCharacter: '*',
+                obscuring: const PinObscuring.character('*'),
                 controller: controller,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
               ),
             ),
           );
@@ -769,7 +768,7 @@ void main() {
                 controller: controller,
                 smsRetriever: mockRetriever,
                 defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                cursorBehavior: CursorBehavior.static,
                 onCompleted: (val) => completed = val,
               ),
             ),

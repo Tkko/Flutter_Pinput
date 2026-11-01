@@ -18,6 +18,10 @@ part 'models/pin_theme.dart';
 
 part 'models/validation_state.dart';
 
+part 'models/pin_animation.dart';
+
+part 'models/pin_obscuring.dart';
+
 part 'models/models.dart';
 
 part 'models/sms_retriever.dart';
@@ -77,15 +81,13 @@ class Pinput extends StatefulWidget {
     this.pinContentAlignment = Alignment.center,
     this.animationCurve = Curves.easeIn,
     this.animationDuration = PinputConstants._animationDuration,
-    this.pinAnimationType = PinAnimationType.scale,
+    this.pinAnimation = const PinAnimation.scale(),
     this.enabled = true,
     this.readOnly = false,
     this.useNativeKeyboard = true,
-    this.toolbarEnabled = true,
     this.autofocus = false,
-    this.obscureText = false,
-    this.showCursor = true,
-    this.isCursorAnimationEnabled = true,
+    this.obscuring,
+    this.cursorBehavior = CursorBehavior.blinking,
     this.pinEditMode = PinEditMode.overwrite,
     this.enableIMEPersonalizedLearning = false,
     this.enableInteractiveSelection,
@@ -94,14 +96,11 @@ class Pinput extends StatefulWidget {
     this.closeKeyboardWhenCompleted = true,
     this.keyboardType = TextInputType.number,
     this.textCapitalization = TextCapitalization.none,
-    this.slideTransitionBeginOffset,
     this.cursor,
     this.keyboardAppearance,
     this.inputFormatters = const [],
     this.textInputAction,
     this.autofillHints = const [AutofillHints.oneTimeCode],
-    this.obscuringCharacter = '•',
-    this.obscuringWidget,
     this.selectionControls,
     this.restorationId,
     this.onClipboardFound,
@@ -113,8 +112,7 @@ class Pinput extends StatefulWidget {
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     super.key,
-  }) : assert(obscuringCharacter.length == 1),
-       assert(length > 0),
+  }) : assert(length > 0),
        assert(
          textInputAction != TextInputAction.newline,
          'Pinput is not multiline',
@@ -142,7 +140,7 @@ class Pinput extends StatefulWidget {
     this.enabled = true,
     this.readOnly = false,
     this.useNativeKeyboard = true,
-    this.toolbarEnabled = true,
+    this.obscuring,
     this.autofocus = false,
     this.pinEditMode = PinEditMode.overwrite,
     this.enableIMEPersonalizedLearning = false,
@@ -183,14 +181,9 @@ class Pinput extends StatefulWidget {
        pinContentAlignment = Alignment.center,
        animationCurve = Curves.easeIn,
        animationDuration = PinputConstants._animationDuration,
-       pinAnimationType = PinAnimationType.scale,
-       obscureText = false,
-       showCursor = false,
-       isCursorAnimationEnabled = false,
-       slideTransitionBeginOffset = null,
-       cursor = null,
-       obscuringCharacter = '•',
-       obscuringWidget = null;
+       pinAnimation = const PinAnimation.scale(),
+       cursorBehavior = CursorBehavior.hidden,
+       cursor = null;
 
   /// Theme of the pin in default state
   final PinTheme? defaultPinTheme;
@@ -287,13 +280,10 @@ class Pinput extends StatefulWidget {
   /// Duration of every [Pinput] Animation
   final Duration animationDuration;
 
-  /// Animation Type of each [Pinput] field
-  /// options:
-  /// none, scale, fade, slide, rotation
-  final PinAnimationType pinAnimationType;
-
-  /// Begin Offset of ever [Pinput] field when [pinAnimationType] is slide
-  final Offset? slideTransitionBeginOffset;
+  /// Content transition for each pin. Defaults to [PinAnimation.scale].
+  /// Decoration and error-layout animations use [animationDuration] and
+  /// [animationCurve] independently of this transition.
+  final PinAnimation pinAnimation;
 
   /// Defines [Pinput] state
   final bool enabled;
@@ -309,15 +299,9 @@ class Pinput extends StatefulWidget {
   /// so you should set value of [Pinput]'s [TextEditingController] programmatically
   final bool useNativeKeyboard;
 
-  /// If true, paste button will appear on longPress event
-  final bool toolbarEnabled;
-
-  /// Whether show cursor or not
-  /// Default cursor '|' or [cursor]
-  final bool showCursor;
-
-  /// Whether to enable cursor animation
-  final bool isCursorAnimationEnabled;
+  /// Whether the default renderer shows a blinking, static, or hidden cursor.
+  /// Use [cursor] to customize its appearance.
+  final CursorBehavior cursorBehavior;
 
   /// How editing previous pins behaves when tapping on a filled slot.
   ///
@@ -343,10 +327,12 @@ class Pinput extends StatefulWidget {
   /// This is useful for desktop applications where copy/paste is expected behavior.
   /// On mobile, consider using SMS auto-fill or [onClipboardFound] callback instead.
   ///
-  /// Defaults to false for security and UX reasons.
+  /// If null, uses [EditableText]'s default. Set false to disable selection
+  /// gestures and keyboard selection shortcuts. To hide only the context menu,
+  /// set [contextMenuBuilder] to null instead.
   final bool? enableInteractiveSelection;
 
-  /// If [showCursor] true the focused field will show passed Widget
+  /// Custom cursor content, shown unless [cursorBehavior] is hidden.
   final Widget? cursor;
 
   /// The appearance of the keyboard.
@@ -360,15 +346,11 @@ class Pinput extends StatefulWidget {
   /// See [EditableText.keyboardType]
   final TextInputType keyboardType;
 
-  /// Provide any symbol to obscure each [Pinput] pin
-  /// Recommended ●
-  final String obscuringCharacter;
-
-  /// IF [obscureText] is true typed text will be replaced with passed Widget
-  final Widget? obscuringWidget;
-
-  /// Whether hide typed pin or not
-  final bool obscureText;
+  /// Optional masking of filled pins. Null displays the original text.
+  ///
+  /// Also enables native text obscuring. Custom item builders must mask their
+  /// own visible content; they still receive the original value.
+  final PinObscuring? obscuring;
 
   /// See [EditableText.textCapitalization]
   final TextCapitalization textCapitalization;
@@ -628,9 +610,9 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<Widget?>(
-        'obscuringWidget',
-        obscuringWidget,
+      DiagnosticsProperty<PinObscuring?>(
+        'obscuring',
+        obscuring,
         defaultValue: null,
       ),
     );
@@ -664,17 +646,10 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<PinAnimationType>(
-        'pinAnimationType',
-        pinAnimationType,
-        defaultValue: PinAnimationType.scale,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<Offset?>(
-        'slideTransitionBeginOffset',
-        slideTransitionBeginOffset,
-        defaultValue: null,
+      DiagnosticsProperty<PinAnimation>(
+        'pinAnimation',
+        pinAnimation,
+        defaultValue: const PinAnimation.scale(),
       ),
     );
     properties.add(
@@ -682,13 +657,6 @@ class Pinput extends StatefulWidget {
     );
     properties.add(
       DiagnosticsProperty<bool>('readOnly', readOnly, defaultValue: false),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>(
-        'obscureText',
-        obscureText,
-        defaultValue: false,
-      ),
     );
     properties.add(
       DiagnosticsProperty<bool>('autofocus', autofocus, defaultValue: false),
@@ -701,27 +669,10 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<bool>(
-        'toolbarEnabled',
-        toolbarEnabled,
-        defaultValue: true,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>('showCursor', showCursor, defaultValue: true),
-    );
-    properties.add(
-      DiagnosticsProperty<String>(
-        'obscuringCharacter',
-        obscuringCharacter,
-        defaultValue: '•',
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>(
-        'obscureText',
-        obscureText,
-        defaultValue: false,
+      EnumProperty<CursorBehavior>(
+        'cursorBehavior',
+        cursorBehavior,
+        defaultValue: CursorBehavior.blinking,
       ),
     );
     properties.add(

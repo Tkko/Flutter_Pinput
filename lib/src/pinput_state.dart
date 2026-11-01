@@ -19,7 +19,11 @@ class _PinputState extends State<Pinput>
       GlobalKey<EditableTextState>();
 
   @override
-  bool get selectionEnabled => widget.toolbarEnabled;
+  bool get selectionEnabled =>
+      _editableText?.widget.selectionEnabled ??
+      (widget.enableInteractiveSelection ??
+          (!(widget.readOnly || !isEnabled || !widget.useNativeKeyboard) ||
+              widget.obscuring == null));
 
   @override
   String get autofillId => _editableText!.autofillId;
@@ -534,7 +538,7 @@ class _PinputState extends State<Pinput>
           textCapitalization: widget.textCapitalization,
           selectionColor: PinputConstants._transparent,
           keyboardType: widget.keyboardType,
-          obscureText: widget.obscureText,
+          obscureText: widget.obscuring != null,
           onSubmitted: widget.onSubmitted,
           onTapOutside: widget.onTapOutside,
           onTapUpOutside: widget.onTapUpOutside,
@@ -554,14 +558,12 @@ class _PinputState extends State<Pinput>
           selectionHeightStyle: BoxHeightStyle.tight,
           enableSuggestions: widget.enableSuggestions,
           contextMenuBuilder: widget.contextMenuBuilder,
-          obscuringCharacter: widget.obscuringCharacter,
+          obscuringCharacter: widget.obscuring?._character ?? '•',
           onAppPrivateCommand: widget.onAppPrivateCommand,
           onSelectionChanged: _handleSelectionChanged,
           onSelectionHandleTapped: _handleSelectionHandleTapped,
           readOnly: widget.readOnly || !isEnabled || !widget.useNativeKeyboard,
-          selectionControls: widget.toolbarEnabled
-              ? textSelectionControls
-              : null,
+          selectionControls: textSelectionControls,
           keyboardAppearance:
               widget.keyboardAppearance ??
               MediaQuery.maybePlatformBrightnessOf(context) ??

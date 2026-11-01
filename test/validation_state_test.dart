@@ -7,7 +7,10 @@ import 'helpers/helpers.dart';
 void main() {
   test('Validation states have value equality', () {
     expect(const PinputValidationState.idle(), PinputValidationIdle());
-    expect(const PinputValidationState.validating(), PinputValidationPending());
+    expect(
+      const PinputValidationState.validating(),
+      PinputValidationValidating(),
+    );
     expect(const PinputValidationState.valid(), PinputValidationValid());
     const invalid = PinputValidationState.invalid('Incorrect code');
     final same = PinputValidationInvalid('Incorrect code');
@@ -60,7 +63,7 @@ void main() {
         Pinput(
           controller: controller,
           focusNode: focusNode,
-          showCursor: false,
+          cursorBehavior: CursorBehavior.hidden,
           closeKeyboardWhenCompleted: false,
           validationState: const PinputValidationState.invalid(
             'Incorrect code',
@@ -114,7 +117,7 @@ void main() {
         builder: (_, value, _) => Pinput(
           controller: controller,
           focusNode: focusNode,
-          showCursor: false,
+          cursorBehavior: CursorBehavior.hidden,
           validationState: value,
         ),
       ),
@@ -192,7 +195,7 @@ void main() {
   ) async {
     for (final widget in [
       const Pinput(
-        showCursor: false,
+        cursorBehavior: CursorBehavior.hidden,
         validationState: PinputValidationState.invalid(),
         errorPinTheme: PinTheme(
           decoration: BoxDecoration(color: Color(0xFFFF0000)),
@@ -252,7 +255,7 @@ void main() {
                     errorBuilder: errorBuilder,
                   )
                 : Pinput(
-                    showCursor: false,
+                    cursorBehavior: CursorBehavior.hidden,
                     validationState: value,
                     errorBuilder: errorBuilder,
                   ),
@@ -304,7 +307,7 @@ void main() {
           validator: (value) => value == '1234' ? null : 'Incorrect code',
           builder: (field) => Pinput(
             controller: controller,
-            showCursor: false,
+            cursorBehavior: CursorBehavior.hidden,
             validationState: field.errorText == null
                 ? const PinputValidationState.idle()
                 : PinputValidationState.invalid(field.errorText!),

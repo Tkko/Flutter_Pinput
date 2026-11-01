@@ -43,7 +43,7 @@ class _ExampleState extends State<Example> {
       controller: pinController,
       autofillHints: const [AutofillHints.oneTimeCode],
       length: 10,
-      toolbarEnabled: false,
+      enableInteractiveSelection: false,
       inputFormatters: [Formatter()],
     );
   }

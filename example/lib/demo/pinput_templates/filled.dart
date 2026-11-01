@@ -48,7 +48,7 @@ class _FilledState extends State<Filled> {
         separatorBuilder: (index) =>
             Container(height: 64, width: 1, color: Colors.white),
         defaultPinTheme: defaultPinTheme,
-        showCursor: true,
+        cursorBehavior: CursorBehavior.blinking,
         focusedPinTheme: defaultPinTheme.copyWith(
           decoration: const BoxDecoration(
             color: Color.fromRGBO(124, 102, 152, 1),

@@ -58,18 +58,19 @@ class _PinItem extends StatelessWidget {
     final focused =
         state._effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
     final shouldShowCursor =
-        state.widget.showCursor && state.isEnabled && isActiveField && focused;
+        state.widget.cursorBehavior != CursorBehavior.hidden &&
+        state.isEnabled &&
+        isActiveField &&
+        focused;
 
     if (isSubmittedPin) {
       final Widget characterWidget;
-      if (state.widget.obscureText && state.widget.obscuringWidget != null) {
-        characterWidget = SizedBox(
-          key: key,
-          child: state.widget.obscuringWidget,
-        );
+      final obscuring = state.widget.obscuring;
+      if (obscuring?._widget != null) {
+        characterWidget = SizedBox(key: key, child: obscuring!._widget);
       } else {
         characterWidget = Text(
-          state.widget.obscureText ? state.widget.obscuringCharacter : char,
+          obscuring?._character ?? char,
           key: key,
           style: pinTheme.textStyle,
         );
@@ -103,7 +104,7 @@ class _PinItem extends StatelessWidget {
   }
 
   Widget _buildCursor(PinTheme pinTheme) {
-    if (state.widget.isCursorAnimationEnabled) {
+    if (state.widget.cursorBehavior == CursorBehavior.blinking) {
       return _PinputAnimatedCursor(
         textStyle: pinTheme.textStyle,
         cursor: state.widget.cursor,
@@ -121,23 +122,22 @@ class _PinItem extends StatelessWidget {
       return child;
     }
 
-    switch (state.widget.pinAnimationType) {
-      case PinAnimationType.none:
+    switch (state.widget.pinAnimation._type) {
+      case _PinAnimationType.none:
         return child;
-      case PinAnimationType.fade:
+      case _PinAnimationType.fade:
         return FadeTransition(opacity: animation, child: child);
-      case PinAnimationType.scale:
+      case _PinAnimationType.scale:
         return ScaleTransition(scale: animation, child: child);
-      case PinAnimationType.slide:
+      case _PinAnimationType.slide:
         return SlideTransition(
           position: Tween<Offset>(
-            begin:
-                state.widget.slideTransitionBeginOffset ?? const Offset(0.8, 0),
+            begin: state.widget.pinAnimation._beginOffset!,
             end: Offset.zero,
           ).animate(animation),
           child: child,
         );
-      case PinAnimationType.rotation:
+      case _PinAnimationType.rotation:
         return RotationTransition(turns: animation, child: child);
     }
   }

@@ -807,7 +807,7 @@ void main() {
         Pinput(
           controller: controller,
           closeKeyboardWhenCompleted: false,
-          isCursorAnimationEnabled: false,
+          cursorBehavior: CursorBehavior.static,
           cursor: const SizedBox(key: ValueKey('active-cursor')),
         ),
       );

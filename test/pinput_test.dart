@@ -373,7 +373,6 @@ void main() {
       Pinput(
         controller: controller,
         length: 4,
-        toolbarEnabled: true,
         enableInteractiveSelection: true,
       ),
     );

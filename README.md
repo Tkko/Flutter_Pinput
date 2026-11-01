@@ -153,7 +153,7 @@ defaultPinTheme: defaultPinTheme,
 focusedPinTheme: focusedPinTheme,
 submittedPinTheme: submittedPinTheme,
 validationState: const PinputValidationState.idle(),
-showCursor: true,
+cursorBehavior: CursorBehavior.blinking,
 onCompleted: (pin) => print(pin),
 );
 ```
@@ -258,9 +258,44 @@ return Pinput(
 );  
 ```
 
+- #### Cursor, masking, and animation
+
+```dart
+Pinput(
+  cursorBehavior: CursorBehavior.blinking, // static or hidden are also available
+  cursor: MyCursor(), // optional custom content
+  obscuring: const PinObscuring.character('*'), // null displays original text
+  pinAnimation: const PinAnimation.slide(beginOffset: Offset(0, 0.5)),
+)
+```
+
+`PinObscuring.character()` uses a bullet by default.
+`PinObscuring.widget(MyDot())` supplies custom visible masking and uses a bullet
+for native obscuring. A character must be one UTF-16 code unit, matching Flutter's
+native requirement. Original text remains available in the controller and callbacks.
+Masking widgets may be stateful: each slot creates its own State. Do not reuse
+a masking widget containing a shared GlobalKey across slots.
+`Pinput.builder` also accepts `obscuring` for native masking, but its item builder
+must mask visible content itself.
+
+`PinAnimation` supports `none()`, `scale()` (default), `fade()`, `slide()`, and
+`rotation()`. Slide defaults to `Offset(0.8, 0)`. Shared `animationDuration` and
+`animationCurve` still control transitions, decoration, and error layout.
+Cursor blinking is independent of pin-content transitions.
+
+Set `enableInteractiveSelection: false` to disable interactive selection.
+Set `contextMenuBuilder: null` to hide the modern context menu while keeping
+selection enabled. Legacy custom `selectionControls` that build their own
+toolbar follow Flutter's legacy toolbar behavior; use controls with
+`TextSelectionHandleControls` to customize handles with the modern menu API.
+
 - #### Validation
 
 Pinput renders app-owned validation feedback through `validationState`:
+
+The `validating()` factory uses the `PinputValidationValidating` subtype for
+pattern matching. Presentation configurations (`PinAnimation` and `PinObscuring`)
+support value equality; custom masking widgets use normal widget equality.
 
 | State | Behavior |
 | --- | --- |

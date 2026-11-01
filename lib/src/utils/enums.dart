@@ -17,7 +17,7 @@ enum AndroidSmsAutofillMethod {
 }
 
 /// The animation type if Pin item
-enum PinAnimationType {
+enum _PinAnimationType {
   /// No animation
   none,
 
@@ -32,6 +32,18 @@ enum PinAnimationType {
 
   /// Rotation animation
   rotation,
+}
+
+/// Cursor visibility and motion in the default pin renderer.
+enum CursorBehavior {
+  /// Displays an animated cursor.
+  blinking,
+
+  /// Displays a cursor without animation.
+  static,
+
+  /// Does not display a cursor.
+  hidden,
 }
 
 /// The vibration type when user types
