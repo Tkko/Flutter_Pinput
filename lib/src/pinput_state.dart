@@ -22,7 +22,7 @@ class _PinputState extends State<Pinput>
   bool get selectionEnabled =>
       _editableText?.widget.selectionEnabled ??
       (widget.enableInteractiveSelection ??
-          (!(widget.readOnly || !isEnabled || !widget.useNativeKeyboard) ||
+          (!(_isReadOnly || !isEnabled || !_useNativeKeyboard) ||
               widget.obscuring == null));
 
   @override
@@ -49,9 +49,9 @@ class _PinputState extends State<Pinput>
         NavigationMode.traditional;
     switch (mode) {
       case NavigationMode.traditional:
-        return isEnabled && widget.useNativeKeyboard;
+        return isEnabled && _useNativeKeyboard;
       case NavigationMode.directional:
-        return widget.useNativeKeyboard;
+        return _useNativeKeyboard;
     }
   }
 
@@ -66,7 +66,12 @@ class _PinputState extends State<Pinput>
   bool get hasError => widget.validationState is PinputValidationInvalid;
 
   @protected
-  bool get isEnabled => widget.enabled;
+  bool get isEnabled => widget.inputMode != PinInputMode.disabled;
+
+  bool get _isReadOnly => widget.inputMode == PinInputMode.readOnly;
+
+  bool get _useNativeKeyboard =>
+      widget.inputMode != PinInputMode.customKeyboard;
 
   late List<String?> _slots;
   int _focusedSlotIndex = 0;
@@ -221,7 +226,7 @@ class _PinputState extends State<Pinput>
     }
 
     _syncSlotsFromExternalText(widget.controller?.text ?? '');
-    _effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
+    _effectiveFocusNode.canRequestFocus = isEnabled && _useNativeKeyboard;
     _maybeInitSmartAuth();
     _maybeCheckClipboard();
     // https://github.com/Tkko/Flutter_Pinput/issues/89
@@ -467,21 +472,21 @@ class _PinputState extends State<Pinput>
       onExit: (PointerExitEvent event) => _handleHover(false),
       child: TextFieldTapRegion(
         child: IgnorePointer(
-          ignoring: !isEnabled || !widget.useNativeKeyboard,
+          ignoring: !isEnabled || !_useNativeKeyboard,
           child: AnimatedBuilder(
             animation: _effectiveController,
             builder: (_, Widget? child) => Semantics(
               maxValueLength: widget.length,
               currentValueLength: _currentFilledCount,
               enabled: isEnabled,
-              onTap: widget.readOnly ? null : _semanticsOnTap,
+              onTap: _isReadOnly ? null : _semanticsOnTap,
               onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
               onFocus: isEnabled
                   ? () {
                       if (_effectiveFocusNode.canRequestFocus &&
                           !_effectiveFocusNode.hasFocus) {
                         _effectiveFocusNode.requestFocus();
-                      } else if (!widget.readOnly) {
+                      } else if (!_isReadOnly) {
                         _requestKeyboard();
                       }
                     }
@@ -562,7 +567,7 @@ class _PinputState extends State<Pinput>
           onAppPrivateCommand: widget.onAppPrivateCommand,
           onSelectionChanged: _handleSelectionChanged,
           onSelectionHandleTapped: _handleSelectionHandleTapped,
-          readOnly: widget.readOnly || !isEnabled || !widget.useNativeKeyboard,
+          readOnly: _isReadOnly || !isEnabled || !_useNativeKeyboard,
           selectionControls: textSelectionControls,
           keyboardAppearance:
               widget.keyboardAppearance ??
@@ -627,7 +632,7 @@ class _PinputState extends State<Pinput>
 
     // Mirrors the legacy tap behavior (hide toolbar, request keyboard, onTap)
     // and additionally moves the cursor when pin editing is available.
-    if (widget.pinEditMode != PinEditMode.none && !widget.readOnly) {
+    if (widget.pinEditMode != PinEditMode.none && !_isReadOnly) {
       _focusedSlotIndex = index.clamp(0, widget.length - 1);
       if (_slots[_focusedSlotIndex] == null) {
         _focusedSlotIndex = min(_focusedSlotIndex, _firstEmptySlotIndex);
@@ -717,8 +722,7 @@ class _PinputState extends State<Pinput>
   @protected
   bool get hasFocus {
     final isLastPin = selectedIndex == widget.length;
-    return _effectiveFocusNode.hasFocus ||
-        (!widget.useNativeKeyboard && !isLastPin);
+    return _effectiveFocusNode.hasFocus || (!_useNativeKeyboard && !isLastPin);
   }
 
   @protected

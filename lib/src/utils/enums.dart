@@ -117,7 +117,7 @@ typedef PinputErrorBuilder = Widget Function(String? errorText, String pin);
 ///   [overwrite] therefore does not call it until the user types the last pin;
 ///   read the value from [Pinput.onChanged] or the controller to submit
 ///   explicitly (e.g. a "Continue" button).
-/// - Pin taps are not available with `useNativeKeyboard: false`; a custom
+/// - Pin taps are not available with [PinInputMode.customKeyboard]; a custom
 ///   keyboard can move the cursor by setting `controller.selection`, and the
 ///   `append`/`delete` helpers always work at the end of the input.
 enum PinEditMode {
@@ -129,4 +129,22 @@ enum PinEditMode {
 
   /// Tapping a previous pin focuses that slot. Typing replaces that digit and clears following pins.
   clearFollowing,
+}
+
+/// How the user can input the PIN.
+enum PinInputMode {
+  /// The native keyboard edits the PIN.
+  editable,
+
+  /// The PIN is focusable and selectable, but cannot be edited. See
+  /// [EditableText.readOnly].
+  readOnly,
+
+  /// The PIN ignores input and uses the disabled pin state.
+  disabled,
+
+  /// [Pinput] is not focusable and never opens the native keyboard. Set the
+  /// value of its [TextEditingController] programmatically, for example from
+  /// an on-screen keypad.
+  customKeyboard,
 }

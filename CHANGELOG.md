@@ -12,6 +12,9 @@
   `submittedPinTheme`, `followingPinTheme`, `disabledPinTheme` and
   `errorPinTheme` with `theme: PinThemes` (named state parameters, `all`, `resolveWith`).
   `preFilledWidget` became `PinTheme.placeholder`.
+- **BREAKING**: Replaced `enabled`, `readOnly` and `useNativeKeyboard` with
+  `inputMode: PinInputMode` (`editable`, `readOnly`, `disabled`,
+  `customKeyboard`). Disabled overrides the other modes.
 - `Pinput.builder` now defaults `autofillHints` and `enableInteractiveSelection`
   like `Pinput`. Fixed duplicated and incorrect `debugFillProperties` entries.
 - Removed `toolbarEnabled`; `enableInteractiveSelection` now controls selection

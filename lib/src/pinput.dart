@@ -76,9 +76,7 @@ class Pinput extends StatefulWidget {
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.pinContentAlignment = Alignment.center,
     this.pinAnimation = const PinAnimation.scale(),
-    this.enabled = true,
-    this.readOnly = false,
-    this.useNativeKeyboard = true,
+    this.inputMode = PinInputMode.editable,
     this.autofocus = false,
     this.obscuring,
     this.cursor = const PinCursor.blinking(),
@@ -130,9 +128,7 @@ class Pinput extends StatefulWidget {
     this.separatorBuilder,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.start,
-    this.enabled = true,
-    this.readOnly = false,
-    this.useNativeKeyboard = true,
+    this.inputMode = PinInputMode.editable,
     this.obscuring,
     this.autofocus = false,
     this.pinEditMode = PinEditMode.overwrite,
@@ -245,19 +241,11 @@ class Pinput extends StatefulWidget {
   /// Its duration and curve also drive decoration and error-layout animations.
   final PinAnimation pinAnimation;
 
-  /// Defines [Pinput] state
-  final bool enabled;
-
-  /// See [EditableText.readOnly]
-  final bool readOnly;
+  /// How the user can input the PIN. Defaults to [PinInputMode.editable].
+  final PinInputMode inputMode;
 
   /// See [EditableText.autofocus]
   final bool autofocus;
-
-  /// Whether to use Native keyboard or custom one
-  /// when flag is set to false [Pinput] wont be focusable anymore
-  /// so you should set value of [Pinput]'s [TextEditingController] programmatically
-  final bool useNativeKeyboard;
 
   /// How editing previous pins behaves when tapping on a filled slot.
   ///
@@ -352,7 +340,7 @@ class Pinput extends StatefulWidget {
   ///
   /// Invalid feedback remains visible while focused and is not cleared by
   /// editing. Other states use the normal pin appearance without feedback.
-  /// This state never changes text, focus, [enabled], or [readOnly].
+  /// This state never changes text, focus, [inputMode].
   final PinputValidationState validationState;
 
   /// Style of the default error text. Ignored when [errorBuilder] is supplied.
@@ -529,16 +517,10 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<bool>('enabled', enabled, defaultValue: true),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>('readOnly', readOnly, defaultValue: false),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>(
-        'useNativeKeyboard',
-        useNativeKeyboard,
-        defaultValue: true,
+      EnumProperty<PinInputMode>(
+        'inputMode',
+        inputMode,
+        defaultValue: PinInputMode.editable,
       ),
     );
     properties.add(

@@ -497,7 +497,7 @@ void main() {
       await tester.pumpApp(
         Pinput(
           controller: controller,
-          readOnly: true,
+          inputMode: PinInputMode.readOnly,
           length: 4,
           onTap: () => taps++,
         ),

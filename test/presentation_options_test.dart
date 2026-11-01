@@ -48,7 +48,9 @@ void main() {
           key: key,
           focusNode: focusNode,
           enableInteractiveSelection: config.selection,
-          readOnly: config.readOnly,
+          inputMode: config.readOnly
+              ? PinInputMode.readOnly
+              : PinInputMode.editable,
           obscuring: config.obscured ? const PinObscuring.character() : null,
           cursor: const PinCursor.hidden(),
         ),
@@ -322,5 +324,26 @@ void main() {
         );
       },
     );
+  });
+
+  testWidgets('customKeyboard is not focusable and mirrors programmatic text', (
+    tester,
+  ) async {
+    final focusNode = FocusNode();
+    final controller = TextEditingController(text: '12');
+    addTearDown(focusNode.dispose);
+    addTearDown(controller.dispose);
+    await tester.pumpApp(
+      Pinput(
+        focusNode: focusNode,
+        controller: controller,
+        inputMode: PinInputMode.customKeyboard,
+      ),
+    );
+    focusNode.requestFocus();
+    await tester.pump();
+    expect(focusNode.hasFocus, isFalse);
+    expect(find.text('1'), findsOneWidget);
+    expect(find.text('2'), findsOneWidget);
   });
 }

@@ -47,7 +47,7 @@ class _PinItem extends StatelessWidget {
 
     final isActiveField = index == state.selectedIndex;
     final focused =
-        state._effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
+        state._effectiveFocusNode.hasFocus || !state._useNativeKeyboard;
     final shouldShowCursor =
         state.widget.cursor._type != _PinCursorType.hidden &&
         state.isEnabled &&

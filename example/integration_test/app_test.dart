@@ -592,47 +592,53 @@ void main() {
     // 5. Disabled & ReadOnly States
     // =========================================================================
     group('5. Disabled & ReadOnly States', () {
-      testWidgets('Disabled state (enabled: false) ignores taps and input', (
-        tester,
-      ) async {
-        final controller = TextEditingController(text: '12');
+      testWidgets(
+        'Disabled state (inputMode: PinInputMode.disabled) ignores taps and input',
+        (tester) async {
+          final controller = TextEditingController(text: '12');
 
-        final disabledTheme = defaultTheme.copyWith(
-          decoration: defaultTheme.decoration!.copyWith(color: Colors.black12),
-        );
-
-        await tester.pumpWidget(
-          buildTestHarness(
-            Pinput(
-              key: const ValueKey('pinput_disabled'),
-              length: 4,
-              enabled: false,
-              controller: controller,
-              theme: PinThemes(initial: defaultTheme, disabled: disabledTheme),
-
-              cursor: const PinCursor.static(),
+          final disabledTheme = defaultTheme.copyWith(
+            decoration: defaultTheme.decoration!.copyWith(
+              color: Colors.black12,
             ),
-          ),
-        );
-        await pumpFrames(tester);
+          );
 
-        // Verify disabled theme applied
-        final container = tester.widget<AnimatedContainer>(
-          find.byType(AnimatedContainer).first,
-        );
-        final decoration = container.decoration as BoxDecoration;
-        expect(decoration.color, Colors.black12);
+          await tester.pumpWidget(
+            buildTestHarness(
+              Pinput(
+                key: const ValueKey('pinput_disabled'),
+                length: 4,
+                inputMode: PinInputMode.disabled,
+                controller: controller,
+                theme: PinThemes(
+                  initial: defaultTheme,
+                  disabled: disabledTheme,
+                ),
 
-        // Tap on disabled pin
-        await tester.tap(find.byKey(const ValueKey('pinput_disabled')));
-        await pumpFrames(tester);
+                cursor: const PinCursor.static(),
+              ),
+            ),
+          );
+          await pumpFrames(tester);
 
-        try {
-          await tester.enterText(find.byType(EditableText), '1234');
-        } catch (_) {}
-        await pumpFrames(tester);
-        expect(controller.text, '12');
-      });
+          // Verify disabled theme applied
+          final container = tester.widget<AnimatedContainer>(
+            find.byType(AnimatedContainer).first,
+          );
+          final decoration = container.decoration as BoxDecoration;
+          expect(decoration.color, Colors.black12);
+
+          // Tap on disabled pin
+          await tester.tap(find.byKey(const ValueKey('pinput_disabled')));
+          await pumpFrames(tester);
+
+          try {
+            await tester.enterText(find.byType(EditableText), '1234');
+          } catch (_) {}
+          await pumpFrames(tester);
+          expect(controller.text, '12');
+        },
+      );
 
       testWidgets(
         'ReadOnly state allows focus but prevents text modification',
@@ -645,7 +651,7 @@ void main() {
               Pinput(
                 key: const ValueKey('pinput_readonly'),
                 length: 4,
-                readOnly: true,
+                inputMode: PinInputMode.readOnly,
                 focusNode: focusNode,
                 controller: controller,
                 theme: PinThemes(initial: defaultTheme),

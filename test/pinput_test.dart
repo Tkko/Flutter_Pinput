@@ -335,7 +335,9 @@ void main() {
   ) async {
     int tapCount = 0;
 
-    await tester.pumpApp(Pinput(enabled: false, onTap: () => ++tapCount));
+    await tester.pumpApp(
+      Pinput(inputMode: PinInputMode.disabled, onTap: () => ++tapCount),
+    );
 
     expect(tapCount, 0);
     await tester.tap(find.byType(EditableText), warnIfMissed: false);
