@@ -38,6 +38,7 @@ runs:
       with:
         distribution: temurin
         java-version: '17'
+        cache: gradle
 
     - name: Enable KVM access
       shell: bash
@@ -46,6 +47,26 @@ runs:
         sudo udevadm control --reload-rules
         sudo udevadm trigger --name-match=kvm
 
+    - name: Cache AVD snapshot
+      id: avd-cache
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-api${{ inputs.android-api-level }}-x86_64
+
+    - name: Create AVD and generate snapshot for caching
+      if: steps.avd-cache.outputs.cache-hit != 'true'
+      uses: ReactiveCircus/android-emulator-runner@4c44018e59b437e86cdfc41da381398f93ed8808 # v2
+      with:
+        api-level: ${{ inputs.android-api-level }}
+        arch: x86_64
+        force-avd-creation: false
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        disable-animations: false
+        script: echo "Generated AVD snapshot for caching."
+
     - name: Run Android Integration Tests
       uses: ReactiveCircus/android-emulator-runner@4c44018e59b437e86cdfc41da381398f93ed8808 # v2
       env:
@@ -53,6 +74,8 @@ runs:
       with:
         api-level: ${{ inputs.android-api-level }}
         arch: x86_64
+        force-avd-creation: false
+        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
         disable-animations: true
         working-directory: ${{ inputs.integration-test-working-directory }}
         script: >-
