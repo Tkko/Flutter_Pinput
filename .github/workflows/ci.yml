@@ -9,7 +9,7 @@ on:
       platforms:
         description: 'Comma-separated integration test platforms: web, linux, android, ios, macos, windows'
         type: string
-        default: web,linux,android,ios,macos
+        default: web,linux,android,macos
       integration-test-working-directory:
         description: 'Directory containing the integration test Flutter app'
         type: string
