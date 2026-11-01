@@ -50,7 +50,7 @@ void main() {
           enableInteractiveSelection: config.selection,
           readOnly: config.readOnly,
           obscuring: config.obscured ? const PinObscuring.character() : null,
-          cursorBehavior: CursorBehavior.hidden,
+          cursor: const PinCursor.hidden(),
         ),
       );
       final delegate =
@@ -69,27 +69,27 @@ void main() {
     final focusNode = FocusNode();
     addTearDown(focusNode.dispose);
     const cursorKey = ValueKey('custom-cursor');
-    for (final behavior in CursorBehavior.values) {
-      await tester.pumpApp(
-        Pinput(
-          focusNode: focusNode,
-          cursorBehavior: behavior,
-          cursor: const SizedBox(key: cursorKey, width: 2, height: 12),
-        ),
-      );
+    const child = SizedBox(key: cursorKey, width: 2, height: 12);
+    final cursors = <String, PinCursor>{
+      'blinking': const PinCursor.blinking(child: child),
+      'static': const PinCursor.static(child: child),
+      'hidden': const PinCursor.hidden(),
+    };
+    for (final entry in cursors.entries) {
+      await tester.pumpApp(Pinput(focusNode: focusNode, cursor: entry.value));
       focusNode.requestFocus();
       await tester.pump();
       expect(
         find.byKey(cursorKey),
-        behavior == CursorBehavior.hidden ? findsNothing : findsOneWidget,
+        entry.key == 'hidden' ? findsNothing : findsOneWidget,
       );
-      if (behavior != CursorBehavior.hidden) {
+      if (entry.key != 'hidden') {
         expect(
           find.ancestor(
             of: find.byKey(cursorKey),
             matching: find.byType(FadeTransition),
           ),
-          behavior == CursorBehavior.blinking ? findsOneWidget : findsNothing,
+          entry.key == 'blinking' ? findsOneWidget : findsNothing,
         );
       }
     }
@@ -119,7 +119,7 @@ void main() {
         Pinput(
           controller: controller,
           obscuring: mask,
-          cursorBehavior: CursorBehavior.hidden,
+          cursor: const PinCursor.hidden(),
         ),
       );
       await tester.pump(const Duration(milliseconds: 300));
@@ -169,7 +169,7 @@ void main() {
     };
     for (final entry in animations.entries) {
       await tester.pumpApp(
-        Pinput(pinAnimation: entry.key, cursorBehavior: CursorBehavior.hidden),
+        Pinput(pinAnimation: entry.key, cursor: const PinCursor.hidden()),
       );
       final switcher = tester.widget<AnimatedSwitcher>(
         find.byType(AnimatedSwitcher).first,
@@ -205,7 +205,7 @@ void main() {
         controller: controller,
         enableInteractiveSelection: true,
         contextMenuBuilder: null,
-        cursorBehavior: CursorBehavior.hidden,
+        cursor: const PinCursor.hidden(),
       ),
     );
     await tester.tap(find.byType(EditableText));
@@ -229,7 +229,7 @@ void main() {
     await tester.pumpApp(
       Pinput(
         enableInteractiveSelection: false,
-        cursorBehavior: CursorBehavior.hidden,
+        cursor: const PinCursor.hidden(),
         contextMenuBuilder: (_, _) {
           menus++;
           return const Text('Custom menu');
@@ -260,7 +260,7 @@ void main() {
           focusNode: focusNode,
           enableInteractiveSelection: enabled,
           contextMenuBuilder: null,
-          cursorBehavior: CursorBehavior.hidden,
+          cursor: const PinCursor.hidden(),
         ),
       );
       focusNode.requestFocus();
@@ -278,4 +278,49 @@ void main() {
       );
     }
   }, variant: TargetPlatformVariant({TargetPlatform.macOS}));
+
+  group('PinThemes', () {
+    const initial = PinTheme(width: 1);
+    const focused = PinTheme(width: 2);
+
+    test('named parameters fall back to the initial theme', () {
+      const themes = PinThemes(initial: initial, focused: focused);
+      expect(themes.resolve(PinItemStateType.focused), focused);
+      expect(themes.resolve(PinItemStateType.error), initial);
+    });
+
+    test('all and resolveWith resolve per state', () {
+      expect(
+        const PinThemes.all(focused).resolve(PinItemStateType.following),
+        focused,
+      );
+      final themes = PinThemes.resolveWith(
+        (state) => state == PinItemStateType.error ? focused : initial,
+      );
+      expect(themes.resolve(PinItemStateType.error), focused);
+      expect(themes.resolve(PinItemStateType.submitted), initial);
+    });
+
+    testWidgets(
+      'placeholder shows in empty pins and duration is configurable',
+      (tester) async {
+        const key = ValueKey('placeholder');
+        await tester.pumpApp(
+          const Pinput(
+            length: 3,
+            cursor: PinCursor.hidden(),
+            pinAnimation: PinAnimation.fade(duration: Duration(seconds: 1)),
+            theme: PinThemes.all(PinTheme(placeholder: SizedBox(key: key))),
+          ),
+        );
+        expect(find.byKey(key), findsNWidgets(3));
+        expect(
+          tester
+              .widget<AnimatedContainer>(find.byType(AnimatedContainer).first)
+              .duration,
+          const Duration(seconds: 1),
+        );
+      },
+    );
+  });
 }

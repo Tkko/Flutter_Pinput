@@ -34,8 +34,8 @@ enum _PinAnimationType {
   rotation,
 }
 
-/// Cursor visibility and motion in the default pin renderer.
-enum CursorBehavior {
+/// The cursor type of [PinCursor]
+enum _PinCursorType {
   /// Displays an animated cursor.
   blinking,
 

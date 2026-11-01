@@ -702,7 +702,7 @@ class _PinputState extends State<Pinput>
         ]),
         builder: (BuildContext context, Widget? child) {
           return AnimatedSize(
-            duration: widget.animationDuration,
+            duration: widget.pinAnimation.duration,
             alignment: Alignment.topCenter,
             child: Column(
               crossAxisAlignment: widget.crossAxisAlignment,

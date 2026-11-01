@@ -47,13 +47,15 @@ class _FilledState extends State<Filled> {
         focusNode: focusNode,
         separatorBuilder: (index) =>
             Container(height: 64, width: 1, color: Colors.white),
-        defaultPinTheme: defaultPinTheme,
-        cursorBehavior: CursorBehavior.blinking,
-        focusedPinTheme: defaultPinTheme.copyWith(
-          decoration: const BoxDecoration(
-            color: Color.fromRGBO(124, 102, 152, 1),
+        theme: PinThemes(
+          initial: defaultPinTheme,
+          focused: defaultPinTheme.copyWith(
+            decoration: const BoxDecoration(
+              color: Color.fromRGBO(124, 102, 152, 1),
+            ),
           ),
         ),
+        cursor: const PinCursor.blinking(),
       ),
     );
   }

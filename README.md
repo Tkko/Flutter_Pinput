@@ -94,7 +94,7 @@ Widget buildPinPut() {
 }
 ```
 
-If you want to customize it, create `defaultPinTheme` first.
+If you want to customize it, create a base `PinTheme` first.
 
 ```dart
 final defaultPinTheme = PinTheme(
@@ -108,8 +108,8 @@ final defaultPinTheme = PinTheme(
 );
 ```
 
-if you want all pins to be the same don't pass other theme parameters,
-If not, create `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `errorPinTheme` from `defaultPinTheme`
+If you want all pins to be the same, pass `PinThemes.all(defaultPinTheme)` (or no theme at all).
+If not, create the focused, submitted, following, disabled and error themes from `defaultPinTheme`
 
 ```dart
 final focusedPinTheme = defaultPinTheme.copyDecorationWith(
@@ -149,14 +149,22 @@ final submittedPinTheme = defaultPinTheme.copyWith(
 );
 
 return Pinput(
-defaultPinTheme: defaultPinTheme,
-focusedPinTheme: focusedPinTheme,
-submittedPinTheme: submittedPinTheme,
-validationState: const PinputValidationState.idle(),
-cursorBehavior: CursorBehavior.blinking,
-onCompleted: (pin) => print(pin),
+  theme: PinThemes(
+    initial: defaultPinTheme,
+    focused: focusedPinTheme,
+    submitted: submittedPinTheme,
+  ),
+  validationState: const PinputValidationState.idle(),
+  cursor: const PinCursor.blinking(),
+  onCompleted: (pin) => print(pin),
 );
 ```
+
+`PinThemes` mirrors `WidgetStateProperty`: use `PinThemes(initial:, focused:, …)`, `PinThemes.all`, or
+`PinThemes.resolveWith((state) => ...)` to pick a theme per `PinItemStateType`
+(`initial`, `focused`, `submitted`, `following`, `disabled`, `error`).
+The named form falls back to the `initial` theme, and states are not merged, so derive
+state themes with `copyWith`. `PinTheme.placeholder` replaces `preFilledWidget`.
 
 ## SMS Autofill
 
@@ -262,10 +270,12 @@ return Pinput(
 
 ```dart
 Pinput(
-  cursorBehavior: CursorBehavior.blinking, // static or hidden are also available
-  cursor: MyCursor(), // optional custom content
+  cursor: PinCursor.blinking(child: MyCursor()), // static() or hidden() are also available
   obscuring: const PinObscuring.character('*'), // null displays original text
-  pinAnimation: const PinAnimation.slide(beginOffset: Offset(0, 0.5)),
+  pinAnimation: const PinAnimation.slide(
+    beginOffset: Offset(0, 0.5),
+    duration: Duration(milliseconds: 250),
+  ),
 )
 ```
 
@@ -279,8 +289,8 @@ a masking widget containing a shared GlobalKey across slots.
 must mask visible content itself.
 
 `PinAnimation` supports `none()`, `scale()` (default), `fade()`, `slide()`, and
-`rotation()`. Slide defaults to `Offset(0.8, 0)`. Shared `animationDuration` and
-`animationCurve` still control transitions, decoration, and error layout.
+`rotation()`. Slide defaults to `Offset(0.8, 0)`. Every constructor accepts `duration` and `curve`,
+which control the transition, decoration, and error layout.
 Cursor blinking is independent of pin-content transitions.
 
 Set `enableInteractiveSelection: false` to disable interactive selection.

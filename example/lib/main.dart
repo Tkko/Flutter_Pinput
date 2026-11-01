@@ -127,7 +127,25 @@ class _PinputExampleState extends State<PinputExample> {
                 smsRetriever: smsRetriever,
                 controller: pinController,
                 focusNode: focusNode,
-                defaultPinTheme: defaultPinTheme,
+                theme: PinThemes(
+                  initial: defaultPinTheme,
+                  focused: defaultPinTheme.copyWith(
+                    decoration: defaultPinTheme.decoration!.copyWith(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: focusedBorderColor),
+                    ),
+                  ),
+                  submitted: defaultPinTheme.copyWith(
+                    decoration: defaultPinTheme.decoration!.copyWith(
+                      color: fillColor,
+                      borderRadius: BorderRadius.circular(19),
+                      border: Border.all(color: focusedBorderColor),
+                    ),
+                  ),
+                  error: defaultPinTheme.copyBorderWith(
+                    border: Border.all(color: Colors.redAccent),
+                  ),
+                ),
                 separatorBuilder: (index) => const SizedBox(width: 8),
                 hapticFeedbackType: HapticFeedbackType.lightImpact,
                 onCompleted: (pin) {
@@ -137,32 +155,18 @@ class _PinputExampleState extends State<PinputExample> {
                   field.didChange(value);
                   debugPrint('onChanged: $value');
                 },
-                cursor: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 9),
-                      width: 22,
-                      height: 1,
-                      color: focusedBorderColor,
-                    ),
-                  ],
-                ),
-                focusedPinTheme: defaultPinTheme.copyWith(
-                  decoration: defaultPinTheme.decoration!.copyWith(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: focusedBorderColor),
+                cursor: PinCursor.blinking(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 9),
+                        width: 22,
+                        height: 1,
+                        color: focusedBorderColor,
+                      ),
+                    ],
                   ),
-                ),
-                submittedPinTheme: defaultPinTheme.copyWith(
-                  decoration: defaultPinTheme.decoration!.copyWith(
-                    color: fillColor,
-                    borderRadius: BorderRadius.circular(19),
-                    border: Border.all(color: focusedBorderColor),
-                  ),
-                ),
-                errorPinTheme: defaultPinTheme.copyBorderWith(
-                  border: Border.all(color: Colors.redAccent),
                 ),
               ),
             ),

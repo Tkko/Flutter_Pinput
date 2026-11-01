@@ -3,9 +3,17 @@
 - Aligned the `validating()` subtype name as `PinputValidationValidating`.
 - Added value equality to `PinAnimation` and `PinObscuring`, and documented
   the shared GlobalKey restriction for masking widgets.
-- **BREAKING**: Consolidated cursor visibility/motion into `CursorBehavior`,
-  masking into optional `PinObscuring`, and content transitions into
-  `PinAnimation` (including slide offset).
+- **BREAKING**: Consolidated cursor into `PinCursor` (`blinking`, `static`,
+  `hidden`, with optional `child`), masking into optional `PinObscuring`, and
+  content transitions into `PinAnimation` (including slide offset, `duration`
+  and `curve`). Removed `cursorBehavior`, `animationDuration` and
+  `animationCurve`.
+- **BREAKING**: Replaced `defaultPinTheme`, `focusedPinTheme`,
+  `submittedPinTheme`, `followingPinTheme`, `disabledPinTheme` and
+  `errorPinTheme` with `theme: PinThemes` (named state parameters, `all`, `resolveWith`).
+  `preFilledWidget` became `PinTheme.placeholder`.
+- `Pinput.builder` now defaults `autofillHints` and `enableInteractiveSelection`
+  like `Pinput`. Fixed duplicated and incorrect `debugFillProperties` entries.
 - Removed `toolbarEnabled`; `enableInteractiveSelection` now controls selection
   gestures consistently with native editing. Use `contextMenuBuilder: null` to
   hide the modern menu without disabling selection.

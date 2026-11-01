@@ -21,12 +21,12 @@ class _PinItem extends StatelessWidget {
           margin: pinTheme.margin,
           decoration: pinTheme.decoration,
           alignment: state.widget.pinContentAlignment,
-          duration: state.widget.animationDuration,
-          curve: state.widget.animationCurve,
+          duration: state.widget.pinAnimation.duration,
+          curve: state.widget.pinAnimation.curve,
           child: AnimatedSwitcher(
-            switchInCurve: state.widget.animationCurve,
-            switchOutCurve: state.widget.animationCurve,
-            duration: state.widget.animationDuration,
+            switchInCurve: state.widget.pinAnimation.curve,
+            switchOutCurve: state.widget.pinAnimation.curve,
+            duration: state.widget.pinAnimation.duration,
             transitionBuilder: _getTransition,
             child: _buildFieldContent(index, pinTheme),
           ),
@@ -36,16 +36,7 @@ class _PinItem extends StatelessWidget {
   }
 
   PinTheme _pinTheme(int index) {
-    final theme = switch (state._getState(index)) {
-      PinItemStateType.initial => null,
-      PinItemStateType.focused => state.widget.focusedPinTheme,
-      PinItemStateType.submitted => state.widget.submittedPinTheme,
-      PinItemStateType.following => state.widget.followingPinTheme,
-      PinItemStateType.disabled => state.widget.disabledPinTheme,
-      PinItemStateType.error => state.widget.errorPinTheme,
-    };
-    return theme ??
-        state.widget.defaultPinTheme ??
+    return state.widget.theme?.resolve(state._getState(index)) ??
         PinputConstants._defaultPinTheme;
   }
 
@@ -58,7 +49,7 @@ class _PinItem extends StatelessWidget {
     final focused =
         state._effectiveFocusNode.hasFocus || !state.widget.useNativeKeyboard;
     final shouldShowCursor =
-        state.widget.cursorBehavior != CursorBehavior.hidden &&
+        state.widget.cursor._type != _PinCursorType.hidden &&
         state.isEnabled &&
         isActiveField &&
         focused;
@@ -96,24 +87,24 @@ class _PinItem extends StatelessWidget {
       return _buildCursor(pinTheme);
     }
 
-    if (state.widget.preFilledWidget != null) {
-      return SizedBox(key: key, child: state.widget.preFilledWidget);
+    if (pinTheme.placeholder != null) {
+      return SizedBox(key: key, child: pinTheme.placeholder);
     }
 
     return Text('', key: key, style: pinTheme.textStyle);
   }
 
   Widget _buildCursor(PinTheme pinTheme) {
-    if (state.widget.cursorBehavior == CursorBehavior.blinking) {
+    if (state.widget.cursor._type == _PinCursorType.blinking) {
       return _PinputAnimatedCursor(
         textStyle: pinTheme.textStyle,
-        cursor: state.widget.cursor,
+        cursor: state.widget.cursor._child,
       );
     }
 
     return _PinputCursor(
       textStyle: pinTheme.textStyle,
-      cursor: state.widget.cursor,
+      cursor: state.widget.cursor._child,
     );
   }
 

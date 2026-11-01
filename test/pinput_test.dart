@@ -76,12 +76,14 @@ void main() {
       Pinput(
         length: length,
         focusNode: focusNode,
-        defaultPinTheme: defaultTheme,
-        focusedPinTheme: focusedTheme,
-        submittedPinTheme: submittedTheme,
-        followingPinTheme: followingTheme,
-        disabledPinTheme: disabledTheme,
-        errorPinTheme: errorTheme,
+        theme: PinThemes(
+          initial: defaultTheme,
+          focused: focusedTheme,
+          submitted: submittedTheme,
+          following: followingTheme,
+          disabled: disabledTheme,
+          error: errorTheme,
+        ),
       ),
     );
 
@@ -142,8 +144,7 @@ void main() {
       Pinput(
         focusNode: focusNode,
         autofocus: true,
-        defaultPinTheme: defaultTheme,
-        focusedPinTheme: focusedTheme,
+        theme: PinThemes(initial: defaultTheme, focused: focusedTheme),
       ),
     );
 
@@ -163,7 +164,12 @@ void main() {
   });
 
   testWidgets('Should display custom cursor', (WidgetTester tester) async {
-    await tester.pumpApp(const Pinput(autofocus: true, cursor: FlutterLogo()));
+    await tester.pumpApp(
+      const Pinput(
+        autofocus: true,
+        cursor: PinCursor.blinking(child: FlutterLogo()),
+      ),
+    );
 
     await tester.pump();
     expect(find.byType(FlutterLogo), findsOneWidget);

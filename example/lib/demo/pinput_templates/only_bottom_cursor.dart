@@ -69,10 +69,10 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
       pinAnimation: const PinAnimation.slide(),
       controller: controller,
       focusNode: focusNode,
-      defaultPinTheme: defaultPinTheme,
-      cursorBehavior: CursorBehavior.blinking,
-      cursor: cursor,
-      preFilledWidget: preFilledWidget,
+      theme: PinThemes(
+        initial: defaultPinTheme.copyWith(placeholder: preFilledWidget),
+      ),
+      cursor: PinCursor.blinking(child: cursor),
     );
   }
 }

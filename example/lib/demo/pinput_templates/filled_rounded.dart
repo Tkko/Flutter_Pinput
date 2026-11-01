@@ -51,23 +51,25 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
         length: length,
         controller: controller,
         focusNode: focusNode,
-        defaultPinTheme: defaultPinTheme,
+        theme: PinThemes(
+          initial: defaultPinTheme,
+          focused: defaultPinTheme.copyWith(
+            height: 68,
+            width: 64,
+            decoration: defaultPinTheme.decoration!.copyWith(
+              border: Border.all(color: borderColor),
+            ),
+          ),
+          error: defaultPinTheme.copyWith(
+            decoration: BoxDecoration(
+              color: errorColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
         onCompleted: (pin) {
           setState(() => showError = pin != '5555');
         },
-        focusedPinTheme: defaultPinTheme.copyWith(
-          height: 68,
-          width: 64,
-          decoration: defaultPinTheme.decoration!.copyWith(
-            border: Border.all(color: borderColor),
-          ),
-        ),
-        errorPinTheme: defaultPinTheme.copyWith(
-          decoration: BoxDecoration(
-            color: errorColor,
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
       ),
     );
   }

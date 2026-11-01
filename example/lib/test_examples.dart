@@ -106,23 +106,25 @@ class HeightExample extends StatelessWidget {
 
     return Pinput(
       length: 6,
-      defaultPinTheme: defaultPinTheme,
-      focusedPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Colors.red,
+      theme: PinThemes(
+        initial: defaultPinTheme,
+        focused: defaultPinTheme.copyWith(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.0),
+            color: Colors.red,
+          ),
         ),
-      ),
-      submittedPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Colors.green,
+        submitted: defaultPinTheme.copyWith(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.0),
+            color: Colors.green,
+          ),
         ),
-      ),
-      followingPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Colors.blue,
+        following: defaultPinTheme.copyWith(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.0),
+            color: Colors.blue,
+          ),
         ),
       ),
     );

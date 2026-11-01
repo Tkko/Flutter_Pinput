@@ -101,9 +101,12 @@ void main() {
           controller: controller,
           focusNode: focusNode,
           length: 4,
-          defaultPinTheme: defaultTheme,
-          focusedPinTheme: focusedTheme,
-          submittedPinTheme: submittedTheme,
+          theme: PinThemes(
+            initial: defaultTheme,
+            focused: focusedTheme,
+            submitted: submittedTheme,
+          ),
+
           pinEditMode: PinEditMode.overwrite,
           closeKeyboardWhenCompleted: false,
         ),
@@ -713,8 +716,8 @@ void main() {
           controller: controller,
           focusNode: focusNode,
           length: 4,
-          defaultPinTheme: base,
-          focusedPinTheme: focused,
+          theme: PinThemes(initial: base, focused: focused),
+
           closeKeyboardWhenCompleted: false,
         ),
       );
@@ -807,8 +810,9 @@ void main() {
         Pinput(
           controller: controller,
           closeKeyboardWhenCompleted: false,
-          cursorBehavior: CursorBehavior.static,
-          cursor: const SizedBox(key: ValueKey('active-cursor')),
+          cursor: const PinCursor.static(
+            child: SizedBox(key: ValueKey('active-cursor')),
+          ),
         ),
       );
       final containers = find.byType(AnimatedContainer);

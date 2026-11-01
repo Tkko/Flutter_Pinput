@@ -63,17 +63,20 @@ void main() {
         Pinput(
           controller: controller,
           focusNode: focusNode,
-          cursorBehavior: CursorBehavior.hidden,
+          cursor: const PinCursor.hidden(),
           closeKeyboardWhenCompleted: false,
           validationState: const PinputValidationState.invalid(
             'Incorrect code',
           ),
-          defaultPinTheme: const PinTheme(
-            decoration: BoxDecoration(color: Color(0xFF000000)),
+          theme: PinThemes(
+            initial: const PinTheme(
+              decoration: BoxDecoration(color: Color(0xFF000000)),
+            ),
+            error: const PinTheme(
+              decoration: BoxDecoration(color: Color(0xFFFF0000)),
+            ),
           ),
-          errorPinTheme: const PinTheme(
-            decoration: BoxDecoration(color: Color(0xFFFF0000)),
-          ),
+
           onChanged: (value) => changed = value,
           onCompleted: (value) => completed = value,
           onSubmitted: (value) => submitted = value,
@@ -117,7 +120,7 @@ void main() {
         builder: (_, value, _) => Pinput(
           controller: controller,
           focusNode: focusNode,
-          cursorBehavior: CursorBehavior.hidden,
+          cursor: const PinCursor.hidden(),
           validationState: value,
         ),
       ),
@@ -195,10 +198,10 @@ void main() {
   ) async {
     for (final widget in [
       const Pinput(
-        cursorBehavior: CursorBehavior.hidden,
+        cursor: PinCursor.hidden(),
         validationState: PinputValidationState.invalid(),
-        errorPinTheme: PinTheme(
-          decoration: BoxDecoration(color: Color(0xFFFF0000)),
+        theme: PinThemes(
+          error: PinTheme(decoration: BoxDecoration(color: Color(0xFFFF0000))),
         ),
       ),
       Pinput.builder(
@@ -255,7 +258,7 @@ void main() {
                     errorBuilder: errorBuilder,
                   )
                 : Pinput(
-                    cursorBehavior: CursorBehavior.hidden,
+                    cursor: const PinCursor.hidden(),
                     validationState: value,
                     errorBuilder: errorBuilder,
                   ),
@@ -307,7 +310,7 @@ void main() {
           validator: (value) => value == '1234' ? null : 'Incorrect code',
           builder: (field) => Pinput(
             controller: controller,
-            cursorBehavior: CursorBehavior.hidden,
+            cursor: const PinCursor.hidden(),
             validationState: field.errorText == null
                 ? const PinputValidationState.idle()
                 : PinputValidationState.invalid(field.errorText!),
