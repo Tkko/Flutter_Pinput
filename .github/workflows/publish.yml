@@ -5,107 +5,15 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+*'
   workflow_dispatch:
-  workflow_call:
-    inputs:
-      working-directory:
-        description: Directory containing the Flutter package
-        type: string
-        default: .
-      flutter-channel:
-        description: Flutter SDK channel
-        type: string
-        default: stable
-      flutter-version:
-        description: Flutter SDK version
-        type: string
-        default: 3.47.8
 
 permissions:
   contents: read
 
-concurrency:
-  group: publish-${{ github.repository }}-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
-  metadata:
-    name: Validate Release Tag & Version
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    outputs:
-      sha: ${{ steps.metadata.outputs.sha }}
-      tag: ${{ steps.metadata.outputs.tag }}
-    steps:
-      - name: Checkout release ref
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: Checkout shared actions
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          repository: Tkko/Flutter_Pinput
-          ref: ${{ job.workflow_sha }}
-          path: .github/workflow-actions
-          sparse-checkout: .github/actions
-          sparse-checkout-cone-mode: false
-          persist-credentials: false
-      - id: metadata
-        uses: ./.github/workflow-actions/.github/actions/release-metadata
-        with:
-          existing-tag: 'true'
-          working-directory: ${{ inputs.working-directory || '.' }}
-
-  test:
-    name: Test & Validate
-    needs: metadata
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref: ${{ needs.metadata.outputs.sha }}
-          persist-credentials: false
-      - name: Checkout shared actions
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          repository: Tkko/Flutter_Pinput
-          ref: ${{ job.workflow_sha }}
-          path: .github/workflow-actions
-          sparse-checkout: .github/actions
-          sparse-checkout-cone-mode: false
-          persist-credentials: false
-      - uses: ./.github/workflow-actions/.github/actions/validate-package
-        with:
-          working-directory: ${{ inputs.working-directory || '.' }}
-          run-publish-dry-run: 'true'
-          run-pana: 'true'
-
   publish:
-    name: Publish package
-    needs: [metadata, test]
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
     permissions:
-      id-token: write
       contents: read
-    steps:
-      - name: Checkout validated tag commit
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref: ${{ needs.metadata.outputs.sha }}
-          persist-credentials: false
-      - name: Checkout shared actions
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          repository: Tkko/Flutter_Pinput
-          ref: ${{ job.workflow_sha }}
-          path: .github/workflow-actions
-          sparse-checkout: .github/actions
-          sparse-checkout-cone-mode: false
-          persist-credentials: false
-      - uses: ./.github/workflow-actions/.github/actions/publish-package
-        with:
-          working-directory: ${{ inputs.working-directory || '.' }}
-          flutter-channel: ${{ inputs.flutter-channel || 'stable' }}
-          flutter-version: ${{ inputs.flutter-version || '3.47.8' }}
+      id-token: write
+    uses: Tkko/better-actions/.github/workflows/publish.yml@main
+    with:
+      working-directory: .
