@@ -30,51 +30,56 @@ class _PinputBuilderExampleState extends State<PinputBuilderExample> {
           Directionality(
             // Specify direction if desired
             textDirection: TextDirection.ltr,
-            child: Pinput.builder(
-              builder: (context, pinState) {
-                final dec = () {
-                  switch (pinState.type) {
-                    case PinItemStateType.disabled:
-                      return BoxDecoration(
-                        borderRadius: BorderRadius.circular(19),
-                        border: Border.all(color: Colors.black),
-                      );
-                    case PinItemStateType.focused:
-                      return BoxDecoration(
-                        borderRadius: BorderRadius.circular(19),
-                        border: Border.all(color: Colors.greenAccent),
-                      );
-                    case PinItemStateType.error:
-                      return BoxDecoration(
-                        borderRadius: BorderRadius.circular(19),
-                        border: Border.all(color: Colors.redAccent),
-                      );
-                    default:
-                      return BoxDecoration(
-                        borderRadius: BorderRadius.circular(19),
-                        border: Border.all(color: Colors.black),
-                      );
-                  }
-                }();
-                return Container(
-                  decoration: dec,
-                  padding: const EdgeInsets.all(16),
-                  child: Text(pinState.value),
-                );
-              },
-              controller: pinController,
-              focusNode: focusNode,
-              separatorBuilder: (index) => const SizedBox(width: 8),
-              hapticFeedbackType: HapticFeedbackType.lightImpact,
-              validator: (value) {
-                return value == '2222' ? null : 'Pin is incorrect';
-              },
-              onCompleted: (pin) {
-                debugPrint('onCompleted: $pin');
-              },
-              onChanged: (value) {
-                debugPrint('onChanged: $value');
-              },
+            child: FormField<String>(
+              initialValue: pinController.text,
+              validator: (value) => value == '2222' ? null : 'Pin is incorrect',
+              builder: (field) => Pinput.builder(
+                validationState: field.errorText == null
+                    ? const PinputValidationState.idle()
+                    : PinputValidationState.invalid(field.errorText!),
+                builder: (context, pinState) {
+                  final dec = () {
+                    switch (pinState.type) {
+                      case PinItemStateType.disabled:
+                        return BoxDecoration(
+                          borderRadius: BorderRadius.circular(19),
+                          border: Border.all(color: Colors.black),
+                        );
+                      case PinItemStateType.focused:
+                        return BoxDecoration(
+                          borderRadius: BorderRadius.circular(19),
+                          border: Border.all(color: Colors.greenAccent),
+                        );
+                      case PinItemStateType.error:
+                        return BoxDecoration(
+                          borderRadius: BorderRadius.circular(19),
+                          border: Border.all(color: Colors.redAccent),
+                        );
+                      default:
+                        return BoxDecoration(
+                          borderRadius: BorderRadius.circular(19),
+                          border: Border.all(color: Colors.black),
+                        );
+                    }
+                  }();
+                  return Container(
+                    decoration: dec,
+                    padding: const EdgeInsets.all(16),
+                    child: Text(pinState.value),
+                  );
+                },
+                controller: pinController,
+                focusNode: focusNode,
+                separatorBuilder: (index) => const SizedBox(width: 8),
+                hapticFeedbackType: HapticFeedbackType.lightImpact,
+                onCompleted: (pin) {
+                  debugPrint('onCompleted: $pin');
+                },
+                onChanged: (value) {
+                  field.didChange(value);
+                  debugPrint('onChanged: $value');
+                },
+              ),
             ),
           ),
           TextButton(

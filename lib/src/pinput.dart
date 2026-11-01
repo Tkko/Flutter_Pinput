@@ -16,6 +16,8 @@ part 'widgets/widgets.dart';
 
 part 'models/pin_theme.dart';
 
+part 'models/validation_state.dart';
+
 part 'models/models.dart';
 
 part 'models/sms_retriever.dart';
@@ -34,7 +36,7 @@ part 'widgets/_pinput_selection_gesture_detector_builder.dart';
 ///
 /// ## Features:
 /// - Animated Decoration Switching
-/// - Form validation
+/// - App-controlled validation feedback
 /// - SMS Autofill on iOS
 /// - SMS Autofill on Android
 /// - Standard Cursor
@@ -105,13 +107,9 @@ class Pinput extends StatefulWidget {
     this.onClipboardFound,
     this.onAppPrivateCommand,
     this.mouseCursor,
-    this.forceErrorState = false,
-    this.showErrorWhenFocused = false,
-    this.errorText,
-    this.validator,
+    this.validationState = const PinputValidationState.idle(),
     this.errorBuilder,
     this.errorTextStyle,
-    this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     super.key,
@@ -163,10 +161,9 @@ class Pinput extends StatefulWidget {
     this.onClipboardFound,
     this.onAppPrivateCommand,
     this.mouseCursor,
-    this.forceErrorState = false,
-    this.showErrorWhenFocused = false,
-    this.validator,
-    this.pinputAutovalidateMode = PinputAutovalidateMode.onSubmit,
+    this.validationState = const PinputValidationState.idle(),
+    this.errorBuilder,
+    this.errorTextStyle,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     super.key,
@@ -193,10 +190,7 @@ class Pinput extends StatefulWidget {
        slideTransitionBeginOffset = null,
        cursor = null,
        obscuringCharacter = '•',
-       obscuringWidget = null,
-       errorText = null,
-       errorBuilder = null,
-       errorTextStyle = null;
+       obscuringWidget = null;
 
   /// Theme of the pin in default state
   final PinTheme? defaultPinTheme;
@@ -281,7 +275,7 @@ class Pinput extends StatefulWidget {
   /// Defines how [Pinput] fields are being placed inside [Row]
   final MainAxisAlignment mainAxisAlignment;
 
-  /// Defines how [Pinput] and ([errorText] or [errorBuilder]) are being placed inside [Column]
+  /// Defines how [Pinput] and its error content are placed inside [Column].
   final CrossAxisAlignment crossAxisAlignment;
 
   /// Defines how each [Pinput] field are being placed within the container
@@ -410,26 +404,24 @@ class Pinput extends StatefulWidget {
   /// See [EditableText.mouseCursor]
   final MouseCursor? mouseCursor;
 
-  /// If true [errorPinTheme] will be applied and [errorText] will be displayed under the Pinput
-  final bool forceErrorState;
+  /// App-owned validation feedback. Defaults to [PinputValidationState.idle].
+  ///
+  /// Pinput does not execute validation or register a field with a [Form].
+  /// Validate using [onChanged], [onCompleted], [onSubmitted], or an explicit
+  /// submit action, then supply the result here. The app is responsible for
+  /// clearing stale results on edits and ignoring outdated async responses.
+  ///
+  /// Invalid feedback remains visible while focused and is not cleared by
+  /// editing. Other states use the normal pin appearance without feedback.
+  /// This state never changes text, focus, [enabled], or [readOnly].
+  final PinputValidationState validationState;
 
-  /// If true, the error will also be displayed in the focused state. Otherwise the error is not displayed in the focused state.
-  final bool showErrorWhenFocused;
-
-  /// Text displayed under the Pinput if Pinput is invalid
-  final String? errorText;
-
-  /// Style of error text
+  /// Style of the default error text. Ignored when [errorBuilder] is supplied.
   final TextStyle? errorTextStyle;
 
-  /// If [Pinput] has error and [errorBuilder] is passed it will be rendered under the Pinput
+  /// Replaces the default error content when [validationState] is invalid.
+  /// Called even when the invalid state has no message.
   final PinputErrorBuilder? errorBuilder;
-
-  /// Return null if pin is valid or any String otherwise
-  final FormFieldValidator<String>? validator;
-
-  /// Return null if pin is valid or any String otherwise
-  final PinputAutovalidateMode pinputAutovalidateMode;
 
   /// When this widget receives focus and is not completely visible (for example scrolled partially
   /// off the screen or overlapped by the keyboard)
@@ -824,17 +816,10 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<FormFieldValidator<String>?>(
-        'validator',
-        validator,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<PinputAutovalidateMode>(
-        'pinputAutovalidateMode',
-        pinputAutovalidateMode,
-        defaultValue: PinputAutovalidateMode.onSubmit,
+      DiagnosticsProperty<PinputValidationState>(
+        'validationState',
+        validationState,
+        defaultValue: const PinputValidationState.idle(),
       ),
     );
     properties.add(

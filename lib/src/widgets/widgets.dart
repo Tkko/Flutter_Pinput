@@ -4,25 +4,6 @@ part of '../pinput.dart';
 /// list.
 typedef JustIndexedWidgetBuilder = Widget Function(int index);
 
-class _PinputFormField extends FormField<String> {
-  const _PinputFormField({
-    required super.validator,
-    required super.enabled,
-    required super.initialValue,
-    required super.builder,
-  }) : super(autovalidateMode: AutovalidateMode.disabled);
-
-  @override
-  FormFieldState<String> createState() => _PinputFormFieldState();
-}
-
-class _PinputFormFieldState extends FormFieldState<String> {
-  @override
-  void didChange(String? value) {
-    setValue(value);
-  }
-}
-
 class _SeparatedRaw extends StatelessWidget {
   final List<Widget> children;
   final MainAxisAlignment mainAxisAlignment;

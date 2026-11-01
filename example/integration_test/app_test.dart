@@ -467,14 +467,21 @@ void main() {
               key: formKey,
               child: Column(
                 children: [
-                  Pinput(
-                    key: const ValueKey('pinput_form'),
-                    length: 4,
-                    controller: controller,
-                    defaultPinTheme: defaultTheme,
-                    errorPinTheme: errorTheme,
-                    isCursorAnimationEnabled: false,
+                  FormField<String>(
+                    initialValue: controller.text,
                     validator: (val) => val == '7777' ? null : 'Wrong PIN code',
+                    builder: (field) => Pinput(
+                      key: const ValueKey('pinput_form'),
+                      length: 4,
+                      controller: controller,
+                      defaultPinTheme: defaultTheme,
+                      errorPinTheme: errorTheme,
+                      isCursorAnimationEnabled: false,
+                      onChanged: field.didChange,
+                      validationState: field.errorText == null
+                          ? const PinputValidationState.idle()
+                          : PinputValidationState.invalid(field.errorText!),
+                    ),
                   ),
                   ElevatedButton(
                     key: const ValueKey('btn_submit'),
@@ -507,64 +514,72 @@ void main() {
         expect((decoration.border as Border).top.color, Colors.red);
       });
 
-      testWidgets(
-        'Typing/editing immediately clears error state (Specification 2-A)',
-        (tester) async {
-          final controller = TextEditingController();
-          final formKey = GlobalKey<FormState>();
+      testWidgets('Form adapter can explicitly clear error state on editing', (
+        tester,
+      ) async {
+        final controller = TextEditingController();
+        final formKey = GlobalKey<FormState>();
 
-          await tester.pumpWidget(
-            buildTestHarness(
-              Form(
-                key: formKey,
-                child: Column(
-                  children: [
-                    Pinput(
+        await tester.pumpWidget(
+          buildTestHarness(
+            Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  FormField<String>(
+                    initialValue: controller.text,
+                    validator: (val) => val == '7777' ? null : 'Wrong PIN code',
+                    builder: (field) => Pinput(
                       key: const ValueKey('pinput_clear_error'),
                       length: 4,
                       controller: controller,
                       defaultPinTheme: defaultTheme,
                       errorPinTheme: errorTheme,
                       isCursorAnimationEnabled: false,
-                      validator: (val) =>
-                          val == '7777' ? null : 'Wrong PIN code',
+                      onChanged: (value) {
+                        field.reset();
+                        field.didChange(value);
+                      },
+                      validationState: field.errorText == null
+                          ? const PinputValidationState.idle()
+                          : PinputValidationState.invalid(field.errorText!),
                     ),
-                    ElevatedButton(
-                      key: const ValueKey('btn_submit_2'),
-                      onPressed: () => formKey.currentState!.validate(),
-                      child: const Text('Submit'),
-                    ),
-                  ],
-                ),
+                  ),
+                  ElevatedButton(
+                    key: const ValueKey('btn_submit_2'),
+                    onPressed: () => formKey.currentState!.validate(),
+                    child: const Text('Submit'),
+                  ),
+                ],
               ),
             ),
-          );
-          await pumpFrames(tester);
+          ),
+        );
+        await pumpFrames(tester);
 
-          // Enter wrong pin and trigger error
-          await tester.enterText(find.byType(EditableText), '1111');
-          await pumpFrames(tester);
-          await tester.tap(find.byKey(const ValueKey('btn_submit_2')));
-          await pumpFrames(tester);
-          expect(find.text('Wrong PIN code'), findsOneWidget);
+        // Enter wrong pin and trigger error
+        await tester.enterText(find.byType(EditableText), '1111');
+        await pumpFrames(tester);
+        await tester.tap(find.byKey(const ValueKey('btn_submit_2')));
+        await pumpFrames(tester);
+        expect(find.text('Wrong PIN code'), findsOneWidget);
 
-          // User taps pinput to refocus, then edits by backspacing to '111'
-          await tester.tap(find.byKey(const ValueKey('pinput_clear_error')));
-          await pumpFrames(tester);
-          await tester.enterText(find.byType(EditableText), '111');
-          await pumpFrames(tester);
+        // User taps pinput to refocus, then edits by backspacing to '111'
+        await tester.tap(find.byKey(const ValueKey('pinput_clear_error')));
+        await pumpFrames(tester);
+        await tester.enterText(find.byType(EditableText), '111');
+        await pumpFrames(tester);
 
-          // Per Specification 2-A: error text MUST be cleared immediately on edit!
-          expect(find.text('Wrong PIN code'), findsNothing);
+        // The adapter, not Pinput, clears its error when the value changes.
+        expect(find.text('Wrong PIN code'), findsNothing);
 
-          // Visual border must revert from red error state
-          final container = tester.widget<AnimatedContainer>(
-            find.byType(AnimatedContainer).first,
-          );
-          final decoration = container.decoration as BoxDecoration;
-          expect((decoration.border as Border).top.color, isNot(Colors.red));
-        },
-      );
+        // Visual border must revert from red error state
+        final container = tester.widget<AnimatedContainer>(
+          find.byType(AnimatedContainer).first,
+        );
+        final decoration = container.decoration as BoxDecoration;
+        expect((decoration.border as Border).top.color, isNot(Colors.red));
+      });
     });
 
     // =========================================================================

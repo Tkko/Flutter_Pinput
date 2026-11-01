@@ -32,10 +32,12 @@ class _PinputState extends State<Pinput>
   RestorableTextEditingController? _controller;
   FocusNode? _focusNode;
   bool _isHovering = false;
-  String? _validatorErrorText;
   SmsRetriever? _smsRetriever;
 
-  String? get _errorText => widget.errorText ?? _validatorErrorText;
+  String? get _errorText => switch (widget.validationState) {
+    PinputValidationInvalid(:final message) => message,
+    _ => null,
+  };
 
   bool get _canRequestFocus {
     final NavigationMode mode =
@@ -57,7 +59,7 @@ class _PinputState extends State<Pinput>
       widget.focusNode ?? (_focusNode ??= FocusNode());
 
   @protected
-  bool get hasError => widget.forceErrorState || _validatorErrorText != null;
+  bool get hasError => widget.validationState is PinputValidationInvalid;
 
   @protected
   bool get isEnabled => widget.enabled;
@@ -262,24 +264,14 @@ class _PinputState extends State<Pinput>
   }
 
   void _onChanged(String pin) {
-    if (_validatorErrorText != null) {
-      setState(() => _validatorErrorText = null);
-    }
     widget.onChanged?.call(pin);
     if (_completed) {
       // While the user edits a pin in the middle, the PIN is only "completed"
       // once the cursor reaches the end, so auto-submitting apps never receive
-      // a half-edited code. Validation still runs to keep the error state fresh.
+      // a half-edited code.
       final cursorAtEnd = selectedIndex == widget.length;
       if (cursorAtEnd) widget.onCompleted?.call(pin);
-      _maybeValidateForm();
       if (cursorAtEnd) _maybeCloseKeyboard();
-    }
-  }
-
-  void _maybeValidateForm() {
-    if (widget.pinputAutovalidateMode == PinputAutovalidateMode.onSubmit) {
-      _validator();
     }
   }
 
@@ -442,12 +434,6 @@ class _PinputState extends State<Pinput>
     }
   }
 
-  String? _validator([String? _]) {
-    final res = widget.validator?.call(pin);
-    setState(() => _validatorErrorText = res);
-    return res;
-  }
-
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
@@ -471,63 +457,51 @@ class _PinputState extends State<Pinput>
       };
     }
 
-    return _PinputFormField(
-      enabled: isEnabled,
-      validator: _validator,
-      initialValue: _effectiveController.text,
-      builder: (field) {
-        return MouseRegion(
-          cursor: _effectiveMouseCursor,
-          onEnter: (PointerEnterEvent event) => _handleHover(true),
-          onExit: (PointerExitEvent event) => _handleHover(false),
-          child: TextFieldTapRegion(
-            child: IgnorePointer(
-              ignoring: !isEnabled || !widget.useNativeKeyboard,
-              child: AnimatedBuilder(
-                animation: _effectiveController,
-                builder: (_, Widget? child) => Semantics(
-                  maxValueLength: widget.length,
-                  currentValueLength: _currentFilledCount,
-                  enabled: isEnabled,
-                  onTap: widget.readOnly ? null : _semanticsOnTap,
-                  onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
-                  onFocus: isEnabled
-                      ? () {
-                          if (_effectiveFocusNode.canRequestFocus &&
-                              !_effectiveFocusNode.hasFocus) {
-                            _effectiveFocusNode.requestFocus();
-                          } else if (!widget.readOnly) {
-                            _requestKeyboard();
-                          }
-                        }
-                      : null,
-                  child: child,
-                ),
-                child: _gestureDetectorBuilder.buildGestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      // the editable need to be the full size, otherwise the focus is not correct when getting the render box from the focus
-                      Positioned.fill(
-                        child: _buildEditable(textSelectionControls, field),
-                      ),
-                      _buildFields(),
-                    ],
-                  ),
-                ),
+    return MouseRegion(
+      cursor: _effectiveMouseCursor,
+      onEnter: (PointerEnterEvent event) => _handleHover(true),
+      onExit: (PointerExitEvent event) => _handleHover(false),
+      child: TextFieldTapRegion(
+        child: IgnorePointer(
+          ignoring: !isEnabled || !widget.useNativeKeyboard,
+          child: AnimatedBuilder(
+            animation: _effectiveController,
+            builder: (_, Widget? child) => Semantics(
+              maxValueLength: widget.length,
+              currentValueLength: _currentFilledCount,
+              enabled: isEnabled,
+              onTap: widget.readOnly ? null : _semanticsOnTap,
+              onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
+              onFocus: isEnabled
+                  ? () {
+                      if (_effectiveFocusNode.canRequestFocus &&
+                          !_effectiveFocusNode.hasFocus) {
+                        _effectiveFocusNode.requestFocus();
+                      } else if (!widget.readOnly) {
+                        _requestKeyboard();
+                      }
+                    }
+                  : null,
+              child: child,
+            ),
+            child: _gestureDetectorBuilder.buildGestureDetector(
+              behavior: HitTestBehavior.translucent,
+              child: Stack(
+                alignment: Alignment.topCenter,
+                children: [
+                  // the editable need to be the full size, otherwise the focus is not correct when getting the render box from the focus
+                  Positioned.fill(child: _buildEditable(textSelectionControls)),
+                  _buildFields(),
+                ],
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
-  Widget _buildEditable(
-    TextSelectionControls? textSelectionControls,
-    FormFieldState<String> field,
-  ) {
+  Widget _buildEditable(TextSelectionControls? textSelectionControls) {
     final formatters = <TextInputFormatter>[
       ...widget.inputFormatters,
       if (widget.pinEditMode != PinEditMode.none)
@@ -546,7 +520,6 @@ class _PinputState extends State<Pinput>
           maxLines: 1,
           style: PinputConstants._hiddenTextStyle,
           onChanged: (value) {
-            field.didChange(value);
             _maybeUseHaptic(widget.hapticFeedbackType);
           },
           expands: false,
@@ -562,10 +535,7 @@ class _PinputState extends State<Pinput>
           selectionColor: PinputConstants._transparent,
           keyboardType: widget.keyboardType,
           obscureText: widget.obscureText,
-          onSubmitted: (s) {
-            widget.onSubmitted?.call(s);
-            _maybeValidateForm();
-          },
+          onSubmitted: widget.onSubmitted,
           onTapOutside: widget.onTapOutside,
           onTapUpOutside: widget.onTapUpOutside,
           mouseCursor: MouseCursor.defer,
@@ -729,11 +699,6 @@ class _PinputState extends State<Pinput>
           _effectiveController,
         ]),
         builder: (BuildContext context, Widget? child) {
-          final shouldHideErrorContent =
-              widget.validator == null && widget.errorText == null;
-
-          if (shouldHideErrorContent) return onlyFields();
-
           return AnimatedSize(
             duration: widget.animationDuration,
             alignment: Alignment.topCenter,
@@ -756,34 +721,33 @@ class _PinputState extends State<Pinput>
 
   @protected
   bool get showErrorState {
-    return hasError &&
-        (!hasFocus || widget.showErrorWhenFocused || widget.forceErrorState);
+    return hasError;
   }
 
   Widget _buildError() {
-    if (showErrorState) {
-      if (widget.errorBuilder != null) {
-        return widget.errorBuilder!.call(_errorText, pin);
-      }
+    if (!hasError) return const SizedBox.shrink();
+    final errorText = _errorText;
+    if (widget.errorBuilder != null) {
+      return widget.errorBuilder!.call(errorText, pin);
+    }
 
-      if (_errorText != null) {
-        final isDark =
-            MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
-        final defaultErrorStyle = TextStyle(
-          color: isDark
-              ? PinputConstants._defaultDarkErrorColor
-              : PinputConstants._defaultLightErrorColor,
-          fontSize: 12,
-          decoration: TextDecoration.none,
-        );
-        return Padding(
-          padding: const EdgeInsetsDirectional.only(start: 4, top: 8),
-          child: Text(
-            _errorText!,
-            style: widget.errorTextStyle ?? defaultErrorStyle,
-          ),
-        );
-      }
+    if (errorText != null) {
+      final isDark =
+          MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
+      final defaultErrorStyle = TextStyle(
+        color: isDark
+            ? PinputConstants._defaultDarkErrorColor
+            : PinputConstants._defaultLightErrorColor,
+        fontSize: 12,
+        decoration: TextDecoration.none,
+      );
+      return Padding(
+        padding: const EdgeInsetsDirectional.only(start: 4, top: 8),
+        child: Text(
+          errorText,
+          style: widget.errorTextStyle ?? defaultErrorStyle,
+        ),
+      );
     }
 
     return const SizedBox.shrink();

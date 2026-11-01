@@ -1,3 +1,16 @@
+#### Unreleased
+
+- **BREAKING**: Validation is app-owned through `PinputValidationState`:
+  `idle`, `validating`, `valid`, or `invalid(message)`.
+- Removed `validator`, `pinputAutovalidateMode`, `errorText`, `forceErrorState`,
+  `showErrorWhenFocused`, and the internal Form field. Use an explicit
+  `FormField<String>` wrapper for synchronous Flutter Form validation.
+- Invalid feedback stays visible during focus and editing until the app updates
+  it. Validation state never changes input availability, text, or focus.
+- `Pinput.builder` now supports `errorBuilder` and `errorTextStyle`.
+  Invalid states accept an optional message. Error builders run even without a
+  message; without a builder or message, only error pin styling is shown.
+
 #### 8.0.0 · 30/10/2026
 
 - **feat**: Added cursor navigation and previous pin editing via `pinEditMode`:

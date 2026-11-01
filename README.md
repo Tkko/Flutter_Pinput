@@ -29,11 +29,11 @@
 
 </div>
 
-Flutter Pinput is a package that provides an easy-to-use and customizable Pin code input field. It offers several features such as animated decoration switching, form validation, SMS autofill, custom cursor, copying from clipboard, and more. It also provides beautiful examples that you can choose from.
+Flutter Pinput is a package that provides an easy-to-use and customizable Pin code input field. It offers several features such as animated decoration switching, app-controlled validation feedback, SMS autofill, custom cursor, copying from clipboard, and more. It also provides beautiful examples that you can choose from.
 
 ## Features:
 - Animated Decoration Switching
-- Form validation
+- App-controlled validation feedback (Form integration via `FormField`)
 - SMS Autofill on iOS
 - SMS Autofill on Android
 - Standard Cursor
@@ -152,10 +152,7 @@ return Pinput(
 defaultPinTheme: defaultPinTheme,
 focusedPinTheme: focusedPinTheme,
 submittedPinTheme: submittedPinTheme,
-validator: (s) {
-return s == '2222' ? null : 'Pin is incorrect';
-},
-pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+validationState: const PinputValidationState.idle(),
 showCursor: true,
 onCompleted: (pin) => print(pin),
 );
@@ -263,36 +260,99 @@ return Pinput(
 
 - #### Validation
 
+Pinput renders app-owned validation feedback through `validationState`:
+
+| State | Behavior |
+| --- | --- |
+| `PinputValidationState.idle()` | Default; no current result or feedback. |
+| `PinputValidationState.validating()` | Pending; normal appearance, no error. |
+| `PinputValidationState.valid()` | Passed; normal appearance, no error. |
+| `PinputValidationState.invalid([message])` | Error pin theme and optional error message, even while focused. |
+
 ```dart
-/// Create key
-final formKey = GlobalKey<FormState>();
-
-/// Validate manually
-/// Don't call validate in build method, this is just illustration.
-formKey.currentState!.validate();
-
-return Form(
-  key: formKey,
-  child: Pinput(
-  // Without Validator
-  // If true error state will be applied no matter what validator returns
-  forceErrorState: true,
-  // Text will be displayed under the Pinput
-  errorText: 'Error',
-
-  /// ------------
-  /// With Validator
-  /// Auto validate after user tap on keyboard done button, or completes Pinput
-  pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-  validator: (pin) {
-    if (pin == '2224') return null;
-
-    /// Text will be displayed under the Pinput
-    return 'Pin is incorrect';
-    },
-  ),
-);
+Pinput(
+  validationState: state.pinValidation,
+  onChanged: cubit.pinChanged,
+  onCompleted: cubit.verifyPin,
+)
 ```
+
+Run synchronous or asynchronous validation in your app, using `onChanged`,
+`onCompleted`, `onSubmitted`, or a submit button. `onCompleted` reports a full PIN
+with the cursor at the end, not successful validation. Clear old results when
+the PIN changes and ignore async responses for outdated inputs or disposed views.
+Pinput does not clear supplied feedback, run checks, or modify text or focus.
+Pending and valid states do not add loading/success visuals or disable editing;
+use `enabled` or `readOnly` explicitly when needed.
+
+For a runnable async example, open **Async example** in the default example app,
+or the **Async validation** tab in the demo gallery. Enter `2222` for success.
+The example shows progress, errors, and discarding outdated responses when edited.
+See [`AsyncValidationExample`](example/lib/demo/async_validation_example.dart).
+
+`errorTextStyle` styles the default error text. `errorBuilder(message, pin)`
+replaces the default error widget and ignores `errorTextStyle`. Both are available
+in `Pinput` and `Pinput.builder`.
+The invalid state's message is optional: `invalid()` applies error styling
+without default text or error padding. An `errorBuilder` still runs with a null
+message, so it can supply its own localized text or other content.
+
+### Flutter Form integration
+
+Pinput does not register itself with `Form`. Wrap it in `FormField<String>`:
+
+```dart
+FormField<String>(
+  initialValue: '',
+  validator: (pin) => pin == '2224' ? null : 'Pin is incorrect',
+  builder: (field) => Pinput(
+    onChanged: field.didChange,
+    validationState: field.errorText == null
+        ? const PinputValidationState.idle()
+        : PinputValidationState.invalid(field.errorText!),
+  ),
+)
+```
+
+Configure `autovalidateMode` on the wrapper for automatic Form validation.
+`FormState.validate()` remains synchronous: it cannot await server verification.
+An external async result must already be available if the wrapper uses it.
+
+When using a text controller, synchronize it with the wrapper using a listener
+(including programmatic changes). For example, in the owning State:
+
+```dart
+final pinController = TextEditingController();
+final pinFieldKey = GlobalKey<FormFieldState<String>>();
+
+@override
+void initState() {
+  super.initState();
+  pinController.addListener(() {
+    final field = pinFieldKey.currentState;
+    if (field != null && field.value != pinController.text) {
+      field.didChange(pinController.text);
+    }
+  });
+}
+
+// Inside the Form:
+FormField<String>(
+  key: pinFieldKey,
+  initialValue: '',
+  onReset: pinController.clear,
+  validator: (pin) => pin == '2224' ? null : 'Pin is incorrect',
+  builder: (field) => Pinput(
+    controller: pinController,
+    validationState: field.errorText == null
+        ? const PinputValidationState.idle()
+        : PinputValidationState.invalid(field.errorText!),
+  ),
+)
+```
+
+Dispose `pinController` in the owning State. For non-empty initial values, restore
+that same text in `onReset` rather than clearing it.
 
 ## FAQ
 

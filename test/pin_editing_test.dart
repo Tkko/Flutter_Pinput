@@ -548,17 +548,14 @@ void main() {
         final controller = TextEditingController(text: '1234');
         final focusNode = FocusNode();
         int completed = 0;
-        String? validated;
+        String? changed;
         await tester.pumpApp(
           Pinput(
             controller: controller,
             focusNode: focusNode,
             length: 4,
             onCompleted: (_) => completed++,
-            validator: (v) {
-              validated = v;
-              return null;
-            },
+            onChanged: (value) => changed = value,
           ),
         );
         await tester.tap(find.byType(AnimatedContainer).at(0));
@@ -574,8 +571,7 @@ void main() {
 
         expect(controller.text, equals('9234'));
         expect(completed, equals(0));
-        // Validation still runs so the error state does not go stale.
-        expect(validated, equals('9234'));
+        expect(changed, equals('9234'));
         expect(focusNode.hasFocus, isTrue);
       },
     );

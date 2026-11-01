@@ -1,3 +1,43 @@
+### Migration to app-owned validation
+
+Pinput no longer runs validators or registers an internal Flutter `FormField`.
+This is a breaking API change:
+
+- Replace `validator` and `pinputAutovalidateMode` with checks in `onChanged`,
+  `onCompleted`, `onSubmitted`, or a submit handler.
+- Replace `errorText` and `forceErrorState` with
+  `PinputValidationState.invalid(message)`. Use `invalid()` for error styling
+  without default text, or provide text directly through `errorBuilder`.
+- Use `idle()`, `validating()`, and `valid()` to represent other results.
+  These states do not display feedback or affect input availability.
+- `showErrorWhenFocused` is removed. Invalid feedback is always visible,
+  including during focus and editing, until the app changes `validationState`.
+- Clear stale validation results on edits and ignore outdated async responses.
+  Completion callbacks still report input completion, not successful validation.
+- Keep `errorTextStyle`, `errorBuilder`, and `errorPinTheme` for presentation.
+  `errorBuilder` receives the optional message and the PIN, and runs for invalid
+  states even when the message is null.
+  Both constructors expose the error builder and text style.
+- For native Form validation, wrap Pinput in `FormField<String>` and map its
+  error to `validationState`. Synchronize controller changes and reset explicitly.
+  See the README's Flutter Form integration examples.
+
+```dart
+Pinput(
+  validationState: pinValidation,
+  onChanged: (pin) {
+    setState(() => pinValidation = const PinputValidationState.idle());
+  },
+  onCompleted: (pin) {
+    setState(() {
+      pinValidation = pin == '2222'
+          ? const PinputValidationState.valid()
+          : const PinputValidationState.invalid('Pin is incorrect');
+    });
+  },
+)
+```
+
 ### Migration to 5.0.0+
 
 - If you need SMS autofill on Android, you need to add the smart_auth (or similar) package directly

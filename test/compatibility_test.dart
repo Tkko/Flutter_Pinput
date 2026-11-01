@@ -65,9 +65,15 @@ void main() {
             home: Center(
               child: Form(
                 key: formKey,
-                child: Pinput(
+                child: FormField<String>(
                   validator: (val) =>
                       (val?.length ?? 0) < 4 ? 'PIN too short' : null,
+                  builder: (field) => Pinput(
+                    onChanged: field.didChange,
+                    validationState: field.errorText == null
+                        ? const PinputValidationState.idle()
+                        : PinputValidationState.invalid(field.errorText!),
+                  ),
                 ),
               ),
             ),
@@ -106,9 +112,15 @@ void main() {
               home: Center(
                 child: Form(
                   key: formKey,
-                  child: Pinput(
+                  child: FormField<String>(
                     validator: (val) =>
                         (val?.length ?? 0) < 4 ? 'PIN too short' : null,
+                    builder: (field) => Pinput(
+                      onChanged: field.didChange,
+                      validationState: field.errorText == null
+                          ? const PinputValidationState.idle()
+                          : PinputValidationState.invalid(field.errorText!),
+                    ),
                   ),
                 ),
               ),
@@ -330,7 +342,14 @@ void main() {
             home: flutter_material.Scaffold(
               body: Form(
                 key: formKey,
-                child: Pinput(validator: (val) => 'Invalid code'),
+                child: FormField<String>(
+                  validator: (val) => 'Invalid code',
+                  builder: (field) => Pinput(
+                    validationState: field.errorText == null
+                        ? const PinputValidationState.idle()
+                        : PinputValidationState.invalid(field.errorText!),
+                  ),
+                ),
               ),
             ),
           ),
@@ -438,7 +457,14 @@ void main() {
           home: material_ui.Scaffold(
             body: Form(
               key: formKey,
-              child: Pinput(validator: (val) => 'Wrong OTP'),
+              child: FormField<String>(
+                validator: (val) => 'Wrong OTP',
+                builder: (field) => Pinput(
+                  validationState: field.errorText == null
+                      ? const PinputValidationState.idle()
+                      : PinputValidationState.invalid(field.errorText!),
+                ),
+              ),
             ),
           ),
         ),
@@ -540,7 +566,14 @@ void main() {
             home: flutter_cupertino.CupertinoPageScaffold(
               child: Form(
                 key: formKey,
-                child: Pinput(validator: (val) => 'Cupertino error'),
+                child: FormField<String>(
+                  validator: (val) => 'Cupertino error',
+                  builder: (field) => Pinput(
+                    validationState: field.errorText == null
+                        ? const PinputValidationState.idle()
+                        : PinputValidationState.invalid(field.errorText!),
+                  ),
+                ),
               ),
             ),
           ),
@@ -644,7 +677,14 @@ void main() {
           home: cupertino_ui.CupertinoPageScaffold(
             child: Form(
               key: formKey,
-              child: Pinput(validator: (val) => 'Cupertino UI error'),
+              child: FormField<String>(
+                validator: (val) => 'Cupertino UI error',
+                builder: (field) => Pinput(
+                  validationState: field.errorText == null
+                      ? const PinputValidationState.idle()
+                      : PinputValidationState.invalid(field.errorText!),
+                ),
+              ),
             ),
           ),
         ),

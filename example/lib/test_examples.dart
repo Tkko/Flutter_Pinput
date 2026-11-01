@@ -57,16 +57,31 @@ class ErrorStateExample extends StatefulWidget {
 }
 
 class _ErrorStateExampleState extends State<ErrorStateExample> {
-  bool _hasError = false;
+  PinputValidationState _validationState = const PinputValidationState.idle();
+  int _validationRequest = 0;
 
   Future<void> _validate(String value) async {
+    final request = ++_validationRequest;
+    setState(() => _validationState = const PinputValidationState.validating());
     await Future.delayed(const Duration(seconds: 2));
-    setState(() => _hasError = value == '1111');
+    if (!mounted || request != _validationRequest) return;
+    setState(() {
+      _validationState = value == '1111'
+          ? const PinputValidationState.invalid('Incorrect code')
+          : const PinputValidationState.valid();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Pinput(forceErrorState: _hasError, onCompleted: _validate);
+    return Pinput(
+      validationState: _validationState,
+      onChanged: (_) {
+        _validationRequest++;
+        setState(() => _validationState = const PinputValidationState.idle());
+      },
+      onCompleted: _validate,
+    );
   }
 }
 

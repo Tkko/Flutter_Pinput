@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:pinput_example/demo/demo.dart';
+import 'package:pinput_example/demo/async_validation_example.dart';
 import 'package:pinput_example/demo/pages/all_pinputs_page.dart';
 import 'package:pinput_example/demo/pages/otp_page.dart';
 import 'package:pinput_example/demo/pinput_templates/filled.dart';
@@ -61,6 +62,11 @@ class GalleryPageState extends State<GalleryPage>
     pinPuts.addAll([
       AllPinputs(otpPages.map((e) => e.pinPut).toList(), backgroundColors),
       ...otpPages,
+      const AsyncValidationExample(),
+    ]);
+    backgroundColors.add([
+      const Color.fromRGBO(255, 255, 255, 1),
+      const Color.fromRGBO(255, 255, 255, 1),
     ]);
 
     _tabController = TabController(

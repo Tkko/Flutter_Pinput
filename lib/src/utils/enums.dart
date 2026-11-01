@@ -1,14 +1,5 @@
 part of '../pinput.dart';
 
-/// The mode which determines the Pinput validation method
-enum PinputAutovalidateMode {
-  /// No auto validation will occur.
-  disabled,
-
-  /// Used to auto-validate [Pinput] only after [Pinput.onCompleted] or [Pinput.onSubmitted] is called
-  onSubmit,
-}
-
 /// The method that is used to get the sms code on Android
 enum AndroidSmsAutofillMethod {
   /// Disabled SMS autofill on Android
