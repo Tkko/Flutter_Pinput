@@ -6,14 +6,10 @@ on:
       - master
   workflow_dispatch:
     inputs:
-      full-matrix:
-        description: 'Also run Android, iOS, and macOS integration tests'
-        type: boolean
-        default: true
-      include-windows:
-        description: 'Also run Windows integration tests'
-        type: boolean
-        default: false
+      platforms:
+        description: 'Comma-separated integration test platforms: web, linux, android, ios, macos, windows'
+        type: string
+        default: web,linux,android,ios,macos
       integration-test-working-directory:
         description: 'Directory containing the integration test Flutter app'
         type: string
@@ -37,8 +33,7 @@ jobs:
       pull-requests: read
     uses: Tkko/better-actions/.github/workflows/ci.yml@main
     with:
-      full-matrix: ${{ inputs.full-matrix == true }}
-      include-windows: ${{ inputs.include-windows == true }}
+      platforms: ${{ inputs.platforms || 'web,linux' }}
       integration-test-working-directory: ${{ inputs.integration-test-working-directory || 'example' }}
       integration-test-target: ${{ inputs.integration-test-target || 'integration_test/app_test.dart' }}
       integration-test-driver: ${{ inputs.integration-test-driver || 'test_driver/integration_test.dart' }}
