@@ -12,11 +12,11 @@ on:
         required: false
         default: false
         type: boolean
-      include-windows:
-        description: 'Also validate Windows before creating the release'
+      platforms:
+        description: 'Comma-separated integration test platforms to pass before releasing: web, linux, android, ios, macos, windows'
         required: false
-        default: false
-        type: boolean
+        default: web,linux,android,ios,macos
+        type: string
       working-directory:
         description: Directory containing pubspec.yaml
         required: false
@@ -50,7 +50,7 @@ jobs:
     with:
       tag_name: ${{ inputs.tag_name }}
       dry_run: ${{ inputs.dry_run }}
-      include-windows: ${{ inputs.include-windows }}
+      platforms: ${{ inputs.platforms }}
       working-directory: ${{ inputs.working-directory }}
       integration-test-working-directory: ${{ inputs.integration-test-working-directory }}
       integration-test-target: ${{ inputs.integration-test-target }}
