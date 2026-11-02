@@ -29,7 +29,7 @@
 
 </div>
 
-Flutter Pinput is a package that provides an easy-to-use and customizable Pin code input field. It offers several features such as animated decoration switching, app-controlled validation feedback, SMS autofill, custom cursor, copying from clipboard, and more. It also provides beautiful examples that you can choose from.
+Flutter Pinput is a package that provides an easy-to-use and customizable Pin code input field. It offers several features such as animated decoration switching, app-controlled validation feedback, SMS autofill, custom cursor, and more. It also provides beautiful examples that you can choose from.
 
 ## Features:
 - Animated Decoration Switching
@@ -39,7 +39,6 @@ Flutter Pinput is a package that provides an easy-to-use and customizable Pin co
 - Standard Cursor
 - Custom Cursor
 - Cursor Animation
-- Copy From Clipboard
 - Ready For Custom Keyboard
 - Standard Paste option
 - Obscuring Character
@@ -163,8 +162,8 @@ return Pinput(
 `PinThemes` mirrors `WidgetStateProperty`: use `PinThemes(initial:, focused:, …)`, `PinThemes.all`, or
 `PinThemes.resolveWith((state) => ...)` to pick a theme per `PinItemStateType`
 (`initial`, `focused`, `submitted`, `following`, `disabled`, `error`).
-The named form falls back to the `initial` theme, and states are not merged, so derive
-state themes with `copyWith`. `PinTheme.placeholder` replaces `preFilledWidget`.
+In the named form, `initial` is the base and every other state theme is merged onto it,
+so a state theme only sets what differs. `PinTheme.placeholder` replaces `preFilledWidget`.
 
 ## SMS Autofill
 

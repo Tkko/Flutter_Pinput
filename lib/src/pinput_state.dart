@@ -1,15 +1,7 @@
 part of 'pinput.dart';
 
-/// This allows a value of type T or T?
-/// to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become
-/// non-nullable can still be used with `!` and `?`
-/// to support older versions of the API as well.
-T? _ambiguate<T>(T? value) => value;
-
 class _PinputState extends State<Pinput>
-    with RestorationMixin, WidgetsBindingObserver, _PinputUtilsMixin
+    with RestorationMixin, _PinputUtilsMixin
     implements TextSelectionGestureDetectorBuilderDelegate, AutofillClient {
   @override
   late bool forcePressEnabled;
@@ -228,9 +220,6 @@ class _PinputState extends State<Pinput>
     _syncSlotsFromExternalText(widget.controller?.text ?? '');
     _effectiveFocusNode.canRequestFocus = isEnabled && _useNativeKeyboard;
     _maybeInitSmartAuth();
-    _maybeCheckClipboard();
-    // https://github.com/Tkko/Flutter_Pinput/issues/89
-    _ambiguate(WidgetsBinding.instance)!.addObserver(this);
   }
 
   /// Android Autofill
@@ -354,8 +343,6 @@ class _PinputState extends State<Pinput>
     _controller?.dispose();
     _focusNode?.dispose();
     retriever?.dispose();
-    // https://github.com/Tkko/Flutter_Pinput/issues/89
-    _ambiguate(WidgetsBinding.instance)!.removeObserver(this);
     super.dispose();
   }
 
@@ -426,24 +413,6 @@ class _PinputState extends State<Pinput>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) async {
-    if (appLifecycleState == AppLifecycleState.resumed) {
-      _maybeCheckClipboard();
-    }
-  }
-
-  void _maybeCheckClipboard() async {
-    final callback = widget.onClipboardFound;
-    if (callback != null) {
-      final clipboard = await _getClipboardOrEmpty();
-      if (!mounted || widget.onClipboardFound != callback) return;
-      if (clipboard.characters.length == widget.length) {
-        callback(clipboard);
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
     final isDense = widget.mainAxisAlignment == MainAxisAlignment.center;
@@ -453,8 +422,6 @@ class _PinputState extends State<Pinput>
 
   Widget _buildPinput() {
     VoidCallback? handleDidGainAccessibilityFocus;
-    final textSelectionControls =
-        widget.selectionControls ?? _pinputSelectionControls;
     forcePressEnabled = defaultTargetPlatform == TargetPlatform.iOS;
     if (defaultTargetPlatform == TargetPlatform.macOS ||
         defaultTargetPlatform == TargetPlatform.windows) {
@@ -499,7 +466,7 @@ class _PinputState extends State<Pinput>
                 alignment: Alignment.topCenter,
                 children: [
                   // the editable need to be the full size, otherwise the focus is not correct when getting the render box from the focus
-                  Positioned.fill(child: _buildEditable(textSelectionControls)),
+                  Positioned.fill(child: _buildEditable()),
                   _buildFields(),
                 ],
               ),
@@ -510,7 +477,7 @@ class _PinputState extends State<Pinput>
     );
   }
 
-  Widget _buildEditable(TextSelectionControls? textSelectionControls) {
+  Widget _buildEditable() {
     final formatters = <TextInputFormatter>[
       ...widget.inputFormatters,
       if (widget.pinEditMode != PinEditMode.none)
@@ -538,7 +505,7 @@ class _PinputState extends State<Pinput>
           showSelectionHandles: false,
           rendererIgnoresPointer: true,
           enableInteractiveSelection: widget.enableInteractiveSelection,
-          enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
+          enableIMEPersonalizedLearning: false,
           textInputAction: widget.textInputAction,
           textCapitalization: widget.textCapitalization,
           selectionColor: PinputConstants._transparent,
@@ -564,11 +531,11 @@ class _PinputState extends State<Pinput>
           enableSuggestions: widget.enableSuggestions,
           contextMenuBuilder: widget.contextMenuBuilder,
           obscuringCharacter: widget.obscuring?._character ?? '•',
-          onAppPrivateCommand: widget.onAppPrivateCommand,
           onSelectionChanged: _handleSelectionChanged,
           onSelectionHandleTapped: _handleSelectionHandleTapped,
           readOnly: _isReadOnly || !isEnabled || !_useNativeKeyboard,
-          selectionControls: textSelectionControls,
+          selectionControls:
+              widget.selectionControls ?? _pinputSelectionControls,
           keyboardAppearance:
               widget.keyboardAppearance ??
               MediaQuery.maybePlatformBrightnessOf(context) ??

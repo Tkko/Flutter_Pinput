@@ -72,11 +72,6 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
         ),
       ),
       separatorBuilder: (index) => const SizedBox(width: 16),
-
-      // onClipboardFound: (value) {
-      //   debugPrint('onClipboardFound: $value');
-      //   controller.setText(value);
-      // },
       cursor: PinCursor.blinking(child: cursor),
     );
   }

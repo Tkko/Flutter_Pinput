@@ -22,9 +22,4 @@ mixin _PinputUtilsMixin {
         break;
     }
   }
-
-  Future<String> _getClipboardOrEmpty() async {
-    final ClipboardData? clipboardData = await Clipboard.getData('text/plain');
-    return clipboardData?.text ?? '';
-  }
 }

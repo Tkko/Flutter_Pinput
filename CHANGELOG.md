@@ -15,6 +15,12 @@
 - **BREAKING**: Replaced `enabled`, `readOnly` and `useNativeKeyboard` with
   `inputMode: PinInputMode` (`editable`, `readOnly`, `disabled`,
   `customKeyboard`). Disabled overrides the other modes.
+- **BREAKING**: `PinThemes(...)` merges each state theme onto `initial` (or the
+  built-in theme), so state themes only need to set what differs.
+  `pinContentAlignment` became `PinTheme.alignment`.
+- **BREAKING**: Removed `onClipboardFound`, `onAppPrivateCommand`,
+  `enableIMEPersonalizedLearning` (always off) and the unused
+  `AndroidSmsAutofillMethod` enum.
 - `Pinput.builder` now defaults `autofillHints` and `enableInteractiveSelection`
   like `Pinput`. Fixed duplicated and incorrect `debugFillProperties` entries.
 - Removed `toolbarEnabled`; `enableInteractiveSelection` now controls selection

@@ -287,8 +287,19 @@ void main() {
 
     test('named parameters fall back to the initial theme', () {
       const themes = PinThemes(initial: initial, focused: focused);
-      expect(themes.resolve(PinItemStateType.focused), focused);
+      expect(themes.resolve(PinItemStateType.focused).width, 2);
       expect(themes.resolve(PinItemStateType.error), initial);
+    });
+
+    test('state themes merge onto the initial theme', () {
+      const themes = PinThemes(
+        initial: PinTheme(width: 1, alignment: Alignment.bottomCenter),
+        focused: PinTheme(height: 3),
+      );
+      final resolved = themes.resolve(PinItemStateType.focused);
+      expect(resolved.height, 3);
+      expect(resolved.width, 1);
+      expect(resolved.alignment, Alignment.bottomCenter);
     });
 
     test('all and resolveWith resolve per state', () {
@@ -301,6 +312,30 @@ void main() {
       );
       expect(themes.resolve(PinItemStateType.error), focused);
       expect(themes.resolve(PinItemStateType.submitted), initial);
+    });
+
+    test('PinTheme alignment merges and copies correctly', () {
+      const base = PinTheme(alignment: Alignment.bottomCenter);
+      final copied = base.copyWith(alignment: Alignment.topRight);
+      expect(copied.alignment, Alignment.topRight);
+
+      final merged = const PinTheme().apply(theme: base);
+      expect(merged.alignment, Alignment.bottomCenter);
+    });
+
+    testWidgets('PinTheme alignment configures container alignment', (
+      tester,
+    ) async {
+      await tester.pumpApp(
+        const Pinput(
+          length: 2,
+          theme: PinThemes.all(PinTheme(alignment: Alignment.bottomRight)),
+        ),
+      );
+      final container = tester.widget<AnimatedContainer>(
+        find.byType(AnimatedContainer).first,
+      );
+      expect(container.alignment, Alignment.bottomRight);
     });
 
     testWidgets(

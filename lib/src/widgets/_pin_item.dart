@@ -20,7 +20,7 @@ class _PinItem extends StatelessWidget {
           padding: pinTheme.padding,
           margin: pinTheme.margin,
           decoration: pinTheme.decoration,
-          alignment: state.widget.pinContentAlignment,
+          alignment: pinTheme.alignment ?? Alignment.center,
           duration: state.widget.pinAnimation.duration,
           curve: state.widget.pinAnimation.curve,
           child: AnimatedSwitcher(
@@ -72,7 +72,7 @@ class _PinItem extends StatelessWidget {
       if (state.widget.pinEditMode != PinEditMode.none) {
         return Stack(
           key: key,
-          alignment: state.widget.pinContentAlignment,
+          alignment: pinTheme.alignment ?? Alignment.center,
           children: [
             characterWidget,
             if (shouldShowCursor) _buildCursor(pinTheme),

@@ -51,6 +51,9 @@ class PinTheme {
   /// Widget displayed in an empty pin that does not show the cursor.
   final Widget? placeholder;
 
+  /// Defines how content within the pin container is aligned.
+  final AlignmentGeometry? alignment;
+
   /// Theme of the individual pin items for each [PinItemStateType].
   const PinTheme({
     this.width,
@@ -61,6 +64,7 @@ class PinTheme {
     this.decoration,
     this.constraints,
     this.placeholder,
+    this.alignment,
   });
 
   /// Merge two [PinTheme] into one
@@ -74,6 +78,7 @@ class PinTheme {
       padding: this.padding ?? theme.padding,
       margin: this.margin ?? theme.margin,
       placeholder: this.placeholder ?? theme.placeholder,
+      alignment: this.alignment ?? theme.alignment,
     );
   }
 
@@ -87,6 +92,7 @@ class PinTheme {
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
     Widget? placeholder,
+    AlignmentGeometry? alignment,
   }) {
     return PinTheme(
       width: width ?? this.width,
@@ -97,6 +103,7 @@ class PinTheme {
       padding: padding ?? this.padding,
       margin: margin ?? this.margin,
       placeholder: placeholder ?? this.placeholder,
+      alignment: alignment ?? this.alignment,
     );
   }
 
@@ -157,9 +164,9 @@ abstract class PinThemes {
   /// Abstract const constructor for subclasses.
   const PinThemes._();
 
-  /// Uses the theme for each state, falling back to [initial] (then the
-  /// built-in theme). States are not merged: a state theme replaces the initial
-  /// one, so derive it with [PinTheme.copyWith].
+  /// Uses the theme for each state. [initial] is the base: every other state
+  /// theme is merged onto it (see [PinTheme.apply]), so it only needs to set
+  /// what differs. Without [initial] the built-in theme is the base.
   const factory PinThemes({
     PinTheme? initial,
     PinTheme? focused,
@@ -226,6 +233,8 @@ class _PinThemesNamed extends PinThemes {
       PinItemStateType.disabled => disabled,
       PinItemStateType.error => error,
     };
-    return theme ?? initial ?? PinputConstants._defaultPinTheme;
+    final base = initial ?? PinputConstants._defaultPinTheme;
+    if (state == PinItemStateType.initial) return base;
+    return theme?.apply(theme: base) ?? base;
   }
 }

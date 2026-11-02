@@ -48,7 +48,6 @@ part 'widgets/_pinput_selection_gesture_detector_builder.dart';
 /// - Standard Cursor
 /// - Custom Cursor
 /// - Cursor Animation
-/// - Copy From Clipboard
 /// - Ready For Custom Keyboard
 /// - Standard Paste option
 /// - Obscuring Character
@@ -74,14 +73,12 @@ class Pinput extends StatefulWidget {
     this.separatorBuilder,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.start,
-    this.pinContentAlignment = Alignment.center,
     this.pinAnimation = const PinAnimation.scale(),
     this.inputMode = PinInputMode.editable,
     this.autofocus = false,
     this.obscuring,
     this.cursor = const PinCursor.blinking(),
     this.pinEditMode = PinEditMode.overwrite,
-    this.enableIMEPersonalizedLearning = false,
     this.enableInteractiveSelection,
     this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
@@ -94,8 +91,6 @@ class Pinput extends StatefulWidget {
     this.autofillHints = const [AutofillHints.oneTimeCode],
     this.selectionControls,
     this.restorationId,
-    this.onClipboardFound,
-    this.onAppPrivateCommand,
     this.mouseCursor,
     this.validationState = const PinputValidationState.idle(),
     this.errorBuilder,
@@ -132,7 +127,6 @@ class Pinput extends StatefulWidget {
     this.obscuring,
     this.autofocus = false,
     this.pinEditMode = PinEditMode.overwrite,
-    this.enableIMEPersonalizedLearning = false,
     this.enableInteractiveSelection,
     this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
@@ -145,8 +139,6 @@ class Pinput extends StatefulWidget {
     this.autofillHints = const [AutofillHints.oneTimeCode],
     this.selectionControls,
     this.restorationId,
-    this.onClipboardFound,
-    this.onAppPrivateCommand,
     this.mouseCursor,
     this.validationState = const PinputValidationState.idle(),
     this.errorBuilder,
@@ -161,7 +153,6 @@ class Pinput extends StatefulWidget {
        ),
        _builder = _PinItemBuilder(itemBuilder: builder),
        theme = null,
-       pinContentAlignment = Alignment.center,
        pinAnimation = const PinAnimation.scale(),
        cursor = const PinCursor.hidden();
 
@@ -234,9 +225,6 @@ class Pinput extends StatefulWidget {
   /// Defines how [Pinput] and its error content are placed inside [Column].
   final CrossAxisAlignment crossAxisAlignment;
 
-  /// Defines how each [Pinput] field are being placed within the container
-  final AlignmentGeometry pinContentAlignment;
-
   /// Content transition for each pin. Defaults to [PinAnimation.scale].
   /// Its duration and curve also drive decoration and error-layout animations.
   final PinAnimation pinAnimation;
@@ -258,18 +246,11 @@ class Pinput extends StatefulWidget {
   /// at the start of the input. Other slots use a collapsed cursor.
   final PinEditMode pinEditMode;
 
-  /// Whether to enable that the IME update personalized data such as typing history and user dictionary data.
-  //
-  // This flag only affects Android. On iOS, there is no equivalent flag.
-  //
-  // Defaults to false. Cannot be null.
-  final bool enableIMEPersonalizedLearning;
-
   /// Whether to enable text selection and interactive features like copy/paste.
   /// When enabled, users can select text, use Ctrl+V to paste, and access context menus.
   ///
   /// This is useful for desktop applications where copy/paste is expected behavior.
-  /// On mobile, consider using SMS auto-fill or [onClipboardFound] callback instead.
+  /// On mobile, consider using SMS auto-fill instead.
   ///
   /// If null, uses [EditableText]'s default. Set false to disable selection
   /// gestures and keyboard selection shortcuts. To hide only the context menu,
@@ -318,15 +299,9 @@ class Pinput extends StatefulWidget {
   /// See [TextField.restorationId]
   final String? restorationId;
 
-  /// Fires when clipboard has text of Pinput's length
-  final ValueChanged<String>? onClipboardFound;
-
   /// Use haptic feedback everytime user types on keyboard
   /// See more details in [HapticFeedback]
   final HapticFeedbackType hapticFeedbackType;
-
-  /// See [EditableText.onAppPrivateCommand]
-  final AppPrivateCommandCallback? onAppPrivateCommand;
 
   /// See [EditableText.mouseCursor]
   final MouseCursor? mouseCursor;
@@ -503,13 +478,6 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<AlignmentGeometry>(
-        'pinContentAlignment',
-        pinContentAlignment,
-        defaultValue: Alignment.center,
-      ),
-    );
-    properties.add(
       DiagnosticsProperty<PinAnimation>(
         'pinAnimation',
         pinAnimation,
@@ -545,13 +513,6 @@ class Pinput extends StatefulWidget {
         'pinEditMode',
         pinEditMode,
         defaultValue: PinEditMode.overwrite,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<bool>(
-        'enableIMEPersonalizedLearning',
-        enableIMEPersonalizedLearning,
-        defaultValue: false,
       ),
     );
     properties.add(
@@ -635,20 +596,6 @@ class Pinput extends StatefulWidget {
       DiagnosticsProperty<String?>(
         'restorationId',
         restorationId,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<ValueChanged<String>?>(
-        'onClipboardFound',
-        onClipboardFound,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<AppPrivateCommandCallback?>(
-        'onAppPrivateCommand',
-        onAppPrivateCommand,
         defaultValue: null,
       ),
     );
