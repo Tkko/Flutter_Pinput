@@ -68,6 +68,7 @@ class _AsyncValidationExampleState extends State<AsyncValidationExample> {
           ),
           const SizedBox(height: 24),
           Pinput(
+            length: 4,
             controller: _controller,
             validationState: _validation,
             closeKeyboardWhenCompleted: false,

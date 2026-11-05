@@ -59,6 +59,7 @@ void main() {
           focusNode: focusNode,
           cursor: const PinCursor.hidden(),
           closeKeyboardWhenCompleted: false,
+          length: 4,
           validationState: const PinValidationState.invalid('Incorrect code'),
           theme: PinThemes(
             fallback: const PinTheme(
@@ -205,7 +206,7 @@ void main() {
       ),
     ]) {
       await tester.pumpApp(widget);
-      expect(find.byType(Text), findsNWidgets(4));
+      expect(find.byType(Text), findsNWidgets(6));
       expect(
         find.byWidgetPredicate(
           (widget) =>

@@ -10,6 +10,7 @@
 - **BREAKING**: The controller helpers `length`, `append` and `delete` are now
   `pinLength`, `appendPin` and `deleteLastPin`, and count user-perceived
   characters instead of UTF-16 units. `appendPin` never exceeds `maxLength`.
+- **BREAKING**: `Pinput.length` now defaults to 6 instead of 4.
 - **BREAKING**: Removed the empty public `PinputConstants` class.
 - **BREAKING**: Removed `smsRetriever` and `SmsRetriever`. Listen for the code in
   your app and call `controller.setText`; the README has an example. iOS autofill

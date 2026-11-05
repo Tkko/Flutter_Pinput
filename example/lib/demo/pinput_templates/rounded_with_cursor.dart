@@ -55,6 +55,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
               initialValue: pinController.text,
               validator: (value) => value == '2222' ? null : 'Pin is incorrect',
               builder: (field) => Pinput(
+                length: 4,
                 validationState: field.errorText == null
                     ? const PinValidationState.idle()
                     : PinValidationState.invalid(field.errorText!),

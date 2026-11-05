@@ -11,7 +11,7 @@ class _PinputConstants {
   static const _cursorBlinkDuration = Duration(milliseconds: 450);
 
   /// The default value [Pinput.length]
-  static const _defaultLength = 4;
+  static const _defaultLength = 6;
 
   static const _defaultSeparator = SizedBox(width: 8);
 

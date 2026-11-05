@@ -287,6 +287,7 @@ void main() {
 
       await tester.pumpApp(
         Pinput(
+          length: 4,
           controller: controller,
           onCompleted: (value) {
             fieldValue = value;

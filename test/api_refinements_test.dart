@@ -102,6 +102,7 @@ void main() {
       final completed = <String>[];
       await tester.pumpApp(
         Pinput(
+          length: 4,
           controller: controller,
           onChanged: changed.add,
           onCompleted: completed.add,
@@ -123,7 +124,7 @@ void main() {
       final controller = TextEditingController(text: '123456');
       final changed = <String>[];
       await tester.pumpApp(
-        Pinput(controller: controller, onChanged: changed.add),
+        Pinput(length: 4, controller: controller, onChanged: changed.add),
       );
       await tester.pump();
 
@@ -233,6 +234,7 @@ void main() {
       final focusNode = FocusNode();
       final items = <int, PinItemState>{};
       Widget input() => Pinput(
+        length: 4,
         controller: controller,
         focusNode: focusNode,
         closeKeyboardWhenCompleted: false,
