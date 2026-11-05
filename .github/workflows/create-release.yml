@@ -4,19 +4,19 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Tag name (e.g. v7.0.1). Leave empty to use version from pubspec.yaml'
+        description: 'Tag name (e.g. v1.2.3). Leave empty to use version from pubspec.yaml'
         required: false
         type: string
       dry_run:
         description: 'Dry run (validate tests and pubspec without creating tag/release)'
         required: false
-        default: false
         type: boolean
+        default: false
       platforms:
         description: 'Comma-separated integration test platforms to pass before releasing: web, linux, android, ios, macos, windows'
         required: false
-        default: web,linux,android,ios,macos
         type: string
+        default: web,linux,android,ios,macos
 
 permissions:
   contents: read
@@ -31,8 +31,3 @@ jobs:
       tag_name: ${{ inputs.tag_name }}
       dry_run: ${{ inputs.dry_run }}
       platforms: ${{ inputs.platforms }}
-      working-directory: .
-      integration-test-working-directory: example
-      integration-test-target: integration_test/app_test.dart
-      integration-test-driver: test_driver/integration_test.dart
-      publish-workflow: publish.yml
