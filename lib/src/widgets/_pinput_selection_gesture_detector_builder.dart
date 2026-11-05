@@ -18,19 +18,24 @@ class _PinputSelectionGestureDetectorBuilder
 
   @override
   void onSingleTapUp(details) {
-    // Taps outside pin boxes (separators, padding) must not move the cursor
-    // to a position derived from the hidden text layout.
-    final controller = _state._effectiveController;
-    final before = controller.selection;
-    super.onSingleTapUp(details);
-    if (_state.widget.pinEditMode != PinEditMode.none) {
-      controller.selection = before.isValid
-          ? before
-          : TextSelection.collapsed(offset: controller.text.length);
-    }
-    editableText.hideToolbar();
-    _state._requestKeyboard();
-    _state.widget.onTap?.call();
+    _state._handleTap(
+      details.kind,
+      moveCursor: () {
+        // A toggling tap skips super, which would decide based on the position
+        // in the hidden text layout and could toggle the toolbar a second time.
+        if (_state._canToggleToolbarOnTap(details.kind)) return;
+        // Taps outside pin boxes (separators, padding) must not move the cursor
+        // to a position derived from the hidden text layout.
+        final controller = _state._effectiveController;
+        final before = controller.selection;
+        super.onSingleTapUp(details);
+        if (_state.widget.pinEditMode != PinEditMode.none) {
+          controller.selection = before.isValid
+              ? before
+              : TextSelection.collapsed(offset: controller.text.length);
+        }
+      },
+    );
   }
 
   @override

@@ -1,5 +1,12 @@
 #### Unreleased
 
+- On iOS, tapping an already focused `Pinput` with a finger now toggles the
+  context menu, matching `TextField`. Set `contextMenuBuilder: null` to opt out
+  ([#235](https://github.com/Tkko/Flutter_Pinput/issues/235),
+  [#236](https://github.com/Tkko/Flutter_Pinput/pull/236)).
+- Dragging the cursor with the iOS keyboard (long press on the space bar) and
+  force press no longer move the cursor. Arrow keys on a hardware keyboard
+  still do.
 - Aligned the `validating()` subtype name as `PinputValidationValidating`.
 - Added value equality to `PinAnimation` and `PinObscuring`, and documented
   the shared GlobalKey restriction for masking widgets.

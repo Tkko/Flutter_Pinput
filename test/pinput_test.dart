@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -330,6 +331,268 @@ void main() {
     await tester.tap(find.byType(EditableText));
     await tester.pump(const Duration(milliseconds: 300));
     expect(tapCount, 3);
+  });
+
+  group('context menu on tap', () {
+    const menuKey = Key('menu');
+    Widget menu(BuildContext context, EditableTextState state) =>
+        const SizedBox(key: menuKey, width: 10, height: 10);
+
+    Future<void> tapField(WidgetTester tester) async {
+      await tester.tap(find.byType(EditableText));
+      await tester.pump(const Duration(milliseconds: 300));
+    }
+
+    testWidgets(
+      'iOS: tap on a focused field toggles the menu, first tap does not show it',
+      (tester) async {
+        int tapCount = 0;
+        await tester.pumpApp(
+          Pinput(contextMenuBuilder: menu, onTap: () => ++tapCount),
+        );
+
+        await tapField(tester);
+        expect(find.byKey(menuKey), findsNothing);
+
+        await tapField(tester);
+        expect(find.byKey(menuKey), findsOneWidget);
+
+        await tapField(tester);
+        expect(find.byKey(menuKey), findsNothing);
+        expect(tapCount, 3);
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+    );
+
+    testWidgets(
+      'iOS: tapping a pin box toggles the menu when the cursor does not move',
+      (tester) async {
+        await tester.pumpApp(Pinput(contextMenuBuilder: menu));
+        final pin = find.descendant(
+          of: find.byType(Pinput),
+          matching: find.byType(GestureDetector),
+        );
+        Future<void> tapPin() async {
+          await tester.tapAt(tester.getCenter(pin.first));
+          await tester.pump(const Duration(milliseconds: 300));
+        }
+
+        await tapPin();
+        expect(find.byKey(menuKey), findsNothing);
+        await tapPin();
+        expect(find.byKey(menuKey), findsOneWidget);
+        await tapPin();
+        expect(find.byKey(menuKey), findsNothing);
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+    );
+
+    testWidgets(
+      'iOS: moving between gap slots with the same offset does not show the menu',
+      (tester) async {
+        final controller = TextEditingController(text: '1234');
+        await tester.pumpApp(
+          Pinput(
+            controller: controller,
+            contextMenuBuilder: menu,
+            closeKeyboardWhenCompleted: false,
+          ),
+        );
+        final pins = find.byType(AnimatedContainer);
+        await tester.tap(pins.at(1));
+        await tester.pump(const Duration(milliseconds: 300));
+        tester.testTextInput.updateEditingValue(
+          const TextEditingValue(
+            text: '234',
+            selection: TextSelection.collapsed(offset: 0),
+          ),
+        );
+        await tester.pump(const Duration(seconds: 1));
+        expect(controller.text, '134');
+        final selection = controller.selection;
+
+        await tester.tap(pins.at(2));
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(controller.selection, selection);
+        expect(find.byKey(menuKey), findsNothing);
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+    );
+
+    testWidgets(
+      'iOS: read-only field with a collapsed cursor does not toggle the menu',
+      (tester) async {
+        final focusNode = FocusNode();
+        addTearDown(focusNode.dispose);
+        await tester.pumpApp(
+          Pinput(
+            focusNode: focusNode,
+            inputMode: PinInputMode.readOnly,
+            contextMenuBuilder: menu,
+          ),
+        );
+        focusNode.requestFocus();
+        await tester.pump();
+        expect(focusNode.hasFocus, isTrue);
+
+        await tapField(tester);
+        expect(find.byKey(menuKey), findsNothing);
+        await tapField(tester);
+        expect(find.byKey(menuKey), findsNothing);
+      },
+      variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+    );
+
+    testWidgets('iOS: no menu when contextMenuBuilder is null', (tester) async {
+      await tester.pumpApp(const Pinput(contextMenuBuilder: null));
+      await tapField(tester);
+      await tapField(tester);
+      expect(find.byKey(menuKey), findsNothing);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+    testWidgets('iOS: mouse tap does not toggle the menu', (tester) async {
+      await tester.pumpApp(Pinput(contextMenuBuilder: menu));
+      await tapField(tester);
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.byType(EditableText)),
+        kind: PointerDeviceKind.mouse,
+      );
+      await gesture.up();
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.byKey(menuKey), findsNothing);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+
+    testWidgets('Android: tap never shows the menu', (tester) async {
+      await tester.pumpApp(Pinput(contextMenuBuilder: menu));
+      await tapField(tester);
+      await tapField(tester);
+      expect(find.byKey(menuKey), findsNothing);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+  });
+
+  group('floating cursor (iOS keyboard cursor drag)', () {
+    Future<TextEditingController> drag(
+      WidgetTester tester,
+      PinEditMode mode,
+      double dx,
+    ) async {
+      final controller = TextEditingController(text: '123');
+      await tester.pumpApp(Pinput(controller: controller, pinEditMode: mode));
+      await tester.tap(find.byType(EditableText));
+      await tester.pump(const Duration(milliseconds: 300));
+      if (mode != PinEditMode.none) {
+        controller.selection = const TextSelection.collapsed(offset: 1);
+        await tester.pump();
+      }
+
+      final state = tester.state<EditableTextState>(find.byType(EditableText));
+      state.updateFloatingCursor(
+        RawFloatingCursorPoint(
+          state: FloatingCursorDragState.Start,
+          offset: Offset.zero,
+        ),
+      );
+      state.updateFloatingCursor(
+        RawFloatingCursorPoint(
+          state: FloatingCursorDragState.Update,
+          offset: Offset(dx, 0),
+        ),
+      );
+      state.updateFloatingCursor(
+        RawFloatingCursorPoint(state: FloatingCursorDragState.End),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 300));
+      return controller;
+    }
+
+    testWidgets('does not move the cursor', (tester) async {
+      for (final mode in [PinEditMode.none, PinEditMode.overwrite]) {
+        for (final dx in [-200.0, 200.0]) {
+          final controller = await drag(tester, mode, dx);
+          expect(
+            controller.selection.baseOffset,
+            mode == PinEditMode.none ? 3 : 1,
+          );
+        }
+      }
+    });
+
+    testWidgets('a press without movement keeps the cursor in place', (
+      tester,
+    ) async {
+      final controller = TextEditingController(text: '123');
+      await tester.pumpApp(
+        Pinput(controller: controller, pinEditMode: PinEditMode.overwrite),
+      );
+      await tester.tap(find.byType(EditableText));
+      await tester.pump(const Duration(milliseconds: 300));
+      controller.selection = const TextSelection.collapsed(offset: 1);
+      await tester.pump();
+      controller.selection = const TextSelection.collapsed(offset: 2);
+      await tester.pump();
+
+      final state = tester.state<EditableTextState>(find.byType(EditableText));
+      state.updateFloatingCursor(
+        RawFloatingCursorPoint(
+          state: FloatingCursorDragState.Start,
+          offset: Offset.zero,
+        ),
+      );
+      state.updateFloatingCursor(
+        RawFloatingCursorPoint(state: FloatingCursorDragState.End),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(controller.selection.baseOffset, 2);
+    });
+
+    testWidgets('keeps PinEditMode.none locked without a previous selection', (
+      tester,
+    ) async {
+      final controller = TextEditingController(text: '123');
+      await tester.pumpApp(
+        Pinput(controller: controller, pinEditMode: PinEditMode.none),
+      );
+      expect(controller.selection.isValid, isFalse);
+
+      tester
+          .state<EditableTextState>(find.byType(EditableText))
+          .userUpdateTextEditingValue(
+            controller.value.copyWith(
+              selection: const TextSelection.collapsed(offset: 1),
+            ),
+            SelectionChangedCause.forcePress,
+          );
+      await tester.pump();
+
+      expect(controller.selection.baseOffset, 3);
+    });
+
+    testWidgets(
+      'arrow keys still move the cursor in PinEditMode.overwrite',
+      (tester) async {
+        final controller = TextEditingController(text: '123');
+        await tester.pumpApp(
+          Pinput(controller: controller, pinEditMode: PinEditMode.overwrite),
+        );
+        await tester.tap(find.byType(EditableText));
+        await tester.pump(const Duration(milliseconds: 300));
+        controller.selection = const TextSelection.collapsed(offset: 2);
+        await tester.pump();
+
+        await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+        await tester.pump();
+        expect(controller.selection, const TextSelection.collapsed(offset: 1));
+      },
+      variant: TargetPlatformVariant(const {
+        TargetPlatform.android,
+        TargetPlatform.iOS,
+      }),
+    );
   });
 
   testWidgets('onTap is not called, field is disabled', (
