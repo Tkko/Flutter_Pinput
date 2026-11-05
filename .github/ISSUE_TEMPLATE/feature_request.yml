@@ -1,0 +1,28 @@
+name: Feature request
+description: Suggest an idea for the Pinput package
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Is your feature request related to a problem?
+      description: A clear and concise description of the problem, e.g. "I'm always frustrated when ...".
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution you'd like
+      description: What do you want to happen? Sketches or API examples help.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Anything else, such as screenshots or links.

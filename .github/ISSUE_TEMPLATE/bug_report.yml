@@ -1,0 +1,75 @@
+name: Bug report
+description: Something isn't working as expected
+title: "[Bug]: "
+labels: [bug]
+assignees: [Tkko]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please search [existing issues](https://github.com/Tkko/Flutter_Pinput/issues) first.
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: The smallest set of steps (or code) that triggers the problem.
+      placeholder: |
+        1. Go to '...'
+        2. Tap on '...'
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: code
+    attributes:
+      label: Minimal code sample
+      description: A runnable snippet or a link to a minimal reproduction repository.
+      render: dart
+  - type: input
+    id: version
+    attributes:
+      label: Pinput version
+      placeholder: e.g. 1.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Affected platforms
+      multiple: true
+      options:
+        - Android
+        - iOS
+        - Web
+        - macOS
+        - Windows
+        - Linux
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: flutter doctor -v
+      description: Paste the output of `flutter doctor -v`.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots, logs and extra context
+      description: Drag and drop screenshots or recordings here, and paste relevant logs.
