@@ -2,9 +2,9 @@ part of '../pinput.dart';
 
 /// Keyboard and autofill settings of the hidden input behind the pins.
 @immutable
-class PinKeyboardConfig {
+class PinKeyboard {
   /// Creates a keyboard configuration.
-  const PinKeyboardConfig({
+  const PinKeyboard({
     this.keyboardType = TextInputType.number,
     this.textCapitalization = TextCapitalization.none,
     this.textInputAction,
@@ -40,14 +40,14 @@ class PinKeyboardConfig {
 
   @override
   bool operator ==(Object other) =>
-      other is PinKeyboardConfig &&
+      other is PinKeyboard &&
       runtimeType == other.runtimeType &&
       keyboardType == other.keyboardType &&
       textCapitalization == other.textCapitalization &&
       textInputAction == other.textInputAction &&
       keyboardAppearance == other.keyboardAppearance &&
       enableSuggestions == other.enableSuggestions &&
-      autofillHints == other.autofillHints;
+      listEquals(autofillHints?.toList(), other.autofillHints?.toList());
 
   @override
   int get hashCode => Object.hash(
@@ -57,6 +57,6 @@ class PinKeyboardConfig {
     textInputAction,
     keyboardAppearance,
     enableSuggestions,
-    autofillHints,
+    autofillHints == null ? null : Object.hashAll(autofillHints!),
   );
 }

@@ -3,11 +3,19 @@ part of '../pinput.dart';
 /// Cursor shown by the default pin renderer.
 @immutable
 class PinCursor {
-  const PinCursor._(this._type, this._child);
+  const PinCursor._(
+    this._type,
+    this._child, [
+    this._blinkDuration = _PinputConstants._cursorBlinkDuration,
+  ]);
 
-  /// Displays an animated cursor. Pass [child] to customize its appearance.
-  const PinCursor.blinking({Widget? child})
-    : this._(_PinCursorType.blinking, child);
+  /// Displays an animated cursor. Pass [child] to customize its appearance and
+  /// [blinkDuration] to set how long one fade takes. The cursor does not blink
+  /// when the platform asks to reduce motion.
+  const PinCursor.blinking({
+    Widget? child,
+    Duration blinkDuration = _PinputConstants._cursorBlinkDuration,
+  }) : this._(_PinCursorType.blinking, child, blinkDuration);
 
   /// Displays a cursor without animation. Pass [child] to customize its
   /// appearance.
@@ -19,14 +27,16 @@ class PinCursor {
 
   final _PinCursorType _type;
   final Widget? _child;
+  final Duration _blinkDuration;
 
   @override
   bool operator ==(Object other) =>
       other is PinCursor &&
       runtimeType == other.runtimeType &&
       _type == other._type &&
-      _child == other._child;
+      _child == other._child &&
+      _blinkDuration == other._blinkDuration;
 
   @override
-  int get hashCode => Object.hash(runtimeType, _type, _child);
+  int get hashCode => Object.hash(runtimeType, _type, _child, _blinkDuration);
 }

@@ -71,8 +71,8 @@ void main() {
                   builder: (field) => Pinput(
                     onChanged: field.didChange,
                     validationState: field.errorText == null
-                        ? const PinputValidationState.idle()
-                        : PinputValidationState.invalid(field.errorText!),
+                        ? const PinValidationState.idle()
+                        : PinValidationState.invalid(field.errorText!),
                   ),
                 ),
               ),
@@ -118,8 +118,8 @@ void main() {
                     builder: (field) => Pinput(
                       onChanged: field.didChange,
                       validationState: field.errorText == null
-                          ? const PinputValidationState.idle()
-                          : PinputValidationState.invalid(field.errorText!),
+                          ? const PinValidationState.idle()
+                          : PinValidationState.invalid(field.errorText!),
                     ),
                   ),
                 ),
@@ -343,8 +343,8 @@ void main() {
                   validator: (val) => 'Invalid code',
                   builder: (field) => Pinput(
                     validationState: field.errorText == null
-                        ? const PinputValidationState.idle()
-                        : PinputValidationState.invalid(field.errorText!),
+                        ? const PinValidationState.idle()
+                        : PinValidationState.invalid(field.errorText!),
                   ),
                 ),
               ),
@@ -457,8 +457,8 @@ void main() {
                 validator: (val) => 'Wrong OTP',
                 builder: (field) => Pinput(
                   validationState: field.errorText == null
-                      ? const PinputValidationState.idle()
-                      : PinputValidationState.invalid(field.errorText!),
+                      ? const PinValidationState.idle()
+                      : PinValidationState.invalid(field.errorText!),
                 ),
               ),
             ),
@@ -565,8 +565,8 @@ void main() {
                   validator: (val) => 'Cupertino error',
                   builder: (field) => Pinput(
                     validationState: field.errorText == null
-                        ? const PinputValidationState.idle()
-                        : PinputValidationState.invalid(field.errorText!),
+                        ? const PinValidationState.idle()
+                        : PinValidationState.invalid(field.errorText!),
                   ),
                 ),
               ),
@@ -675,8 +675,8 @@ void main() {
                 validator: (val) => 'Cupertino UI error',
                 builder: (field) => Pinput(
                   validationState: field.errorText == null
-                      ? const PinputValidationState.idle()
-                      : PinputValidationState.invalid(field.errorText!),
+                      ? const PinValidationState.idle()
+                      : PinValidationState.invalid(field.errorText!),
                 ),
               ),
             ),

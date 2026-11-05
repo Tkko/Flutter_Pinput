@@ -6,28 +6,22 @@ import 'helpers/helpers.dart';
 
 void main() {
   test('Validation states have value equality', () {
-    expect(const PinputValidationState.idle(), PinputValidationIdle());
-    expect(
-      const PinputValidationState.validating(),
-      PinputValidationValidating(),
-    );
-    expect(const PinputValidationState.valid(), PinputValidationValid());
-    const invalid = PinputValidationState.invalid('Incorrect code');
-    final same = PinputValidationInvalid('Incorrect code');
+    expect(const PinValidationState.idle(), PinValidationIdle());
+    expect(const PinValidationState.validating(), PinValidationValidating());
+    expect(const PinValidationState.valid(), PinValidationValid());
+    const invalid = PinValidationState.invalid('Incorrect code');
+    final same = PinValidationInvalid('Incorrect code');
     expect(invalid, same);
     expect(invalid.hashCode, same.hashCode);
+    expect(const PinValidationState.invalid(), PinValidationInvalid(null));
     expect(
-      const PinputValidationState.invalid(),
-      PinputValidationInvalid(null),
+      const PinValidationState.invalid(),
+      isNot(const PinValidationState.invalid('')),
     );
+    expect(invalid, isNot(const PinValidationState.invalid('Expired code')));
     expect(
-      const PinputValidationState.invalid(),
-      isNot(const PinputValidationState.invalid('')),
-    );
-    expect(invalid, isNot(const PinputValidationState.invalid('Expired code')));
-    expect(
-      const PinputValidationState.idle(),
-      isNot(const PinputValidationState.valid()),
+      const PinValidationState.idle(),
+      isNot(const PinValidationState.valid()),
     );
   });
 
@@ -39,11 +33,11 @@ void main() {
       Form(
         key: formKey,
         child: const Pinput(
-          validationState: PinputValidationState.invalid('Incorrect code'),
+          validationState: PinValidationState.invalid('Incorrect code'),
         ),
       ),
     );
-    expect(const Pinput().validationState, const PinputValidationState.idle());
+    expect(const Pinput().validationState, const PinValidationState.idle());
     expect(find.byType(FormField<String>), findsNothing);
     expect(formKey.currentState!.validate(), isTrue);
     expect(find.text('Incorrect code'), findsOneWidget);
@@ -65,9 +59,7 @@ void main() {
           focusNode: focusNode,
           cursor: const PinCursor.hidden(),
           closeKeyboardWhenCompleted: false,
-          validationState: const PinputValidationState.invalid(
-            'Incorrect code',
-          ),
+          validationState: const PinValidationState.invalid('Incorrect code'),
           theme: PinThemes(
             fallback: const PinTheme(
               decoration: BoxDecoration(color: Color(0xFF000000)),
@@ -106,8 +98,8 @@ void main() {
   testWidgets('App transitions preserve text, focus and editing availability', (
     tester,
   ) async {
-    final state = ValueNotifier<PinputValidationState>(
-      const PinputValidationState.invalid('Incorrect code'),
+    final state = ValueNotifier<PinValidationState>(
+      const PinValidationState.invalid('Incorrect code'),
     );
     final controller = TextEditingController(text: '12');
     final focusNode = FocusNode();
@@ -115,7 +107,7 @@ void main() {
     addTearDown(controller.dispose);
     addTearDown(focusNode.dispose);
     await tester.pumpApp(
-      ValueListenableBuilder<PinputValidationState>(
+      ValueListenableBuilder<PinValidationState>(
         valueListenable: state,
         builder: (_, value, _) => Pinput(
           controller: controller,
@@ -128,9 +120,9 @@ void main() {
     focusNode.requestFocus();
     await tester.pump();
     for (final value in [
-      const PinputValidationState.idle(),
-      const PinputValidationState.validating(),
-      const PinputValidationState.valid(),
+      const PinValidationState.idle(),
+      const PinValidationState.validating(),
+      const PinValidationState.valid(),
     ]) {
       state.value = value;
       await tester.pumpAndSettle();
@@ -144,7 +136,7 @@ void main() {
     await tester.enterText(find.byType(EditableText), '123');
     await tester.pump();
     expect(controller.text, '123');
-    expect(state.value, const PinputValidationState.valid());
+    expect(state.value, const PinValidationState.valid());
   });
 
   testWidgets(
@@ -156,13 +148,13 @@ void main() {
       await tester.pumpApp(
         Pinput(
           controller: controller,
-          validationState: const PinputValidationState.invalid('Expired'),
+          validationState: const PinValidationState.invalid('Expired'),
           errorTextStyle: const TextStyle(fontSize: 40),
           itemBuilder: (_, item) {
             items.add(item.type);
             return Text(item.value);
           },
-          errorBuilder: (message, pin) =>
+          errorBuilder: (context, message, pin) =>
               Text('$message: $pin', style: const TextStyle(fontSize: 14)),
         ),
       );
@@ -179,12 +171,12 @@ void main() {
     const style = TextStyle(fontSize: 18, color: Color(0xFF123456));
     for (final widget in [
       const Pinput(
-        validationState: PinputValidationState.invalid('Incorrect code'),
+        validationState: PinValidationState.invalid('Incorrect code'),
         errorTextStyle: style,
       ),
       Pinput(
         itemBuilder: (_, item) => Text(item.value),
-        validationState: const PinputValidationState.invalid('Incorrect code'),
+        validationState: const PinValidationState.invalid('Incorrect code'),
         errorTextStyle: style,
       ),
     ]) {
@@ -199,13 +191,13 @@ void main() {
     for (final widget in [
       const Pinput(
         cursor: PinCursor.hidden(),
-        validationState: PinputValidationState.invalid(),
+        validationState: PinValidationState.invalid(),
         theme: PinThemes(
           error: PinTheme(decoration: BoxDecoration(color: Color(0xFFFF0000))),
         ),
       ),
       Pinput(
-        validationState: const PinputValidationState.invalid(null),
+        validationState: const PinValidationState.invalid(null),
         itemBuilder: (_, item) {
           expect(item.type, PinItemStateType.error);
           return Text(item.value);
@@ -238,18 +230,18 @@ void main() {
     'Error builder receives null only for message-free invalid state',
     (tester) async {
       for (final useItemBuilder in [false, true]) {
-        final state = ValueNotifier<PinputValidationState>(
-          const PinputValidationState.invalid(),
+        final state = ValueNotifier<PinValidationState>(
+          const PinValidationState.invalid(),
         );
         final messages = <String?>[];
         addTearDown(state.dispose);
-        Widget errorBuilder(String? message, String pin) {
+        Widget errorBuilder(BuildContext context, String? message, String pin) {
           messages.add(message);
           return Text(message ?? 'Localized error');
         }
 
         await tester.pumpApp(
-          ValueListenableBuilder<PinputValidationState>(
+          ValueListenableBuilder<PinValidationState>(
             valueListenable: state,
             builder: (_, value, _) => useItemBuilder
                 ? Pinput(
@@ -267,14 +259,14 @@ void main() {
         expect(messages, isNotEmpty);
         expect(messages, everyElement(isNull));
         expect(find.text('Localized error'), findsOneWidget);
-        state.value = const PinputValidationState.invalid('Expired');
+        state.value = const PinValidationState.invalid('Expired');
         await tester.pumpAndSettle();
         expect(messages.last, 'Expired');
         expect(find.text('Expired'), findsOneWidget);
         for (final value in [
-          const PinputValidationState.idle(),
-          const PinputValidationState.validating(),
-          const PinputValidationState.valid(),
+          const PinValidationState.idle(),
+          const PinValidationState.validating(),
+          const PinValidationState.valid(),
         ]) {
           messages.clear();
           state.value = value;
@@ -312,8 +304,8 @@ void main() {
             controller: controller,
             cursor: const PinCursor.hidden(),
             validationState: field.errorText == null
-                ? const PinputValidationState.idle()
-                : PinputValidationState.invalid(field.errorText!),
+                ? const PinValidationState.idle()
+                : PinValidationState.invalid(field.errorText!),
           ),
         ),
       ),
@@ -332,7 +324,7 @@ void main() {
     expect(fieldKey.currentState!.value, isEmpty);
     expect(
       tester.widget<Pinput>(find.byType(Pinput)).validationState,
-      const PinputValidationState.idle(),
+      const PinValidationState.idle(),
     );
   });
 }

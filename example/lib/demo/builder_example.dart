@@ -35,8 +35,8 @@ class _PinputBuilderExampleState extends State<PinputBuilderExample> {
               validator: (value) => value == '2222' ? null : 'Pin is incorrect',
               builder: (field) => Pinput(
                 validationState: field.errorText == null
-                    ? const PinputValidationState.idle()
-                    : PinputValidationState.invalid(field.errorText!),
+                    ? const PinValidationState.idle()
+                    : PinValidationState.invalid(field.errorText!),
                 itemBuilder: (context, pinState) {
                   final dec = () {
                     switch (pinState.type) {
@@ -71,7 +71,8 @@ class _PinputBuilderExampleState extends State<PinputBuilderExample> {
                 controller: pinController,
                 focusNode: focusNode,
                 layout: PinLayout(
-                  separatorBuilder: (index) => const SizedBox(width: 8),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 8),
                 ),
                 hapticFeedbackType: HapticFeedbackType.lightImpact,
                 onCompleted: (pin) {

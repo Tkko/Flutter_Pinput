@@ -71,7 +71,9 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
           ),
         ),
       ),
-      layout: PinLayout(separatorBuilder: (index) => const SizedBox(width: 16)),
+      layout: PinLayout(
+        separatorBuilder: (context, index) => const SizedBox(width: 16),
+      ),
       cursor: PinCursor.blinking(child: cursor),
     );
   }

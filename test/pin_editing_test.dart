@@ -15,7 +15,7 @@ void main() {
         Pinput(
           controller: controller,
           length: 4,
-          pinEditMode: PinEditMode.overwrite,
+          editMode: PinEditMode.overwrite,
         ),
       );
 
@@ -37,7 +37,7 @@ void main() {
         Pinput(
           controller: controller,
           length: 4,
-          pinEditMode: PinEditMode.overwrite,
+          editMode: PinEditMode.overwrite,
         ),
       );
 
@@ -60,7 +60,7 @@ void main() {
           Pinput(
             controller: controller,
             length: 4,
-            pinEditMode: PinEditMode.overwrite,
+            editMode: PinEditMode.overwrite,
           ),
         );
 
@@ -104,10 +104,10 @@ void main() {
           theme: PinThemes(
             fallback: defaultTheme,
             focused: focusedTheme,
-            submitted: submittedTheme,
+            filled: submittedTheme,
           ),
 
-          pinEditMode: PinEditMode.overwrite,
+          editMode: PinEditMode.overwrite,
           closeKeyboardWhenCompleted: false,
         ),
       );
@@ -135,7 +135,7 @@ void main() {
       expect(pin3.decoration, equals(submittedTheme.decoration));
     });
 
-    testWidgets('Pinput.builder supports pin tap with pinEditMode', (
+    testWidgets('Pinput.builder supports pin tap with editMode', (
       WidgetTester tester,
     ) async {
       final controller = TextEditingController(text: '1234');
@@ -145,7 +145,7 @@ void main() {
         Pinput(
           controller: controller,
           length: 4,
-          pinEditMode: PinEditMode.overwrite,
+          editMode: PinEditMode.overwrite,
           itemBuilder: (context, state) {
             return Text(
               '${state.index}:${state.value}',
@@ -172,7 +172,7 @@ void main() {
         Pinput(
           controller: controller,
           length: 4,
-          pinEditMode: PinEditMode.overwrite,
+          editMode: PinEditMode.overwrite,
           closeKeyboardWhenCompleted: false,
         ),
       );
@@ -202,7 +202,7 @@ void main() {
         Pinput(
           controller: controller,
           length: 4,
-          pinEditMode: PinEditMode.overwrite,
+          editMode: PinEditMode.overwrite,
           closeKeyboardWhenCompleted: false,
         ),
       );
@@ -235,7 +235,7 @@ void main() {
           focusNode: focusNode,
           length: 4,
           closeKeyboardWhenCompleted: true,
-          pinEditMode: PinEditMode.overwrite,
+          editMode: PinEditMode.overwrite,
         ),
       );
 
@@ -273,7 +273,7 @@ void main() {
             controller: controller,
             focusNode: focusNode,
             length: 4,
-            pinEditMode: PinEditMode.clearFollowing,
+            editMode: PinEditMode.clearFollowing,
             onCompleted: (_) => completedCount++,
           ),
         );
@@ -442,7 +442,7 @@ void main() {
           Pinput(
             controller: controller,
             length: 4,
-            pinEditMode: mode,
+            editMode: mode,
             closeKeyboardWhenCompleted: false,
           ),
         );
@@ -530,7 +530,9 @@ void main() {
         Pinput(
           controller: controller,
           length: 4,
-          layout: PinLayout(separatorBuilder: (_) => const SizedBox(width: 40)),
+          layout: PinLayout(
+            separatorBuilder: (_, _) => const SizedBox(width: 40),
+          ),
         ),
       );
       final first = tester.getRect(find.byType(AnimatedContainer).at(0));
@@ -617,7 +619,7 @@ void main() {
           Pinput(
             controller: controller,
             length: 4,
-            pinEditMode: mode,
+            editMode: mode,
             closeKeyboardWhenCompleted: false,
           ),
         );
@@ -647,7 +649,7 @@ void main() {
           Pinput(
             controller: controller,
             length: 4,
-            pinEditMode: mode,
+            editMode: mode,
             closeKeyboardWhenCompleted: false,
           ),
         );
@@ -767,11 +769,7 @@ void main() {
     ) async {
       final controller = TextEditingController(text: '1234');
       await tester.pumpApp(
-        Pinput(
-          controller: controller,
-          length: 4,
-          pinEditMode: PinEditMode.none,
-        ),
+        Pinput(controller: controller, length: 4, editMode: PinEditMode.none),
       );
 
       final containers = find.byType(AnimatedContainer);
@@ -855,7 +853,7 @@ void main() {
         await tester.pumpApp(
           Pinput(
             controller: controller,
-            pinEditMode: mode,
+            editMode: mode,
             closeKeyboardWhenCompleted: false,
           ),
         );
@@ -969,7 +967,7 @@ void main() {
           Pinput(
             controller: controller,
             length: 4,
-            pinEditMode: PinEditMode.overwrite,
+            editMode: PinEditMode.overwrite,
           ),
         );
 
@@ -1023,7 +1021,7 @@ void main() {
           Pinput(
             controller: controller,
             length: 4,
-            pinEditMode: PinEditMode.clearFollowing,
+            editMode: PinEditMode.clearFollowing,
           ),
         );
 

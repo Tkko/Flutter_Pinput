@@ -1,5 +1,31 @@
-#### Unreleased
+#### 8.0.0-beta.1 · 05/11/2026
 
+- **BREAKING**: Renamed `pinAnimation` to `animation`, `pinEditMode` to `editMode`,
+  `PinKeyboardConfig` to `PinKeyboard`, `PinputValidationState` and its subtypes
+  to `PinValidationState`/`PinValidation*`, `PinputErrorBuilder` to
+  `PinErrorBuilder`, and `PinItemStateType.submitted`/`following` (and the matching
+  `PinThemes` parameters) to `filled`/`empty`.
+- **BREAKING**: `errorBuilder` and `separatorBuilder` now receive a `BuildContext`.
+  `JustIndexedWidgetBuilder` is replaced by Flutter's `IndexedWidgetBuilder`.
+- **BREAKING**: The controller helpers `length`, `append` and `delete` are now
+  `pinLength`, `appendPin` and `deleteLastPin`, and count user-perceived
+  characters instead of UTF-16 units. `appendPin` never exceeds `maxLength`.
+- **BREAKING**: Removed the empty public `PinputConstants` class.
+- **BREAKING**: Removed `smsRetriever` and `SmsRetriever`. Listen for the code in
+  your app and call `controller.setText`; the README has an example. iOS autofill
+  is unchanged.
+- The built-in theme now marks the focused, disabled and error states, so
+  `PinValidationState.invalid()` is visible without a custom theme.
+- Programmatic text longer than `length` is cut to `length`, so the controller,
+  `onChanged` and `onCompleted` agree with the pins.
+- Screen readers get the PIN once and the validation result of the field.
+- `MediaQuery.disableAnimations` is respected by pin animations and the cursor.
+- Added `DefaultPinThemes` to style every `Pinput` below it.
+- Added `PinItemState.isFocused`, `isFilled` and `showCursor`.
+- Added value equality and `lerp` to `PinTheme`, and value equality to
+  `PinItemState`. `PinKeyboard` compares `autofillHints` by content.
+- Added `PinAnimation.custom`, `PinCursor.blinking(blinkDuration:)`,
+  `PinLayout.textDirection` and `revealDuration` on `PinObscuring`.
 - On iOS, tapping an already focused `Pinput` with a finger now toggles the
   context menu, matching `TextField`. Set `contextMenuBuilder: null` to opt out
   ([#235](https://github.com/Tkko/Flutter_Pinput/issues/235),

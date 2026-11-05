@@ -8,6 +8,7 @@ class PinLayout {
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.separatorBuilder,
+    this.textDirection,
   });
 
   /// Defines how the pins are placed inside the [Row].
@@ -17,7 +18,11 @@ class PinLayout {
   final CrossAxisAlignment crossAxisAlignment;
 
   /// Builds the separator between pins. If null, `SizedBox(width: 8)` is used.
-  final JustIndexedWidgetBuilder? separatorBuilder;
+  final IndexedWidgetBuilder? separatorBuilder;
+
+  /// Order of the pins. If null, uses the ambient [Directionality]. Set
+  /// [TextDirection.ltr] to keep a numeric code left to right in an RTL app.
+  final TextDirection? textDirection;
 
   @override
   bool operator ==(Object other) =>
@@ -25,7 +30,8 @@ class PinLayout {
       runtimeType == other.runtimeType &&
       mainAxisAlignment == other.mainAxisAlignment &&
       crossAxisAlignment == other.crossAxisAlignment &&
-      separatorBuilder == other.separatorBuilder;
+      separatorBuilder == other.separatorBuilder &&
+      textDirection == other.textDirection;
 
   @override
   int get hashCode => Object.hash(
@@ -33,5 +39,6 @@ class PinLayout {
     mainAxisAlignment,
     crossAxisAlignment,
     separatorBuilder,
+    textDirection,
   );
 }

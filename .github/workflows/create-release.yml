@@ -17,26 +17,6 @@ on:
         required: false
         default: web,linux,android,ios,macos
         type: string
-      working-directory:
-        description: Directory containing pubspec.yaml
-        required: false
-        default: .
-        type: string
-      integration-test-working-directory:
-        description: Directory containing the integration test Flutter app
-        required: false
-        default: example
-        type: string
-      integration-test-target:
-        description: Integration test file relative to the working directory
-        required: false
-        default: integration_test/app_test.dart
-        type: string
-      integration-test-driver:
-        description: Web integration test driver file
-        required: false
-        default: test_driver/integration_test.dart
-        type: string
 
 permissions:
   contents: read
@@ -51,8 +31,8 @@ jobs:
       tag_name: ${{ inputs.tag_name }}
       dry_run: ${{ inputs.dry_run }}
       platforms: ${{ inputs.platforms }}
-      working-directory: ${{ inputs.working-directory }}
-      integration-test-working-directory: ${{ inputs.integration-test-working-directory }}
-      integration-test-target: ${{ inputs.integration-test-target }}
-      integration-test-driver: ${{ inputs.integration-test-driver }}
+      working-directory: .
+      integration-test-working-directory: example
+      integration-test-target: integration_test/app_test.dart
+      integration-test-driver: test_driver/integration_test.dart
       publish-workflow: publish.yml

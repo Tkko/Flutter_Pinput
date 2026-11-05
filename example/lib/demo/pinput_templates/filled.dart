@@ -46,7 +46,7 @@ class _FilledState extends State<Filled> {
         controller: controller,
         focusNode: focusNode,
         layout: PinLayout(
-          separatorBuilder: (index) =>
+          separatorBuilder: (context, index) =>
               Container(height: 64, width: 1, color: Colors.white),
         ),
         theme: PinThemes(

@@ -171,7 +171,7 @@ void main() {
     };
     for (final entry in animations.entries) {
       await tester.pumpApp(
-        Pinput(pinAnimation: entry.key, cursor: const PinCursor.hidden()),
+        Pinput(animation: entry.key, cursor: const PinCursor.hidden()),
       );
       final switcher = tester.widget<AnimatedSwitcher>(
         find.byType(AnimatedSwitcher).first,
@@ -287,7 +287,7 @@ void main() {
 
     PinItemState item(PinItemStateType type) =>
         PinItemState(value: '', index: 0, type: type);
-    const idle = PinputValidationState.idle();
+    const idle = PinValidationState.idle();
 
     test('named parameters fall back to the fallback theme', () {
       const themes = PinThemes(fallback: base, focused: focused);
@@ -308,7 +308,7 @@ void main() {
 
     test('without any theme the built-in defaults are used', () {
       expect(
-        const PinThemes().resolve(item(PinItemStateType.following), idle),
+        const PinThemes().resolve(item(PinItemStateType.empty), idle),
         PinTheme.defaults,
       );
     });
@@ -323,12 +323,12 @@ void main() {
         valid: valid,
         validating: validating,
       );
-      PinTheme at(PinItemStateType t, PinputValidationState v) =>
+      PinTheme at(PinItemStateType t, PinValidationState v) =>
           themes.resolve(item(t), v);
-      const ok = PinputValidationState.valid();
-      const pending = PinputValidationState.validating();
+      const ok = PinValidationState.valid();
+      const pending = PinValidationState.validating();
       expect(at(PinItemStateType.focused, ok), valid);
-      expect(at(PinItemStateType.submitted, pending), validating);
+      expect(at(PinItemStateType.filled, pending), validating);
       expect(at(PinItemStateType.disabled, ok).width, 9);
       expect(at(PinItemStateType.error, ok).width, 10);
       expect(at(PinItemStateType.focused, idle), base);
@@ -339,7 +339,7 @@ void main() {
       expect(
         themes.resolve(
           item(PinItemStateType.focused),
-          const PinputValidationState.valid(),
+          const PinValidationState.valid(),
         ),
         focused,
       );
@@ -349,7 +349,7 @@ void main() {
       expect(
         const PinThemes.all(
           focused,
-        ).resolve(item(PinItemStateType.following), idle),
+        ).resolve(item(PinItemStateType.empty), idle),
         focused,
       );
       final themes = PinThemes.resolveWith(
@@ -357,16 +357,12 @@ void main() {
       );
       expect(
         themes.resolve(
-          const PinItemState(
-            value: '',
-            index: 1,
-            type: PinItemStateType.following,
-          ),
+          const PinItemState(value: '', index: 1, type: PinItemStateType.empty),
           idle,
         ),
         focused,
       );
-      expect(themes.resolve(item(PinItemStateType.submitted), idle), base);
+      expect(themes.resolve(item(PinItemStateType.filled), idle), base);
     });
 
     test('PinTheme alignment copies correctly', () {
@@ -398,7 +394,7 @@ void main() {
           const Pinput(
             length: 3,
             cursor: PinCursor.hidden(),
-            pinAnimation: PinAnimation.fade(duration: Duration(seconds: 1)),
+            animation: PinAnimation.fade(duration: Duration(seconds: 1)),
             theme: PinThemes.all(PinTheme(placeholder: SizedBox(key: key))),
           ),
         );
@@ -458,9 +454,7 @@ void main() {
 
   testWidgets('Default error text is a live region', (tester) async {
     await tester.pumpApp(
-      const Pinput(
-        validationState: PinputValidationState.invalid('Wrong code'),
-      ),
+      const Pinput(validationState: PinValidationState.invalid('Wrong code')),
     );
     final semantics = tester.getSemantics(find.text('Wrong code'));
     expect(semantics.flagsCollection.isLiveRegion, isTrue);
@@ -470,7 +464,7 @@ void main() {
     await tester.pumpApp(
       Pinput(
         itemBuilder: (context, state) => Text(state.value),
-        pinAnimation: const PinAnimation.none(
+        animation: const PinAnimation.none(
           duration: Duration(seconds: 2),
           curve: Curves.linear,
         ),

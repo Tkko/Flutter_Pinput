@@ -27,10 +27,14 @@ class _PinputState extends State<Pinput>
   RestorableTextEditingController? _controller;
   FocusNode? _focusNode;
   bool _isHovering = false;
-  SmsRetriever? _smsRetriever;
+
+  /// Slot kept unmasked for [PinObscuring.revealDuration].
+  int? _revealedSlot;
+  Timer? _revealTimer;
+  List<String?> _revealBaseline = const [];
 
   String? get _errorText => switch (widget.validationState) {
-    PinputValidationInvalid(:final message) => message,
+    PinValidationInvalid(:final message) => message,
     _ => null,
   };
 
@@ -42,7 +46,7 @@ class _PinputState extends State<Pinput>
       widget.focusNode ?? (_focusNode ??= FocusNode());
 
   @protected
-  bool get hasError => widget.validationState is PinputValidationInvalid;
+  bool get hasError => widget.validationState is PinValidationInvalid;
 
   @protected
   bool get isEnabled => widget.inputMode != PinInputMode.disabled;
@@ -103,7 +107,7 @@ class _PinputState extends State<Pinput>
       if (currentSlot >= widget.length) break;
       _slots[currentSlot++] = char;
     }
-    if (widget.pinEditMode == PinEditMode.clearFollowing) {
+    if (widget.editMode == PinEditMode.clearFollowing) {
       _slots.fillRange(currentSlot, widget.length, null);
     }
     return _editingValueForSlot(currentSlot);
@@ -113,7 +117,7 @@ class _PinputState extends State<Pinput>
     var currentSlot = index.clamp(0, widget.length - 1);
     final clearFollowing =
         _slots[currentSlot] != null &&
-        widget.pinEditMode == PinEditMode.clearFollowing;
+        widget.editMode == PinEditMode.clearFollowing;
     if (_slots[currentSlot] == null && currentSlot > 0) {
       currentSlot--;
     }
@@ -172,7 +176,7 @@ class _PinputState extends State<Pinput>
 
   /// Index of the active pin.
   int get selectedIndex {
-    if (widget.pinEditMode == PinEditMode.none) return _firstEmptySlotIndex;
+    if (widget.editMode == PinEditMode.none) return _firstEmptySlotIndex;
     final selection = _effectiveController.selection;
     if (selection.isValid && selection.baseOffset >= 0) {
       final leadingOffset = min(
@@ -212,34 +216,60 @@ class _PinputState extends State<Pinput>
     }
 
     _syncSlotsFromExternalText(widget.controller?.text ?? '');
+    _revealBaseline = List.of(_slots);
+    if (widget.controller != null) _scheduleExcessTextTrim();
     _effectiveFocusNode.canRequestFocus = isEnabled;
-    _maybeInitSmartAuth();
   }
 
-  /// Android Autofill
-  void _maybeInitSmartAuth() async {
-    if (_smsRetriever == null && widget.smsRetriever != null) {
-      _smsRetriever = widget.smsRetriever!;
-      _listenForSmsCode();
-    }
+  /// Cuts programmatic text down to [Pinput.length], matching what the input
+  /// formatters do for typed text. Returns whether the text changed.
+  bool _trimExcessText({bool notify = true}) {
+    final chars = _effectiveController.text.characters;
+    if (chars.length <= widget.length) return false;
+    final text = chars.take(widget.length).string;
+    final value = TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
+    if (!notify) _recentControllerValue = value;
+    _effectiveController.value = value;
+    return true;
   }
 
-  void _listenForSmsCode() async {
-    final retriever = _smsRetriever!;
-    final res = await retriever.getSmsCode();
-    if (!mounted || _smsRetriever != retriever) return;
-    if (res != null && res.characters.length == widget.length) {
-      _effectiveController.setText(res);
-    }
-    // Listen for multiple sms codes
-    if (mounted &&
-        _smsRetriever == retriever &&
-        retriever.listenForMultipleSms) {
-      _listenForSmsCode();
-    }
+  /// Controllers can't be changed during build, so trim after the frame. The
+  /// text was already there, so this isn't reported as a change.
+  void _scheduleExcessTextTrim() {
+    if (_effectiveController.text.characters.length <= widget.length) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _trimExcessText(notify: false);
+    });
+  }
+
+  /// Keeps a single newly entered pin unmasked for a moment. Replacing several
+  /// pins at once, like a paste, is masked immediately.
+  void _revealEnteredPin() {
+    final previous = _revealBaseline;
+    _revealBaseline = List.of(_slots);
+    _revealTimer?.cancel();
+    _revealedSlot = null;
+    final duration = widget.obscuring?.revealDuration ?? Duration.zero;
+    if (duration <= Duration.zero) return;
+    final entered = [
+      for (var i = 0; i < _slots.length; i++)
+        if (_slots[i] != null &&
+            (i >= previous.length || _slots[i] != previous[i]))
+          i,
+    ];
+    if (entered.length != 1) return;
+    _revealedSlot = entered.single;
+    _revealTimer = Timer(duration, () {
+      if (mounted) setState(() => _revealedSlot = null);
+    });
   }
 
   void _handleTextEditingControllerChanges() {
+    // Setting the trimmed text runs this listener again.
+    if (_trimExcessText()) return;
     final currentText = _effectiveController.value.text;
     final textChanged = _recentControllerValue.text != currentText;
     if (_recentControllerValue.selection != _effectiveController.selection) {
@@ -257,6 +287,7 @@ class _PinputState extends State<Pinput>
     }
 
     if (textChanged) {
+      _revealEnteredPin();
       _onChanged(pin);
     }
   }
@@ -297,8 +328,12 @@ class _PinputState extends State<Pinput>
       _syncSlotsFromExternalText(_effectiveController.text);
       _recentControllerValue = _effectiveController.value;
       _pinTapSelection = null;
+      _revealBaseline = List.of(_slots);
+      _scheduleExcessTextTrim();
     } else if (widget.length != oldWidget.length) {
       _syncSlotsFromExternalText(_effectiveController.text);
+      _revealBaseline = List.of(_slots);
+      _scheduleExcessTextTrim();
     }
 
     _effectiveFocusNode.canRequestFocus = isEnabled;
@@ -309,6 +344,7 @@ class _PinputState extends State<Pinput>
     if (_controller != null) {
       _registerController();
       _syncSlotsFromExternalText(_controller!.value.text);
+      _revealBaseline = List.of(_slots);
     }
   }
 
@@ -330,13 +366,11 @@ class _PinputState extends State<Pinput>
 
   @override
   void dispose() {
-    final retriever = _smsRetriever;
-    _smsRetriever = null;
+    _revealTimer?.cancel();
     widget.controller?.removeListener(_handleTextEditingControllerChanges);
     _controller?.removeListener(_handleTextEditingControllerChanges);
     _controller?.dispose();
     _focusNode?.dispose();
-    retriever?.dispose();
     super.dispose();
   }
 
@@ -363,7 +397,7 @@ class _PinputState extends State<Pinput>
       _effectiveController.selection = previous;
       return;
     }
-    if (widget.pinEditMode != PinEditMode.none) {
+    if (widget.editMode != PinEditMode.none) {
       if (selection.isCollapsed && selection.baseOffset > textLength) {
         _effectiveController.selection = TextSelection.collapsed(
           offset: textLength,
@@ -453,6 +487,11 @@ class _PinputState extends State<Pinput>
               maxValueLength: widget.length,
               currentValueLength: _currentFilledCount,
               enabled: isEnabled,
+              validationResult: switch (widget.validationState) {
+                PinValidationInvalid() => SemanticsValidationResult.invalid,
+                PinValidationValid() => SemanticsValidationResult.valid,
+                _ => SemanticsValidationResult.none,
+              },
               onTap: _isReadOnly ? null : _semanticsOnTap,
               onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
               onFocus: isEnabled
@@ -487,7 +526,7 @@ class _PinputState extends State<Pinput>
   Widget _buildEditable() {
     final formatters = <TextInputFormatter>[
       ...widget.inputFormatters,
-      if (widget.pinEditMode != PinEditMode.none)
+      if (widget.editMode != PinEditMode.none)
         _PinOverwriteTextInputFormatter(this),
       LengthLimitingTextInputFormatter(
         widget.length,
@@ -501,7 +540,7 @@ class _PinputState extends State<Pinput>
         child: EditableText(
           key: editableTextKey,
           maxLines: 1,
-          style: PinputConstants._hiddenTextStyle,
+          style: _PinputConstants._hiddenTextStyle,
           onChanged: (value) {
             _maybeUseHaptic(widget.hapticFeedbackType);
           },
@@ -515,7 +554,7 @@ class _PinputState extends State<Pinput>
           enableIMEPersonalizedLearning: false,
           textInputAction: widget.keyboard.textInputAction,
           textCapitalization: widget.keyboard.textCapitalization,
-          selectionColor: PinputConstants._transparent,
+          selectionColor: _PinputConstants._transparent,
           keyboardType: widget.keyboard.keyboardType,
           obscureText: widget.obscuring != null,
           onSubmitted: widget.onSubmitted,
@@ -524,16 +563,17 @@ class _PinputState extends State<Pinput>
           mouseCursor: MouseCursor.defer,
           focusNode: _effectiveFocusNode,
           textAlign: TextAlign.center,
+          textDirection: widget.layout.textDirection,
           autofocus: widget.autofocus,
           inputFormatters: formatters,
           restorationId: 'pinput',
           clipBehavior: Clip.hardEdge,
-          cursorColor: PinputConstants._transparent,
+          cursorColor: _PinputConstants._transparent,
           controller: _effectiveController,
           autofillHints: widget.keyboard.autofillHints,
           scrollPadding: widget.scrollPadding,
           selectionWidthStyle: BoxWidthStyle.tight,
-          backgroundCursorColor: PinputConstants._transparent,
+          backgroundCursorColor: _PinputConstants._transparent,
           selectionHeightStyle: BoxHeightStyle.tight,
           enableSuggestions: widget.keyboard.enableSuggestions,
           contextMenuBuilder: widget.contextMenuBuilder,
@@ -574,6 +614,28 @@ class _PinputState extends State<Pinput>
     _requestKeyboard();
   }
 
+  bool _isFocusedPin(int index) =>
+      hasFocus && index == selectedIndex.clamp(0, widget.length - 1);
+
+  bool _isCursorAt(int index) =>
+      isEnabled &&
+      index == selectedIndex &&
+      (_effectiveFocusNode.hasFocus || !_useNativeKeyboard);
+
+  PinItemState _pinItemState(int index) => PinItemState(
+    value: _slotValue(index),
+    index: index,
+    type: _getState(index),
+    isFocused: isEnabled && _isFocusedPin(index),
+    showCursor: _isCursorAt(index),
+  );
+
+  /// [PinAnimation.duration], unless the platform asks to reduce motion.
+  Duration _animationDuration(BuildContext context) =>
+      (MediaQuery.maybeDisableAnimationsOf(context) ?? false)
+      ? Duration.zero
+      : widget.animation.duration;
+
   PinItemStateType _getState(int index) {
     if (!isEnabled) {
       return PinItemStateType.disabled;
@@ -583,22 +645,22 @@ class _PinputState extends State<Pinput>
       return PinItemStateType.error;
     }
 
-    if (hasFocus && index == selectedIndex.clamp(0, widget.length - 1)) {
+    if (_isFocusedPin(index)) {
       return PinItemStateType.focused;
     }
 
-    if (widget.pinEditMode != PinEditMode.none) {
+    if (widget.editMode != PinEditMode.none) {
       if (_slotValue(index).isNotEmpty) {
-        return PinItemStateType.submitted;
+        return PinItemStateType.filled;
       }
-      return PinItemStateType.following;
+      return PinItemStateType.empty;
     }
 
     if (index < selectedIndex) {
-      return PinItemStateType.submitted;
+      return PinItemStateType.filled;
     }
 
-    return PinItemStateType.following;
+    return PinItemStateType.empty;
   }
 
   /// Whether a tap should toggle the context menu, mirroring [TextField] on
@@ -646,7 +708,7 @@ class _PinputState extends State<Pinput>
   }
 
   void _moveCursorToPin(int index) {
-    if (widget.pinEditMode == PinEditMode.none || _isReadOnly) return;
+    if (widget.editMode == PinEditMode.none || _isReadOnly) return;
     _focusedSlotIndex = index.clamp(0, widget.length - 1);
     if (_slots[_focusedSlotIndex] == null) {
       _focusedSlotIndex = min(_focusedSlotIndex, _firstEmptySlotIndex);
@@ -691,17 +753,11 @@ class _PinputState extends State<Pinput>
       return _SeparatedRaw(
         separatorBuilder: widget.layout.separatorBuilder,
         mainAxisAlignment: widget.layout.mainAxisAlignment,
+        textDirection: widget.layout.textDirection,
         children: Iterable<int>.generate(widget.length).map<Widget>((index) {
           final itemBuilder = widget.itemBuilder;
           if (itemBuilder != null) {
-            final child = itemBuilder(
-              context,
-              PinItemState(
-                value: _slotValue(index),
-                index: index,
-                type: _getState(index),
-              ),
-            );
+            final child = itemBuilder(context, _pinItemState(index));
             return _wrapWithPinTap(index, child);
           }
 
@@ -718,12 +774,17 @@ class _PinputState extends State<Pinput>
         ]),
         builder: (BuildContext context, Widget? child) {
           return AnimatedSize(
-            duration: widget.pinAnimation.duration,
-            curve: widget.pinAnimation.curve,
+            duration: _animationDuration(context),
+            curve: widget.animation.curve,
             alignment: Alignment.topCenter,
             child: Column(
               crossAxisAlignment: widget.layout.crossAxisAlignment,
-              children: [onlyFields(), _buildError()],
+              // The value is exposed by the EditableText. Without this the
+              // pin content is announced a second time.
+              children: [
+                ExcludeSemantics(child: onlyFields()),
+                _buildError(),
+              ],
             ),
           );
         },
@@ -746,7 +807,7 @@ class _PinputState extends State<Pinput>
     if (!hasError) return const SizedBox.shrink();
     final errorText = _errorText;
     if (widget.errorBuilder != null) {
-      return widget.errorBuilder!.call(errorText, pin);
+      return widget.errorBuilder!.call(context, errorText, pin);
     }
 
     if (errorText != null) {
@@ -754,8 +815,8 @@ class _PinputState extends State<Pinput>
           MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
       final defaultErrorStyle = TextStyle(
         color: isDark
-            ? PinputConstants._defaultDarkErrorColor
-            : PinputConstants._defaultLightErrorColor,
+            ? _PinputConstants._defaultDarkErrorColor
+            : _PinputConstants._defaultLightErrorColor,
         fontSize: 12,
         decoration: TextDecoration.none,
       );
