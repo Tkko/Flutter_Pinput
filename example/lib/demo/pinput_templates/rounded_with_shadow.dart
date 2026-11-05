@@ -56,7 +56,7 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
       controller: controller,
       focusNode: focusNode,
       theme: PinThemes(
-        initial: defaultPinTheme,
+        fallback: defaultPinTheme,
         focused: defaultPinTheme.copyWith(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -71,7 +71,7 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
           ),
         ),
       ),
-      separatorBuilder: (index) => const SizedBox(width: 16),
+      layout: PinLayout(separatorBuilder: (index) => const SizedBox(width: 16)),
       cursor: PinCursor.blinking(child: cursor),
     );
   }

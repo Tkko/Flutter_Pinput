@@ -36,8 +36,13 @@ class _PinItem extends StatelessWidget {
   }
 
   PinTheme _pinTheme(int index) {
-    return state.widget.theme?.resolve(state._getState(index)) ??
-        PinputConstants._defaultPinTheme;
+    final item = PinItemState(
+      value: state._slotValue(index),
+      index: index,
+      type: state._getState(index),
+    );
+    return state.widget.theme?.resolve(item, state.widget.validationState) ??
+        PinTheme.defaults;
   }
 
   Widget _buildFieldContent(int index, PinTheme pinTheme) {

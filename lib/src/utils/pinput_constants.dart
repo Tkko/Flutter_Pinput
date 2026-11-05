@@ -43,12 +43,4 @@ class PinputConstants {
     color: _defaultPinFillColor,
     borderRadius: BorderRadius.all(Radius.circular(8)),
   );
-
-  /// The default value [Pinput.theme]
-  static const _defaultPinTheme = PinTheme(
-    width: 56,
-    height: 60,
-    textStyle: TextStyle(),
-    decoration: _defaultPinputDecoration,
-  );
 }

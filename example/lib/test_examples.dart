@@ -41,7 +41,9 @@ class _ExampleState extends State<Example> {
   Widget build(BuildContext context) {
     return Pinput(
       controller: pinController,
-      autofillHints: const [AutofillHints.oneTimeCode],
+      keyboard: PinKeyboardConfig(
+        autofillHints: const [AutofillHints.oneTimeCode],
+      ),
       length: 10,
       enableInteractiveSelection: false,
       inputFormatters: [Formatter()],
@@ -107,7 +109,7 @@ class HeightExample extends StatelessWidget {
     return Pinput(
       length: 6,
       theme: PinThemes(
-        initial: defaultPinTheme,
+        fallback: defaultPinTheme,
         focused: defaultPinTheme.copyWith(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5.0),

@@ -52,11 +52,11 @@ class _FilledRoundedPinPutState extends State<FilledRoundedPinPut> {
         controller: controller,
         focusNode: focusNode,
         theme: PinThemes(
-          initial: defaultPinTheme,
+          fallback: defaultPinTheme,
           focused: defaultPinTheme.copyWith(
             height: 68,
             width: 64,
-            decoration: defaultPinTheme.decoration!.copyWith(
+            decoration: (defaultPinTheme.decoration as BoxDecoration).copyWith(
               border: Border.all(color: borderColor),
             ),
           ),

@@ -127,8 +127,9 @@ enum PinInputMode {
   /// The PIN ignores input and uses the disabled pin state.
   disabled,
 
-  /// [Pinput] is not focusable and never opens the native keyboard. Set the
-  /// value of its [TextEditingController] programmatically, for example from
-  /// an on-screen keypad.
+  /// [Pinput] never opens the native keyboard and ignores pointer input, but
+  /// stays focusable (for example for focus traversal and accessibility). Set
+  /// the value of its [TextEditingController] programmatically, for example
+  /// from an on-screen keypad.
   customKeyboard,
 }

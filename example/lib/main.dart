@@ -128,25 +128,29 @@ class _PinputExampleState extends State<PinputExample> {
                 controller: pinController,
                 focusNode: focusNode,
                 theme: PinThemes(
-                  initial: defaultPinTheme,
+                  fallback: defaultPinTheme,
                   focused: defaultPinTheme.copyWith(
-                    decoration: defaultPinTheme.decoration!.copyWith(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: focusedBorderColor),
-                    ),
+                    decoration: (defaultPinTheme.decoration as BoxDecoration)
+                        .copyWith(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: focusedBorderColor),
+                        ),
                   ),
                   submitted: defaultPinTheme.copyWith(
-                    decoration: defaultPinTheme.decoration!.copyWith(
-                      color: fillColor,
-                      borderRadius: BorderRadius.circular(19),
-                      border: Border.all(color: focusedBorderColor),
-                    ),
+                    decoration: (defaultPinTheme.decoration as BoxDecoration)
+                        .copyWith(
+                          color: fillColor,
+                          borderRadius: BorderRadius.circular(19),
+                          border: Border.all(color: focusedBorderColor),
+                        ),
                   ),
                   error: defaultPinTheme.copyBorderWith(
                     border: Border.all(color: Colors.redAccent),
                   ),
                 ),
-                separatorBuilder: (index) => const SizedBox(width: 8),
+                layout: PinLayout(
+                  separatorBuilder: (index) => const SizedBox(width: 8),
+                ),
                 hapticFeedbackType: HapticFeedbackType.lightImpact,
                 onCompleted: (pin) {
                   debugPrint('onCompleted: $pin');

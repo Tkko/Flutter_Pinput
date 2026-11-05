@@ -33,11 +33,11 @@ class _PinputBuilderExampleState extends State<PinputBuilderExample> {
             child: FormField<String>(
               initialValue: pinController.text,
               validator: (value) => value == '2222' ? null : 'Pin is incorrect',
-              builder: (field) => Pinput.builder(
+              builder: (field) => Pinput(
                 validationState: field.errorText == null
                     ? const PinputValidationState.idle()
                     : PinputValidationState.invalid(field.errorText!),
-                builder: (context, pinState) {
+                itemBuilder: (context, pinState) {
                   final dec = () {
                     switch (pinState.type) {
                       case PinItemStateType.disabled:
@@ -70,7 +70,9 @@ class _PinputBuilderExampleState extends State<PinputBuilderExample> {
                 },
                 controller: pinController,
                 focusNode: focusNode,
-                separatorBuilder: (index) => const SizedBox(width: 8),
+                layout: PinLayout(
+                  separatorBuilder: (index) => const SizedBox(width: 8),
+                ),
                 hapticFeedbackType: HapticFeedbackType.lightImpact,
                 onCompleted: (pin) {
                   debugPrint('onCompleted: $pin');

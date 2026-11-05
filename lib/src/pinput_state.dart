@@ -35,18 +35,6 @@ class _PinputState extends State<Pinput>
     _ => null,
   };
 
-  bool get _canRequestFocus {
-    final NavigationMode mode =
-        MediaQuery.maybeOf(context)?.navigationMode ??
-        NavigationMode.traditional;
-    switch (mode) {
-      case NavigationMode.traditional:
-        return isEnabled && _useNativeKeyboard;
-      case NavigationMode.directional:
-        return _useNativeKeyboard;
-    }
-  }
-
   TextEditingController get _effectiveController =>
       widget.controller ?? _controller!.value;
 
@@ -218,7 +206,7 @@ class _PinputState extends State<Pinput>
     }
 
     _syncSlotsFromExternalText(widget.controller?.text ?? '');
-    _effectiveFocusNode.canRequestFocus = isEnabled && _useNativeKeyboard;
+    _effectiveFocusNode.canRequestFocus = isEnabled;
     _maybeInitSmartAuth();
   }
 
@@ -280,12 +268,6 @@ class _PinputState extends State<Pinput>
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _effectiveFocusNode.canRequestFocus = _canRequestFocus;
-  }
-
-  @override
   void didUpdateWidget(Pinput oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller == null && oldWidget.controller != null) {
@@ -307,7 +289,7 @@ class _PinputState extends State<Pinput>
       _syncSlotsFromExternalText(_effectiveController.text);
     }
 
-    _effectiveFocusNode.canRequestFocus = _canRequestFocus;
+    _effectiveFocusNode.canRequestFocus = isEnabled;
   }
 
   @override
@@ -415,7 +397,7 @@ class _PinputState extends State<Pinput>
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
-    final isDense = widget.mainAxisAlignment == MainAxisAlignment.center;
+    final isDense = widget.layout.mainAxisAlignment == MainAxisAlignment.center;
 
     return isDense ? IntrinsicWidth(child: _buildPinput()) : _buildPinput();
   }
@@ -443,6 +425,7 @@ class _PinputState extends State<Pinput>
           child: AnimatedBuilder(
             animation: _effectiveController,
             builder: (_, Widget? child) => Semantics(
+              label: widget.semanticsLabel,
               maxValueLength: widget.length,
               currentValueLength: _currentFilledCount,
               enabled: isEnabled,
@@ -506,10 +489,10 @@ class _PinputState extends State<Pinput>
           rendererIgnoresPointer: true,
           enableInteractiveSelection: widget.enableInteractiveSelection,
           enableIMEPersonalizedLearning: false,
-          textInputAction: widget.textInputAction,
-          textCapitalization: widget.textCapitalization,
+          textInputAction: widget.keyboard.textInputAction,
+          textCapitalization: widget.keyboard.textCapitalization,
           selectionColor: PinputConstants._transparent,
-          keyboardType: widget.keyboardType,
+          keyboardType: widget.keyboard.keyboardType,
           obscureText: widget.obscuring != null,
           onSubmitted: widget.onSubmitted,
           onTapOutside: widget.onTapOutside,
@@ -523,12 +506,12 @@ class _PinputState extends State<Pinput>
           clipBehavior: Clip.hardEdge,
           cursorColor: PinputConstants._transparent,
           controller: _effectiveController,
-          autofillHints: widget.autofillHints,
+          autofillHints: widget.keyboard.autofillHints,
           scrollPadding: widget.scrollPadding,
           selectionWidthStyle: BoxWidthStyle.tight,
           backgroundCursorColor: PinputConstants._transparent,
           selectionHeightStyle: BoxHeightStyle.tight,
-          enableSuggestions: widget.enableSuggestions,
+          enableSuggestions: widget.keyboard.enableSuggestions,
           contextMenuBuilder: widget.contextMenuBuilder,
           obscuringCharacter: widget.obscuring?._character ?? '•',
           onSelectionChanged: _handleSelectionChanged,
@@ -537,7 +520,7 @@ class _PinputState extends State<Pinput>
           selectionControls:
               widget.selectionControls ?? _pinputSelectionControls,
           keyboardAppearance:
-              widget.keyboardAppearance ??
+              widget.keyboard.keyboardAppearance ??
               MediaQuery.maybePlatformBrightnessOf(context) ??
               Brightness.light,
         ),
@@ -646,11 +629,12 @@ class _PinputState extends State<Pinput>
   Widget _buildFields() {
     Widget onlyFields() {
       return _SeparatedRaw(
-        separatorBuilder: widget.separatorBuilder,
-        mainAxisAlignment: widget.mainAxisAlignment,
+        separatorBuilder: widget.layout.separatorBuilder,
+        mainAxisAlignment: widget.layout.mainAxisAlignment,
         children: Iterable<int>.generate(widget.length).map<Widget>((index) {
-          if (widget._builder != null) {
-            final child = widget._builder!.itemBuilder.call(
+          final itemBuilder = widget.itemBuilder;
+          if (itemBuilder != null) {
+            final child = itemBuilder(
               context,
               PinItemState(
                 value: _slotValue(index),
@@ -675,9 +659,10 @@ class _PinputState extends State<Pinput>
         builder: (BuildContext context, Widget? child) {
           return AnimatedSize(
             duration: widget.pinAnimation.duration,
+            curve: widget.pinAnimation.curve,
             alignment: Alignment.topCenter,
             child: Column(
-              crossAxisAlignment: widget.crossAxisAlignment,
+              crossAxisAlignment: widget.layout.crossAxisAlignment,
               children: [onlyFields(), _buildError()],
             ),
           );
@@ -716,9 +701,12 @@ class _PinputState extends State<Pinput>
       );
       return Padding(
         padding: const EdgeInsetsDirectional.only(start: 4, top: 8),
-        child: Text(
-          errorText,
-          style: widget.errorTextStyle ?? defaultErrorStyle,
+        child: Semantics(
+          liveRegion: true,
+          child: Text(
+            errorText,
+            style: widget.errorTextStyle ?? defaultErrorStyle,
+          ),
         ),
       );
     }
@@ -733,7 +721,7 @@ class _PinputState extends State<Pinput>
 
   @override
   TextInputConfiguration get textInputConfiguration {
-    final List<String>? autofillHints = widget.autofillHints?.toList(
+    final List<String>? autofillHints = widget.keyboard.autofillHints?.toList(
       growable: false,
     );
     final AutofillConfiguration autofillConfiguration = autofillHints != null

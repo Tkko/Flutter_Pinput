@@ -116,10 +116,8 @@ final focusedPinTheme = defaultPinTheme.copyDecorationWith(
   borderRadius: BorderRadius.circular(8),
 );
 
-final submittedPinTheme = defaultPinTheme.copyWith(
-  decoration: defaultPinTheme.decoration.copyWith(
-    color: Color.fromRGBO(234, 239, 243, 1),
-  ),
+final submittedPinTheme = defaultPinTheme.copyDecorationWith(
+  color: Color.fromRGBO(234, 239, 243, 1),
 );
 ```
 
@@ -141,15 +139,13 @@ final focusedPinTheme = defaultPinTheme.copyDecorationWith(
   borderRadius: BorderRadius.circular(8),
 );
 
-final submittedPinTheme = defaultPinTheme.copyWith(
-  decoration: defaultPinTheme.decoration.copyWith(
-    color: Color.fromRGBO(234, 239, 243, 1),
-  ),
+final submittedPinTheme = defaultPinTheme.copyDecorationWith(
+  color: Color.fromRGBO(234, 239, 243, 1),
 );
 
 return Pinput(
   theme: PinThemes(
-    initial: defaultPinTheme,
+    fallback: defaultPinTheme,
     focused: focusedPinTheme,
     submitted: submittedPinTheme,
   ),
@@ -159,11 +155,14 @@ return Pinput(
 );
 ```
 
-`PinThemes` mirrors `WidgetStateProperty`: use `PinThemes(initial:, focused:, …)`, `PinThemes.all`, or
-`PinThemes.resolveWith((state) => ...)` to pick a theme per `PinItemStateType`
-(`initial`, `focused`, `submitted`, `following`, `disabled`, `error`).
-In the named form, `initial` is the base and every other state theme is merged onto it,
-so a state theme only sets what differs. `PinTheme.placeholder` replaces `preFilledWidget`.
+`PinThemes` mirrors `WidgetStateProperty`: use `PinThemes(fallback:, focused:, …)`, `PinThemes.all`, or
+`PinThemes.resolveWith((item, validation) => ...)` to pick a theme per pin. `item` has the pin's `index`, `value` and
+`type` (`PinItemStateType`: `focused`, `submitted`, `following`, `disabled`, `error`).
+In the named form, a state you don't set uses `fallback`. Set `valid` or `validating` to style the pins while the app
+supplies `PinputValidationState.valid()` or `.validating()`; otherwise those states don't change the look.
+Implement `PinThemes` to share a theme as your own type.
+A state theme is used exactly as written and is not merged with `fallback`, so derive it
+with `copyWith`. `PinTheme.decoration` accepts any `Decoration` (`BoxDecoration`, `ShapeDecoration`, …); `copyDecorationWith` and `copyBorderWith` require a `BoxDecoration`. `PinTheme.placeholder` replaces `preFilledWidget`. `PinTheme.defaults` is the built-in theme to derive from.
 
 ## SMS Autofill
 
@@ -284,8 +283,8 @@ for native obscuring. A character must be one UTF-16 code unit, matching Flutter
 native requirement. Original text remains available in the controller and callbacks.
 Masking widgets may be stateful: each slot creates its own State. Do not reuse
 a masking widget containing a shared GlobalKey across slots.
-`Pinput.builder` also accepts `obscuring` for native masking, but its item builder
-must mask visible content itself.
+With `itemBuilder`, `obscuring` only enables native masking; the builder must mask
+visible content itself.
 
 `PinAnimation` supports `none()`, `scale()` (default), `fade()`, `slide()`, and
 `rotation()`. Slide defaults to `Offset(0.8, 0)`. Every constructor accepts `duration` and `curve`,
@@ -327,7 +326,7 @@ with the cursor at the end, not successful validation. Clear old results when
 the PIN changes and ignore async responses for outdated inputs or disposed views.
 Pinput does not clear supplied feedback, run checks, or modify text or focus.
 Pending and valid states do not add loading/success visuals or disable editing;
-use `enabled` or `readOnly` explicitly when needed.
+use `inputMode: PinInputMode.readOnly` or `PinInputMode.disabled` explicitly when needed.
 
 For a runnable async example, open **Async example** in the default example app,
 or the **Async validation** tab in the demo gallery. Enter `2222` for success.
@@ -336,7 +335,7 @@ See [`AsyncValidationExample`](example/lib/demo/async_validation_example.dart).
 
 `errorTextStyle` styles the default error text. `errorBuilder(message, pin)`
 replaces the default error widget and ignores `errorTextStyle`. Both are available
-in `Pinput` and `Pinput.builder`.
+in `Pinput`, including with `itemBuilder`.
 The invalid state's message is optional: `invalid()` applies error styling
 without default text or error padding. An `errorBuilder` still runs with a null
 message, so it can supply its own localized text or other content.

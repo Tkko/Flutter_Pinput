@@ -70,7 +70,7 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
       controller: controller,
       focusNode: focusNode,
       theme: PinThemes(
-        initial: defaultPinTheme.copyWith(placeholder: preFilledWidget),
+        fallback: defaultPinTheme.copyWith(placeholder: preFilledWidget),
       ),
       cursor: PinCursor.blinking(child: cursor),
     );

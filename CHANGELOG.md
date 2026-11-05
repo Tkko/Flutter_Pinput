@@ -15,14 +15,36 @@
 - **BREAKING**: Replaced `enabled`, `readOnly` and `useNativeKeyboard` with
   `inputMode: PinInputMode` (`editable`, `readOnly`, `disabled`,
   `customKeyboard`). Disabled overrides the other modes.
-- **BREAKING**: `PinThemes(...)` merges each state theme onto `initial` (or the
-  built-in theme), so state themes only need to set what differs.
-  `pinContentAlignment` became `PinTheme.alignment`.
+- `pinContentAlignment` became `PinTheme.alignment`. Added the public
+  `PinTheme.defaults` built-in theme; `PinThemes` uses `fallback`
+  (default `PinTheme.defaults`) for unset states.
+- `PinTheme.decoration` is now a `Decoration`, so `ShapeDecoration` and other
+  decorations work. `copyDecorationWith` and `copyBorderWith` still require a
+  `BoxDecoration`.
+- **BREAKING**: `Pinput.builder` is now `Pinput(itemBuilder: ...)`; there is one
+  constructor. `theme` and `cursor` are not used when `itemBuilder` is set.
+- **BREAKING**: Grouped `mainAxisAlignment`, `crossAxisAlignment` and
+  `separatorBuilder` into `layout: PinLayout`, and `keyboardType`,
+  `textCapitalization`, `textInputAction`, `keyboardAppearance`,
+  `enableSuggestions` and `autofillHints` into `keyboard: PinKeyboardConfig`.
+- **BREAKING**: Removed `PinItemStateType.initial` (use `PinThemes.fallback`) and
+  `PinTheme.apply`. `PinThemes.resolve` and `resolveWith` now take the
+  `PinItemState` (index, value, type) and the `PinputValidationState`.
+- Added `PinThemes(valid:, validating:)` to style pins during those validation
+  states. Added `Pinput.semanticsLabel`.
+- `PinInputMode.customKeyboard` is now focusable; it still ignores pointer input
+  and never opens the native keyboard.
 - **BREAKING**: Removed `onClipboardFound`, `onAppPrivateCommand`,
   `enableIMEPersonalizedLearning` (always off) and the unused
   `AndroidSmsAutofillMethod` enum.
-- `Pinput.builder` now defaults `autofillHints` and `enableInteractiveSelection`
-  like `Pinput`. Fixed duplicated and incorrect `debugFillProperties` entries.
+- Disabled input never takes focus, including with directional navigation.
+- `Pinput` with `itemBuilder` accepts `pinAnimation` (duration and curve animate the error
+  layout), and `pinAnimation.curve` now applies to the error layout animation.
+- The default error message is exposed to assistive technology as a live region.
+- Moved migration guides to `doc/migration/` (one human and one agent guide per
+  version) and refreshed the 8.0.0 guide for the new API.
+- A custom item builder now gets the same `autofillHints` and
+  `enableInteractiveSelection` defaults as the default renderer. Fixed duplicated and incorrect `debugFillProperties` entries.
 - Removed `toolbarEnabled`; `enableInteractiveSelection` now controls selection
   gestures consistently with native editing. Use `contextMenuBuilder: null` to
   hide the modern menu without disabling selection.
@@ -119,7 +141,7 @@
 - Migrated deprecated imperative apply of Flutter's Gradle plugins example app
 - Removed smart_auth dependency which was responsible for SMS autofill (Not everyone might need it
   and it was causing some issues)
-- [Migration guide](MIGRATION.md)
+- [Migration guide](doc/migration/README.md)
 
 #### 4.0.0 · 10/02/2024
 

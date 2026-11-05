@@ -69,7 +69,7 @@ void main() {
             'Incorrect code',
           ),
           theme: PinThemes(
-            initial: const PinTheme(
+            fallback: const PinTheme(
               decoration: BoxDecoration(color: Color(0xFF000000)),
             ),
             error: const PinTheme(
@@ -154,11 +154,11 @@ void main() {
       addTearDown(controller.dispose);
       final items = <PinItemStateType>[];
       await tester.pumpApp(
-        Pinput.builder(
+        Pinput(
           controller: controller,
           validationState: const PinputValidationState.invalid('Expired'),
           errorTextStyle: const TextStyle(fontSize: 40),
-          builder: (_, item) {
+          itemBuilder: (_, item) {
             items.add(item.type);
             return Text(item.value);
           },
@@ -182,8 +182,8 @@ void main() {
         validationState: PinputValidationState.invalid('Incorrect code'),
         errorTextStyle: style,
       ),
-      Pinput.builder(
-        builder: (_, item) => Text(item.value),
+      Pinput(
+        itemBuilder: (_, item) => Text(item.value),
         validationState: const PinputValidationState.invalid('Incorrect code'),
         errorTextStyle: style,
       ),
@@ -204,9 +204,9 @@ void main() {
           error: PinTheme(decoration: BoxDecoration(color: Color(0xFFFF0000))),
         ),
       ),
-      Pinput.builder(
+      Pinput(
         validationState: const PinputValidationState.invalid(null),
-        builder: (_, item) {
+        itemBuilder: (_, item) {
           expect(item.type, PinItemStateType.error);
           return Text(item.value);
         },
@@ -252,9 +252,9 @@ void main() {
           ValueListenableBuilder<PinputValidationState>(
             valueListenable: state,
             builder: (_, value, _) => useItemBuilder
-                ? Pinput.builder(
+                ? Pinput(
                     validationState: value,
-                    builder: (_, item) => Text(item.value),
+                    itemBuilder: (_, item) => Text(item.value),
                     errorBuilder: errorBuilder,
                   )
                 : Pinput(

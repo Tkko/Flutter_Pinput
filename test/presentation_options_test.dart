@@ -148,9 +148,9 @@ void main() {
 
   testWidgets('Custom item builders retain native obscuring', (tester) async {
     await tester.pumpApp(
-      Pinput.builder(
+      Pinput(
         obscuring: const PinObscuring.character('*'),
-        builder: (_, item) => const Text('*'),
+        itemBuilder: (_, item) => const Text('*'),
       ),
     );
     final editable = tester.widget<EditableText>(find.byType(EditableText));
@@ -282,45 +282,97 @@ void main() {
   }, variant: TargetPlatformVariant({TargetPlatform.macOS}));
 
   group('PinThemes', () {
-    const initial = PinTheme(width: 1);
+    const base = PinTheme(width: 1);
     const focused = PinTheme(width: 2);
 
-    test('named parameters fall back to the initial theme', () {
-      const themes = PinThemes(initial: initial, focused: focused);
-      expect(themes.resolve(PinItemStateType.focused).width, 2);
-      expect(themes.resolve(PinItemStateType.error), initial);
+    PinItemState item(PinItemStateType type) =>
+        PinItemState(value: '', index: 0, type: type);
+    const idle = PinputValidationState.idle();
+
+    test('named parameters fall back to the fallback theme', () {
+      const themes = PinThemes(fallback: base, focused: focused);
+      expect(themes.resolve(item(PinItemStateType.focused), idle).width, 2);
+      expect(themes.resolve(item(PinItemStateType.error), idle), base);
     });
 
-    test('state themes merge onto the initial theme', () {
+    test('state themes replace the fallback theme', () {
       const themes = PinThemes(
-        initial: PinTheme(width: 1, alignment: Alignment.bottomCenter),
+        fallback: PinTheme(width: 1, alignment: Alignment.bottomCenter),
         focused: PinTheme(height: 3),
       );
-      final resolved = themes.resolve(PinItemStateType.focused);
+      final resolved = themes.resolve(item(PinItemStateType.focused), idle);
       expect(resolved.height, 3);
-      expect(resolved.width, 1);
-      expect(resolved.alignment, Alignment.bottomCenter);
+      expect(resolved.width, isNull);
+      expect(resolved.alignment, isNull);
     });
 
-    test('all and resolveWith resolve per state', () {
+    test('without any theme the built-in defaults are used', () {
       expect(
-        const PinThemes.all(focused).resolve(PinItemStateType.following),
+        const PinThemes().resolve(item(PinItemStateType.following), idle),
+        PinTheme.defaults,
+      );
+    });
+
+    test('valid and validating themes apply unless disabled or error', () {
+      const valid = PinTheme(width: 7);
+      const validating = PinTheme(width: 8);
+      const themes = PinThemes(
+        fallback: base,
+        disabled: PinTheme(width: 9),
+        error: PinTheme(width: 10),
+        valid: valid,
+        validating: validating,
+      );
+      PinTheme at(PinItemStateType t, PinputValidationState v) =>
+          themes.resolve(item(t), v);
+      const ok = PinputValidationState.valid();
+      const pending = PinputValidationState.validating();
+      expect(at(PinItemStateType.focused, ok), valid);
+      expect(at(PinItemStateType.submitted, pending), validating);
+      expect(at(PinItemStateType.disabled, ok).width, 9);
+      expect(at(PinItemStateType.error, ok).width, 10);
+      expect(at(PinItemStateType.focused, idle), base);
+    });
+
+    test('unset valid theme leaves the normal look', () {
+      const themes = PinThemes(fallback: base, focused: focused);
+      expect(
+        themes.resolve(
+          item(PinItemStateType.focused),
+          const PinputValidationState.valid(),
+        ),
+        focused,
+      );
+    });
+
+    test('all and resolveWith resolve per item', () {
+      expect(
+        const PinThemes.all(
+          focused,
+        ).resolve(item(PinItemStateType.following), idle),
         focused,
       );
       final themes = PinThemes.resolveWith(
-        (state) => state == PinItemStateType.error ? focused : initial,
+        (item, validation) => item.index == 1 ? focused : base,
       );
-      expect(themes.resolve(PinItemStateType.error), focused);
-      expect(themes.resolve(PinItemStateType.submitted), initial);
+      expect(
+        themes.resolve(
+          const PinItemState(
+            value: '',
+            index: 1,
+            type: PinItemStateType.following,
+          ),
+          idle,
+        ),
+        focused,
+      );
+      expect(themes.resolve(item(PinItemStateType.submitted), idle), base);
     });
 
-    test('PinTheme alignment merges and copies correctly', () {
-      const base = PinTheme(alignment: Alignment.bottomCenter);
-      final copied = base.copyWith(alignment: Alignment.topRight);
+    test('PinTheme alignment copies correctly', () {
+      const theme = PinTheme(alignment: Alignment.bottomCenter);
+      final copied = theme.copyWith(alignment: Alignment.topRight);
       expect(copied.alignment, Alignment.topRight);
-
-      final merged = const PinTheme().apply(theme: base);
-      expect(merged.alignment, Alignment.bottomCenter);
     });
 
     testWidgets('PinTheme alignment configures container alignment', (
@@ -361,7 +413,7 @@ void main() {
     );
   });
 
-  testWidgets('customKeyboard is not focusable and mirrors programmatic text', (
+  testWidgets('customKeyboard is focusable and mirrors programmatic text', (
     tester,
   ) async {
     final focusNode = FocusNode();
@@ -377,8 +429,78 @@ void main() {
     );
     focusNode.requestFocus();
     await tester.pump();
-    expect(focusNode.hasFocus, isFalse);
+    expect(focusNode.canRequestFocus, isTrue);
+    expect(focusNode.hasFocus, isTrue);
     expect(find.text('1'), findsOneWidget);
     expect(find.text('2'), findsOneWidget);
+  });
+
+  for (final mode in NavigationMode.values) {
+    testWidgets('Disabled input cannot take focus in $mode navigation', (
+      tester,
+    ) async {
+      final focusNode = FocusNode();
+      addTearDown(focusNode.dispose);
+      await tester.pumpApp(
+        MediaQuery(
+          data: MediaQueryData(navigationMode: mode),
+          child: Pinput(focusNode: focusNode, inputMode: PinInputMode.disabled),
+        ),
+      );
+      expect(focusNode.canRequestFocus, isFalse);
+    });
+  }
+
+  testWidgets('semanticsLabel labels the field', (tester) async {
+    await tester.pumpApp(const Pinput(semanticsLabel: 'Verification code'));
+    expect(find.bySemanticsLabel('Verification code'), findsOneWidget);
+  });
+
+  testWidgets('Default error text is a live region', (tester) async {
+    await tester.pumpApp(
+      const Pinput(
+        validationState: PinputValidationState.invalid('Wrong code'),
+      ),
+    );
+    final semantics = tester.getSemantics(find.text('Wrong code'));
+    expect(semantics.flagsCollection.isLiveRegion, isTrue);
+  });
+
+  testWidgets('itemBuilder accepts layout animation timing', (tester) async {
+    await tester.pumpApp(
+      Pinput(
+        itemBuilder: (context, state) => Text(state.value),
+        pinAnimation: const PinAnimation.none(
+          duration: Duration(seconds: 2),
+          curve: Curves.linear,
+        ),
+      ),
+    );
+    final size = tester.widget<AnimatedSize>(find.byType(AnimatedSize));
+    expect(size.duration, const Duration(seconds: 2));
+    expect(size.curve, Curves.linear);
+  });
+
+  testWidgets('PinTheme accepts non-box decorations', (tester) async {
+    const decoration = ShapeDecoration(
+      color: Color(0xFF00FF00),
+      shape: StadiumBorder(),
+    );
+    await tester.pumpApp(
+      const Pinput(
+        length: 2,
+        theme: PinThemes.all(PinTheme(decoration: decoration)),
+      ),
+    );
+    final container = tester.widget<AnimatedContainer>(
+      find.byType(AnimatedContainer).first,
+    );
+    expect(container.decoration, decoration);
+    expect(
+      () => const PinTheme(
+        decoration: decoration,
+      ).copyBorderWith(border: Border.all()),
+      throwsAssertionError,
+    );
   });
 }

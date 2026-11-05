@@ -102,7 +102,7 @@ void main() {
           focusNode: focusNode,
           length: 4,
           theme: PinThemes(
-            initial: defaultTheme,
+            fallback: defaultTheme,
             focused: focusedTheme,
             submitted: submittedTheme,
           ),
@@ -142,11 +142,11 @@ void main() {
       int? tappedIndex;
 
       await tester.pumpApp(
-        Pinput.builder(
+        Pinput(
           controller: controller,
           length: 4,
           pinEditMode: PinEditMode.overwrite,
-          builder: (context, state) {
+          itemBuilder: (context, state) {
             return Text(
               '${state.index}:${state.value}',
               key: ValueKey(state.index),
@@ -513,9 +513,9 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpApp(
-        Pinput.builder(
+        Pinput(
           length: 4,
-          builder: (context, s) => Expanded(child: Text('${s.index}')),
+          itemBuilder: (context, s) => Expanded(child: Text('${s.index}')),
         ),
       );
       expect(tester.takeException(), isNull);
@@ -530,7 +530,7 @@ void main() {
         Pinput(
           controller: controller,
           length: 4,
-          separatorBuilder: (_) => const SizedBox(width: 40),
+          layout: PinLayout(separatorBuilder: (_) => const SizedBox(width: 40)),
         ),
       );
       final first = tester.getRect(find.byType(AnimatedContainer).at(0));
@@ -716,7 +716,7 @@ void main() {
           controller: controller,
           focusNode: focusNode,
           length: 4,
-          theme: PinThemes(initial: base, focused: focused),
+          theme: PinThemes(fallback: base, focused: focused),
 
           closeKeyboardWhenCompleted: false,
         ),

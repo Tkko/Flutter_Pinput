@@ -33,7 +33,7 @@ void main() {
     );
 
     final errorTheme = defaultTheme.copyWith(
-      decoration: defaultTheme.decoration!.copyWith(
+      decoration: (defaultTheme.decoration as BoxDecoration).copyWith(
         border: Border.all(color: Colors.red),
       ),
     );
@@ -55,7 +55,7 @@ void main() {
                 key: const ValueKey('pinput_seq'),
                 length: 4,
                 controller: controller,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
                 onChanged: (val) => changedValues.add(val),
                 onCompleted: (val) => completedValue = val,
@@ -130,7 +130,7 @@ void main() {
                 key: const ValueKey('pinput_backspace'),
                 length: 4,
                 controller: controller,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
                 onChanged: (val) => changedValues.add(val),
               ),
@@ -182,7 +182,7 @@ void main() {
                 length: 4,
                 controller: controller,
                 pinEditMode: PinEditMode.overwrite,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
                 onCompleted: (val) {
                   completedCount++;
@@ -237,7 +237,7 @@ void main() {
                 length: 4,
                 controller: controller,
                 pinEditMode: PinEditMode.overwrite,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
               ),
             ),
@@ -293,7 +293,7 @@ void main() {
                 length: 4,
                 controller: controller,
                 pinEditMode: PinEditMode.clearFollowing,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
                 onCompleted: (_) => completedCount++,
               ),
@@ -335,7 +335,7 @@ void main() {
                 key: const ValueKey('pinput_paste_exact'),
                 length: 4,
                 controller: controller,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
                 onCompleted: (val) => completed = val,
               ),
@@ -367,7 +367,7 @@ void main() {
                 key: const ValueKey('pinput_paste_over'),
                 length: 4,
                 controller: controller,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
                 onCompleted: (val) => completed = val,
               ),
@@ -402,7 +402,7 @@ void main() {
                 key: const ValueKey('pinput_paste_under'),
                 length: 4,
                 controller: controller,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
                 onChanged: (val) => changed = val,
                 onCompleted: (val) => completed = val,
@@ -434,7 +434,7 @@ void main() {
                 key: const ValueKey('pinput_paste_replace'),
                 length: 4,
                 controller: controller,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
                 onCompleted: (val) => completed = val,
               ),
@@ -475,7 +475,7 @@ void main() {
                       length: 4,
                       controller: controller,
                       theme: PinThemes(
-                        initial: defaultTheme,
+                        fallback: defaultTheme,
                         error: errorTheme,
                       ),
 
@@ -537,7 +537,7 @@ void main() {
                       length: 4,
                       controller: controller,
                       theme: PinThemes(
-                        initial: defaultTheme,
+                        fallback: defaultTheme,
                         error: errorTheme,
                       ),
 
@@ -598,7 +598,7 @@ void main() {
           final controller = TextEditingController(text: '12');
 
           final disabledTheme = defaultTheme.copyWith(
-            decoration: defaultTheme.decoration!.copyWith(
+            decoration: (defaultTheme.decoration as BoxDecoration).copyWith(
               color: Colors.black12,
             ),
           );
@@ -611,7 +611,7 @@ void main() {
                 inputMode: PinInputMode.disabled,
                 controller: controller,
                 theme: PinThemes(
-                  initial: defaultTheme,
+                  fallback: defaultTheme,
                   disabled: disabledTheme,
                 ),
 
@@ -654,7 +654,7 @@ void main() {
                 inputMode: PinInputMode.readOnly,
                 focusNode: focusNode,
                 controller: controller,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
               ),
             ),
@@ -690,7 +690,7 @@ void main() {
                 length: 4,
                 obscuring: const PinObscuring.character('*'),
                 controller: controller,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
               ),
             ),
@@ -719,12 +719,12 @@ void main() {
 
           await tester.pumpWidget(
             buildTestHarness(
-              Pinput.builder(
+              Pinput(
                 key: const ValueKey('pinput_builder'),
                 length: 4,
                 controller: controller,
                 onCompleted: (val) => completed = val,
-                builder: (context, item) {
+                itemBuilder: (context, item) {
                   return Container(
                     key: ValueKey('custom_cell_${item.index}'),
                     width: 40,
@@ -779,7 +779,7 @@ void main() {
                 length: 4,
                 controller: controller,
                 smsRetriever: mockRetriever,
-                theme: PinThemes(initial: defaultTheme),
+                theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
                 onCompleted: (val) => completed = val,
               ),

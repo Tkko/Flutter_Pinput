@@ -22,6 +22,10 @@ part 'models/pin_animation.dart';
 
 part 'models/pin_cursor.dart';
 
+part 'models/pin_layout.dart';
+
+part 'models/pin_keyboard.dart';
+
 part 'models/pin_obscuring.dart';
 
 part 'models/models.dart';
@@ -56,11 +60,15 @@ part 'widgets/_pinput_selection_gesture_detector_builder.dart';
 /// - Close Keyboard After Completion
 /// - Beautiful [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib/demo)
 class Pinput extends StatefulWidget {
-  /// Creates a PinPut widget
+  /// Creates a PinPut widget.
+  ///
+  /// Pass [itemBuilder] to take full control over the pin item widget; then
+  /// [theme] and [cursor] are not used.
   const Pinput({
     this.length = PinputConstants._defaultLength,
     this.smsRetriever,
     this.theme,
+    this.itemBuilder,
     this.onChanged,
     this.onCompleted,
     this.onSubmitted,
@@ -70,9 +78,7 @@ class Pinput extends StatefulWidget {
     this.onTapUpOutside,
     this.controller,
     this.focusNode,
-    this.separatorBuilder,
-    this.mainAxisAlignment = MainAxisAlignment.center,
-    this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.layout = const PinLayout(),
     this.pinAnimation = const PinAnimation.scale(),
     this.inputMode = PinInputMode.editable,
     this.autofocus = false,
@@ -80,85 +86,33 @@ class Pinput extends StatefulWidget {
     this.cursor = const PinCursor.blinking(),
     this.pinEditMode = PinEditMode.overwrite,
     this.enableInteractiveSelection,
-    this.enableSuggestions = true,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
-    this.keyboardType = TextInputType.number,
-    this.textCapitalization = TextCapitalization.none,
-    this.keyboardAppearance,
+    this.keyboard = const PinKeyboardConfig(),
     this.inputFormatters = const [],
-    this.textInputAction,
-    this.autofillHints = const [AutofillHints.oneTimeCode],
     this.selectionControls,
     this.restorationId,
     this.mouseCursor,
     this.validationState = const PinputValidationState.idle(),
     this.errorBuilder,
     this.errorTextStyle,
+    this.semanticsLabel,
     this.scrollPadding = const EdgeInsets.all(20),
     this.contextMenuBuilder = _defaultContextMenuBuilder,
     super.key,
-  }) : assert(length > 0),
-       assert(
-         textInputAction != TextInputAction.newline,
-         'Pinput is not multiline',
-       ),
-       _builder = null;
-
-  /// Creates a PinPut widget with custom pin item builder
-  /// This gives you full control over the pin item widget
-  Pinput.builder({
-    required PinItemWidgetBuilder builder,
-    this.smsRetriever,
-    this.length = PinputConstants._defaultLength,
-    this.onChanged,
-    this.onCompleted,
-    this.onSubmitted,
-    this.onTap,
-    this.onLongPress,
-    this.onTapOutside,
-    this.onTapUpOutside,
-    this.controller,
-    this.focusNode,
-    this.separatorBuilder,
-    this.mainAxisAlignment = MainAxisAlignment.center,
-    this.crossAxisAlignment = CrossAxisAlignment.start,
-    this.inputMode = PinInputMode.editable,
-    this.obscuring,
-    this.autofocus = false,
-    this.pinEditMode = PinEditMode.overwrite,
-    this.enableInteractiveSelection,
-    this.enableSuggestions = true,
-    this.hapticFeedbackType = HapticFeedbackType.disabled,
-    this.closeKeyboardWhenCompleted = true,
-    this.keyboardType = TextInputType.number,
-    this.textCapitalization = TextCapitalization.none,
-    this.keyboardAppearance,
-    this.inputFormatters = const [],
-    this.textInputAction,
-    this.autofillHints = const [AutofillHints.oneTimeCode],
-    this.selectionControls,
-    this.restorationId,
-    this.mouseCursor,
-    this.validationState = const PinputValidationState.idle(),
-    this.errorBuilder,
-    this.errorTextStyle,
-    this.scrollPadding = const EdgeInsets.all(20),
-    this.contextMenuBuilder = _defaultContextMenuBuilder,
-    super.key,
-  }) : assert(length > 0),
-       assert(
-         textInputAction != TextInputAction.newline,
-         'Pinput is not multiline',
-       ),
-       _builder = _PinItemBuilder(itemBuilder: builder),
-       theme = null,
-       pinAnimation = const PinAnimation.scale(),
-       cursor = const PinCursor.hidden();
+  }) : assert(length > 0);
 
   /// Themes of the pin items per state, see [PinThemes].
   /// If null the built-in theme is used.
   final PinThemes? theme;
+
+  /// Builds every pin item. When set, [theme] and [cursor] are not used and the
+  /// builder is responsible for the content, including masking
+  /// ([obscuring] only enables native text obscuring).
+  final PinItemWidgetBuilder? itemBuilder;
+
+  /// Layout of the pins and the error content, see [PinLayout].
+  final PinLayout layout;
 
   /// If true keyboard will be closed
   final bool closeKeyboardWhenCompleted;
@@ -211,22 +165,11 @@ class Pinput extends StatefulWidget {
   /// ```
   final FocusNode? focusNode;
 
-  /// Builds a [Pinput] separator
-  /// If null SizedBox(width: 8) will be used
-  final JustIndexedWidgetBuilder? separatorBuilder;
-
-  /// Builds a [Pinput] item
-  /// If null the default _PinItem will be used
-  final _PinItemBuilder? _builder;
-
-  /// Defines how [Pinput] fields are being placed inside [Row]
-  final MainAxisAlignment mainAxisAlignment;
-
-  /// Defines how [Pinput] and its error content are placed inside [Column].
-  final CrossAxisAlignment crossAxisAlignment;
-
   /// Content transition for each pin. Defaults to [PinAnimation.scale].
   /// Its duration and curve also drive decoration and error-layout animations.
+  ///
+  /// With [itemBuilder] the builder owns the pin content, so only the duration
+  /// and curve apply, animating the error layout.
   final PinAnimation pinAnimation;
 
   /// How the user can input the PIN. Defaults to [PinInputMode.editable].
@@ -261,37 +204,17 @@ class Pinput extends StatefulWidget {
   /// [PinCursor.blinking]. Pass a `child` to customize its appearance.
   final PinCursor cursor;
 
-  /// The appearance of the keyboard.
-  /// This setting is only honored on iOS devices.
-  /// If unset, defaults to system brightness.
-  final Brightness? keyboardAppearance;
+  /// Keyboard and autofill settings, see [PinKeyboardConfig].
+  final PinKeyboardConfig keyboard;
 
   /// See [EditableText.inputFormatters]
   final List<TextInputFormatter> inputFormatters;
-
-  /// See [EditableText.keyboardType]
-  final TextInputType keyboardType;
 
   /// Optional masking of filled pins. Null displays the original text.
   ///
   /// Also enables native text obscuring. Custom item builders must mask their
   /// own visible content; they still receive the original value.
   final PinObscuring? obscuring;
-
-  /// See [EditableText.textCapitalization]
-  final TextCapitalization textCapitalization;
-
-  /// The type of action button to use for the keyboard.
-  ///
-  /// Defaults to [TextInputAction.newline] if [keyboardType] is
-  /// [TextInputType.multiline] and [TextInputAction.done] otherwise.
-  final TextInputAction? textInputAction;
-
-  /// See [EditableText.autofillHints]
-  final Iterable<String>? autofillHints;
-
-  /// See [EditableText.enableSuggestions]
-  final bool enableSuggestions;
 
   /// See [EditableText.selectionControls]
   final TextSelectionControls? selectionControls;
@@ -322,8 +245,14 @@ class Pinput extends StatefulWidget {
   final TextStyle? errorTextStyle;
 
   /// Replaces the default error content when [validationState] is invalid.
-  /// Called even when the invalid state has no message.
+  /// Called even when the invalid state has no message. Unlike the default
+  /// error text, its content is not a live region; add
+  /// `Semantics(liveRegion: true)` to announce new errors.
   final PinputErrorBuilder? errorBuilder;
+
+  /// Accessibility label announced for the whole field, for example
+  /// "Verification code".
+  final String? semanticsLabel;
 
   /// When this widget receives focus and is not completely visible (for example scrolled partially
   /// off the screen or overlapped by the keyboard)
@@ -457,27 +386,6 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<JustIndexedWidgetBuilder?>(
-        'separatorBuilder',
-        separatorBuilder,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<MainAxisAlignment>(
-        'mainAxisAlignment',
-        mainAxisAlignment,
-        defaultValue: MainAxisAlignment.center,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<CrossAxisAlignment>(
-        'crossAxisAlignment',
-        crossAxisAlignment,
-        defaultValue: CrossAxisAlignment.start,
-      ),
-    );
-    properties.add(
       DiagnosticsProperty<PinAnimation>(
         'pinAnimation',
         pinAnimation,
@@ -523,13 +431,6 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<bool>(
-        'enableSuggestions',
-        enableSuggestions,
-        defaultValue: true,
-      ),
-    );
-    properties.add(
       EnumProperty<HapticFeedbackType>(
         'hapticFeedbackType',
         hapticFeedbackType,
@@ -544,45 +445,10 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<TextInputType>(
-        'keyboardType',
-        keyboardType,
-        defaultValue: TextInputType.number,
-      ),
-    );
-    properties.add(
-      EnumProperty<TextCapitalization>(
-        'textCapitalization',
-        textCapitalization,
-        defaultValue: TextCapitalization.none,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<Brightness?>(
-        'keyboardAppearance',
-        keyboardAppearance,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
       DiagnosticsProperty<List<TextInputFormatter>>(
         'inputFormatters',
         inputFormatters,
         defaultValue: const <TextInputFormatter>[],
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<TextInputAction?>(
-        'textInputAction',
-        textInputAction,
-        defaultValue: null,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<Iterable<String>?>(
-        'autofillHints',
-        autofillHints,
-        defaultValue: const [AutofillHints.oneTimeCode],
       ),
     );
     properties.add(
@@ -632,6 +498,34 @@ class Pinput extends StatefulWidget {
         'scrollPadding',
         scrollPadding,
         defaultValue: const EdgeInsets.all(20),
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<PinLayout>(
+        'layout',
+        layout,
+        defaultValue: const PinLayout(),
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<PinKeyboardConfig>(
+        'keyboard',
+        keyboard,
+        defaultValue: const PinKeyboardConfig(),
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<PinItemWidgetBuilder?>(
+        'itemBuilder',
+        itemBuilder,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<String?>(
+        'semanticsLabel',
+        semanticsLabel,
+        defaultValue: null,
       ),
     );
     properties.add(

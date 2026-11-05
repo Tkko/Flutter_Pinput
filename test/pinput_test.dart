@@ -23,13 +23,15 @@ void main() {
   ) async {
     final indices = <int>[];
     await tester.pumpApp(
-      Pinput.builder(
+      Pinput(
         length: 4,
-        builder: (_, item) => Text('pin-${item.index}'),
-        separatorBuilder: (index) {
-          indices.add(index);
-          return Text('separator-$index');
-        },
+        itemBuilder: (_, item) => Text('pin-${item.index}'),
+        layout: PinLayout(
+          separatorBuilder: (index) {
+            indices.add(index);
+            return Text('separator-$index');
+          },
+        ),
       ),
     );
 
@@ -77,7 +79,7 @@ void main() {
         length: length,
         focusNode: focusNode,
         theme: PinThemes(
-          initial: defaultTheme,
+          fallback: defaultTheme,
           focused: focusedTheme,
           submitted: submittedTheme,
           following: followingTheme,
@@ -144,7 +146,7 @@ void main() {
       Pinput(
         focusNode: focusNode,
         autofocus: true,
-        theme: PinThemes(initial: defaultTheme, focused: focusedTheme),
+        theme: PinThemes(fallback: defaultTheme, focused: focusedTheme),
       ),
     );
 
