@@ -10,7 +10,7 @@
 [![Style](https://img.shields.io/badge/style-effective_dart-40c4ff.svg)](https://github.com/tenhobi/effective_dart)
 [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
 
-[Live demo](https://tkko.github.io/Flutter_Pinput/) · [Install](#install) · [Usage](#usage) · [SMS autofill](#sms-autofill) · [Examples](example/lib) · [pub.dev](https://pub.dev/packages/pinput) · [Changelog](CHANGELOG.md)
+[Live demo](https://tkko.github.io/Flutter_Pinput/) · [Install](#install) · [Usage](#usage) · [SMS autofill](#sms-autofill) · [Migrating](#migrating-to-80) · [Examples](example/lib) · [pub.dev](https://pub.dev/packages/pinput) · [Changelog](CHANGELOG.md)
 
 <b>🚀 Have a project in mind? <a href="https://www.linkedin.com/in/thornike/">Let's work together on LinkedIn</a>.</b>
 
@@ -66,6 +66,17 @@ Pinput(
   onCompleted: (pin) => print(pin),
 )
 ```
+
+By default Pinput shows 6 pins. Set `length` for another size, for example `Pinput(length: 4)`.
+
+Use `inputMode` to change how it accepts input:
+
+| `PinInputMode` | Behavior |
+| :--- | :--- |
+| `editable` | Default; the native keyboard edits the PIN |
+| `readOnly` | Focusable and selectable, but can't be edited |
+| `disabled` | Ignores input and uses the disabled pin state |
+| `customKeyboard` | Focusable, but ignores pointer input and never opens the native keyboard. Drive it with your own keys, see [Controller and focus](#controller-and-focus) |
 
 ### Theming
 
@@ -361,6 +372,57 @@ kg+TZ3A5qzS
 <summary><b>I'm using firebase_auth</b></summary>
 
 Set the controller's value in the `verificationCompleted` callback, see [SMS autofill](#android).
+
+</details>
+
+## Migrating to 8.0
+
+<details>
+<summary><b>Renamed and removed options</b></summary>
+
+| Previous options | Replacement |
+| :--- | :--- |
+| `defaultPinTheme`, `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `disabledPinTheme`, `errorPinTheme` | `theme: PinThemes(fallback:, focused:, filled:, empty:, disabled:, error:)` |
+| `preFilledWidget` | `PinTheme(placeholder: widget)` |
+| `pinContentAlignment` | `PinTheme(alignment: …)` |
+| `animationDuration`, `animationCurve`, `pinAnimationType`, `slideTransitionBeginOffset` | `animation: PinAnimation.none/scale/fade/slide/rotation(duration:, curve:)` |
+| `showCursor: false` | `cursor: const PinCursor.hidden()` |
+| `showCursor: true`, `isCursorAnimationEnabled: false` | `cursor: const PinCursor.static()` |
+| `cursor: widget` | `cursor: PinCursor.blinking(child: widget)` (or `static`) |
+| `enabled: false` | `inputMode: PinInputMode.disabled` |
+| `readOnly: true` | `inputMode: PinInputMode.readOnly` |
+| `useNativeKeyboard: false` | `inputMode: PinInputMode.customKeyboard` |
+| `obscureText`, `obscuringCharacter`, `obscuringWidget` | `obscuring: PinObscuring.character('*')` or `PinObscuring.widget(widget)`; `null` for none |
+| `toolbarEnabled: false` | `enableInteractiveSelection: false`, or `contextMenuBuilder: null` |
+| `mainAxisAlignment`, `crossAxisAlignment`, `separatorBuilder` | `layout: PinLayout(…)`; `separatorBuilder` now takes `(context, index)` |
+| `errorBuilder: (message, pin)` | `errorBuilder: (context, message, pin)` |
+| `keyboardType`, `textCapitalization`, `textInputAction`, `keyboardAppearance`, `enableSuggestions`, `autofillHints` | `keyboard: PinKeyboard(…)` |
+| `Pinput.builder(builder:)` | `Pinput(itemBuilder:)` |
+| `pinEditMode` | `editMode` |
+| `PinItemStateType.submitted`, `.following`, `.initial` | `.filled`, `.empty`, and `PinThemes(fallback:)` |
+| `PinputValidationState` and subtypes | `PinValidationState` and subtypes |
+| `controller.length`, `.append(…)`, `.delete()` | `controller.pinLength`, `.appendPin(…)`, `.deleteLastPin()` |
+| `PinTheme.apply` | Use `copyWith` |
+| `onClipboardFound`, `onAppPrivateCommand`, `enableIMEPersonalizedLearning` | Removed |
+| `smsRetriever`, `AndroidSmsAutofillMethod` | Removed, see [SMS autofill](#android) |
+| `validator`, `pinputAutovalidateMode`, `errorText`, `forceErrorState`, `showErrorWhenFocused` | Removed, see [Validation](#validation) |
+
+</details>
+
+<details>
+<summary><b>Behavior changes</b></summary>
+
+- **`length` defaults to 6**, not 4. Pass `length: 4` to keep four pins.
+- **Themes are not merged.** A state theme is used exactly as written, so derive it with `copyWith`. A state you leave out falls back to `fallback`, which defaults to `PinTheme.defaults`.
+- **The built-in look marks states.** Without a `theme`, focused, disabled and error pins look different. Set `fallback` or use `PinThemes.all` to keep one look.
+- **Validation is app-owned.** Pinput no longer runs validators or registers a `FormField`. Use `validationState`, see [Validation](#validation) and [Form integration](#form-integration).
+- **SMS autofill on Android is app-owned.** Listen for the code in your `State` and call `controller.setText`, see [SMS autofill](#android). iOS autofill is unchanged.
+- **Over-long programmatic text is cut** to `length`, like typed text, and `onCompleted` fires.
+- **Screen readers** get the value once, from the input, instead of each pin.
+- **Reduced motion** is respected: animations take no time and the cursor doesn't blink when `MediaQuery.disableAnimations` is set.
+- **`disabled` never takes focus**, and `customKeyboard` is focusable but ignores pointer input.
+- **With `itemBuilder`,** `theme` and `cursor` are not used, and `obscuring` only enables native masking, so the builder masks visible content itself.
+- The default error message is announced as a live region. Add your own `Semantics(liveRegion: true)` to a custom `errorBuilder` if needed.
 
 </details>
 
