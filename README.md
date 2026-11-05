@@ -12,6 +12,10 @@
 
 [Live demo](https://tkko.github.io/Flutter_Pinput/) · [Install](#install) · [Usage](#usage) · [SMS autofill](#sms-autofill) · [Examples](example/lib) · [pub.dev](https://pub.dev/packages/pinput) · [Changelog](CHANGELOG.md)
 
+<b>🚀 Have a project in mind? <a href="https://www.linkedin.com/in/thornike/">Let's work together on LinkedIn</a>.</b>
+
+<b>Enjoying this package? Help keep it maintained.</b>
+
 <a href="https://ko-fi.com/flutterman"><img height="40" src="https://user-images.githubusercontent.com/26390946/161375565-e7d64410-bbcf-4a28-896b-7514e106478e.png" alt="Support on Ko-fi"></a>
 <a href="https://www.buymeacoffee.com/fman"><img height="40" src="https://user-images.githubusercontent.com/26390946/161375563-69c634fd-89d2-45ac-addd-931b03996b34.png" alt="Buy Me a Coffee"></a>
 
@@ -21,11 +25,16 @@
 
 | [Live demo](https://tkko.github.io/Flutter_Pinput/) | Rounded with shadows | Rounded with cursor |
 | :---: | :---: | :---: |
-| <a href="https://tkko.github.io/Flutter_Pinput/"><img height="400" src="https://user-images.githubusercontent.com/26390946/155666045-aa93bf48-f8e7-407c-bb19-bc247d9e12bd.png" alt="Live demo"/></a> | <img height="400" src="https://user-images.githubusercontent.com/26390946/155599527-fe934f2c-5124-4754-bbf6-bb97d55a77c0.gif" alt="Rounded with shadows"/> | <img height="400" src="https://user-images.githubusercontent.com/26390946/155599870-03387689-7be2-4a30-8e6f-90136a0515be.gif" alt="Rounded with cursor"/> |
+| <a href="https://tkko.github.io/Flutter_Pinput/"><img width="180" height="400" src="https://user-images.githubusercontent.com/26390946/155666045-aa93bf48-f8e7-407c-bb19-bc247d9e12bd.png" alt="Live demo"/></a> | <img width="180" height="400" src="https://user-images.githubusercontent.com/26390946/155599527-fe934f2c-5124-4754-bbf6-bb97d55a77c0.gif" alt="Rounded with shadows"/> | <img width="180" height="400" src="https://user-images.githubusercontent.com/26390946/155599870-03387689-7be2-4a30-8e6f-90136a0515be.gif" alt="Rounded with cursor"/> |
+
+<details>
+<summary><b>More styles</b></summary>
 
 | Rounded filled | Bottom cursor | Filled |
 | :---: | :---: | :---: |
-| <img height="400" src="https://user-images.githubusercontent.com/26390946/155600099-d0a02f55-09e6-4142-92de-066cd71cf211.gif" alt="Rounded filled"/> | <img height="400" src="https://user-images.githubusercontent.com/26390946/155600276-0380b3b4-3d9c-4ea8-87d0-4f7ebd86e460.gif" alt="Bottom cursor"/> | <img height="400" src="https://user-images.githubusercontent.com/26390946/155600427-901c1eae-e565-4cf8-a338-8ac40eb1149c.gif" alt="Filled"/> |
+| <img width="180" height="400" src="https://user-images.githubusercontent.com/26390946/155600099-d0a02f55-09e6-4142-92de-066cd71cf211.gif" alt="Rounded filled"/> | <img width="180" height="400" src="https://user-images.githubusercontent.com/26390946/155600276-0380b3b4-3d9c-4ea8-87d0-4f7ebd86e460.gif" alt="Bottom cursor"/> | <img width="180" height="400" src="https://user-images.githubusercontent.com/26390946/155600427-901c1eae-e565-4cf8-a338-8ac40eb1149c.gif" alt="Filled"/> |
+
+</details>
 
 ## Features
 
@@ -38,13 +47,7 @@
 - Closes the keyboard after completion
 - Ready-made [templates](example/lib) to pick from
 
-## Platform support
-
-| Android | iOS | Web | macOS | Windows | Linux |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-
-SMS autofill works out of the box on iOS. On Android the app sets the code on the controller, see [SMS autofill](#sms-autofill).
+**Platforms:** Android, iOS, web, macOS, Windows and Linux. SMS autofill works out of the box on iOS; on Android the app sets the code on the controller, see [SMS autofill](#sms-autofill).
 
 ## Install
 
@@ -369,7 +372,7 @@ PRs are welcome. The [example app](example/lib) has multiple templates to choose
 
 <div align="center">
 
-Made by [Tornike](https://www.linkedin.com/in/thornike/) · [Discord](https://rebrand.ly/qwc3s0d) · [MIT License](LICENSE)
+Made by [Tornike](https://www.linkedin.com/in/thornike/) · [MIT License](LICENSE)
 
 If this package helps you, a ⭐ on GitHub means a lot.
 
