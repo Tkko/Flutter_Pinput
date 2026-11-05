@@ -19,9 +19,8 @@ funding:
   - https://ko-fi.com/flutterman
 
 environment:
-  sdk: '>=3.12.0 <4.0.0'
+  sdk: ^3.12.0
   flutter: ">=3.44.0"
-
 
 dependencies:
   flutter:
@@ -31,5 +30,5 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
-  material_ui: ^1.0.0
-  cupertino_ui: ^1.0.0
+  material_ui: ^1.2.0
+  cupertino_ui: ^1.0.2
