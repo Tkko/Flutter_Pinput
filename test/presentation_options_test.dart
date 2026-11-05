@@ -248,40 +248,38 @@ void main() {
     );
   });
 
-  testWidgets(
-    'Selection shortcuts follow enablement, not menu availability',
-    (tester) async {
-      final controller = TextEditingController(text: '1234');
-      final focusNode = FocusNode();
-      addTearDown(controller.dispose);
-      addTearDown(focusNode.dispose);
-      for (final enabled in [true, false]) {
-        await tester.pumpApp(
-          Pinput(
-            controller: controller,
-            focusNode: focusNode,
-            enableInteractiveSelection: enabled,
-            contextMenuBuilder: null,
-            cursor: const PinCursor.hidden(),
-          ),
-        );
-        focusNode.requestFocus();
-        controller.selection = const TextSelection.collapsed(offset: 4);
-        await tester.pump();
-        await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
-        await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
-        await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
-        await tester.pump();
-        expect(
-          controller.selection,
-          enabled
-              ? const TextSelection(baseOffset: 0, extentOffset: 4)
-              : const TextSelection.collapsed(offset: 4),
-        );
-      }
-    },
-    variant: TargetPlatformVariant({TargetPlatform.macOS}),
-  );
+  testWidgets('Selection shortcuts follow enablement, not menu availability', (
+    tester,
+  ) async {
+    final controller = TextEditingController(text: '1234');
+    final focusNode = FocusNode();
+    addTearDown(controller.dispose);
+    addTearDown(focusNode.dispose);
+    for (final enabled in [true, false]) {
+      await tester.pumpApp(
+        Pinput(
+          controller: controller,
+          focusNode: focusNode,
+          enableInteractiveSelection: enabled,
+          contextMenuBuilder: null,
+          cursor: const PinCursor.hidden(),
+        ),
+      );
+      focusNode.requestFocus();
+      controller.selection = const TextSelection.collapsed(offset: 4);
+      await tester.pump();
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.metaLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.metaLeft);
+      await tester.pump();
+      expect(
+        controller.selection,
+        enabled
+            ? const TextSelection(baseOffset: 0, extentOffset: 4)
+            : const TextSelection.collapsed(offset: 4),
+      );
+    }
+  }, variant: TargetPlatformVariant({TargetPlatform.macOS}));
 
   group('PinThemes', () {
     const initial = PinTheme(width: 1);
