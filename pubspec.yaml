@@ -16,7 +16,7 @@ screenshots:
   - description: 'Pin code example'
     path: screenshots/pinput_demo_2.webp
 funding:
-  - https://ko-fi.com/flutterman
+  - https://ko-fi.com/tornike_dev
 
 environment:
   sdk: ^3.12.0
