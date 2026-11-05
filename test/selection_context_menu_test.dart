@@ -45,7 +45,7 @@ void main() {
       await tester.pumpApp(
         Pinput(
           controller: controller,
-          pinEditMode: mode,
+          editMode: mode,
           enableInteractiveSelection: true,
           closeKeyboardWhenCompleted: false,
         ),
@@ -92,7 +92,7 @@ void main() {
       await tester.pumpApp(
         Pinput(
           controller: controller,
-          pinEditMode: mode,
+          editMode: mode,
           enableInteractiveSelection: true,
           closeKeyboardWhenCompleted: false,
         ),

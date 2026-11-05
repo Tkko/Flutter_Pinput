@@ -10,7 +10,7 @@ class _PinOverwriteTextInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     // Range selections use native replacement semantics, not slot deletion.
-    if (state.widget.pinEditMode == PinEditMode.none ||
+    if (state.widget.editMode == PinEditMode.none ||
         (newValue.composing.isValid && !newValue.composing.isCollapsed)) {
       return newValue;
     }

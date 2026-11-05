@@ -181,7 +181,7 @@ void main() {
                 key: const ValueKey('pinput_overwrite'),
                 length: 4,
                 controller: controller,
-                pinEditMode: PinEditMode.overwrite,
+                editMode: PinEditMode.overwrite,
                 theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
                 onCompleted: (val) {
@@ -236,7 +236,7 @@ void main() {
                 key: const ValueKey('pinput_del_mid'),
                 length: 4,
                 controller: controller,
-                pinEditMode: PinEditMode.overwrite,
+                editMode: PinEditMode.overwrite,
                 theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
               ),
@@ -292,7 +292,7 @@ void main() {
                 key: const ValueKey('pinput_clear_following'),
                 length: 4,
                 controller: controller,
-                pinEditMode: PinEditMode.clearFollowing,
+                editMode: PinEditMode.clearFollowing,
                 theme: PinThemes(fallback: defaultTheme),
                 cursor: const PinCursor.static(),
                 onCompleted: (_) => completedCount++,
@@ -482,8 +482,8 @@ void main() {
                       cursor: const PinCursor.static(),
                       onChanged: field.didChange,
                       validationState: field.errorText == null
-                          ? const PinputValidationState.idle()
-                          : PinputValidationState.invalid(field.errorText!),
+                          ? const PinValidationState.idle()
+                          : PinValidationState.invalid(field.errorText!),
                     ),
                   ),
                   ElevatedButton(
@@ -547,8 +547,8 @@ void main() {
                         field.didChange(value);
                       },
                       validationState: field.errorText == null
-                          ? const PinputValidationState.idle()
-                          : PinputValidationState.invalid(field.errorText!),
+                          ? const PinValidationState.idle()
+                          : PinValidationState.invalid(field.errorText!),
                     ),
                   ),
                   ElevatedButton(
@@ -759,54 +759,5 @@ void main() {
         },
       );
     });
-
-    // =========================================================================
-    // 8. SMS Retriever Mock Flow
-    // =========================================================================
-    group('8. SMS Retriever Integration', () {
-      testWidgets(
-        'SmsRetriever resolution automatically populates pin and calls onCompleted',
-        (tester) async {
-          final controller = TextEditingController();
-          String? completed;
-
-          final mockRetriever = _MockSmsRetriever('4567');
-
-          await tester.pumpWidget(
-            buildTestHarness(
-              Pinput(
-                key: const ValueKey('pinput_sms'),
-                length: 4,
-                controller: controller,
-                smsRetriever: mockRetriever,
-                theme: PinThemes(fallback: defaultTheme),
-                cursor: const PinCursor.static(),
-                onCompleted: (val) => completed = val,
-              ),
-            ),
-          );
-          await pumpFrames(tester);
-
-          expect(controller.text, '4567');
-          expect(completed, '4567');
-          expect(find.text('4'), findsOneWidget);
-          expect(find.text('7'), findsOneWidget);
-        },
-      );
-    });
   });
-}
-
-class _MockSmsRetriever implements SmsRetriever {
-  final String code;
-  _MockSmsRetriever(this.code);
-
-  @override
-  Future<String?> getSmsCode() async => code;
-
-  @override
-  bool get listenForMultipleSms => false;
-
-  @override
-  Future<void> dispose() async {}
 }

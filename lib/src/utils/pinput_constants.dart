@@ -1,14 +1,17 @@
 part of '../pinput.dart';
 
 /// The constant values for Pinput
-class PinputConstants {
-  const PinputConstants._();
+class _PinputConstants {
+  const _PinputConstants._();
 
   /// The default value [PinAnimation.duration]
   static const _animationDuration = Duration(milliseconds: 180);
 
+  /// The default blink interval of [PinCursor.blinking]
+  static const _cursorBlinkDuration = Duration(milliseconds: 450);
+
   /// The default value [Pinput.length]
-  static const _defaultLength = 4;
+  static const _defaultLength = 6;
 
   static const _defaultSeparator = SizedBox(width: 8);
 
@@ -39,8 +42,31 @@ class PinputConstants {
 
   ///
   static const _defaultPinFillColor = Color.fromRGBO(222, 231, 240, .57);
+  static const _defaultPinRadius = BorderRadius.all(Radius.circular(8));
+  static const _defaultFocusColor = Color(0xFF64748B);
+  static const _defaultDisabledFillColor = Color.fromRGBO(222, 231, 240, .25);
+  static const _defaultDisabledTextColor = Color(0xFF94A3B8);
+
   static const _defaultPinputDecoration = BoxDecoration(
     color: _defaultPinFillColor,
-    borderRadius: BorderRadius.all(Radius.circular(8)),
+    borderRadius: _defaultPinRadius,
+  );
+  static const _defaultFocusedDecoration = BoxDecoration(
+    color: _defaultPinFillColor,
+    borderRadius: _defaultPinRadius,
+    border: Border.fromBorderSide(
+      BorderSide(color: _defaultFocusColor, width: 1.5),
+    ),
+  );
+  static const _defaultDisabledDecoration = BoxDecoration(
+    color: _defaultDisabledFillColor,
+    borderRadius: _defaultPinRadius,
+  );
+  static const _defaultErrorDecoration = BoxDecoration(
+    color: _defaultPinFillColor,
+    borderRadius: _defaultPinRadius,
+    border: Border.fromBorderSide(
+      BorderSide(color: _defaultLightErrorColor, width: 1.5),
+    ),
   );
 }

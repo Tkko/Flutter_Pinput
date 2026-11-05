@@ -8,7 +8,13 @@ class _PinItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pinTheme = _pinTheme(index);
+    final item = state._pinItemState(index);
+    final themes =
+        state.widget.theme ??
+        DefaultPinThemes.maybeOf(context) ??
+        const PinThemes();
+    final pinTheme = themes.resolve(item, state.widget.validationState);
+    final duration = state._animationDuration(context);
 
     return state._wrapWithPinTap(
       index,
@@ -21,47 +27,35 @@ class _PinItem extends StatelessWidget {
           margin: pinTheme.margin,
           decoration: pinTheme.decoration,
           alignment: pinTheme.alignment ?? Alignment.center,
-          duration: state.widget.pinAnimation.duration,
-          curve: state.widget.pinAnimation.curve,
+          duration: duration,
+          curve: state.widget.animation.curve,
           child: AnimatedSwitcher(
-            switchInCurve: state.widget.pinAnimation.curve,
-            switchOutCurve: state.widget.pinAnimation.curve,
-            duration: state.widget.pinAnimation.duration,
+            switchInCurve: state.widget.animation.curve,
+            switchOutCurve: state.widget.animation.curve,
+            duration: duration,
             transitionBuilder: _getTransition,
-            child: _buildFieldContent(index, pinTheme),
+            child: _buildFieldContent(context, item, pinTheme),
           ),
         ),
       ),
     );
   }
 
-  PinTheme _pinTheme(int index) {
-    final item = PinItemState(
-      value: state._slotValue(index),
-      index: index,
-      type: state._getState(index),
-    );
-    return state.widget.theme?.resolve(item, state.widget.validationState) ??
-        PinTheme.defaults;
-  }
-
-  Widget _buildFieldContent(int index, PinTheme pinTheme) {
-    final char = state._slotValue(index);
+  Widget _buildFieldContent(
+    BuildContext context,
+    PinItemState item,
+    PinTheme pinTheme,
+  ) {
+    final char = item.value;
     final key = ValueKey<String>('$index-$char');
-    final isSubmittedPin = char.isNotEmpty;
-
-    final isActiveField = index == state.selectedIndex;
-    final focused =
-        state._effectiveFocusNode.hasFocus || !state._useNativeKeyboard;
     final shouldShowCursor =
-        state.widget.cursor._type != _PinCursorType.hidden &&
-        state.isEnabled &&
-        isActiveField &&
-        focused;
+        state.widget.cursor._type != _PinCursorType.hidden && item.showCursor;
 
-    if (isSubmittedPin) {
+    if (item.isFilled) {
       final Widget characterWidget;
-      final obscuring = state.widget.obscuring;
+      final obscuring = index == state._revealedSlot
+          ? null
+          : state.widget.obscuring;
       if (obscuring?._widget != null) {
         characterWidget = SizedBox(key: key, child: obscuring!._widget);
       } else {
@@ -74,13 +68,13 @@ class _PinItem extends StatelessWidget {
 
       // With pin editing the filled pin always uses the same wrapper, so moving
       // the cursor on/off a pin does not replay the AnimatedSwitcher transition.
-      if (state.widget.pinEditMode != PinEditMode.none) {
+      if (state.widget.editMode != PinEditMode.none) {
         return Stack(
           key: key,
           alignment: pinTheme.alignment ?? Alignment.center,
           children: [
             characterWidget,
-            if (shouldShowCursor) _buildCursor(pinTheme),
+            if (shouldShowCursor) _buildCursor(context, pinTheme),
           ],
         );
       }
@@ -89,7 +83,7 @@ class _PinItem extends StatelessWidget {
     }
 
     if (shouldShowCursor) {
-      return _buildCursor(pinTheme);
+      return _buildCursor(context, pinTheme);
     }
 
     if (pinTheme.placeholder != null) {
@@ -99,11 +93,13 @@ class _PinItem extends StatelessWidget {
     return Text('', key: key, style: pinTheme.textStyle);
   }
 
-  Widget _buildCursor(PinTheme pinTheme) {
-    if (state.widget.cursor._type == _PinCursorType.blinking) {
+  Widget _buildCursor(BuildContext context, PinTheme pinTheme) {
+    final reduceMotion = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    if (state.widget.cursor._type == _PinCursorType.blinking && !reduceMotion) {
       return _PinputAnimatedCursor(
         textStyle: pinTheme.textStyle,
         cursor: state.widget.cursor._child,
+        blinkDuration: state.widget.cursor._blinkDuration,
       );
     }
 
@@ -118,7 +114,7 @@ class _PinItem extends StatelessWidget {
       return child;
     }
 
-    switch (state.widget.pinAnimation._type) {
+    switch (state.widget.animation._type) {
       case _PinAnimationType.none:
         return child;
       case _PinAnimationType.fade:
@@ -128,13 +124,15 @@ class _PinItem extends StatelessWidget {
       case _PinAnimationType.slide:
         return SlideTransition(
           position: Tween<Offset>(
-            begin: state.widget.pinAnimation._beginOffset!,
+            begin: state.widget.animation._beginOffset!,
             end: Offset.zero,
           ).animate(animation),
           child: child,
         );
       case _PinAnimationType.rotation:
         return RotationTransition(turns: animation, child: child);
+      case _PinAnimationType.custom:
+        return state.widget.animation._transitionBuilder!(child, animation);
     }
   }
 }

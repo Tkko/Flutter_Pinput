@@ -66,7 +66,7 @@ class _OnlyBottomCursorState extends State<OnlyBottomCursor> {
 
     return Pinput(
       length: 5,
-      pinAnimation: const PinAnimation.slide(),
+      animation: const PinAnimation.slide(),
       controller: controller,
       focusNode: focusNode,
       theme: PinThemes(

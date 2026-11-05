@@ -41,9 +41,7 @@ class _ExampleState extends State<Example> {
   Widget build(BuildContext context) {
     return Pinput(
       controller: pinController,
-      keyboard: PinKeyboardConfig(
-        autofillHints: const [AutofillHints.oneTimeCode],
-      ),
+      keyboard: PinKeyboard(autofillHints: const [AutofillHints.oneTimeCode]),
       length: 10,
       enableInteractiveSelection: false,
       inputFormatters: [Formatter()],
@@ -59,28 +57,29 @@ class ErrorStateExample extends StatefulWidget {
 }
 
 class _ErrorStateExampleState extends State<ErrorStateExample> {
-  PinputValidationState _validationState = const PinputValidationState.idle();
+  PinValidationState _validationState = const PinValidationState.idle();
   int _validationRequest = 0;
 
   Future<void> _validate(String value) async {
     final request = ++_validationRequest;
-    setState(() => _validationState = const PinputValidationState.validating());
+    setState(() => _validationState = const PinValidationState.validating());
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted || request != _validationRequest) return;
     setState(() {
       _validationState = value == '1111'
-          ? const PinputValidationState.invalid('Incorrect code')
-          : const PinputValidationState.valid();
+          ? const PinValidationState.invalid('Incorrect code')
+          : const PinValidationState.valid();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Pinput(
+      length: 4,
       validationState: _validationState,
       onChanged: (_) {
         _validationRequest++;
-        setState(() => _validationState = const PinputValidationState.idle());
+        setState(() => _validationState = const PinValidationState.idle());
       },
       onCompleted: _validate,
     );
@@ -116,13 +115,13 @@ class HeightExample extends StatelessWidget {
             color: Colors.red,
           ),
         ),
-        submitted: defaultPinTheme.copyWith(
+        filled: defaultPinTheme.copyWith(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5.0),
             color: Colors.green,
           ),
         ),
-        following: defaultPinTheme.copyWith(
+        empty: defaultPinTheme.copyWith(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5.0),
             color: Colors.blue,

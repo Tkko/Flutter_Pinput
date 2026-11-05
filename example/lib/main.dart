@@ -56,7 +56,6 @@ class PinputExample extends StatefulWidget {
 }
 
 class _PinputExampleState extends State<PinputExample> {
-  late final SmsRetriever smsRetriever;
   late final TextEditingController pinController;
   late final FocusNode focusNode;
   late final GlobalKey<FormState> formKey;
@@ -74,7 +73,17 @@ class _PinputExampleState extends State<PinputExample> {
     focusNode = FocusNode();
 
     /// In case you need an SMS autofill feature
-    smsRetriever = SmsRetrieverImpl(SmartAuth.instance);
+    _listenForSmsCode();
+  }
+
+  /// You can use any package to retrieve the SMS code, in this example we are
+  /// using SmartAuth. Set the code on the controller when it arrives.
+  Future<void> _listenForSmsCode() async {
+    final signature = await SmartAuth.instance.getAppSignature();
+    debugPrint('App Signature: $signature');
+    final res = await SmartAuth.instance.getSmsWithUserConsentApi();
+    final code = res.data?.code;
+    if (mounted && code != null) pinController.setText(code);
   }
 
   @override
@@ -82,6 +91,7 @@ class _PinputExampleState extends State<PinputExample> {
     if (kIsWeb) {
       BrowserContextMenu.enableContextMenu();
     }
+    SmartAuth.instance.removeUserConsentApiListener();
     pinController.dispose();
     focusNode.dispose();
     super.dispose();
@@ -119,12 +129,10 @@ class _PinputExampleState extends State<PinputExample> {
               initialValue: pinController.text,
               validator: (value) => value == '2222' ? null : 'Pin is incorrect',
               builder: (field) => Pinput(
+                length: 4,
                 validationState: field.errorText == null
-                    ? const PinputValidationState.idle()
-                    : PinputValidationState.invalid(field.errorText!),
-                // You can pass your own SmsRetriever implementation based on any package
-                // in this example we are using the SmartAuth
-                smsRetriever: smsRetriever,
+                    ? const PinValidationState.idle()
+                    : PinValidationState.invalid(field.errorText!),
                 controller: pinController,
                 focusNode: focusNode,
                 theme: PinThemes(
@@ -136,7 +144,7 @@ class _PinputExampleState extends State<PinputExample> {
                           border: Border.all(color: focusedBorderColor),
                         ),
                   ),
-                  submitted: defaultPinTheme.copyWith(
+                  filled: defaultPinTheme.copyWith(
                     decoration: (defaultPinTheme.decoration as BoxDecoration)
                         .copyWith(
                           color: fillColor,
@@ -149,7 +157,8 @@ class _PinputExampleState extends State<PinputExample> {
                   ),
                 ),
                 layout: PinLayout(
-                  separatorBuilder: (index) => const SizedBox(width: 8),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 8),
                 ),
                 hapticFeedbackType: HapticFeedbackType.lightImpact,
                 onCompleted: (pin) {
@@ -186,28 +195,4 @@ class _PinputExampleState extends State<PinputExample> {
       ),
     );
   }
-}
-
-/// You, as a developer should implement this interface.
-/// You can use any package to retrieve the SMS code. in this example we are using SmartAuth
-class SmsRetrieverImpl implements SmsRetriever {
-  const SmsRetrieverImpl(this.smartAuth);
-
-  final SmartAuth smartAuth;
-
-  @override
-  Future<void> dispose() {
-    return smartAuth.removeUserConsentApiListener();
-  }
-
-  @override
-  Future<String?> getSmsCode() async {
-    final signature = await smartAuth.getAppSignature();
-    debugPrint('App Signature: $signature');
-    final res = await smartAuth.getSmsWithUserConsentApi();
-    return res.data?.code;
-  }
-
-  @override
-  bool get listenForMultipleSms => false;
 }

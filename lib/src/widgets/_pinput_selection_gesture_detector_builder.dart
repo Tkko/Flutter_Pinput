@@ -29,7 +29,7 @@ class _PinputSelectionGestureDetectorBuilder
         final controller = _state._effectiveController;
         final before = controller.selection;
         super.onSingleTapUp(details);
-        if (_state.widget.pinEditMode != PinEditMode.none) {
+        if (_state.widget.editMode != PinEditMode.none) {
           controller.selection = before.isValid
               ? before
               : TextSelection.collapsed(offset: controller.text.length);

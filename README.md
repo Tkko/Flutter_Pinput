@@ -35,7 +35,7 @@ Flutter Pinput is a package that provides an easy-to-use and customizable Pin co
 - Animated Decoration Switching
 - App-controlled validation feedback (Form integration via `FormField`)
 - SMS Autofill on iOS
-- SMS Autofill on Android
+- SMS Autofill on Android (set the code on the controller, see [Android](#android))
 - Standard Cursor
 - Custom Cursor
 - Cursor Animation
@@ -69,7 +69,7 @@ Don't forget to give it a star ⭐
 
 ## Getting Started
 
-The pin has 6 states `default` `focused`, `submitted`, `following`, `disabled`, `error`, you can customize each state by specifying theme parameter.
+The pin has 6 states `default` `focused`, `filled`, `empty`, `disabled`, `error`, you can customize each state by specifying theme parameter.
 Pin smoothly animates from one state to another automatically.
 `PinTheme Class`
 
@@ -107,8 +107,9 @@ final defaultPinTheme = PinTheme(
 );
 ```
 
-If you want all pins to be the same, pass `PinThemes.all(defaultPinTheme)` (or no theme at all).
-If not, create the focused, submitted, following, disabled and error themes from `defaultPinTheme`
+If you want all pins to be the same in every state, pass `PinThemes.all(defaultPinTheme)`. Without a theme the built-in look
+marks the focused, disabled and error states.
+If not, create the focused, filled, empty, disabled and error themes from `defaultPinTheme`
 
 ```dart
 final focusedPinTheme = defaultPinTheme.copyDecorationWith(
@@ -116,7 +117,7 @@ final focusedPinTheme = defaultPinTheme.copyDecorationWith(
   borderRadius: BorderRadius.circular(8),
 );
 
-final submittedPinTheme = defaultPinTheme.copyDecorationWith(
+final filledPinTheme = defaultPinTheme.copyDecorationWith(
   color: Color.fromRGBO(234, 239, 243, 1),
 );
 ```
@@ -139,7 +140,7 @@ final focusedPinTheme = defaultPinTheme.copyDecorationWith(
   borderRadius: BorderRadius.circular(8),
 );
 
-final submittedPinTheme = defaultPinTheme.copyDecorationWith(
+final filledPinTheme = defaultPinTheme.copyDecorationWith(
   color: Color.fromRGBO(234, 239, 243, 1),
 );
 
@@ -147,20 +148,22 @@ return Pinput(
   theme: PinThemes(
     fallback: defaultPinTheme,
     focused: focusedPinTheme,
-    submitted: submittedPinTheme,
+    filled: filledPinTheme,
   ),
-  validationState: const PinputValidationState.idle(),
+  validationState: const PinValidationState.idle(),
   cursor: const PinCursor.blinking(),
   onCompleted: (pin) => print(pin),
 );
 ```
 
 `PinThemes` mirrors `WidgetStateProperty`: use `PinThemes(fallback:, focused:, …)`, `PinThemes.all`, or
-`PinThemes.resolveWith((item, validation) => ...)` to pick a theme per pin. `item` has the pin's `index`, `value` and
-`type` (`PinItemStateType`: `focused`, `submitted`, `following`, `disabled`, `error`).
+`PinThemes.resolveWith((item, validation) => ...)` to pick a theme per pin. `item` has the pin's `index`, `value`,
+`type` (`PinItemStateType`: `focused`, `filled`, `empty`, `disabled`, `error`), `isFilled`, `isFocused` and `showCursor`.
+`isFocused` stays accurate while `type` is `error`, and `showCursor` tells a full PIN's focused last pin from the cursor.
 In the named form, a state you don't set uses `fallback`. Set `valid` or `validating` to style the pins while the app
-supplies `PinputValidationState.valid()` or `.validating()`; otherwise those states don't change the look.
-Implement `PinThemes` to share a theme as your own type.
+supplies `PinValidationState.valid()` or `.validating()`; otherwise those states don't change the look.
+Implement `PinThemes` to share a theme as your own type, or wrap part of your app in
+`DefaultPinThemes(themes: ..., child: ...)` to style every `Pinput` below it that has no `theme`.
 A state theme is used exactly as written and is not merged with `fallback`, so derive it
 with `copyWith`. `PinTheme.decoration` accepts any `Decoration` (`BoxDecoration`, `ShapeDecoration`, …); `copyDecorationWith` and `copyBorderWith` require a `BoxDecoration`. `PinTheme.placeholder` replaces `preFilledWidget`. `PinTheme.defaults` is the built-in theme to derive from.
 
@@ -193,6 +196,39 @@ And set pinController's value in `verificationCompleted` callback:
 If you aren't using firebase_auth, you have two options, [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview?hl=en) and [SMS User Consent API](https://developers.google.com/identity/sms-retriever/user-consent/overview),
 
 [SmartAuth](https://pub.dev/packages/smart_auth) is a wrapper package for Flutter for these APIs, so go ahead and add it as a dependency.
+
+Pinput doesn't read SMS itself. Your app listens for the code and sets it on the controller, so it also owns starting and
+stopping the listener:
+
+```dart
+class _OtpPageState extends State<OtpPage> {
+  final pinController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _listenForSmsCode();
+  }
+
+  Future<void> _listenForSmsCode() async {
+    final res = await SmartAuth.instance.getSmsWithRetrieverApi();
+    final code = res.data?.code;
+    if (mounted && code != null) pinController.setText(code);
+  }
+
+  @override
+  void dispose() {
+    SmartAuth.instance.removeSmsRetrieverApiListener();
+    pinController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Pinput(controller: pinController);
+}
+```
+
+To keep listening for more messages, call `_listenForSmsCode` again after each result.
 
 ###### SMS Retriever API
 
@@ -233,12 +269,13 @@ final pinController = TextEditingController();
 pinController.setText('1222');
 
 /// Append typed character, useful if you are using custom keyboard  
-pinController.append('1', 4);
+pinController.appendPin('1', 4);
 
 /// Delete last character  
-pinController.delete();
+pinController.deleteLastPin();
 
-/// Don't call setText, append, delete in build method, this is just illustration.  
+/// Text longer than Pinput.length is cut to that length, like typed text.
+/// Don't call setText, appendPin, deleteLastPin in build method, this is just illustration.  
 
 return Pinput(
   controller: pinController,  
@@ -270,19 +307,23 @@ return Pinput(
 Pinput(
   cursor: PinCursor.blinking(child: MyCursor()), // static() or hidden() are also available
   obscuring: const PinObscuring.character('*'), // null displays original text
-  pinAnimation: const PinAnimation.slide(
+  animation: const PinAnimation.slide(
     beginOffset: Offset(0, 0.5),
     duration: Duration(milliseconds: 250),
   ),
 )
 ```
 
-`PinObscuring.character()` uses a bullet by default.
+`PinObscuring.character()` uses a bullet by default. To keep a typed pin visible for a moment before masking, pass a
+duration: `PinObscuring.character('*', Duration(seconds: 1))` or `PinObscuring.widget(MyDot(), revealDuration: …)`.
 `PinObscuring.widget(MyDot())` supplies custom visible masking and uses a bullet
 for native obscuring. A character must be one UTF-16 code unit, matching Flutter's
 native requirement. Original text remains available in the controller and callbacks.
 Masking widgets may be stateful: each slot creates its own State. Do not reuse
 a masking widget containing a shared GlobalKey across slots.
+`PinAnimation.custom(transitionBuilder: …)` supplies your own content transition, and
+`PinCursor.blinking(blinkDuration: …)` sets the blink speed. Animations and blinking stop when the platform asks to reduce
+motion. `PinLayout(textDirection: TextDirection.ltr)` keeps a numeric code left to right in an RTL app.
 With `itemBuilder`, `obscuring` only enables native masking; the builder must mask
 visible content itself.
 
@@ -301,16 +342,16 @@ toolbar follow Flutter's legacy toolbar behavior; use controls with
 
 Pinput renders app-owned validation feedback through `validationState`:
 
-The `validating()` factory uses the `PinputValidationValidating` subtype for
+The `validating()` factory uses the `PinValidationValidating` subtype for
 pattern matching. Presentation configurations (`PinAnimation` and `PinObscuring`)
 support value equality; custom masking widgets use normal widget equality.
 
 | State | Behavior |
 | --- | --- |
-| `PinputValidationState.idle()` | Default; no current result or feedback. |
-| `PinputValidationState.validating()` | Pending; normal appearance, no error. |
-| `PinputValidationState.valid()` | Passed; normal appearance, no error. |
-| `PinputValidationState.invalid([message])` | Error pin theme and optional error message, even while focused. |
+| `PinValidationState.idle()` | Default; no current result or feedback. |
+| `PinValidationState.validating()` | Pending; normal appearance, no error. |
+| `PinValidationState.valid()` | Passed; normal appearance, no error. |
+| `PinValidationState.invalid([message])` | Error pin theme and optional error message, even while focused. |
 
 ```dart
 Pinput(
@@ -333,7 +374,7 @@ or the **Async validation** tab in the demo gallery. Enter `2222` for success.
 The example shows progress, errors, and discarding outdated responses when edited.
 See [`AsyncValidationExample`](example/lib/demo/async_validation_example.dart).
 
-`errorTextStyle` styles the default error text. `errorBuilder(message, pin)`
+`errorTextStyle` styles the default error text. `errorBuilder(context, message, pin)`
 replaces the default error widget and ignores `errorTextStyle`. Both are available
 in `Pinput`, including with `itemBuilder`.
 The invalid state's message is optional: `invalid()` applies error styling
@@ -351,8 +392,8 @@ FormField<String>(
   builder: (field) => Pinput(
     onChanged: field.didChange,
     validationState: field.errorText == null
-        ? const PinputValidationState.idle()
-        : PinputValidationState.invalid(field.errorText!),
+        ? const PinValidationState.idle()
+        : PinValidationState.invalid(field.errorText!),
   ),
 )
 ```
@@ -388,8 +429,8 @@ FormField<String>(
   builder: (field) => Pinput(
     controller: pinController,
     validationState: field.errorText == null
-        ? const PinputValidationState.idle()
-        : PinputValidationState.invalid(field.errorText!),
+        ? const PinValidationState.idle()
+        : PinValidationState.invalid(field.errorText!),
   ),
 )
 ```

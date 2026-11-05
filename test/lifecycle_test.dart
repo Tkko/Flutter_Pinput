@@ -1,51 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pinput/pinput.dart';
 
 import 'helpers/helpers.dart';
 
-class _PendingSmsRetriever implements SmsRetriever {
-  final result = Completer<String?>();
-  int requests = 0;
-  int disposals = 0;
-
-  @override
-  bool get listenForMultipleSms => true;
-
-  @override
-  Future<String?> getSmsCode() {
-    requests++;
-    return result.future;
-  }
-
-  @override
-  Future<void> dispose() async {
-    disposals++;
-  }
-}
-
 void main() {
-  testWidgets('Late SMS results do not update or restart after disposal', (
-    tester,
-  ) async {
-    final retriever = _PendingSmsRetriever();
-    final controller = TextEditingController();
-    await tester.pumpApp(
-      Pinput(controller: controller, smsRetriever: retriever),
-    );
-    await tester.pumpApp(const SizedBox.shrink());
-    retriever.result.complete('1234');
-    await tester.pump();
-
-    expect(controller.text, '');
-    expect(retriever.requests, 1);
-    expect(retriever.disposals, 1);
-    expect(tester.takeException(), isNull);
-    controller.dispose();
-  });
-
   testWidgets(
     'Replacing a controller does not turn selection into text change',
     (tester) async {

@@ -36,7 +36,7 @@ class AlienKeyboard extends StatelessWidget {
                     child: CircularButton(
                       text: '$index',
                       size: buttonSize,
-                      onTap: () => controller.append('$index', 4),
+                      onTap: () => controller.appendPin('$index', 4),
                     ),
                   );
                 }),
@@ -51,7 +51,7 @@ class AlienKeyboard extends StatelessWidget {
                     child: CircularButton(
                       text: '$index',
                       size: buttonSize,
-                      onTap: () => controller.append('$index', 4),
+                      onTap: () => controller.appendPin('$index', 4),
                     ),
                   );
                 }),
@@ -65,13 +65,13 @@ class AlienKeyboard extends StatelessWidget {
                       CircularButton(
                         text: '0',
                         size: buttonSize,
-                        onTap: () => controller.append('0', 4),
+                        onTap: () => controller.appendPin('0', 4),
                       ),
                       const SizedBox(width: 4),
                       CircularButton(
                         text: '-',
                         size: buttonSize,
-                        onTap: () => controller.delete(),
+                        onTap: () => controller.deleteLastPin(),
                       ),
                     ],
                   ),

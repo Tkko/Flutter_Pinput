@@ -1,18 +1,16 @@
 part of '../pinput.dart';
 
-/// Signature for a function that creates a widget for a given index, e.g., in a
-/// list.
-typedef JustIndexedWidgetBuilder = Widget Function(int index);
-
 class _SeparatedRaw extends StatelessWidget {
   final List<Widget> children;
   final MainAxisAlignment mainAxisAlignment;
-  final JustIndexedWidgetBuilder? separatorBuilder;
+  final IndexedWidgetBuilder? separatorBuilder;
+  final TextDirection? textDirection;
 
   const _SeparatedRaw({
     required this.children,
     required this.mainAxisAlignment,
     this.separatorBuilder,
+    this.textDirection,
   });
 
   @override
@@ -20,20 +18,22 @@ class _SeparatedRaw extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: mainAxisAlignment,
+      textDirection: textDirection,
       mainAxisSize: mainAxisAlignment == MainAxisAlignment.center
           ? MainAxisSize.min
           : MainAxisSize.max,
       children: [
         for (var index = 0; index < children.length; index++) ...[
-          if (index > 0) _separator(index - 1),
+          if (index > 0) _separator(context, index - 1),
           children[index],
         ],
       ],
     );
   }
 
-  Widget _separator(int index) =>
-      separatorBuilder?.call(index) ?? PinputConstants._defaultSeparator;
+  Widget _separator(BuildContext context, int index) =>
+      separatorBuilder?.call(context, index) ??
+      _PinputConstants._defaultSeparator;
 }
 
 class _PinputCursor extends StatelessWidget {
@@ -49,8 +49,13 @@ class _PinputCursor extends StatelessWidget {
 class _PinputAnimatedCursor extends StatefulWidget {
   final Widget? cursor;
   final TextStyle? textStyle;
+  final Duration blinkDuration;
 
-  const _PinputAnimatedCursor({required this.textStyle, required this.cursor});
+  const _PinputAnimatedCursor({
+    required this.textStyle,
+    required this.cursor,
+    required this.blinkDuration,
+  });
 
   @override
   State<_PinputAnimatedCursor> createState() => _PinputAnimatedCursorState();
@@ -69,7 +74,7 @@ class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor>
   void _startCursorAnimation() {
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 450),
+      duration: widget.blinkDuration,
     );
 
     _animationController.addStatusListener((AnimationStatus status) {
@@ -78,6 +83,12 @@ class _PinputAnimatedCursorState extends State<_PinputAnimatedCursor>
       }
     });
     _animationController.forward();
+  }
+
+  @override
+  void didUpdateWidget(_PinputAnimatedCursor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _animationController.duration = widget.blinkDuration;
   }
 
   @override
@@ -150,17 +161,17 @@ class _PinputDefaultContextMenu extends StatelessWidget {
     final isDark =
         MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
     final backgroundColor = isDark
-        ? PinputConstants._menuDarkBackground
-        : PinputConstants._menuLightBackground;
+        ? _PinputConstants._menuDarkBackground
+        : _PinputConstants._menuLightBackground;
     final foregroundColor = isDark
-        ? PinputConstants._menuDarkForeground
-        : PinputConstants._menuLightForeground;
+        ? _PinputConstants._menuDarkForeground
+        : _PinputConstants._menuLightForeground;
     final shadowColor = isDark
-        ? PinputConstants._menuDarkShadow
-        : PinputConstants._menuLightShadow;
+        ? _PinputConstants._menuDarkShadow
+        : _PinputConstants._menuLightShadow;
     final borderColor = isDark
-        ? PinputConstants._menuDarkBorder
-        : PinputConstants._menuLightBorder;
+        ? _PinputConstants._menuDarkBorder
+        : _PinputConstants._menuLightBorder;
 
     return CustomSingleChildLayout(
       delegate: TextSelectionToolbarLayoutDelegate(
@@ -233,8 +244,8 @@ class _PinputContextMenuButtonState extends State<_PinputContextMenuButton> {
     final isDark =
         MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
     final highlightColor = isDark
-        ? PinputConstants._menuDarkHighlight
-        : PinputConstants._menuLightHighlight;
+        ? _PinputConstants._menuDarkHighlight
+        : _PinputConstants._menuLightHighlight;
 
     return Semantics(
       button: true,
@@ -253,7 +264,9 @@ class _PinputContextMenuButtonState extends State<_PinputContextMenuButton> {
           onTap: widget.onPressed,
           child: Container(
             decoration: BoxDecoration(
-              color: _isHovered ? highlightColor : PinputConstants._transparent,
+              color: _isHovered
+                  ? highlightColor
+                  : _PinputConstants._transparent,
               borderRadius: const BorderRadius.all(Radius.circular(6)),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

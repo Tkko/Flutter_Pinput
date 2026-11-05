@@ -55,9 +55,10 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
               initialValue: pinController.text,
               validator: (value) => value == '2222' ? null : 'Pin is incorrect',
               builder: (field) => Pinput(
+                length: 4,
                 validationState: field.errorText == null
-                    ? const PinputValidationState.idle()
-                    : PinputValidationState.invalid(field.errorText!),
+                    ? const PinValidationState.idle()
+                    : PinValidationState.invalid(field.errorText!),
                 controller: pinController,
                 focusNode: focusNode,
                 theme: PinThemes(
@@ -69,7 +70,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
                           border: Border.all(color: focusedBorderColor),
                         ),
                   ),
-                  submitted: defaultPinTheme.copyWith(
+                  filled: defaultPinTheme.copyWith(
                     decoration: (defaultPinTheme.decoration as BoxDecoration)
                         .copyWith(
                           color: fillColor,

@@ -2,26 +2,6 @@ import 'package:material_ui/material_ui.dart';
 import 'package:pinput/pinput.dart';
 import 'package:smart_auth/smart_auth.dart';
 
-class SmsRetrieverImpl implements SmsRetriever {
-  const SmsRetrieverImpl(this.smartAuth);
-
-  final SmartAuth smartAuth;
-
-  @override
-  Future<void> dispose() {
-    return smartAuth.removeUserConsentApiListener();
-  }
-
-  @override
-  Future<String?> getSmsCode() async {
-    final res = await smartAuth.getSmsWithUserConsentApi();
-    return res.data?.code;
-  }
-
-  @override
-  bool get listenForMultipleSms => false;
-}
-
 class UserConsentApiExample extends StatefulWidget {
   const UserConsentApiExample({super.key});
 
@@ -30,16 +10,29 @@ class UserConsentApiExample extends StatefulWidget {
 }
 
 class _UserConsentApiExampleState extends State<UserConsentApiExample> {
-  late final SmsRetrieverImpl smsRetrieverImpl;
+  final pinController = TextEditingController();
 
   @override
   void initState() {
-    smsRetrieverImpl = SmsRetrieverImpl(SmartAuth.instance);
     super.initState();
+    _listenForSmsCode();
+  }
+
+  Future<void> _listenForSmsCode() async {
+    final res = await SmartAuth.instance.getSmsWithUserConsentApi();
+    final code = res.data?.code;
+    if (mounted && code != null) pinController.setText(code);
+  }
+
+  @override
+  void dispose() {
+    SmartAuth.instance.removeUserConsentApiListener();
+    pinController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Pinput(smsRetriever: smsRetrieverImpl);
+    return Pinput(controller: pinController);
   }
 }

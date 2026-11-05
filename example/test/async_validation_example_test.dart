@@ -17,7 +17,7 @@ void main() {
     expect(find.text('Verifying code...'), findsOneWidget);
     expect(
       tester.widget<Pinput>(find.byType(Pinput)).validationState,
-      const PinputValidationState.validating(),
+      const PinValidationState.validating(),
     );
     expect(
       tester.widget<ElevatedButton>(find.byType(ElevatedButton)).onPressed,
@@ -27,7 +27,7 @@ void main() {
     expect(find.text('Code verified'), findsOneWidget);
     expect(
       tester.widget<Pinput>(find.byType(Pinput)).validationState,
-      const PinputValidationState.valid(),
+      const PinValidationState.valid(),
     );
   });
 
@@ -56,7 +56,7 @@ void main() {
     await tester.pump();
     expect(
       tester.widget<Pinput>(find.byType(Pinput)).validationState,
-      const PinputValidationState.idle(),
+      const PinValidationState.idle(),
     );
     await tester.enterText(find.byType(EditableText), '2222');
     await tester.pump();

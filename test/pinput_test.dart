@@ -28,7 +28,7 @@ void main() {
         length: 4,
         itemBuilder: (_, item) => Text('pin-${item.index}'),
         layout: PinLayout(
-          separatorBuilder: (index) {
+          separatorBuilder: (context, index) {
             indices.add(index);
             return Text('separator-$index');
           },
@@ -82,8 +82,8 @@ void main() {
         theme: PinThemes(
           fallback: defaultTheme,
           focused: focusedTheme,
-          submitted: submittedTheme,
-          following: followingTheme,
+          filled: submittedTheme,
+          empty: followingTheme,
           disabled: disabledTheme,
           error: errorTheme,
         ),
@@ -287,6 +287,7 @@ void main() {
 
       await tester.pumpApp(
         Pinput(
+          length: 4,
           controller: controller,
           onCompleted: (value) {
             fieldValue = value;
@@ -311,9 +312,10 @@ void main() {
       expect(fieldValue, isNull);
       expect(called, 1);
 
+      // Text over the length is cut, the same as typed text.
       controller.setText('12345');
-      expect(fieldValue, isNull);
-      expect(called, 1);
+      expect(fieldValue, equals('1234'));
+      expect(called, 2);
     });
   });
 
@@ -477,7 +479,7 @@ void main() {
       double dx,
     ) async {
       final controller = TextEditingController(text: '123');
-      await tester.pumpApp(Pinput(controller: controller, pinEditMode: mode));
+      await tester.pumpApp(Pinput(controller: controller, editMode: mode));
       await tester.tap(find.byType(EditableText));
       await tester.pump(const Duration(milliseconds: 300));
       if (mode != PinEditMode.none) {
@@ -524,7 +526,7 @@ void main() {
     ) async {
       final controller = TextEditingController(text: '123');
       await tester.pumpApp(
-        Pinput(controller: controller, pinEditMode: PinEditMode.overwrite),
+        Pinput(controller: controller, editMode: PinEditMode.overwrite),
       );
       await tester.tap(find.byType(EditableText));
       await tester.pump(const Duration(milliseconds: 300));
@@ -555,7 +557,7 @@ void main() {
     ) async {
       final controller = TextEditingController(text: '123');
       await tester.pumpApp(
-        Pinput(controller: controller, pinEditMode: PinEditMode.none),
+        Pinput(controller: controller, editMode: PinEditMode.none),
       );
       expect(controller.selection.isValid, isFalse);
 
@@ -577,7 +579,7 @@ void main() {
       (tester) async {
         final controller = TextEditingController(text: '123');
         await tester.pumpApp(
-          Pinput(controller: controller, pinEditMode: PinEditMode.overwrite),
+          Pinput(controller: controller, editMode: PinEditMode.overwrite),
         );
         await tester.tap(find.byType(EditableText));
         await tester.pump(const Duration(milliseconds: 300));

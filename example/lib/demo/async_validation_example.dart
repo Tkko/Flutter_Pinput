@@ -14,25 +14,25 @@ class AsyncValidationExample extends StatefulWidget {
 
 class _AsyncValidationExampleState extends State<AsyncValidationExample> {
   final _controller = TextEditingController();
-  PinputValidationState _validation = const PinputValidationState.idle();
+  PinValidationState _validation = const PinValidationState.idle();
   int _request = 0;
 
   void _onChanged(String pin) {
     _request++;
-    setState(() => _validation = const PinputValidationState.idle());
+    setState(() => _validation = const PinValidationState.idle());
   }
 
   Future<void> _verify(String pin) async {
-    if (_validation is PinputValidationValidating) return;
+    if (_validation is PinValidationValidating) return;
     if (pin.length != 4) {
       setState(() {
-        _validation = const PinputValidationState.invalid('Enter all 4 digits');
+        _validation = const PinValidationState.invalid('Enter all 4 digits');
       });
       return;
     }
 
     final request = ++_request;
-    setState(() => _validation = const PinputValidationState.validating());
+    setState(() => _validation = const PinValidationState.validating());
 
     // Simulate a server check. Keep editing enabled to demonstrate stale results.
     await Future<void>.delayed(const Duration(seconds: 2));
@@ -40,8 +40,8 @@ class _AsyncValidationExampleState extends State<AsyncValidationExample> {
 
     setState(() {
       _validation = pin == '2222'
-          ? const PinputValidationState.valid()
-          : const PinputValidationState.invalid('Incorrect code. Try 2222.');
+          ? const PinValidationState.valid()
+          : const PinValidationState.invalid('Incorrect code. Try 2222.');
     });
   }
 
@@ -53,7 +53,7 @@ class _AsyncValidationExampleState extends State<AsyncValidationExample> {
 
   @override
   Widget build(BuildContext context) {
-    final pending = _validation is PinputValidationValidating;
+    final pending = _validation is PinValidationValidating;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -68,6 +68,7 @@ class _AsyncValidationExampleState extends State<AsyncValidationExample> {
           ),
           const SizedBox(height: 24),
           Pinput(
+            length: 4,
             controller: _controller,
             validationState: _validation,
             closeKeyboardWhenCompleted: false,
@@ -80,7 +81,7 @@ class _AsyncValidationExampleState extends State<AsyncValidationExample> {
             const CircularProgressIndicator(),
             const SizedBox(height: 12),
             const Text('Verifying code...'),
-          ] else if (_validation is PinputValidationValid)
+          ] else if (_validation is PinValidationValid)
             const Text('Code verified'),
           const SizedBox(height: 20),
           ElevatedButton(

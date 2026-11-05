@@ -16,6 +16,9 @@ enum _PinAnimationType {
 
   /// Rotation animation
   rotation,
+
+  /// Animation built by the app
+  custom,
 }
 
 /// The cursor type of [PinCursor]
@@ -82,7 +85,8 @@ enum HapticFeedbackType {
 }
 
 /// Error widget builder of Pinput
-typedef PinputErrorBuilder = Widget Function(String? errorText, String pin);
+typedef PinErrorBuilder =
+    Widget Function(BuildContext context, String? errorText, String pin);
 
 /// How editing previous pins behaves when tapping on a filled pin slot.
 ///
@@ -103,7 +107,9 @@ typedef PinputErrorBuilder = Widget Function(String? errorText, String pin);
 ///   explicitly (e.g. a "Continue" button).
 /// - Pin taps are not available with [PinInputMode.customKeyboard]; a custom
 ///   keyboard can move the cursor by setting `controller.selection`, and the
-///   `append`/`delete` helpers always work at the end of the input.
+///   `appendPin`/`deleteLastPin` helpers always work at the end of the input.
+/// - Text stays contiguous, so an empty slot left by [overwrite] is not visible
+///   in the value: clearing the second pin of `1234` reports `134`.
 enum PinEditMode {
   /// Editing previous pins is disabled; the cursor is locked to the end of the input.
   none,

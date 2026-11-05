@@ -31,8 +31,6 @@ part 'models/pin_obscuring.dart';
 
 part 'models/models.dart';
 
-part 'models/sms_retriever.dart';
-
 part 'utils/extensions.dart';
 
 part 'utils/_pin_overwrite_text_input_formatter.dart';
@@ -66,8 +64,7 @@ class Pinput extends StatefulWidget {
   /// Pass [itemBuilder] to take full control over the pin item widget; then
   /// [theme] and [cursor] are not used.
   const Pinput({
-    this.length = PinputConstants._defaultLength,
-    this.smsRetriever,
+    this.length = _PinputConstants._defaultLength,
     this.theme,
     this.itemBuilder,
     this.onChanged,
@@ -80,21 +77,21 @@ class Pinput extends StatefulWidget {
     this.controller,
     this.focusNode,
     this.layout = const PinLayout(),
-    this.pinAnimation = const PinAnimation.scale(),
+    this.animation = const PinAnimation.scale(),
     this.inputMode = PinInputMode.editable,
     this.autofocus = false,
     this.obscuring,
     this.cursor = const PinCursor.blinking(),
-    this.pinEditMode = PinEditMode.overwrite,
+    this.editMode = PinEditMode.overwrite,
     this.enableInteractiveSelection,
     this.hapticFeedbackType = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
-    this.keyboard = const PinKeyboardConfig(),
+    this.keyboard = const PinKeyboard(),
     this.inputFormatters = const [],
     this.selectionControls,
     this.restorationId,
     this.mouseCursor,
-    this.validationState = const PinputValidationState.idle(),
+    this.validationState = const PinValidationState.idle(),
     this.errorBuilder,
     this.errorTextStyle,
     this.semanticsLabel,
@@ -104,7 +101,7 @@ class Pinput extends StatefulWidget {
   }) : assert(length > 0);
 
   /// Themes of the pin items per state, see [PinThemes].
-  /// If null the built-in theme is used.
+  /// If null the closest [DefaultPinThemes] is used, then the built-in theme.
   final PinThemes? theme;
 
   /// Builds every pin item. When set, [theme] and [cursor] are not used and the
@@ -121,15 +118,11 @@ class Pinput extends StatefulWidget {
   /// Displayed fields count. PIN code length.
   final int length;
 
-  /// By default Android autofill is Disabled, you can enable it by passing [smsRetriever]
-  /// SmsRetriever exposes methods to listen for incoming SMS and extract code from it
-  /// Recommended package to get sms code on Android is smart_auth https://pub.dev/packages/smart_auth
-  final SmsRetriever? smsRetriever;
-
   /// Fires when user completes pin input
   final ValueChanged<String>? onCompleted;
 
-  /// Called every time input value changes.
+  /// Called every time input value changes. The value is contiguous: an empty
+  /// slot left by [PinEditMode.overwrite] is not represented in it.
   final ValueChanged<String>? onChanged;
 
   /// See [EditableText.onSubmitted]
@@ -143,6 +136,7 @@ class Pinput extends StatefulWidget {
   final VoidCallback? onLongPress;
 
   /// Used to get, modify PinPut value and more.
+  /// Text longer than [length] is cut to [length], as it is for typed text.
   /// Don't forget to dispose controller
   /// ``` dart
   ///   @override
@@ -171,7 +165,7 @@ class Pinput extends StatefulWidget {
   ///
   /// With [itemBuilder] the builder owns the pin content, so only the duration
   /// and curve apply, animating the error layout.
-  final PinAnimation pinAnimation;
+  final PinAnimation animation;
 
   /// How the user can input the PIN. Defaults to [PinInputMode.editable].
   final PinInputMode inputMode;
@@ -188,7 +182,7 @@ class Pinput extends StatefulWidget {
   /// - [PinEditMode.none]: Editing previous pins is disabled; cursor is locked to the end of the input (legacy behavior).
   /// The first filled slot is selected on tap to make native backspace possible
   /// at the start of the input. Other slots use a collapsed cursor.
-  final PinEditMode pinEditMode;
+  final PinEditMode editMode;
 
   /// Whether to enable text selection and interactive features like copy/paste.
   /// When enabled, users can select text, use Ctrl+V to paste, and access context menus.
@@ -205,8 +199,8 @@ class Pinput extends StatefulWidget {
   /// [PinCursor.blinking]. Pass a `child` to customize its appearance.
   final PinCursor cursor;
 
-  /// Keyboard and autofill settings, see [PinKeyboardConfig].
-  final PinKeyboardConfig keyboard;
+  /// Keyboard and autofill settings, see [PinKeyboard].
+  final PinKeyboard keyboard;
 
   /// See [EditableText.inputFormatters]
   final List<TextInputFormatter> inputFormatters;
@@ -230,7 +224,7 @@ class Pinput extends StatefulWidget {
   /// See [EditableText.mouseCursor]
   final MouseCursor? mouseCursor;
 
-  /// App-owned validation feedback. Defaults to [PinputValidationState.idle].
+  /// App-owned validation feedback. Defaults to [PinValidationState.idle].
   ///
   /// Pinput does not execute validation or register a field with a [Form].
   /// Validate using [onChanged], [onCompleted], [onSubmitted], or an explicit
@@ -239,8 +233,8 @@ class Pinput extends StatefulWidget {
   ///
   /// Invalid feedback remains visible while focused and is not cleared by
   /// editing. Other states use the normal pin appearance without feedback.
-  /// This state never changes text, focus, [inputMode].
-  final PinputValidationState validationState;
+  /// This state never changes text, focus or [inputMode].
+  final PinValidationState validationState;
 
   /// Style of the default error text. Ignored when [errorBuilder] is supplied.
   final TextStyle? errorTextStyle;
@@ -249,7 +243,7 @@ class Pinput extends StatefulWidget {
   /// Called even when the invalid state has no message. Unlike the default
   /// error text, its content is not a live region; add
   /// `Semantics(liveRegion: true)` to announce new errors.
-  final PinputErrorBuilder? errorBuilder;
+  final PinErrorBuilder? errorBuilder;
 
   /// Accessibility label announced for the whole field, for example
   /// "Verification code".
@@ -317,14 +311,7 @@ class Pinput extends StatefulWidget {
       DiagnosticsProperty<int>(
         'length',
         length,
-        defaultValue: PinputConstants._defaultLength,
-      ),
-    );
-    properties.add(
-      DiagnosticsProperty<SmsRetriever?>(
-        'smsRetriever',
-        smsRetriever,
-        defaultValue: null,
+        defaultValue: _PinputConstants._defaultLength,
       ),
     );
     properties.add(
@@ -388,8 +375,8 @@ class Pinput extends StatefulWidget {
     );
     properties.add(
       DiagnosticsProperty<PinAnimation>(
-        'pinAnimation',
-        pinAnimation,
+        'animation',
+        animation,
         defaultValue: const PinAnimation.scale(),
       ),
     );
@@ -419,8 +406,8 @@ class Pinput extends StatefulWidget {
     );
     properties.add(
       EnumProperty<PinEditMode>(
-        'pinEditMode',
-        pinEditMode,
+        'editMode',
+        editMode,
         defaultValue: PinEditMode.overwrite,
       ),
     );
@@ -474,14 +461,14 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<PinputValidationState>(
+      DiagnosticsProperty<PinValidationState>(
         'validationState',
         validationState,
-        defaultValue: const PinputValidationState.idle(),
+        defaultValue: const PinValidationState.idle(),
       ),
     );
     properties.add(
-      DiagnosticsProperty<PinputErrorBuilder?>(
+      DiagnosticsProperty<PinErrorBuilder?>(
         'errorBuilder',
         errorBuilder,
         defaultValue: null,
@@ -509,10 +496,10 @@ class Pinput extends StatefulWidget {
       ),
     );
     properties.add(
-      DiagnosticsProperty<PinKeyboardConfig>(
+      DiagnosticsProperty<PinKeyboard>(
         'keyboard',
         keyboard,
-        defaultValue: const PinKeyboardConfig(),
+        defaultValue: const PinKeyboard(),
       ),
     );
     properties.add(
