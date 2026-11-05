@@ -14,8 +14,7 @@ class _PinputState extends State<Pinput>
   bool get selectionEnabled =>
       _editableText?.widget.selectionEnabled ??
       (widget.enableInteractiveSelection ??
-          (!(_isReadOnly || !isEnabled || !_useNativeKeyboard) ||
-              widget.obscuring == null));
+          (!_isEffectivelyReadOnly || widget.obscuring == null));
 
   @override
   String get autofillId => _editableText!.autofillId;
@@ -50,12 +49,19 @@ class _PinputState extends State<Pinput>
 
   bool get _isReadOnly => widget.inputMode == PinInputMode.readOnly;
 
+  bool get _isEffectivelyReadOnly =>
+      _isReadOnly || !isEnabled || !_useNativeKeyboard;
+
   bool get _useNativeKeyboard =>
       widget.inputMode != PinInputMode.customKeyboard;
 
   late List<String?> _slots;
   int _focusedSlotIndex = 0;
   TextSelection? _pinTapSelection;
+
+  /// Selection the controller had before its most recent selection change.
+  /// Used to revert selection changes that Pinput doesn't support.
+  TextSelection? _selectionBeforeChange;
 
   bool get _hasPinTapSelection =>
       _pinTapSelection != null &&
@@ -236,6 +242,12 @@ class _PinputState extends State<Pinput>
   void _handleTextEditingControllerChanges() {
     final currentText = _effectiveController.value.text;
     final textChanged = _recentControllerValue.text != currentText;
+    if (_recentControllerValue.selection != _effectiveController.selection) {
+      _selectionBeforeChange = _recentControllerValue.selection;
+      // Only valid for the onSelectionChanged call in the same call stack. That
+      // callback also fires for unchanged selections, which don't get here.
+      scheduleMicrotask(() => _selectionBeforeChange = null);
+    }
     _recentControllerValue = _effectiveController.value;
     if (!_hasPinTapSelection) _pinTapSelection = null;
 
@@ -339,6 +351,18 @@ class _PinputState extends State<Pinput>
     SelectionChangedCause? cause,
   ) {
     final textLength = _effectiveController.text.length;
+    final previous = _selectionBeforeChange;
+    _selectionBeforeChange = null;
+    // The iOS keyboard's floating cursor (long press on the space bar) and force
+    // press report their selection with this cause. Moving the cursor that way
+    // isn't supported, so revert it. Arrow keys on a hardware keyboard use a
+    // different cause and keep working.
+    final canRestore =
+        previous != null && previous.isValid && previous.end <= textLength;
+    if (cause == SelectionChangedCause.forcePress && canRestore) {
+      _effectiveController.selection = previous;
+      return;
+    }
     if (widget.pinEditMode != PinEditMode.none) {
       if (selection.isCollapsed && selection.baseOffset > textLength) {
         _effectiveController.selection = TextSelection.collapsed(
@@ -516,7 +540,7 @@ class _PinputState extends State<Pinput>
           obscuringCharacter: widget.obscuring?._character ?? '•',
           onSelectionChanged: _handleSelectionChanged,
           onSelectionHandleTapped: _handleSelectionHandleTapped,
-          readOnly: _isReadOnly || !isEnabled || !_useNativeKeyboard,
+          readOnly: _isEffectivelyReadOnly,
           selectionControls:
               widget.selectionControls ?? _pinputSelectionControls,
           keyboardAppearance:
@@ -577,32 +601,68 @@ class _PinputState extends State<Pinput>
     return PinItemStateType.following;
   }
 
-  void _onPinTap(int index) {
-    if (!isEnabled) return;
+  /// Whether a tap should toggle the context menu, mirroring [TextField] on
+  /// iOS: a finger tap on an already focused field toggles it.
+  bool _canToggleToolbarOnTap(PointerDeviceKind kind) {
+    final isTouch =
+        kind == PointerDeviceKind.touch || kind == PointerDeviceKind.unknown;
+    final isIOSTouch = defaultTargetPlatform == TargetPlatform.iOS && isTouch;
+    final hasMenu = selectionEnabled && widget.contextMenuBuilder != null;
+    final isReadOnlyCursor =
+        _isEffectivelyReadOnly && _effectiveController.selection.isCollapsed;
+    return isIOSTouch &&
+        hasMenu &&
+        _effectiveFocusNode.hasFocus &&
+        !isReadOnlyCursor;
+  }
 
-    // Mirrors the legacy tap behavior (hide toolbar, request keyboard, onTap)
-    // and additionally moves the cursor when pin editing is available.
-    if (widget.pinEditMode != PinEditMode.none && !_isReadOnly) {
-      _focusedSlotIndex = index.clamp(0, widget.length - 1);
-      if (_slots[_focusedSlotIndex] == null) {
-        _focusedSlotIndex = min(_focusedSlotIndex, _firstEmptySlotIndex);
-      }
-      final offset = _offsetForSlot(_focusedSlotIndex);
-      // At offset zero a mobile keyboard may send no backspace edit. Selecting
-      // the first digit gives it a native deletion target.
-      _pinTapSelection = _focusedSlotIndex == 0 && _slotValue(0).isNotEmpty
-          ? TextSelection(
-              baseOffset: offset,
-              extentOffset: offset + _slotValue(0).length,
-            )
-          : null;
-      _effectiveController.selection =
-          _pinTapSelection ?? TextSelection.collapsed(offset: offset);
-      setState(() {});
+  /// Shared handling for taps on and outside pin boxes. Like [TextField], the
+  /// context menu only toggles when the tap didn't move the cursor.
+  void _handleTap(PointerDeviceKind kind, {required VoidCallback moveCursor}) {
+    final canToggleToolbar = _canToggleToolbarOnTap(kind);
+    final selectionBeforeTap = _effectiveController.selection;
+    final focusedSlotBeforeTap = _focusedSlotIndex;
+
+    moveCursor();
+
+    // Gap slots share a text offset, so compare the slot as well.
+    final cursorMoved =
+        selectionBeforeTap != _effectiveController.selection ||
+        focusedSlotBeforeTap != _focusedSlotIndex;
+    if (canToggleToolbar && !cursorMoved) {
+      // Creates the selection overlay as well, which is null while
+      // rendererIgnoresPointer is true.
+      _editableText?.toggleToolbar(false);
+    } else {
+      _editableText?.hideToolbar();
     }
-    _editableText?.hideToolbar();
     _requestKeyboard();
     widget.onTap?.call();
+  }
+
+  void _onPinTap(int index, PointerDeviceKind kind) {
+    if (!isEnabled) return;
+    _handleTap(kind, moveCursor: () => _moveCursorToPin(index));
+  }
+
+  void _moveCursorToPin(int index) {
+    if (widget.pinEditMode == PinEditMode.none || _isReadOnly) return;
+    _focusedSlotIndex = index.clamp(0, widget.length - 1);
+    if (_slots[_focusedSlotIndex] == null) {
+      _focusedSlotIndex = min(_focusedSlotIndex, _firstEmptySlotIndex);
+    }
+    final offset = _offsetForSlot(_focusedSlotIndex);
+    // At offset zero a mobile keyboard may send no backspace edit. Selecting
+    // the first digit gives it a native deletion target.
+    _pinTapSelection = _focusedSlotIndex == 0 && _slotValue(0).isNotEmpty
+        ? TextSelection(
+            baseOffset: offset,
+            extentOffset: offset + _slotValue(0).length,
+          )
+        : null;
+    _effectiveController.selection =
+        _pinTapSelection ?? TextSelection.collapsed(offset: offset);
+    setState(() {});
   }
 
   /// Adds tap handling to a pin item without breaking [Flex] parent data when
@@ -611,7 +671,7 @@ class _PinputState extends State<Pinput>
     Widget detector(Widget c) => GestureDetector(
       behavior: HitTestBehavior.opaque,
       excludeFromSemantics: true,
-      onTap: () => _onPinTap(index),
+      onTapUp: (details) => _onPinTap(index, details.kind),
       child: c,
     );
 
