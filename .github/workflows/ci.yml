@@ -3,6 +3,10 @@ name: CI
 on:
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'LICENSE'
   workflow_dispatch:
     inputs:
       platforms:
@@ -17,7 +21,6 @@ jobs:
   ci:
     permissions:
       contents: read
-      pull-requests: read
     uses: Tkko/better-actions/.github/workflows/ci.yml@main
     with:
       platforms: ${{ inputs.platforms || 'web' }}
