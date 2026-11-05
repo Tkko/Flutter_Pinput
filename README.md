@@ -45,7 +45,7 @@ Flutter Pinput is a package that provides an easy-to-use and customizable Pin co
 - Obscuring Widget
 - Haptic Feedback
 - Close Keyboard After Completion
-- Beautiful [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)
+- Beautiful [Examples](https://github.com/Tkko/Flutter_Pinput/tree/main/example/lib)
 
 ## Support
 
@@ -53,7 +53,7 @@ PRs Welcome
 
 Discord [Channel](https://rebrand.ly/qwc3s0d)
 
-[Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib) app on Github has multiple templates to choose from
+[Examples](https://github.com/Tkko/Flutter_Pinput/tree/main/example/lib) app on Github has multiple templates to choose from
 
 Don't forget to give it a star ⭐
 
@@ -255,7 +255,7 @@ You don't need the App signature, the user will be prompted to confirm reading t
 
 <img src="https://user-images.githubusercontent.com/26390946/158870589-a2d631fa-55d7-487f-8c30-d378bab4c21d.png" style="height: 700px; width: auto; image-rendering: pixelated;" alt="Request Hint" />
 
-## See Example app for more [templates](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib)
+## See Example app for more [templates](https://github.com/Tkko/Flutter_Pinput/tree/main/example/lib)
 
 ## Tips
 
