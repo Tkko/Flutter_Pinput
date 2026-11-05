@@ -28,7 +28,7 @@ dependencies:
   pinput:
     path: ../
   smart_auth: ^3.2.0 
-  google_fonts: ^8.2.1 
+  google_fonts: ^9.0.0 
   cupertino_icons: ^2.0.0 
 
 dev_dependencies:
