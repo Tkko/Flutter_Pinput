@@ -1,3 +1,7 @@
+#### 8.0.0-beta.3 · 05/11/2026
+
+- Documentation: resized the donation badges in the README so they render at a sensible size on pub.dev
+
 #### 8.0.0-beta.2 · 05/11/2026
 
 - Documentation: redesigned README with a shared header and footer, collapsible guides and an 8.0 migration section
