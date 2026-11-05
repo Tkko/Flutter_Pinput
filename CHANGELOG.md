@@ -1,3 +1,8 @@
+#### 8.0.0-beta.2 · 05/11/2026
+
+- Documentation: redesigned README with a shared header and footer, collapsible guides and an 8.0 migration section
+- Aligned issue forms and the pull request template
+
 #### 8.0.0-beta.1 · 05/11/2026
 
 - **BREAKING**: Renamed `pinAnimation` to `animation`, `pinEditMode` to `editMode`,
