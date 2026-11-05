@@ -29,17 +29,16 @@
 
 </div>
 
-Flutter Pinput is a package that provides an easy-to-use and customizable Pin code input field. It offers several features such as animated decoration switching, form validation, SMS autofill, custom cursor, copying from clipboard, and more. It also provides beautiful examples that you can choose from.
+Flutter Pinput is a package that provides an easy-to-use and customizable Pin code input field. It offers several features such as animated decoration switching, app-controlled validation feedback, SMS autofill, custom cursor, and more. It also provides beautiful examples that you can choose from.
 
 ## Features:
 - Animated Decoration Switching
-- Form validation
+- App-controlled validation feedback (Form integration via `FormField`)
 - SMS Autofill on iOS
 - SMS Autofill on Android
 - Standard Cursor
 - Custom Cursor
 - Cursor Animation
-- Copy From Clipboard
 - Ready For Custom Keyboard
 - Standard Paste option
 - Obscuring Character
@@ -94,7 +93,7 @@ Widget buildPinPut() {
 }
 ```
 
-If you want to customize it, create `defaultPinTheme` first.
+If you want to customize it, create a base `PinTheme` first.
 
 ```dart
 final defaultPinTheme = PinTheme(
@@ -108,8 +107,8 @@ final defaultPinTheme = PinTheme(
 );
 ```
 
-if you want all pins to be the same don't pass other theme parameters,
-If not, create `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `errorPinTheme` from `defaultPinTheme`
+If you want all pins to be the same, pass `PinThemes.all(defaultPinTheme)` (or no theme at all).
+If not, create the focused, submitted, following, disabled and error themes from `defaultPinTheme`
 
 ```dart
 final focusedPinTheme = defaultPinTheme.copyDecorationWith(
@@ -117,10 +116,8 @@ final focusedPinTheme = defaultPinTheme.copyDecorationWith(
   borderRadius: BorderRadius.circular(8),
 );
 
-final submittedPinTheme = defaultPinTheme.copyWith(
-  decoration: defaultPinTheme.decoration.copyWith(
-    color: Color.fromRGBO(234, 239, 243, 1),
-  ),
+final submittedPinTheme = defaultPinTheme.copyDecorationWith(
+  color: Color.fromRGBO(234, 239, 243, 1),
 );
 ```
 
@@ -142,24 +139,30 @@ final focusedPinTheme = defaultPinTheme.copyDecorationWith(
   borderRadius: BorderRadius.circular(8),
 );
 
-final submittedPinTheme = defaultPinTheme.copyWith(
-  decoration: defaultPinTheme.decoration.copyWith(
-    color: Color.fromRGBO(234, 239, 243, 1),
-  ),
+final submittedPinTheme = defaultPinTheme.copyDecorationWith(
+  color: Color.fromRGBO(234, 239, 243, 1),
 );
 
 return Pinput(
-defaultPinTheme: defaultPinTheme,
-focusedPinTheme: focusedPinTheme,
-submittedPinTheme: submittedPinTheme,
-validator: (s) {
-return s == '2222' ? null : 'Pin is incorrect';
-},
-pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-showCursor: true,
-onCompleted: (pin) => print(pin),
+  theme: PinThemes(
+    fallback: defaultPinTheme,
+    focused: focusedPinTheme,
+    submitted: submittedPinTheme,
+  ),
+  validationState: const PinputValidationState.idle(),
+  cursor: const PinCursor.blinking(),
+  onCompleted: (pin) => print(pin),
 );
 ```
+
+`PinThemes` mirrors `WidgetStateProperty`: use `PinThemes(fallback:, focused:, …)`, `PinThemes.all`, or
+`PinThemes.resolveWith((item, validation) => ...)` to pick a theme per pin. `item` has the pin's `index`, `value` and
+`type` (`PinItemStateType`: `focused`, `submitted`, `following`, `disabled`, `error`).
+In the named form, a state you don't set uses `fallback`. Set `valid` or `validating` to style the pins while the app
+supplies `PinputValidationState.valid()` or `.validating()`; otherwise those states don't change the look.
+Implement `PinThemes` to share a theme as your own type.
+A state theme is used exactly as written and is not merged with `fallback`, so derive it
+with `copyWith`. `PinTheme.decoration` accepts any `Decoration` (`BoxDecoration`, `ShapeDecoration`, …); `copyDecorationWith` and `copyBorderWith` require a `BoxDecoration`. `PinTheme.placeholder` replaces `preFilledWidget`. `PinTheme.defaults` is the built-in theme to derive from.
 
 ## SMS Autofill
 
@@ -261,38 +264,138 @@ return Pinput(
 );  
 ```
 
-- #### Validation
+- #### Cursor, masking, and animation
 
 ```dart
-/// Create key
-final formKey = GlobalKey<FormState>();
-
-/// Validate manually
-/// Don't call validate in build method, this is just illustration.
-formKey.currentState!.validate();
-
-return Form(
-  key: formKey,
-  child: Pinput(
-  // Without Validator
-  // If true error state will be applied no matter what validator returns
-  forceErrorState: true,
-  // Text will be displayed under the Pinput
-  errorText: 'Error',
-
-  /// ------------
-  /// With Validator
-  /// Auto validate after user tap on keyboard done button, or completes Pinput
-  pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
-  validator: (pin) {
-    if (pin == '2224') return null;
-
-    /// Text will be displayed under the Pinput
-    return 'Pin is incorrect';
-    },
+Pinput(
+  cursor: PinCursor.blinking(child: MyCursor()), // static() or hidden() are also available
+  obscuring: const PinObscuring.character('*'), // null displays original text
+  pinAnimation: const PinAnimation.slide(
+    beginOffset: Offset(0, 0.5),
+    duration: Duration(milliseconds: 250),
   ),
-);
+)
 ```
+
+`PinObscuring.character()` uses a bullet by default.
+`PinObscuring.widget(MyDot())` supplies custom visible masking and uses a bullet
+for native obscuring. A character must be one UTF-16 code unit, matching Flutter's
+native requirement. Original text remains available in the controller and callbacks.
+Masking widgets may be stateful: each slot creates its own State. Do not reuse
+a masking widget containing a shared GlobalKey across slots.
+With `itemBuilder`, `obscuring` only enables native masking; the builder must mask
+visible content itself.
+
+`PinAnimation` supports `none()`, `scale()` (default), `fade()`, `slide()`, and
+`rotation()`. Slide defaults to `Offset(0.8, 0)`. Every constructor accepts `duration` and `curve`,
+which control the transition, decoration, and error layout.
+Cursor blinking is independent of pin-content transitions.
+
+Set `enableInteractiveSelection: false` to disable interactive selection.
+Set `contextMenuBuilder: null` to hide the modern context menu while keeping
+selection enabled. Legacy custom `selectionControls` that build their own
+toolbar follow Flutter's legacy toolbar behavior; use controls with
+`TextSelectionHandleControls` to customize handles with the modern menu API.
+
+- #### Validation
+
+Pinput renders app-owned validation feedback through `validationState`:
+
+The `validating()` factory uses the `PinputValidationValidating` subtype for
+pattern matching. Presentation configurations (`PinAnimation` and `PinObscuring`)
+support value equality; custom masking widgets use normal widget equality.
+
+| State | Behavior |
+| --- | --- |
+| `PinputValidationState.idle()` | Default; no current result or feedback. |
+| `PinputValidationState.validating()` | Pending; normal appearance, no error. |
+| `PinputValidationState.valid()` | Passed; normal appearance, no error. |
+| `PinputValidationState.invalid([message])` | Error pin theme and optional error message, even while focused. |
+
+```dart
+Pinput(
+  validationState: state.pinValidation,
+  onChanged: cubit.pinChanged,
+  onCompleted: cubit.verifyPin,
+)
+```
+
+Run synchronous or asynchronous validation in your app, using `onChanged`,
+`onCompleted`, `onSubmitted`, or a submit button. `onCompleted` reports a full PIN
+with the cursor at the end, not successful validation. Clear old results when
+the PIN changes and ignore async responses for outdated inputs or disposed views.
+Pinput does not clear supplied feedback, run checks, or modify text or focus.
+Pending and valid states do not add loading/success visuals or disable editing;
+use `inputMode: PinInputMode.readOnly` or `PinInputMode.disabled` explicitly when needed.
+
+For a runnable async example, open **Async example** in the default example app,
+or the **Async validation** tab in the demo gallery. Enter `2222` for success.
+The example shows progress, errors, and discarding outdated responses when edited.
+See [`AsyncValidationExample`](example/lib/demo/async_validation_example.dart).
+
+`errorTextStyle` styles the default error text. `errorBuilder(message, pin)`
+replaces the default error widget and ignores `errorTextStyle`. Both are available
+in `Pinput`, including with `itemBuilder`.
+The invalid state's message is optional: `invalid()` applies error styling
+without default text or error padding. An `errorBuilder` still runs with a null
+message, so it can supply its own localized text or other content.
+
+### Flutter Form integration
+
+Pinput does not register itself with `Form`. Wrap it in `FormField<String>`:
+
+```dart
+FormField<String>(
+  initialValue: '',
+  validator: (pin) => pin == '2224' ? null : 'Pin is incorrect',
+  builder: (field) => Pinput(
+    onChanged: field.didChange,
+    validationState: field.errorText == null
+        ? const PinputValidationState.idle()
+        : PinputValidationState.invalid(field.errorText!),
+  ),
+)
+```
+
+Configure `autovalidateMode` on the wrapper for automatic Form validation.
+`FormState.validate()` remains synchronous: it cannot await server verification.
+An external async result must already be available if the wrapper uses it.
+
+When using a text controller, synchronize it with the wrapper using a listener
+(including programmatic changes). For example, in the owning State:
+
+```dart
+final pinController = TextEditingController();
+final pinFieldKey = GlobalKey<FormFieldState<String>>();
+
+@override
+void initState() {
+  super.initState();
+  pinController.addListener(() {
+    final field = pinFieldKey.currentState;
+    if (field != null && field.value != pinController.text) {
+      field.didChange(pinController.text);
+    }
+  });
+}
+
+// Inside the Form:
+FormField<String>(
+  key: pinFieldKey,
+  initialValue: '',
+  onReset: pinController.clear,
+  validator: (pin) => pin == '2224' ? null : 'Pin is incorrect',
+  builder: (field) => Pinput(
+    controller: pinController,
+    validationState: field.errorText == null
+        ? const PinputValidationState.idle()
+        : PinputValidationState.invalid(field.errorText!),
+  ),
+)
+```
+
+Dispose `pinController` in the owning State. For non-empty initial values, restore
+that same text in `onReset` rather than clearing it.
 
 ## FAQ
 

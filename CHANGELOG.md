@@ -1,3 +1,64 @@
+#### Unreleased
+
+- Aligned the `validating()` subtype name as `PinputValidationValidating`.
+- Added value equality to `PinAnimation` and `PinObscuring`, and documented
+  the shared GlobalKey restriction for masking widgets.
+- **BREAKING**: Consolidated cursor into `PinCursor` (`blinking`, `static`,
+  `hidden`, with optional `child`), masking into optional `PinObscuring`, and
+  content transitions into `PinAnimation` (including slide offset, `duration`
+  and `curve`). Removed `cursorBehavior`, `animationDuration` and
+  `animationCurve`.
+- **BREAKING**: Replaced `defaultPinTheme`, `focusedPinTheme`,
+  `submittedPinTheme`, `followingPinTheme`, `disabledPinTheme` and
+  `errorPinTheme` with `theme: PinThemes` (named state parameters, `all`, `resolveWith`).
+  `preFilledWidget` became `PinTheme.placeholder`.
+- **BREAKING**: Replaced `enabled`, `readOnly` and `useNativeKeyboard` with
+  `inputMode: PinInputMode` (`editable`, `readOnly`, `disabled`,
+  `customKeyboard`). Disabled overrides the other modes.
+- `pinContentAlignment` became `PinTheme.alignment`. Added the public
+  `PinTheme.defaults` built-in theme; `PinThemes` uses `fallback`
+  (default `PinTheme.defaults`) for unset states.
+- `PinTheme.decoration` is now a `Decoration`, so `ShapeDecoration` and other
+  decorations work. `copyDecorationWith` and `copyBorderWith` still require a
+  `BoxDecoration`.
+- **BREAKING**: `Pinput.builder` is now `Pinput(itemBuilder: ...)`; there is one
+  constructor. `theme` and `cursor` are not used when `itemBuilder` is set.
+- **BREAKING**: Grouped `mainAxisAlignment`, `crossAxisAlignment` and
+  `separatorBuilder` into `layout: PinLayout`, and `keyboardType`,
+  `textCapitalization`, `textInputAction`, `keyboardAppearance`,
+  `enableSuggestions` and `autofillHints` into `keyboard: PinKeyboardConfig`.
+- **BREAKING**: Removed `PinItemStateType.initial` (use `PinThemes.fallback`) and
+  `PinTheme.apply`. `PinThemes.resolve` and `resolveWith` now take the
+  `PinItemState` (index, value, type) and the `PinputValidationState`.
+- Added `PinThemes(valid:, validating:)` to style pins during those validation
+  states. Added `Pinput.semanticsLabel`.
+- `PinInputMode.customKeyboard` is now focusable; it still ignores pointer input
+  and never opens the native keyboard.
+- **BREAKING**: Removed `onClipboardFound`, `onAppPrivateCommand`,
+  `enableIMEPersonalizedLearning` (always off) and the unused
+  `AndroidSmsAutofillMethod` enum.
+- Disabled input never takes focus, including with directional navigation.
+- `Pinput` with `itemBuilder` accepts `pinAnimation` (duration and curve animate the error
+  layout), and `pinAnimation.curve` now applies to the error layout animation.
+- The default error message is exposed to assistive technology as a live region.
+- Moved migration guides to `doc/migration/` (one human and one agent guide per
+  version) and refreshed the 8.0.0 guide for the new API.
+- A custom item builder now gets the same `autofillHints` and
+  `enableInteractiveSelection` defaults as the default renderer. Fixed duplicated and incorrect `debugFillProperties` entries.
+- Removed `toolbarEnabled`; `enableInteractiveSelection` now controls selection
+  gestures consistently with native editing. Use `contextMenuBuilder: null` to
+  hide the modern menu without disabling selection.
+- **BREAKING**: Validation is app-owned through `PinputValidationState`:
+  `idle`, `validating`, `valid`, or `invalid(message)`.
+- Removed `validator`, `pinputAutovalidateMode`, `errorText`, `forceErrorState`,
+  `showErrorWhenFocused`, and the internal Form field. Use an explicit
+  `FormField<String>` wrapper for synchronous Flutter Form validation.
+- Invalid feedback stays visible during focus and editing until the app updates
+  it. Validation state never changes input availability, text, or focus.
+- `Pinput.builder` now supports `errorBuilder` and `errorTextStyle`.
+  Invalid states accept an optional message. Error builders run even without a
+  message; without a builder or message, only error pin styling is shown.
+
 #### 8.0.0 · 30/10/2026
 
 - **feat**: Added cursor navigation and previous pin editing via `pinEditMode`:
@@ -80,7 +141,7 @@
 - Migrated deprecated imperative apply of Flutter's Gradle plugins example app
 - Removed smart_auth dependency which was responsible for SMS autofill (Not everyone might need it
   and it was causing some issues)
-- [Migration guide](MIGRATION.md)
+- [Migration guide](doc/migration/README.md)
 
 #### 4.0.0 · 10/02/2024
 

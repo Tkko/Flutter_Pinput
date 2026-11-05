@@ -41,9 +41,11 @@ class _ExampleState extends State<Example> {
   Widget build(BuildContext context) {
     return Pinput(
       controller: pinController,
-      autofillHints: const [AutofillHints.oneTimeCode],
+      keyboard: PinKeyboardConfig(
+        autofillHints: const [AutofillHints.oneTimeCode],
+      ),
       length: 10,
-      toolbarEnabled: false,
+      enableInteractiveSelection: false,
       inputFormatters: [Formatter()],
     );
   }
@@ -57,16 +59,31 @@ class ErrorStateExample extends StatefulWidget {
 }
 
 class _ErrorStateExampleState extends State<ErrorStateExample> {
-  bool _hasError = false;
+  PinputValidationState _validationState = const PinputValidationState.idle();
+  int _validationRequest = 0;
 
   Future<void> _validate(String value) async {
+    final request = ++_validationRequest;
+    setState(() => _validationState = const PinputValidationState.validating());
     await Future.delayed(const Duration(seconds: 2));
-    setState(() => _hasError = value == '1111');
+    if (!mounted || request != _validationRequest) return;
+    setState(() {
+      _validationState = value == '1111'
+          ? const PinputValidationState.invalid('Incorrect code')
+          : const PinputValidationState.valid();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Pinput(forceErrorState: _hasError, onCompleted: _validate);
+    return Pinput(
+      validationState: _validationState,
+      onChanged: (_) {
+        _validationRequest++;
+        setState(() => _validationState = const PinputValidationState.idle());
+      },
+      onCompleted: _validate,
+    );
   }
 }
 
@@ -91,23 +108,25 @@ class HeightExample extends StatelessWidget {
 
     return Pinput(
       length: 6,
-      defaultPinTheme: defaultPinTheme,
-      focusedPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Colors.red,
+      theme: PinThemes(
+        fallback: defaultPinTheme,
+        focused: defaultPinTheme.copyWith(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.0),
+            color: Colors.red,
+          ),
         ),
-      ),
-      submittedPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Colors.green,
+        submitted: defaultPinTheme.copyWith(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.0),
+            color: Colors.green,
+          ),
         ),
-      ),
-      followingPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Colors.blue,
+        following: defaultPinTheme.copyWith(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.0),
+            color: Colors.blue,
+          ),
         ),
       ),
     );

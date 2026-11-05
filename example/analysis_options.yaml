@@ -1,4 +1,4 @@
-include: package:flutter_lints/flutter.yaml
+include: ../analysis_options.yaml
 
 analyzer:
   errors:
@@ -20,21 +20,5 @@ analyzer:
 
 linter:
   rules:
-    unnecessary_this: false
     public_member_api_docs: false
     library_private_types_in_public_api: false
-    always_declare_return_types: true
-    camel_case_types: true
-    empty_constructor_bodies: true
-    annotate_overrides: true
-    avoid_init_to_null: true
-    constant_identifier_names: true
-    one_member_abstracts: true
-    slash_for_doc_comments: true
-    unnecessary_brace_in_string_interps: true
-    cancel_subscriptions: true
-    close_sinks: true
-    unnecessary_const: true
-    unnecessary_new: true
-    prefer_single_quotes: true
-    require_trailing_commas: true

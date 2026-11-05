@@ -23,13 +23,15 @@ void main() {
   ) async {
     final indices = <int>[];
     await tester.pumpApp(
-      Pinput.builder(
+      Pinput(
         length: 4,
-        builder: (_, item) => Text('pin-${item.index}'),
-        separatorBuilder: (index) {
-          indices.add(index);
-          return Text('separator-$index');
-        },
+        itemBuilder: (_, item) => Text('pin-${item.index}'),
+        layout: PinLayout(
+          separatorBuilder: (index) {
+            indices.add(index);
+            return Text('separator-$index');
+          },
+        ),
       ),
     );
 
@@ -76,12 +78,14 @@ void main() {
       Pinput(
         length: length,
         focusNode: focusNode,
-        defaultPinTheme: defaultTheme,
-        focusedPinTheme: focusedTheme,
-        submittedPinTheme: submittedTheme,
-        followingPinTheme: followingTheme,
-        disabledPinTheme: disabledTheme,
-        errorPinTheme: errorTheme,
+        theme: PinThemes(
+          fallback: defaultTheme,
+          focused: focusedTheme,
+          submitted: submittedTheme,
+          following: followingTheme,
+          disabled: disabledTheme,
+          error: errorTheme,
+        ),
       ),
     );
 
@@ -142,8 +146,7 @@ void main() {
       Pinput(
         focusNode: focusNode,
         autofocus: true,
-        defaultPinTheme: defaultTheme,
-        focusedPinTheme: focusedTheme,
+        theme: PinThemes(fallback: defaultTheme, focused: focusedTheme),
       ),
     );
 
@@ -163,7 +166,12 @@ void main() {
   });
 
   testWidgets('Should display custom cursor', (WidgetTester tester) async {
-    await tester.pumpApp(const Pinput(autofocus: true, cursor: FlutterLogo()));
+    await tester.pumpApp(
+      const Pinput(
+        autofocus: true,
+        cursor: PinCursor.blinking(child: FlutterLogo()),
+      ),
+    );
 
     await tester.pump();
     expect(find.byType(FlutterLogo), findsOneWidget);
@@ -329,7 +337,9 @@ void main() {
   ) async {
     int tapCount = 0;
 
-    await tester.pumpApp(Pinput(enabled: false, onTap: () => ++tapCount));
+    await tester.pumpApp(
+      Pinput(inputMode: PinInputMode.disabled, onTap: () => ++tapCount),
+    );
 
     expect(tapCount, 0);
     await tester.tap(find.byType(EditableText), warnIfMissed: false);
@@ -373,7 +383,6 @@ void main() {
       Pinput(
         controller: controller,
         length: 4,
-        toolbarEnabled: true,
         enableInteractiveSelection: true,
       ),
     );

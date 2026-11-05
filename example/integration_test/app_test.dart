@@ -33,7 +33,7 @@ void main() {
     );
 
     final errorTheme = defaultTheme.copyWith(
-      decoration: defaultTheme.decoration!.copyWith(
+      decoration: (defaultTheme.decoration as BoxDecoration).copyWith(
         border: Border.all(color: Colors.red),
       ),
     );
@@ -55,8 +55,8 @@ void main() {
                 key: const ValueKey('pinput_seq'),
                 length: 4,
                 controller: controller,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
                 onChanged: (val) => changedValues.add(val),
                 onCompleted: (val) => completedValue = val,
               ),
@@ -130,8 +130,8 @@ void main() {
                 key: const ValueKey('pinput_backspace'),
                 length: 4,
                 controller: controller,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
                 onChanged: (val) => changedValues.add(val),
               ),
             ),
@@ -182,8 +182,8 @@ void main() {
                 length: 4,
                 controller: controller,
                 pinEditMode: PinEditMode.overwrite,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
                 onCompleted: (val) {
                   completedCount++;
                   lastCompleted = val;
@@ -237,8 +237,8 @@ void main() {
                 length: 4,
                 controller: controller,
                 pinEditMode: PinEditMode.overwrite,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
               ),
             ),
           );
@@ -293,8 +293,8 @@ void main() {
                 length: 4,
                 controller: controller,
                 pinEditMode: PinEditMode.clearFollowing,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
                 onCompleted: (_) => completedCount++,
               ),
             ),
@@ -335,8 +335,8 @@ void main() {
                 key: const ValueKey('pinput_paste_exact'),
                 length: 4,
                 controller: controller,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
                 onCompleted: (val) => completed = val,
               ),
             ),
@@ -367,8 +367,8 @@ void main() {
                 key: const ValueKey('pinput_paste_over'),
                 length: 4,
                 controller: controller,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
                 onCompleted: (val) => completed = val,
               ),
             ),
@@ -402,8 +402,8 @@ void main() {
                 key: const ValueKey('pinput_paste_under'),
                 length: 4,
                 controller: controller,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
                 onChanged: (val) => changed = val,
                 onCompleted: (val) => completed = val,
               ),
@@ -434,8 +434,8 @@ void main() {
                 key: const ValueKey('pinput_paste_replace'),
                 length: 4,
                 controller: controller,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
                 onCompleted: (val) => completed = val,
               ),
             ),
@@ -467,14 +467,24 @@ void main() {
               key: formKey,
               child: Column(
                 children: [
-                  Pinput(
-                    key: const ValueKey('pinput_form'),
-                    length: 4,
-                    controller: controller,
-                    defaultPinTheme: defaultTheme,
-                    errorPinTheme: errorTheme,
-                    isCursorAnimationEnabled: false,
+                  FormField<String>(
+                    initialValue: controller.text,
                     validator: (val) => val == '7777' ? null : 'Wrong PIN code',
+                    builder: (field) => Pinput(
+                      key: const ValueKey('pinput_form'),
+                      length: 4,
+                      controller: controller,
+                      theme: PinThemes(
+                        fallback: defaultTheme,
+                        error: errorTheme,
+                      ),
+
+                      cursor: const PinCursor.static(),
+                      onChanged: field.didChange,
+                      validationState: field.errorText == null
+                          ? const PinputValidationState.idle()
+                          : PinputValidationState.invalid(field.errorText!),
+                    ),
                   ),
                   ElevatedButton(
                     key: const ValueKey('btn_submit'),
@@ -507,111 +517,128 @@ void main() {
         expect((decoration.border as Border).top.color, Colors.red);
       });
 
-      testWidgets(
-        'Typing/editing immediately clears error state (Specification 2-A)',
-        (tester) async {
-          final controller = TextEditingController();
-          final formKey = GlobalKey<FormState>();
+      testWidgets('Form adapter can explicitly clear error state on editing', (
+        tester,
+      ) async {
+        final controller = TextEditingController();
+        final formKey = GlobalKey<FormState>();
 
-          await tester.pumpWidget(
-            buildTestHarness(
-              Form(
-                key: formKey,
-                child: Column(
-                  children: [
-                    Pinput(
+        await tester.pumpWidget(
+          buildTestHarness(
+            Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  FormField<String>(
+                    initialValue: controller.text,
+                    validator: (val) => val == '7777' ? null : 'Wrong PIN code',
+                    builder: (field) => Pinput(
                       key: const ValueKey('pinput_clear_error'),
                       length: 4,
                       controller: controller,
-                      defaultPinTheme: defaultTheme,
-                      errorPinTheme: errorTheme,
-                      isCursorAnimationEnabled: false,
-                      validator: (val) =>
-                          val == '7777' ? null : 'Wrong PIN code',
+                      theme: PinThemes(
+                        fallback: defaultTheme,
+                        error: errorTheme,
+                      ),
+
+                      cursor: const PinCursor.static(),
+                      onChanged: (value) {
+                        field.reset();
+                        field.didChange(value);
+                      },
+                      validationState: field.errorText == null
+                          ? const PinputValidationState.idle()
+                          : PinputValidationState.invalid(field.errorText!),
                     ),
-                    ElevatedButton(
-                      key: const ValueKey('btn_submit_2'),
-                      onPressed: () => formKey.currentState!.validate(),
-                      child: const Text('Submit'),
-                    ),
-                  ],
-                ),
+                  ),
+                  ElevatedButton(
+                    key: const ValueKey('btn_submit_2'),
+                    onPressed: () => formKey.currentState!.validate(),
+                    child: const Text('Submit'),
+                  ),
+                ],
               ),
             ),
-          );
-          await pumpFrames(tester);
+          ),
+        );
+        await pumpFrames(tester);
 
-          // Enter wrong pin and trigger error
-          await tester.enterText(find.byType(EditableText), '1111');
-          await pumpFrames(tester);
-          await tester.tap(find.byKey(const ValueKey('btn_submit_2')));
-          await pumpFrames(tester);
-          expect(find.text('Wrong PIN code'), findsOneWidget);
+        // Enter wrong pin and trigger error
+        await tester.enterText(find.byType(EditableText), '1111');
+        await pumpFrames(tester);
+        await tester.tap(find.byKey(const ValueKey('btn_submit_2')));
+        await pumpFrames(tester);
+        expect(find.text('Wrong PIN code'), findsOneWidget);
 
-          // User taps pinput to refocus, then edits by backspacing to '111'
-          await tester.tap(find.byKey(const ValueKey('pinput_clear_error')));
-          await pumpFrames(tester);
-          await tester.enterText(find.byType(EditableText), '111');
-          await pumpFrames(tester);
+        // User taps pinput to refocus, then edits by backspacing to '111'
+        await tester.tap(find.byKey(const ValueKey('pinput_clear_error')));
+        await pumpFrames(tester);
+        await tester.enterText(find.byType(EditableText), '111');
+        await pumpFrames(tester);
 
-          // Per Specification 2-A: error text MUST be cleared immediately on edit!
-          expect(find.text('Wrong PIN code'), findsNothing);
+        // The adapter, not Pinput, clears its error when the value changes.
+        expect(find.text('Wrong PIN code'), findsNothing);
 
-          // Visual border must revert from red error state
-          final container = tester.widget<AnimatedContainer>(
-            find.byType(AnimatedContainer).first,
-          );
-          final decoration = container.decoration as BoxDecoration;
-          expect((decoration.border as Border).top.color, isNot(Colors.red));
-        },
-      );
+        // Visual border must revert from red error state
+        final container = tester.widget<AnimatedContainer>(
+          find.byType(AnimatedContainer).first,
+        );
+        final decoration = container.decoration as BoxDecoration;
+        expect((decoration.border as Border).top.color, isNot(Colors.red));
+      });
     });
 
     // =========================================================================
     // 5. Disabled & ReadOnly States
     // =========================================================================
     group('5. Disabled & ReadOnly States', () {
-      testWidgets('Disabled state (enabled: false) ignores taps and input', (
-        tester,
-      ) async {
-        final controller = TextEditingController(text: '12');
+      testWidgets(
+        'Disabled state (inputMode: PinInputMode.disabled) ignores taps and input',
+        (tester) async {
+          final controller = TextEditingController(text: '12');
 
-        final disabledTheme = defaultTheme.copyWith(
-          decoration: defaultTheme.decoration!.copyWith(color: Colors.black12),
-        );
-
-        await tester.pumpWidget(
-          buildTestHarness(
-            Pinput(
-              key: const ValueKey('pinput_disabled'),
-              length: 4,
-              enabled: false,
-              controller: controller,
-              defaultPinTheme: defaultTheme,
-              disabledPinTheme: disabledTheme,
-              isCursorAnimationEnabled: false,
+          final disabledTheme = defaultTheme.copyWith(
+            decoration: (defaultTheme.decoration as BoxDecoration).copyWith(
+              color: Colors.black12,
             ),
-          ),
-        );
-        await pumpFrames(tester);
+          );
 
-        // Verify disabled theme applied
-        final container = tester.widget<AnimatedContainer>(
-          find.byType(AnimatedContainer).first,
-        );
-        final decoration = container.decoration as BoxDecoration;
-        expect(decoration.color, Colors.black12);
+          await tester.pumpWidget(
+            buildTestHarness(
+              Pinput(
+                key: const ValueKey('pinput_disabled'),
+                length: 4,
+                inputMode: PinInputMode.disabled,
+                controller: controller,
+                theme: PinThemes(
+                  fallback: defaultTheme,
+                  disabled: disabledTheme,
+                ),
 
-        // Tap on disabled pin
-        await tester.tap(find.byKey(const ValueKey('pinput_disabled')));
-        await pumpFrames(tester);
+                cursor: const PinCursor.static(),
+              ),
+            ),
+          );
+          await pumpFrames(tester);
 
-        try {
-          await tester.enterText(find.byType(EditableText), '1234');
-        } catch (_) {}
-        await pumpFrames(tester);
-        expect(controller.text, '12');
-      });
+          // Verify disabled theme applied
+          final container = tester.widget<AnimatedContainer>(
+            find.byType(AnimatedContainer).first,
+          );
+          final decoration = container.decoration as BoxDecoration;
+          expect(decoration.color, Colors.black12);
+
+          // Tap on disabled pin
+          await tester.tap(find.byKey(const ValueKey('pinput_disabled')));
+          await pumpFrames(tester);
+
+          try {
+            await tester.enterText(find.byType(EditableText), '1234');
+          } catch (_) {}
+          await pumpFrames(tester);
+          expect(controller.text, '12');
+        },
+      );
 
       testWidgets(
         'ReadOnly state allows focus but prevents text modification',
@@ -624,11 +651,11 @@ void main() {
               Pinput(
                 key: const ValueKey('pinput_readonly'),
                 length: 4,
-                readOnly: true,
+                inputMode: PinInputMode.readOnly,
                 focusNode: focusNode,
                 controller: controller,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
               ),
             ),
           );
@@ -661,11 +688,10 @@ void main() {
               Pinput(
                 key: const ValueKey('pinput_obscure'),
                 length: 4,
-                obscureText: true,
-                obscuringCharacter: '*',
+                obscuring: const PinObscuring.character('*'),
                 controller: controller,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
               ),
             ),
           );
@@ -693,12 +719,12 @@ void main() {
 
           await tester.pumpWidget(
             buildTestHarness(
-              Pinput.builder(
+              Pinput(
                 key: const ValueKey('pinput_builder'),
                 length: 4,
                 controller: controller,
                 onCompleted: (val) => completed = val,
-                builder: (context, item) {
+                itemBuilder: (context, item) {
                   return Container(
                     key: ValueKey('custom_cell_${item.index}'),
                     width: 40,
@@ -753,8 +779,8 @@ void main() {
                 length: 4,
                 controller: controller,
                 smsRetriever: mockRetriever,
-                defaultPinTheme: defaultTheme,
-                isCursorAnimationEnabled: false,
+                theme: PinThemes(fallback: defaultTheme),
+                cursor: const PinCursor.static(),
                 onCompleted: (val) => completed = val,
               ),
             ),

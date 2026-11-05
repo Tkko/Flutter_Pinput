@@ -1,32 +1,7 @@
 part of '../pinput.dart';
 
-/// The mode which determines the Pinput validation method
-enum PinputAutovalidateMode {
-  /// No auto validation will occur.
-  disabled,
-
-  /// Used to auto-validate [Pinput] only after [Pinput.onCompleted] or [Pinput.onSubmitted] is called
-  onSubmit,
-}
-
-/// The method that is used to get the sms code on Android
-enum AndroidSmsAutofillMethod {
-  /// Disabled SMS autofill on Android
-  none,
-
-  /// Automatically reads sms without user interaction
-  /// Requires SMS to contain The App signature, see readme for more details
-  /// More about Sms Retriever API https://developers.google.com/identity/sms-retriever/overview?hl=en
-  smsRetrieverApi,
-
-  /// Requires user interaction to confirm reading a SMS, see readme for more details
-  /// [AndroidSmsAutofillMethod.smsUserConsentApi]
-  /// More about SMS User Consent API https://developers.google.com/identity/sms-retriever/user-consent/overview
-  smsUserConsentApi,
-}
-
 /// The animation type if Pin item
-enum PinAnimationType {
+enum _PinAnimationType {
   /// No animation
   none,
 
@@ -41,6 +16,18 @@ enum PinAnimationType {
 
   /// Rotation animation
   rotation,
+}
+
+/// The cursor type of [PinCursor]
+enum _PinCursorType {
+  /// Displays an animated cursor.
+  blinking,
+
+  /// Displays a cursor without animation.
+  static,
+
+  /// Does not display a cursor.
+  hidden,
 }
 
 /// The vibration type when user types
@@ -114,7 +101,7 @@ typedef PinputErrorBuilder = Widget Function(String? errorText, String pin);
 ///   [overwrite] therefore does not call it until the user types the last pin;
 ///   read the value from [Pinput.onChanged] or the controller to submit
 ///   explicitly (e.g. a "Continue" button).
-/// - Pin taps are not available with `useNativeKeyboard: false`; a custom
+/// - Pin taps are not available with [PinInputMode.customKeyboard]; a custom
 ///   keyboard can move the cursor by setting `controller.selection`, and the
 ///   `append`/`delete` helpers always work at the end of the input.
 enum PinEditMode {
@@ -126,4 +113,23 @@ enum PinEditMode {
 
   /// Tapping a previous pin focuses that slot. Typing replaces that digit and clears following pins.
   clearFollowing,
+}
+
+/// How the user can input the PIN.
+enum PinInputMode {
+  /// The native keyboard edits the PIN.
+  editable,
+
+  /// The PIN is focusable and selectable, but cannot be edited. See
+  /// [EditableText.readOnly].
+  readOnly,
+
+  /// The PIN ignores input and uses the disabled pin state.
+  disabled,
+
+  /// [Pinput] never opens the native keyboard and ignores pointer input, but
+  /// stays focusable (for example for focus traversal and accessibility). Set
+  /// the value of its [TextEditingController] programmatically, for example
+  /// from an on-screen keypad.
+  customKeyboard,
 }

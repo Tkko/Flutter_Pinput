@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:pinput/pinput.dart';
 import 'package:smart_auth/smart_auth.dart';
+import 'package:pinput_example/demo/async_validation_example.dart';
 
 void main() {
   runApp(
@@ -13,6 +14,21 @@ void main() {
           backgroundColor: Colors.white,
           elevation: 0,
           title: const Text('Pinput Example'),
+          actions: [
+            Builder(
+              builder: (context) => TextButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => Scaffold(
+                      appBar: AppBar(title: const Text('Async validation')),
+                      body: const AsyncValidationExample(),
+                    ),
+                  ),
+                ),
+                child: const Text('Async example'),
+              ),
+            ),
+          ],
           centerTitle: true,
           titleTextStyle: const TextStyle(
             fontSize: 22,
@@ -99,50 +115,63 @@ class _PinputExampleState extends State<PinputExample> {
           Directionality(
             // Specify direction if desired
             textDirection: TextDirection.ltr,
-            child: Pinput(
-              // You can pass your own SmsRetriever implementation based on any package
-              // in this example we are using the SmartAuth
-              smsRetriever: smsRetriever,
-              controller: pinController,
-              focusNode: focusNode,
-              defaultPinTheme: defaultPinTheme,
-              separatorBuilder: (index) => const SizedBox(width: 8),
-              validator: (value) {
-                return value == '2222' ? null : 'Pin is incorrect';
-              },
-              hapticFeedbackType: HapticFeedbackType.lightImpact,
-              onCompleted: (pin) {
-                debugPrint('onCompleted: $pin');
-              },
-              onChanged: (value) {
-                debugPrint('onChanged: $value');
-              },
-              cursor: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 9),
-                    width: 22,
-                    height: 1,
-                    color: focusedBorderColor,
+            child: FormField<String>(
+              initialValue: pinController.text,
+              validator: (value) => value == '2222' ? null : 'Pin is incorrect',
+              builder: (field) => Pinput(
+                validationState: field.errorText == null
+                    ? const PinputValidationState.idle()
+                    : PinputValidationState.invalid(field.errorText!),
+                // You can pass your own SmsRetriever implementation based on any package
+                // in this example we are using the SmartAuth
+                smsRetriever: smsRetriever,
+                controller: pinController,
+                focusNode: focusNode,
+                theme: PinThemes(
+                  fallback: defaultPinTheme,
+                  focused: defaultPinTheme.copyWith(
+                    decoration: (defaultPinTheme.decoration as BoxDecoration)
+                        .copyWith(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: focusedBorderColor),
+                        ),
                   ),
-                ],
-              ),
-              focusedPinTheme: defaultPinTheme.copyWith(
-                decoration: defaultPinTheme.decoration!.copyWith(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: focusedBorderColor),
+                  submitted: defaultPinTheme.copyWith(
+                    decoration: (defaultPinTheme.decoration as BoxDecoration)
+                        .copyWith(
+                          color: fillColor,
+                          borderRadius: BorderRadius.circular(19),
+                          border: Border.all(color: focusedBorderColor),
+                        ),
+                  ),
+                  error: defaultPinTheme.copyBorderWith(
+                    border: Border.all(color: Colors.redAccent),
+                  ),
                 ),
-              ),
-              submittedPinTheme: defaultPinTheme.copyWith(
-                decoration: defaultPinTheme.decoration!.copyWith(
-                  color: fillColor,
-                  borderRadius: BorderRadius.circular(19),
-                  border: Border.all(color: focusedBorderColor),
+                layout: PinLayout(
+                  separatorBuilder: (index) => const SizedBox(width: 8),
                 ),
-              ),
-              errorPinTheme: defaultPinTheme.copyBorderWith(
-                border: Border.all(color: Colors.redAccent),
+                hapticFeedbackType: HapticFeedbackType.lightImpact,
+                onCompleted: (pin) {
+                  debugPrint('onCompleted: $pin');
+                },
+                onChanged: (value) {
+                  field.didChange(value);
+                  debugPrint('onChanged: $value');
+                },
+                cursor: PinCursor.blinking(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 9),
+                        width: 22,
+                        height: 1,
+                        color: focusedBorderColor,
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

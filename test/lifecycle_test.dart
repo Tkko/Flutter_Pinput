@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pinput/pinput.dart';
@@ -46,33 +45,6 @@ void main() {
     expect(tester.takeException(), isNull);
     controller.dispose();
   });
-
-  for (final removeWidget in [false, true]) {
-    testWidgets('Pending clipboard is ignored after removal: $removeWidget', (
-      tester,
-    ) async {
-      final result = Completer<Object?>();
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(SystemChannels.platform, (call) async {
-            if (call.method == 'Clipboard.getData') return result.future;
-            return null;
-          });
-      addTearDown(() {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(SystemChannels.platform, null);
-      });
-      var callbacks = 0;
-      await tester.pumpApp(Pinput(onClipboardFound: (_) => callbacks++));
-      await tester.pumpApp(
-        removeWidget ? const SizedBox.shrink() : const Pinput(),
-      );
-      result.complete({'text': '1234'});
-      await tester.pump();
-
-      expect(callbacks, 0);
-      expect(tester.takeException(), isNull);
-    });
-  }
 
   testWidgets(
     'Replacing a controller does not turn selection into text change',

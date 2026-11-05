@@ -55,27 +55,24 @@ class _RoundedWithShadowState extends State<RoundedWithShadow> {
       length: 4,
       controller: controller,
       focusNode: focusNode,
-      defaultPinTheme: defaultPinTheme,
-      separatorBuilder: (index) => const SizedBox(width: 16),
-      focusedPinTheme: defaultPinTheme.copyWith(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: const [
-            BoxShadow(
-              color: Color.fromRGBO(0, 0, 0, 0.05999999865889549),
-              offset: Offset(0, 3),
-              blurRadius: 16,
-            ),
-          ],
+      theme: PinThemes(
+        fallback: defaultPinTheme,
+        focused: defaultPinTheme.copyWith(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: const [
+              BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.05999999865889549),
+                offset: Offset(0, 3),
+                blurRadius: 16,
+              ),
+            ],
+          ),
         ),
       ),
-      // onClipboardFound: (value) {
-      //   debugPrint('onClipboardFound: $value');
-      //   controller.setText(value);
-      // },
-      showCursor: true,
-      cursor: cursor,
+      layout: PinLayout(separatorBuilder: (index) => const SizedBox(width: 16)),
+      cursor: PinCursor.blinking(child: cursor),
     );
   }
 }

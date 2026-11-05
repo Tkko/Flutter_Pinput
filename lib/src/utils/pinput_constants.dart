@@ -4,7 +4,7 @@ part of '../pinput.dart';
 class PinputConstants {
   const PinputConstants._();
 
-  /// The default value [Pinput.animationDuration]
+  /// The default value [PinAnimation.duration]
   static const _animationDuration = Duration(milliseconds: 180);
 
   /// The default value [Pinput.length]
@@ -42,13 +42,5 @@ class PinputConstants {
   static const _defaultPinputDecoration = BoxDecoration(
     color: _defaultPinFillColor,
     borderRadius: BorderRadius.all(Radius.circular(8)),
-  );
-
-  /// The default value [Pinput.defaultPinTheme]
-  static const _defaultPinTheme = PinTheme(
-    width: 56,
-    height: 60,
-    textStyle: TextStyle(),
-    decoration: _defaultPinputDecoration,
   );
 }

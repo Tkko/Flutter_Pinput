@@ -101,9 +101,12 @@ void main() {
           controller: controller,
           focusNode: focusNode,
           length: 4,
-          defaultPinTheme: defaultTheme,
-          focusedPinTheme: focusedTheme,
-          submittedPinTheme: submittedTheme,
+          theme: PinThemes(
+            fallback: defaultTheme,
+            focused: focusedTheme,
+            submitted: submittedTheme,
+          ),
+
           pinEditMode: PinEditMode.overwrite,
           closeKeyboardWhenCompleted: false,
         ),
@@ -139,11 +142,11 @@ void main() {
       int? tappedIndex;
 
       await tester.pumpApp(
-        Pinput.builder(
+        Pinput(
           controller: controller,
           length: 4,
           pinEditMode: PinEditMode.overwrite,
-          builder: (context, state) {
+          itemBuilder: (context, state) {
             return Text(
               '${state.index}:${state.value}',
               key: ValueKey(state.index),
@@ -494,7 +497,7 @@ void main() {
       await tester.pumpApp(
         Pinput(
           controller: controller,
-          readOnly: true,
+          inputMode: PinInputMode.readOnly,
           length: 4,
           onTap: () => taps++,
         ),
@@ -510,9 +513,9 @@ void main() {
       WidgetTester tester,
     ) async {
       await tester.pumpApp(
-        Pinput.builder(
+        Pinput(
           length: 4,
-          builder: (context, s) => Expanded(child: Text('${s.index}')),
+          itemBuilder: (context, s) => Expanded(child: Text('${s.index}')),
         ),
       );
       expect(tester.takeException(), isNull);
@@ -527,7 +530,7 @@ void main() {
         Pinput(
           controller: controller,
           length: 4,
-          separatorBuilder: (_) => const SizedBox(width: 40),
+          layout: PinLayout(separatorBuilder: (_) => const SizedBox(width: 40)),
         ),
       );
       final first = tester.getRect(find.byType(AnimatedContainer).at(0));
@@ -548,17 +551,14 @@ void main() {
         final controller = TextEditingController(text: '1234');
         final focusNode = FocusNode();
         int completed = 0;
-        String? validated;
+        String? changed;
         await tester.pumpApp(
           Pinput(
             controller: controller,
             focusNode: focusNode,
             length: 4,
             onCompleted: (_) => completed++,
-            validator: (v) {
-              validated = v;
-              return null;
-            },
+            onChanged: (value) => changed = value,
           ),
         );
         await tester.tap(find.byType(AnimatedContainer).at(0));
@@ -574,8 +574,7 @@ void main() {
 
         expect(controller.text, equals('9234'));
         expect(completed, equals(0));
-        // Validation still runs so the error state does not go stale.
-        expect(validated, equals('9234'));
+        expect(changed, equals('9234'));
         expect(focusNode.hasFocus, isTrue);
       },
     );
@@ -717,8 +716,8 @@ void main() {
           controller: controller,
           focusNode: focusNode,
           length: 4,
-          defaultPinTheme: base,
-          focusedPinTheme: focused,
+          theme: PinThemes(fallback: base, focused: focused),
+
           closeKeyboardWhenCompleted: false,
         ),
       );
@@ -811,8 +810,9 @@ void main() {
         Pinput(
           controller: controller,
           closeKeyboardWhenCompleted: false,
-          isCursorAnimationEnabled: false,
-          cursor: const SizedBox(key: ValueKey('active-cursor')),
+          cursor: const PinCursor.static(
+            child: SizedBox(key: ValueKey('active-cursor')),
+          ),
         ),
       );
       final containers = find.byType(AnimatedContainer);

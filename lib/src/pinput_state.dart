@@ -1,15 +1,7 @@
 part of 'pinput.dart';
 
-/// This allows a value of type T or T?
-/// to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become
-/// non-nullable can still be used with `!` and `?`
-/// to support older versions of the API as well.
-T? _ambiguate<T>(T? value) => value;
-
 class _PinputState extends State<Pinput>
-    with RestorationMixin, WidgetsBindingObserver, _PinputUtilsMixin
+    with RestorationMixin, _PinputUtilsMixin
     implements TextSelectionGestureDetectorBuilderDelegate, AutofillClient {
   @override
   late bool forcePressEnabled;
@@ -19,7 +11,11 @@ class _PinputState extends State<Pinput>
       GlobalKey<EditableTextState>();
 
   @override
-  bool get selectionEnabled => widget.toolbarEnabled;
+  bool get selectionEnabled =>
+      _editableText?.widget.selectionEnabled ??
+      (widget.enableInteractiveSelection ??
+          (!(_isReadOnly || !isEnabled || !_useNativeKeyboard) ||
+              widget.obscuring == null));
 
   @override
   String get autofillId => _editableText!.autofillId;
@@ -32,22 +28,12 @@ class _PinputState extends State<Pinput>
   RestorableTextEditingController? _controller;
   FocusNode? _focusNode;
   bool _isHovering = false;
-  String? _validatorErrorText;
   SmsRetriever? _smsRetriever;
 
-  String? get _errorText => widget.errorText ?? _validatorErrorText;
-
-  bool get _canRequestFocus {
-    final NavigationMode mode =
-        MediaQuery.maybeOf(context)?.navigationMode ??
-        NavigationMode.traditional;
-    switch (mode) {
-      case NavigationMode.traditional:
-        return isEnabled && widget.useNativeKeyboard;
-      case NavigationMode.directional:
-        return widget.useNativeKeyboard;
-    }
-  }
+  String? get _errorText => switch (widget.validationState) {
+    PinputValidationInvalid(:final message) => message,
+    _ => null,
+  };
 
   TextEditingController get _effectiveController =>
       widget.controller ?? _controller!.value;
@@ -57,10 +43,15 @@ class _PinputState extends State<Pinput>
       widget.focusNode ?? (_focusNode ??= FocusNode());
 
   @protected
-  bool get hasError => widget.forceErrorState || _validatorErrorText != null;
+  bool get hasError => widget.validationState is PinputValidationInvalid;
 
   @protected
-  bool get isEnabled => widget.enabled;
+  bool get isEnabled => widget.inputMode != PinInputMode.disabled;
+
+  bool get _isReadOnly => widget.inputMode == PinInputMode.readOnly;
+
+  bool get _useNativeKeyboard =>
+      widget.inputMode != PinInputMode.customKeyboard;
 
   late List<String?> _slots;
   int _focusedSlotIndex = 0;
@@ -215,11 +206,8 @@ class _PinputState extends State<Pinput>
     }
 
     _syncSlotsFromExternalText(widget.controller?.text ?? '');
-    _effectiveFocusNode.canRequestFocus = isEnabled && widget.useNativeKeyboard;
+    _effectiveFocusNode.canRequestFocus = isEnabled;
     _maybeInitSmartAuth();
-    _maybeCheckClipboard();
-    // https://github.com/Tkko/Flutter_Pinput/issues/89
-    _ambiguate(WidgetsBinding.instance)!.addObserver(this);
   }
 
   /// Android Autofill
@@ -262,24 +250,14 @@ class _PinputState extends State<Pinput>
   }
 
   void _onChanged(String pin) {
-    if (_validatorErrorText != null) {
-      setState(() => _validatorErrorText = null);
-    }
     widget.onChanged?.call(pin);
     if (_completed) {
       // While the user edits a pin in the middle, the PIN is only "completed"
       // once the cursor reaches the end, so auto-submitting apps never receive
-      // a half-edited code. Validation still runs to keep the error state fresh.
+      // a half-edited code.
       final cursorAtEnd = selectedIndex == widget.length;
       if (cursorAtEnd) widget.onCompleted?.call(pin);
-      _maybeValidateForm();
       if (cursorAtEnd) _maybeCloseKeyboard();
-    }
-  }
-
-  void _maybeValidateForm() {
-    if (widget.pinputAutovalidateMode == PinputAutovalidateMode.onSubmit) {
-      _validator();
     }
   }
 
@@ -287,12 +265,6 @@ class _PinputState extends State<Pinput>
     if (widget.closeKeyboardWhenCompleted && selectedIndex == widget.length) {
       _effectiveFocusNode.unfocus();
     }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _effectiveFocusNode.canRequestFocus = _canRequestFocus;
   }
 
   @override
@@ -317,7 +289,7 @@ class _PinputState extends State<Pinput>
       _syncSlotsFromExternalText(_effectiveController.text);
     }
 
-    _effectiveFocusNode.canRequestFocus = _canRequestFocus;
+    _effectiveFocusNode.canRequestFocus = isEnabled;
   }
 
   @override
@@ -353,8 +325,6 @@ class _PinputState extends State<Pinput>
     _controller?.dispose();
     _focusNode?.dispose();
     retriever?.dispose();
-    // https://github.com/Tkko/Flutter_Pinput/issues/89
-    _ambiguate(WidgetsBinding.instance)!.removeObserver(this);
     super.dispose();
   }
 
@@ -425,41 +395,15 @@ class _PinputState extends State<Pinput>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState appLifecycleState) async {
-    if (appLifecycleState == AppLifecycleState.resumed) {
-      _maybeCheckClipboard();
-    }
-  }
-
-  void _maybeCheckClipboard() async {
-    final callback = widget.onClipboardFound;
-    if (callback != null) {
-      final clipboard = await _getClipboardOrEmpty();
-      if (!mounted || widget.onClipboardFound != callback) return;
-      if (clipboard.characters.length == widget.length) {
-        callback(clipboard);
-      }
-    }
-  }
-
-  String? _validator([String? _]) {
-    final res = widget.validator?.call(pin);
-    setState(() => _validatorErrorText = res);
-    return res;
-  }
-
-  @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
-    final isDense = widget.mainAxisAlignment == MainAxisAlignment.center;
+    final isDense = widget.layout.mainAxisAlignment == MainAxisAlignment.center;
 
     return isDense ? IntrinsicWidth(child: _buildPinput()) : _buildPinput();
   }
 
   Widget _buildPinput() {
     VoidCallback? handleDidGainAccessibilityFocus;
-    final textSelectionControls =
-        widget.selectionControls ?? _pinputSelectionControls;
     forcePressEnabled = defaultTargetPlatform == TargetPlatform.iOS;
     if (defaultTargetPlatform == TargetPlatform.macOS ||
         defaultTargetPlatform == TargetPlatform.windows) {
@@ -471,63 +415,52 @@ class _PinputState extends State<Pinput>
       };
     }
 
-    return _PinputFormField(
-      enabled: isEnabled,
-      validator: _validator,
-      initialValue: _effectiveController.text,
-      builder: (field) {
-        return MouseRegion(
-          cursor: _effectiveMouseCursor,
-          onEnter: (PointerEnterEvent event) => _handleHover(true),
-          onExit: (PointerExitEvent event) => _handleHover(false),
-          child: TextFieldTapRegion(
-            child: IgnorePointer(
-              ignoring: !isEnabled || !widget.useNativeKeyboard,
-              child: AnimatedBuilder(
-                animation: _effectiveController,
-                builder: (_, Widget? child) => Semantics(
-                  maxValueLength: widget.length,
-                  currentValueLength: _currentFilledCount,
-                  enabled: isEnabled,
-                  onTap: widget.readOnly ? null : _semanticsOnTap,
-                  onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
-                  onFocus: isEnabled
-                      ? () {
-                          if (_effectiveFocusNode.canRequestFocus &&
-                              !_effectiveFocusNode.hasFocus) {
-                            _effectiveFocusNode.requestFocus();
-                          } else if (!widget.readOnly) {
-                            _requestKeyboard();
-                          }
-                        }
-                      : null,
-                  child: child,
-                ),
-                child: _gestureDetectorBuilder.buildGestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      // the editable need to be the full size, otherwise the focus is not correct when getting the render box from the focus
-                      Positioned.fill(
-                        child: _buildEditable(textSelectionControls, field),
-                      ),
-                      _buildFields(),
-                    ],
-                  ),
-                ),
+    return MouseRegion(
+      cursor: _effectiveMouseCursor,
+      onEnter: (PointerEnterEvent event) => _handleHover(true),
+      onExit: (PointerExitEvent event) => _handleHover(false),
+      child: TextFieldTapRegion(
+        child: IgnorePointer(
+          ignoring: !isEnabled || !_useNativeKeyboard,
+          child: AnimatedBuilder(
+            animation: _effectiveController,
+            builder: (_, Widget? child) => Semantics(
+              label: widget.semanticsLabel,
+              maxValueLength: widget.length,
+              currentValueLength: _currentFilledCount,
+              enabled: isEnabled,
+              onTap: _isReadOnly ? null : _semanticsOnTap,
+              onDidGainAccessibilityFocus: handleDidGainAccessibilityFocus,
+              onFocus: isEnabled
+                  ? () {
+                      if (_effectiveFocusNode.canRequestFocus &&
+                          !_effectiveFocusNode.hasFocus) {
+                        _effectiveFocusNode.requestFocus();
+                      } else if (!_isReadOnly) {
+                        _requestKeyboard();
+                      }
+                    }
+                  : null,
+              child: child,
+            ),
+            child: _gestureDetectorBuilder.buildGestureDetector(
+              behavior: HitTestBehavior.translucent,
+              child: Stack(
+                alignment: Alignment.topCenter,
+                children: [
+                  // the editable need to be the full size, otherwise the focus is not correct when getting the render box from the focus
+                  Positioned.fill(child: _buildEditable()),
+                  _buildFields(),
+                ],
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
-  Widget _buildEditable(
-    TextSelectionControls? textSelectionControls,
-    FormFieldState<String> field,
-  ) {
+  Widget _buildEditable() {
     final formatters = <TextInputFormatter>[
       ...widget.inputFormatters,
       if (widget.pinEditMode != PinEditMode.none)
@@ -546,7 +479,6 @@ class _PinputState extends State<Pinput>
           maxLines: 1,
           style: PinputConstants._hiddenTextStyle,
           onChanged: (value) {
-            field.didChange(value);
             _maybeUseHaptic(widget.hapticFeedbackType);
           },
           expands: false,
@@ -556,16 +488,13 @@ class _PinputState extends State<Pinput>
           showSelectionHandles: false,
           rendererIgnoresPointer: true,
           enableInteractiveSelection: widget.enableInteractiveSelection,
-          enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
-          textInputAction: widget.textInputAction,
-          textCapitalization: widget.textCapitalization,
+          enableIMEPersonalizedLearning: false,
+          textInputAction: widget.keyboard.textInputAction,
+          textCapitalization: widget.keyboard.textCapitalization,
           selectionColor: PinputConstants._transparent,
-          keyboardType: widget.keyboardType,
-          obscureText: widget.obscureText,
-          onSubmitted: (s) {
-            widget.onSubmitted?.call(s);
-            _maybeValidateForm();
-          },
+          keyboardType: widget.keyboard.keyboardType,
+          obscureText: widget.obscuring != null,
+          onSubmitted: widget.onSubmitted,
           onTapOutside: widget.onTapOutside,
           onTapUpOutside: widget.onTapUpOutside,
           mouseCursor: MouseCursor.defer,
@@ -577,23 +506,21 @@ class _PinputState extends State<Pinput>
           clipBehavior: Clip.hardEdge,
           cursorColor: PinputConstants._transparent,
           controller: _effectiveController,
-          autofillHints: widget.autofillHints,
+          autofillHints: widget.keyboard.autofillHints,
           scrollPadding: widget.scrollPadding,
           selectionWidthStyle: BoxWidthStyle.tight,
           backgroundCursorColor: PinputConstants._transparent,
           selectionHeightStyle: BoxHeightStyle.tight,
-          enableSuggestions: widget.enableSuggestions,
+          enableSuggestions: widget.keyboard.enableSuggestions,
           contextMenuBuilder: widget.contextMenuBuilder,
-          obscuringCharacter: widget.obscuringCharacter,
-          onAppPrivateCommand: widget.onAppPrivateCommand,
+          obscuringCharacter: widget.obscuring?._character ?? '•',
           onSelectionChanged: _handleSelectionChanged,
           onSelectionHandleTapped: _handleSelectionHandleTapped,
-          readOnly: widget.readOnly || !isEnabled || !widget.useNativeKeyboard,
-          selectionControls: widget.toolbarEnabled
-              ? textSelectionControls
-              : null,
+          readOnly: _isReadOnly || !isEnabled || !_useNativeKeyboard,
+          selectionControls:
+              widget.selectionControls ?? _pinputSelectionControls,
           keyboardAppearance:
-              widget.keyboardAppearance ??
+              widget.keyboard.keyboardAppearance ??
               MediaQuery.maybePlatformBrightnessOf(context) ??
               Brightness.light,
         ),
@@ -655,7 +582,7 @@ class _PinputState extends State<Pinput>
 
     // Mirrors the legacy tap behavior (hide toolbar, request keyboard, onTap)
     // and additionally moves the cursor when pin editing is available.
-    if (widget.pinEditMode != PinEditMode.none && !widget.readOnly) {
+    if (widget.pinEditMode != PinEditMode.none && !_isReadOnly) {
       _focusedSlotIndex = index.clamp(0, widget.length - 1);
       if (_slots[_focusedSlotIndex] == null) {
         _focusedSlotIndex = min(_focusedSlotIndex, _firstEmptySlotIndex);
@@ -702,11 +629,12 @@ class _PinputState extends State<Pinput>
   Widget _buildFields() {
     Widget onlyFields() {
       return _SeparatedRaw(
-        separatorBuilder: widget.separatorBuilder,
-        mainAxisAlignment: widget.mainAxisAlignment,
+        separatorBuilder: widget.layout.separatorBuilder,
+        mainAxisAlignment: widget.layout.mainAxisAlignment,
         children: Iterable<int>.generate(widget.length).map<Widget>((index) {
-          if (widget._builder != null) {
-            final child = widget._builder!.itemBuilder.call(
+          final itemBuilder = widget.itemBuilder;
+          if (itemBuilder != null) {
+            final child = itemBuilder(
               context,
               PinItemState(
                 value: _slotValue(index),
@@ -729,16 +657,12 @@ class _PinputState extends State<Pinput>
           _effectiveController,
         ]),
         builder: (BuildContext context, Widget? child) {
-          final shouldHideErrorContent =
-              widget.validator == null && widget.errorText == null;
-
-          if (shouldHideErrorContent) return onlyFields();
-
           return AnimatedSize(
-            duration: widget.animationDuration,
+            duration: widget.pinAnimation.duration,
+            curve: widget.pinAnimation.curve,
             alignment: Alignment.topCenter,
             child: Column(
-              crossAxisAlignment: widget.crossAxisAlignment,
+              crossAxisAlignment: widget.layout.crossAxisAlignment,
               children: [onlyFields(), _buildError()],
             ),
           );
@@ -750,40 +674,41 @@ class _PinputState extends State<Pinput>
   @protected
   bool get hasFocus {
     final isLastPin = selectedIndex == widget.length;
-    return _effectiveFocusNode.hasFocus ||
-        (!widget.useNativeKeyboard && !isLastPin);
+    return _effectiveFocusNode.hasFocus || (!_useNativeKeyboard && !isLastPin);
   }
 
   @protected
   bool get showErrorState {
-    return hasError &&
-        (!hasFocus || widget.showErrorWhenFocused || widget.forceErrorState);
+    return hasError;
   }
 
   Widget _buildError() {
-    if (showErrorState) {
-      if (widget.errorBuilder != null) {
-        return widget.errorBuilder!.call(_errorText, pin);
-      }
+    if (!hasError) return const SizedBox.shrink();
+    final errorText = _errorText;
+    if (widget.errorBuilder != null) {
+      return widget.errorBuilder!.call(errorText, pin);
+    }
 
-      if (_errorText != null) {
-        final isDark =
-            MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
-        final defaultErrorStyle = TextStyle(
-          color: isDark
-              ? PinputConstants._defaultDarkErrorColor
-              : PinputConstants._defaultLightErrorColor,
-          fontSize: 12,
-          decoration: TextDecoration.none,
-        );
-        return Padding(
-          padding: const EdgeInsetsDirectional.only(start: 4, top: 8),
+    if (errorText != null) {
+      final isDark =
+          MediaQuery.maybePlatformBrightnessOf(context) == Brightness.dark;
+      final defaultErrorStyle = TextStyle(
+        color: isDark
+            ? PinputConstants._defaultDarkErrorColor
+            : PinputConstants._defaultLightErrorColor,
+        fontSize: 12,
+        decoration: TextDecoration.none,
+      );
+      return Padding(
+        padding: const EdgeInsetsDirectional.only(start: 4, top: 8),
+        child: Semantics(
+          liveRegion: true,
           child: Text(
-            _errorText!,
+            errorText,
             style: widget.errorTextStyle ?? defaultErrorStyle,
           ),
-        );
-      }
+        ),
+      );
     }
 
     return const SizedBox.shrink();
@@ -796,7 +721,7 @@ class _PinputState extends State<Pinput>
 
   @override
   TextInputConfiguration get textInputConfiguration {
-    final List<String>? autofillHints = widget.autofillHints?.toList(
+    final List<String>? autofillHints = widget.keyboard.autofillHints?.toList(
       growable: false,
     );
     final AutofillConfiguration autofillConfiguration = autofillHints != null
