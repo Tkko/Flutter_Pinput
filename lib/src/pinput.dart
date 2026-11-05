@@ -57,7 +57,7 @@ part 'widgets/_pinput_selection_gesture_detector_builder.dart';
 /// - Obscuring Widget
 /// - Haptic Feedback
 /// - Close Keyboard After Completion
-/// - Beautiful [Examples](https://github.com/Tkko/Flutter_PinPut/tree/master/example/lib/demo)
+/// - Beautiful [Examples](https://github.com/Tkko/Flutter_Pinput/tree/main/example/lib/demo)
 class Pinput extends StatefulWidget {
   /// Creates a PinPut widget.
   ///
