@@ -2,8 +2,8 @@ name: Deploy Demo
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,5 +15,3 @@ jobs:
       pages: write
       id-token: write
     uses: Tkko/better-actions/.github/workflows/deploy-demo.yml@main
-    with:
-      working-directory: example

@@ -2,26 +2,13 @@ name: CI
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
     inputs:
       platforms:
         description: 'Comma-separated integration test platforms: web, linux, android, ios, macos, windows'
         type: string
-        default: web,linux,android,macos
-      integration-test-working-directory:
-        description: 'Directory containing the integration test Flutter app'
-        type: string
-        default: example
-      integration-test-target:
-        description: 'Integration test file relative to the working directory'
-        type: string
-        default: integration_test/app_test.dart
-      integration-test-driver:
-        description: 'Web integration test driver file'
-        type: string
-        default: test_driver/integration_test.dart
+        default: web,linux,android,ios,macos
 
 permissions:
   contents: read
@@ -33,7 +20,4 @@ jobs:
       pull-requests: read
     uses: Tkko/better-actions/.github/workflows/ci.yml@main
     with:
-      platforms: ${{ inputs.platforms || 'web,linux' }}
-      integration-test-working-directory: ${{ inputs.integration-test-working-directory || 'example' }}
-      integration-test-target: ${{ inputs.integration-test-target || 'integration_test/app_test.dart' }}
-      integration-test-driver: ${{ inputs.integration-test-driver || 'test_driver/integration_test.dart' }}
+      platforms: ${{ inputs.platforms || 'web' }}

@@ -15,5 +15,3 @@ jobs:
       contents: read
       id-token: write
     uses: Tkko/better-actions/.github/workflows/publish.yml@main
-    with:
-      working-directory: .
