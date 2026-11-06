@@ -21,6 +21,6 @@ jobs:
   ci:
     permissions:
       contents: read
-    uses: Tkko/better-actions/.github/workflows/ci.yml@main
+    uses: Tkko/better-actions/.github/workflows/ci.yml@chore/drop-third-party-actions
     with:
       platforms: ${{ inputs.platforms || 'web' }}
