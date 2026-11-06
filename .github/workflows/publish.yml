@@ -5,6 +5,12 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+*'
   workflow_dispatch:
+    inputs:
+      skip_validation:
+        description: 'Skip Test & Validate (set by Create Release & Tag, which already validated this commit)'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -15,3 +21,5 @@ jobs:
       contents: read
       id-token: write
     uses: Tkko/better-actions/.github/workflows/publish.yml@main
+    with:
+      skip-validation: ${{ inputs.skip_validation == true }}
