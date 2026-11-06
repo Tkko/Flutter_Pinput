@@ -745,9 +745,8 @@ class _CustomWidgetsLocalizationsDelegate
 
   @override
   Future<WidgetsLocalizations> load(Locale locale) =>
-      DefaultWidgetsLocalizations.load(
-        locale,
-      ).then((defaultLoc) => _CustomWidgetsLocalizations(defaultLoc));
+      DefaultWidgetsLocalizations.load(locale)
+          .then((defaultLoc) => _CustomWidgetsLocalizations(defaultLoc));
 
   @override
   bool shouldReload(_CustomWidgetsLocalizationsDelegate old) => false;

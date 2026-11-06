@@ -2,8 +2,10 @@ part of '../pinput.dart';
 
 /// Resolves the [PinTheme] of a pin item from the item (its index, value and
 /// state) and the app-supplied validation state.
-typedef PinThemeResolver =
-    PinTheme Function(PinItemState item, PinValidationState validation);
+typedef PinThemeResolver = PinTheme Function(
+  PinItemState item,
+  PinValidationState validation,
+);
 
 /// Theme of the individual pin items for each [PinItemStateType].
 @immutable

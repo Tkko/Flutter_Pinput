@@ -347,9 +347,8 @@ void main() {
 
     test('all and resolveWith resolve per item', () {
       expect(
-        const PinThemes.all(
-          focused,
-        ).resolve(item(PinItemStateType.empty), idle),
+        const PinThemes.all(focused)
+            .resolve(item(PinItemStateType.empty), idle),
         focused,
       );
       final themes = PinThemes.resolveWith(
@@ -491,9 +490,9 @@ void main() {
     );
     expect(container.decoration, decoration);
     expect(
-      () => const PinTheme(
-        decoration: decoration,
-      ).copyBorderWith(border: Border.all()),
+      () =>
+          const PinTheme(decoration: decoration)
+              .copyBorderWith(border: Border.all()),
       throwsAssertionError,
     );
   });
