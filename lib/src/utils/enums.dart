@@ -85,11 +85,8 @@ enum HapticFeedbackType {
 }
 
 /// Error widget builder of Pinput
-typedef PinErrorBuilder = Widget Function(
-  BuildContext context,
-  String? errorText,
-  String pin,
-);
+typedef PinErrorBuilder =
+    Widget Function(BuildContext context, String? errorText, String pin);
 
 /// How editing previous pins behaves when tapping on a filled pin slot.
 ///
