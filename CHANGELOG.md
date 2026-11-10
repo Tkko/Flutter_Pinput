@@ -43,7 +43,7 @@
 - Dragging the cursor with the iOS keyboard (long press on the space bar) and
   force press no longer move the cursor. Arrow keys on a hardware keyboard
   still do.
-- Aligned the `validating()` subtype name as `PinputValidationValidating`.
+- Aligned the `validating()` subtype name as `PinValidationValidating`.
 - Added value equality to `PinAnimation` and `PinObscuring`, and documented
   the shared GlobalKey restriction for masking widgets.
 - **BREAKING**: Consolidated cursor into `PinCursor` (`blinking`, `static`,
@@ -61,9 +61,14 @@
 - `pinContentAlignment` became `PinTheme.alignment`. Added the public
   `PinTheme.defaults` built-in theme; `PinThemes` uses `fallback`
   (default `PinTheme.defaults`) for unset states.
-- `PinTheme.decoration` is now a `Decoration`, so `ShapeDecoration` and other
-  decorations work. `copyDecorationWith` and `copyBorderWith` still require a
-  `BoxDecoration`.
+- `PinTheme<T extends Decoration>` and `PinThemes<T extends Decoration>` are now
+  generic over `Decoration`, fully typed with `<T>` for `BoxDecoration`,
+  `ShapeDecoration`, and custom decorations.
+- **BREAKING**: Removed `PinTheme.copyDecorationWith`, `copyBorderWith` and
+  `PinTheme.apply` in favor of standard `PinTheme.copyWith(decoration: ...)`.
+- Added `copyWith` and informative `toString` across all configuration models
+  (`PinThemes`, `PinLayout`, `PinKeyboard`, `PinAnimation`, `PinCursor`,
+  `PinObscuring`, `PinItemState`).
 - **BREAKING**: `Pinput.builder` is now `Pinput(itemBuilder: ...)`; there is one
   constructor. `theme` and `cursor` are not used when `itemBuilder` is set.
 - **BREAKING**: Grouped `mainAxisAlignment`, `crossAxisAlignment` and

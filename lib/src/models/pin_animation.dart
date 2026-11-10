@@ -68,6 +68,30 @@ class PinAnimation {
   final Offset? _beginOffset;
   final AnimatedSwitcherTransitionBuilder? _transitionBuilder;
 
+  /// Creates a copy of this animation with the given fields replaced.
+  PinAnimation copyWith({Duration? duration, Curve? curve}) {
+    return PinAnimation._(
+      _type,
+      duration ?? this.duration,
+      curve ?? this.curve,
+      _beginOffset,
+      _transitionBuilder,
+    );
+  }
+
+  @override
+  String toString() {
+    final typeName = switch (_type) {
+      _PinAnimationType.none => 'none',
+      _PinAnimationType.scale => 'scale',
+      _PinAnimationType.fade => 'fade',
+      _PinAnimationType.slide => 'slide(beginOffset: $_beginOffset)',
+      _PinAnimationType.rotation => 'rotation',
+      _PinAnimationType.custom => 'custom',
+    };
+    return 'PinAnimation.$typeName(duration: $duration, curve: $curve)';
+  }
+
   @override
   bool operator ==(Object other) =>
       other is PinAnimation &&

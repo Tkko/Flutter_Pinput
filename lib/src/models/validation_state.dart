@@ -35,18 +35,27 @@ sealed class PinValidationState {
 final class PinValidationIdle extends PinValidationState {
   /// Creates feedback with no current validation result.
   const PinValidationIdle() : super._();
+
+  @override
+  String toString() => 'PinValidationState.idle()';
 }
 
 /// Validation is pending.
 final class PinValidationValidating extends PinValidationState {
   /// Creates feedback for a pending check.
   const PinValidationValidating() : super._();
+
+  @override
+  String toString() => 'PinValidationState.validating()';
 }
 
 /// Validation passed for the current PIN.
 final class PinValidationValid extends PinValidationState {
   /// Creates feedback for successful validation.
   const PinValidationValid() : super._();
+
+  @override
+  String toString() => 'PinValidationState.valid()';
 }
 
 /// Validation failed with an optional [message].
@@ -63,4 +72,9 @@ final class PinValidationInvalid extends PinValidationState {
 
   @override
   int get hashCode => Object.hash(runtimeType, message);
+
+  @override
+  String toString() => message != null
+      ? 'PinValidationState.invalid($message)'
+      : 'PinValidationState.invalid()';
 }

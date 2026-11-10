@@ -490,11 +490,5 @@ void main() {
       find.byType(AnimatedContainer).first,
     );
     expect(container.decoration, decoration);
-    expect(
-      () => const PinTheme(
-        decoration: decoration,
-      ).copyBorderWith(border: Border.all()),
-      throwsAssertionError,
-    );
   });
 }

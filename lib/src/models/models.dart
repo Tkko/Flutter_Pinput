@@ -55,6 +55,27 @@ class PinItemState {
   /// Whether this pin holds a value.
   bool get isFilled => value.isNotEmpty;
 
+  /// Creates a copy of this state with the given fields replaced.
+  PinItemState copyWith({
+    String? value,
+    int? index,
+    PinItemStateType? type,
+    bool? isFocused,
+    bool? showCursor,
+  }) {
+    return PinItemState(
+      value: value ?? this.value,
+      index: index ?? this.index,
+      type: type ?? this.type,
+      isFocused: isFocused ?? this.isFocused,
+      showCursor: showCursor ?? this.showCursor,
+    );
+  }
+
+  @override
+  String toString() =>
+      'PinItemState(value: $value, index: $index, type: $type, isFocused: $isFocused, showCursor: $showCursor)';
+
   @override
   bool operator ==(Object other) =>
       other is PinItemState &&

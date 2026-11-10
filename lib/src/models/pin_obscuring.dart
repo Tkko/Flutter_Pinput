@@ -33,6 +33,32 @@ class PinObscuring {
   final String _character;
   final Widget? _widget;
 
+  /// Creates a copy of this obscuring configuration with the given fields replaced.
+  PinObscuring copyWith({
+    Duration? revealDuration,
+    String? character,
+    Widget? widget,
+  }) {
+    if (widget != null || (_widget != null && character == null)) {
+      return PinObscuring.widget(
+        widget ?? _widget!,
+        revealDuration: revealDuration ?? this.revealDuration,
+      );
+    }
+    return PinObscuring.character(
+      character ?? _character,
+      revealDuration ?? this.revealDuration,
+    );
+  }
+
+  @override
+  String toString() {
+    if (_widget != null) {
+      return 'PinObscuring.widget($_widget, revealDuration: $revealDuration)';
+    }
+    return 'PinObscuring.character($_character, revealDuration: $revealDuration)';
+  }
+
   @override
   bool operator ==(Object other) =>
       other is PinObscuring &&
