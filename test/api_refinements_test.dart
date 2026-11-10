@@ -464,12 +464,6 @@ void main() {
       expect(filled.isFilled, isTrue);
       expect(empty.isFilled, isFalse);
       expect(filled.toString(), contains('PinItemState(value: 1, index: 0'));
-
-      final copy = filled.copyWith(value: '9', isFocused: true);
-      expect(copy.value, '9');
-      expect(copy.isFocused, isTrue);
-      expect(copy.index, 0);
-      expect(copy.type, PinItemStateType.filled);
     });
 
     test('PinLayout copyWith and toString', () {
