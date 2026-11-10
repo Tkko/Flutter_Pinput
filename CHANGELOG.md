@@ -2,11 +2,13 @@
 
 - **BREAKING**: Renamed `hapticFeedbackType` to `hapticFeedback`.
 - **BREAKING**: `PinAnimation.none()` now disables content, decoration and
-  error-layout animations and no longer accepts timing parameters. Its
-  `copyWith` keeps animations disabled. Cursor blinking remains controlled
-  separately by `PinCursor`.
+  error-layout animations and no longer accepts timing parameters. Cursor
+  blinking remains controlled separately by `PinCursor`.
 - **BREAKING**: Removed `PinThemes.copyWith`; custom implementations only need
   to implement `resolve`.
+- **BREAKING**: Removed `copyWith` from `PinLayout`, `PinKeyboard`,
+  `PinAnimation`, `PinCursor`, `PinObscuring` and `PinItemState`. Use their
+  constructors instead. `PinTheme.copyWith` remains available for deriving styles.
 - Fixed generic theme resolution without an explicit fallback. Built-in
   styling is preserved, with decorations included only when compatible with
   the theme's decoration type.

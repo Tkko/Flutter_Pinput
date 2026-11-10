@@ -449,7 +449,7 @@ void main() {
       expect(invalidNoMsg.toString(), 'PinValidationState.invalid()');
     });
 
-    test('PinItemState copyWith and toString', () {
+    test('PinItemState getters and toString', () {
       const filled = PinItemState(
         value: '1',
         index: 0,
@@ -466,21 +466,13 @@ void main() {
       expect(filled.toString(), contains('PinItemState(value: 1, index: 0'));
     });
 
-    test('PinLayout copyWith and toString', () {
+    test('PinLayout toString', () {
       const layout = PinLayout(mainAxisAlignment: MainAxisAlignment.start);
-      final copy = layout.copyWith(
-        crossAxisAlignment: CrossAxisAlignment.center,
-      );
-      expect(copy.mainAxisAlignment, MainAxisAlignment.start);
-      expect(copy.crossAxisAlignment, CrossAxisAlignment.center);
       expect(layout.toString(), contains('PinLayout(mainAxisAlignment:'));
     });
 
-    test('PinKeyboard copyWith and toString', () {
+    test('PinKeyboard toString', () {
       const kb = PinKeyboard(keyboardType: TextInputType.phone);
-      final copy = kb.copyWith(enableSuggestions: false);
-      expect(copy.keyboardType, TextInputType.phone);
-      expect(copy.enableSuggestions, isFalse);
       expect(kb.toString(), contains('PinKeyboard(keyboardType:'));
     });
 
@@ -505,18 +497,10 @@ void main() {
       expect(hidden.toString(), 'PinCursor.hidden()');
     });
 
-    test('PinObscuring copyWith and toString', () {
+    test('PinObscuring revealDuration and toString', () {
       const char = PinObscuring.character('*', Duration(milliseconds: 200));
       expect(char.revealDuration, const Duration(milliseconds: 200));
       expect(char.toString(), contains('PinObscuring.character(*'));
-
-      final copyChar = char.copyWith(
-        character: '#',
-        revealDuration: const Duration(milliseconds: 400),
-      );
-      expect(copyChar, isNot(char));
-      expect(copyChar.revealDuration, const Duration(milliseconds: 400));
-      expect(copyChar.toString(), contains('PinObscuring.character(#'));
 
       const widgetObs = PinObscuring.widget(
         SizedBox(),
@@ -524,11 +508,7 @@ void main() {
       );
       expect(widgetObs.toString(), contains('PinObscuring.widget'));
 
-      final copyWidget = widgetObs.copyWith(
-        revealDuration: const Duration(milliseconds: 500),
-      );
-      expect(copyWidget, isNot(widgetObs));
-      expect(copyWidget.revealDuration, const Duration(milliseconds: 500));
+      expect(widgetObs.revealDuration, const Duration(milliseconds: 100));
     });
 
     test('PinTheme<T> and PinThemes<T> preserve generic Decoration type T', () {

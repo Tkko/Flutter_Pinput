@@ -24,21 +24,6 @@ class PinLayout {
   /// [TextDirection.ltr] to keep a numeric code left to right in an RTL app.
   final TextDirection? textDirection;
 
-  /// Creates a copy of this layout with the given fields replaced.
-  PinLayout copyWith({
-    MainAxisAlignment? mainAxisAlignment,
-    CrossAxisAlignment? crossAxisAlignment,
-    IndexedWidgetBuilder? separatorBuilder,
-    TextDirection? textDirection,
-  }) {
-    return PinLayout(
-      mainAxisAlignment: mainAxisAlignment ?? this.mainAxisAlignment,
-      crossAxisAlignment: crossAxisAlignment ?? this.crossAxisAlignment,
-      separatorBuilder: separatorBuilder ?? this.separatorBuilder,
-      textDirection: textDirection ?? this.textDirection,
-    );
-  }
-
   @override
   String toString() =>
       'PinLayout(mainAxisAlignment: $mainAxisAlignment, crossAxisAlignment: $crossAxisAlignment, separatorBuilder: $separatorBuilder, textDirection: $textDirection)';

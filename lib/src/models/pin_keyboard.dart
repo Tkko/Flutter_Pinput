@@ -38,25 +38,6 @@ class PinKeyboard {
   /// See [EditableText.autofillHints]. Null disables autofill.
   final Iterable<String>? autofillHints;
 
-  /// Creates a copy of this keyboard configuration with the given fields replaced.
-  PinKeyboard copyWith({
-    TextInputType? keyboardType,
-    TextCapitalization? textCapitalization,
-    TextInputAction? textInputAction,
-    Brightness? keyboardAppearance,
-    bool? enableSuggestions,
-    Iterable<String>? autofillHints,
-  }) {
-    return PinKeyboard(
-      keyboardType: keyboardType ?? this.keyboardType,
-      textCapitalization: textCapitalization ?? this.textCapitalization,
-      textInputAction: textInputAction ?? this.textInputAction,
-      keyboardAppearance: keyboardAppearance ?? this.keyboardAppearance,
-      enableSuggestions: enableSuggestions ?? this.enableSuggestions,
-      autofillHints: autofillHints ?? this.autofillHints,
-    );
-  }
-
   @override
   String toString() =>
       'PinKeyboard(keyboardType: $keyboardType, textCapitalization: $textCapitalization, textInputAction: $textInputAction, keyboardAppearance: $keyboardAppearance, enableSuggestions: $enableSuggestions, autofillHints: $autofillHints)';
