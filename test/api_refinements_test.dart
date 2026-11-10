@@ -492,18 +492,11 @@ void main() {
       expect(slide.toString(), contains('PinAnimation.slide'));
     });
 
-    test('PinCursor copyWith and toString', () {
+    test('PinCursor toString', () {
       const blinking = PinCursor.blinking(
         blinkDuration: Duration(milliseconds: 300),
       );
       expect(blinking.toString(), contains('PinCursor.blinking'));
-
-      final copy = blinking.copyWith(
-        child: const SizedBox(width: 2),
-        blinkDuration: const Duration(milliseconds: 600),
-      );
-      expect(copy, isNot(blinking));
-      expect(copy.toString(), contains('0:00:00.600000'));
 
       const staticCursor = PinCursor.static(child: SizedBox());
       expect(staticCursor.toString(), contains('PinCursor.static'));

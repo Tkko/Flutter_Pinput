@@ -29,11 +29,6 @@ class PinCursor {
   final Widget? _child;
   final Duration _blinkDuration;
 
-  /// Creates a copy of this cursor with the given fields replaced.
-  PinCursor copyWith({Widget? child, Duration? blinkDuration}) {
-    return PinCursor._(_type, child ?? _child, blinkDuration ?? _blinkDuration);
-  }
-
   @override
   String toString() {
     return switch (_type) {
