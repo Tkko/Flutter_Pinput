@@ -59,20 +59,20 @@ void main() {
     const length = 4;
     final focusNode = FocusNode();
     const defaultTheme = PinTheme(decoration: BoxDecoration(color: _red));
-    final focusedTheme = defaultTheme.copyDecorationWith(
-      color: _greenAccent.withValues(alpha: .9),
+    final focusedTheme = PinTheme(
+      decoration: BoxDecoration(color: _greenAccent.withValues(alpha: .9)),
     );
-    final submittedTheme = defaultTheme.copyDecorationWith(
-      color: _greenAccent.withValues(alpha: .8),
+    final submittedTheme = PinTheme(
+      decoration: BoxDecoration(color: _greenAccent.withValues(alpha: .8)),
     );
-    final followingTheme = defaultTheme.copyDecorationWith(
-      color: _greenAccent.withValues(alpha: .7),
+    final followingTheme = PinTheme(
+      decoration: BoxDecoration(color: _greenAccent.withValues(alpha: .7)),
     );
-    final disabledTheme = defaultTheme.copyDecorationWith(
-      color: _greenAccent.withValues(alpha: .6),
+    final disabledTheme = PinTheme(
+      decoration: BoxDecoration(color: _greenAccent.withValues(alpha: .6)),
     );
-    final errorTheme = defaultTheme.copyDecorationWith(
-      color: _greenAccent.withValues(alpha: .5),
+    final errorTheme = PinTheme(
+      decoration: BoxDecoration(color: _greenAccent.withValues(alpha: .5)),
     );
 
     await tester.pumpApp(
@@ -142,7 +142,7 @@ void main() {
   ) async {
     final focusNode = FocusNode();
     const defaultTheme = PinTheme(decoration: BoxDecoration());
-    final focusedTheme = defaultTheme.copyDecorationWith(color: _red);
+    const focusedTheme = PinTheme(decoration: BoxDecoration(color: _red));
     await tester.pumpApp(
       Pinput(
         focusNode: focusNode,

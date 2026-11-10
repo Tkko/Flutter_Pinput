@@ -56,6 +56,10 @@ class PinItemState {
   bool get isFilled => value.isNotEmpty;
 
   @override
+  String toString() =>
+      'PinItemState(value: $value, index: $index, type: $type, isFocused: $isFocused, showCursor: $showCursor)';
+
+  @override
   bool operator ==(Object other) =>
       other is PinItemState &&
       runtimeType == other.runtimeType &&

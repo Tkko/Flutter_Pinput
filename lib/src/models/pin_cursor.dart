@@ -30,6 +30,16 @@ class PinCursor {
   final Duration _blinkDuration;
 
   @override
+  String toString() {
+    return switch (_type) {
+      _PinCursorType.blinking =>
+        'PinCursor.blinking(child: $_child, blinkDuration: $_blinkDuration)',
+      _PinCursorType.static => 'PinCursor.static(child: $_child)',
+      _PinCursorType.hidden => 'PinCursor.hidden()',
+    };
+  }
+
+  @override
   bool operator ==(Object other) =>
       other is PinCursor &&
       runtimeType == other.runtimeType &&

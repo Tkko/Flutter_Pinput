@@ -2,12 +2,12 @@ part of '../pinput.dart';
 
 /// Resolves the [PinTheme] of a pin item from the item (its index, value and
 /// state) and the app-supplied validation state.
-typedef PinThemeResolver =
-    PinTheme Function(PinItemState item, PinValidationState validation);
+typedef PinThemeResolver<T extends Decoration> =
+    PinTheme<T> Function(PinItemState item, PinValidationState validation);
 
 /// Theme of the individual pin items for each [PinItemStateType].
 @immutable
-class PinTheme {
+class PinTheme<T extends Decoration> {
   /// width of each [Pinput] field
   final double? width;
 
@@ -49,7 +49,7 @@ class PinTheme {
   ///  this.backgroundBlendMode,
   ///  this.shape = BoxShape.rectangle,
   ///  ```
-  final Decoration? decoration;
+  final T? decoration;
 
   /// Widget displayed in an empty pin that does not show the cursor.
   final Widget? placeholder;
@@ -59,7 +59,7 @@ class PinTheme {
 
   /// The built-in theme used when no [Pinput.theme] is set. Derive from it with
   /// [copyWith] to change only part of the default look.
-  static const PinTheme defaults = PinTheme(
+  static const defaults = PinTheme(
     width: 56,
     height: 60,
     textStyle: TextStyle(),
@@ -101,16 +101,27 @@ class PinTheme {
   });
 
   /// Linearly interpolates between two themes. [placeholder] is not
-  /// interpolated; it switches at the midpoint.
-  static PinTheme? lerp(PinTheme? a, PinTheme? b, double t) {
+  /// interpolated; it switches at the midpoint. If the decoration's
+  /// interpolation returns a value outside [T], the decoration switches
+  /// between the endpoints at the midpoint.
+  static PinTheme<T>? lerp<T extends Decoration>(
+    PinTheme<T>? a,
+    PinTheme<T>? b,
+    double t,
+  ) {
     if (identical(a, b)) return a;
-    return PinTheme(
+    final decoration = Decoration.lerp(a?.decoration, b?.decoration, t);
+    return PinTheme<T>(
       width: lerpDouble(a?.width, b?.width, t),
       height: lerpDouble(a?.height, b?.height, t),
       margin: EdgeInsetsGeometry.lerp(a?.margin, b?.margin, t),
       padding: EdgeInsetsGeometry.lerp(a?.padding, b?.padding, t),
       textStyle: TextStyle.lerp(a?.textStyle, b?.textStyle, t),
-      decoration: Decoration.lerp(a?.decoration, b?.decoration, t),
+      decoration: decoration is T
+          ? decoration
+          : t < 0.5
+          ? a?.decoration
+          : b?.decoration,
       constraints: BoxConstraints.lerp(a?.constraints, b?.constraints, t),
       placeholder: t < 0.5 ? a?.placeholder : b?.placeholder,
       alignment: AlignmentGeometry.lerp(a?.alignment, b?.alignment, t),
@@ -118,18 +129,18 @@ class PinTheme {
   }
 
   /// Create a new [PinTheme] from the current instance
-  PinTheme copyWith({
+  PinTheme<T> copyWith({
     double? width,
     double? height,
     TextStyle? textStyle,
     BoxConstraints? constraints,
-    Decoration? decoration,
+    T? decoration,
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
     Widget? placeholder,
     AlignmentGeometry? alignment,
   }) {
-    return PinTheme(
+    return PinTheme<T>(
       width: width ?? this.width,
       height: height ?? this.height,
       textStyle: textStyle ?? this.textStyle,
@@ -142,65 +153,27 @@ class PinTheme {
     );
   }
 
-  /// Create a new [PinTheme] from the current instance with new decoration.
-  /// Requires [decoration] to be a [BoxDecoration].
-  PinTheme copyDecorationWith({
-    Color? color,
-    DecorationImage? image,
-    BoxBorder? border,
-    BorderRadiusGeometry? borderRadius,
-    List<BoxShadow>? boxShadow,
-    Gradient? gradient,
-    BlendMode? backgroundBlendMode,
-    BoxShape? shape,
-  }) {
-    assert(
-      decoration is BoxDecoration,
-      'copyDecorationWith requires a BoxDecoration',
-    );
-    return copyWith(
-      decoration: (decoration as BoxDecoration).copyWith(
-        color: color,
-        image: image,
-        border: border,
-        borderRadius: borderRadius,
-        boxShadow: boxShadow,
-        gradient: gradient,
-        backgroundBlendMode: backgroundBlendMode,
-        shape: shape,
-      ),
-    );
-  }
-
-  /// Create a new [PinTheme] from the current instance with new border.
-  /// Requires [decoration] to be a [BoxDecoration].
-  PinTheme copyBorderWith({required Border border}) {
-    assert(
-      decoration is BoxDecoration,
-      'copyBorderWith requires a BoxDecoration',
-    );
-    return copyWith(
-      decoration: (decoration as BoxDecoration).copyWith(border: border),
-    );
-  }
+  @override
+  String toString() =>
+      'PinTheme(width: $width, height: $height, textStyle: $textStyle, margin: $margin, padding: $padding, constraints: $constraints, decoration: $decoration, placeholder: $placeholder, alignment: $alignment)';
 
   @override
   bool operator ==(Object other) =>
-      other is PinTheme &&
-      runtimeType == other.runtimeType &&
-      width == other.width &&
-      height == other.height &&
-      margin == other.margin &&
-      padding == other.padding &&
-      textStyle == other.textStyle &&
-      decoration == other.decoration &&
-      constraints == other.constraints &&
-      placeholder == other.placeholder &&
-      alignment == other.alignment;
+      identical(this, other) ||
+      (other is PinTheme &&
+          width == other.width &&
+          height == other.height &&
+          margin == other.margin &&
+          padding == other.padding &&
+          textStyle == other.textStyle &&
+          decoration == other.decoration &&
+          constraints == other.constraints &&
+          placeholder == other.placeholder &&
+          alignment == other.alignment);
 
   @override
   int get hashCode => Object.hash(
-    runtimeType,
+    PinTheme,
     width,
     height,
     margin,
@@ -233,6 +206,10 @@ class DefaultPinThemes extends InheritedWidget {
   @override
   bool updateShouldNotify(DefaultPinThemes oldWidget) =>
       themes != oldWidget.themes;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) =>
+      'DefaultPinThemes(themes: $themes)';
 }
 
 /// Themes of the pin items, resolved per [PinItemStateType].
@@ -257,64 +234,80 @@ class DefaultPinThemes extends InheritedWidget {
 /// Implement this class to share a theme as your own type; only [resolve] is
 /// required.
 // ignore: one_member_abstracts
-abstract class PinThemes {
+abstract class PinThemes<T extends Decoration> {
   /// Abstract const constructor for subclasses.
   const PinThemes._();
 
   /// Uses the theme for each state, falling back to [fallback] for states you
   /// leave out. Without a [fallback] the built-in look is used, which marks the
-  /// focused, disabled and error states. A state theme is used exactly as
-  /// written and is not merged with [fallback], so derive it with
-  /// [PinTheme.copyWith].
+  /// focused, disabled and error states. A built-in decoration is included
+  /// only when it matches [T]. A state theme is used exactly as written and is
+  /// not merged with [fallback], so derive it with [PinTheme.copyWith].
   ///
   /// [valid] and [validating] apply to every pin that is not disabled or in the
   /// error state while the app supplies [PinValidationState.valid] or
   /// [PinValidationState.validating]. When they are null, validation does not
   /// change the look of the pins.
   const factory PinThemes({
-    PinTheme? fallback,
-    PinTheme? focused,
-    PinTheme? filled,
-    PinTheme? empty,
-    PinTheme? disabled,
-    PinTheme? error,
-    PinTheme? valid,
-    PinTheme? validating,
-  }) = _PinThemesNamed;
+    PinTheme<T>? fallback,
+    PinTheme<T>? focused,
+    PinTheme<T>? filled,
+    PinTheme<T>? empty,
+    PinTheme<T>? disabled,
+    PinTheme<T>? error,
+    PinTheme<T>? valid,
+    PinTheme<T>? validating,
+  }) = _PinThemesNamed<T>;
 
   /// Resolves the theme with [callback]. Use a `switch` without a wildcard to
   /// get compile-time exhaustiveness over [PinItemStateType].
-  const factory PinThemes.resolveWith(PinThemeResolver callback) =
-      _PinThemesResolveWith;
+  const factory PinThemes.resolveWith(PinThemeResolver<T> callback) =
+      _PinThemesResolveWith<T>;
 
   /// Uses [theme] in every state, so focus, disabled input and errors do not
   /// change the look of the pins.
-  const factory PinThemes.all(PinTheme theme) = _PinThemesAll;
+  const factory PinThemes.all(PinTheme<T> theme) = _PinThemesAll<T>;
 
   /// Returns the theme for [item] under the current [validation] state.
-  PinTheme resolve(PinItemState item, PinValidationState validation);
+  PinTheme<T> resolve(PinItemState item, PinValidationState validation);
 }
 
-class _PinThemesResolveWith extends PinThemes {
+class _PinThemesResolveWith<T extends Decoration> extends PinThemes<T> {
   const _PinThemesResolveWith(this._callback) : super._();
 
-  final PinThemeResolver _callback;
+  final PinThemeResolver<T> _callback;
 
   @override
-  PinTheme resolve(PinItemState item, PinValidationState validation) =>
+  PinTheme<T> resolve(PinItemState item, PinValidationState validation) =>
       _callback(item, validation);
+
+  @override
+  String toString() => 'PinThemes.resolveWith(...)';
 }
 
-class _PinThemesAll extends PinThemes {
+class _PinThemesAll<T extends Decoration> extends PinThemes<T> {
   const _PinThemesAll(this._theme) : super._();
 
-  final PinTheme _theme;
+  final PinTheme<T> _theme;
 
   @override
-  PinTheme resolve(PinItemState item, PinValidationState validation) => _theme;
+  PinTheme<T> resolve(PinItemState item, PinValidationState validation) =>
+      _theme;
+
+  @override
+  bool operator ==(Object other) =>
+      other is _PinThemesAll<T> &&
+      runtimeType == other.runtimeType &&
+      _theme == other._theme;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, _theme);
+
+  @override
+  String toString() => 'PinThemes.all($_theme)';
 }
 
-class _PinThemesNamed extends PinThemes {
+class _PinThemesNamed<T extends Decoration> extends PinThemes<T> {
   const _PinThemesNamed({
     this.fallback,
     this.focused,
@@ -326,17 +319,17 @@ class _PinThemesNamed extends PinThemes {
     this.validating,
   }) : super._();
 
-  final PinTheme? fallback;
-  final PinTheme? focused;
-  final PinTheme? filled;
-  final PinTheme? empty;
-  final PinTheme? disabled;
-  final PinTheme? error;
-  final PinTheme? valid;
-  final PinTheme? validating;
+  final PinTheme<T>? fallback;
+  final PinTheme<T>? focused;
+  final PinTheme<T>? filled;
+  final PinTheme<T>? empty;
+  final PinTheme<T>? disabled;
+  final PinTheme<T>? error;
+  final PinTheme<T>? valid;
+  final PinTheme<T>? validating;
 
   @override
-  PinTheme resolve(PinItemState item, PinValidationState validation) {
+  PinTheme<T> resolve(PinItemState item, PinValidationState validation) {
     final type = item.type;
     if (type != PinItemStateType.disabled && type != PinItemStateType.error) {
       final feedback = switch (validation) {
@@ -353,14 +346,57 @@ class _PinThemesNamed extends PinThemes {
       PinItemStateType.disabled => disabled,
       PinItemStateType.error => error,
     };
-    return theme ??
-        fallback ??
-        switch (type) {
-          PinItemStateType.focused => PinTheme._defaultFocused,
-          PinItemStateType.disabled => PinTheme._defaultDisabled,
-          PinItemStateType.error => PinTheme._defaultError,
-          PinItemStateType.filled ||
-          PinItemStateType.empty => PinTheme.defaults,
-        };
+    if (theme != null) return theme;
+    final fallbackTheme = fallback;
+    if (fallbackTheme != null) return fallbackTheme;
+
+    final defaultTheme = switch (type) {
+      PinItemStateType.focused => PinTheme._defaultFocused,
+      PinItemStateType.disabled => PinTheme._defaultDisabled,
+      PinItemStateType.error => PinTheme._defaultError,
+      PinItemStateType.filled || PinItemStateType.empty => PinTheme.defaults,
+    };
+    final decoration = defaultTheme.decoration;
+    return PinTheme<T>(
+      width: defaultTheme.width,
+      height: defaultTheme.height,
+      textStyle: defaultTheme.textStyle,
+      margin: defaultTheme.margin,
+      padding: defaultTheme.padding,
+      constraints: defaultTheme.constraints,
+      decoration: decoration is T ? decoration as T : null,
+      placeholder: defaultTheme.placeholder,
+      alignment: defaultTheme.alignment,
+    );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is _PinThemesNamed<T> &&
+      runtimeType == other.runtimeType &&
+      fallback == other.fallback &&
+      focused == other.focused &&
+      filled == other.filled &&
+      empty == other.empty &&
+      disabled == other.disabled &&
+      error == other.error &&
+      valid == other.valid &&
+      validating == other.validating;
+
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    fallback,
+    focused,
+    filled,
+    empty,
+    disabled,
+    error,
+    valid,
+    validating,
+  );
+
+  @override
+  String toString() =>
+      'PinThemes(fallback: $fallback, focused: $focused, filled: $filled, empty: $empty, disabled: $disabled, error: $error, valid: $valid, validating: $validating)';
 }

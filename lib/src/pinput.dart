@@ -85,7 +85,7 @@ class Pinput extends StatefulWidget {
     this.cursor = const PinCursor.blinking(),
     this.editMode = PinEditMode.overwrite,
     this.enableInteractiveSelection,
-    this.hapticFeedbackType = HapticFeedbackType.disabled,
+    this.hapticFeedback = HapticFeedbackType.disabled,
     this.closeKeyboardWhenCompleted = true,
     this.keyboard = const PinKeyboard(),
     this.inputFormatters = const [],
@@ -119,7 +119,11 @@ class Pinput extends StatefulWidget {
   /// Displayed fields count. PIN code length.
   final int length;
 
-  /// Fires when user completes pin input
+  /// Called after the text changes when every pin is filled and the cursor is
+  /// at the end. Controller changes can also trigger this callback.
+  ///
+  /// Editing a middle pin does not trigger it until an edit leaves the cursor
+  /// at the end. Use [onChanged] to observe every text change.
   final ValueChanged<String>? onCompleted;
 
   /// Called every time input value changes. The value is contiguous: an empty
@@ -191,7 +195,8 @@ class Pinput extends StatefulWidget {
   /// This is useful for desktop applications where copy/paste is expected behavior.
   /// On mobile, consider using SMS auto-fill instead.
   ///
-  /// If null, uses [EditableText]'s default. Set false to disable selection
+  /// If null, selection is enabled unless the input is both read-only and
+  /// obscured. Set false to disable selection
   /// gestures and keyboard selection shortcuts. To hide only the context menu,
   /// set [contextMenuBuilder] to null instead.
   final bool? enableInteractiveSelection;
@@ -220,7 +225,7 @@ class Pinput extends StatefulWidget {
 
   /// Use haptic feedback everytime user types on keyboard
   /// See more details in [HapticFeedback]
-  final HapticFeedbackType hapticFeedbackType;
+  final HapticFeedbackType hapticFeedback;
 
   /// See [EditableText.mouseCursor]
   final MouseCursor? mouseCursor;
@@ -421,8 +426,8 @@ class Pinput extends StatefulWidget {
     );
     properties.add(
       EnumProperty<HapticFeedbackType>(
-        'hapticFeedbackType',
-        hapticFeedbackType,
+        'hapticFeedback',
+        hapticFeedback,
         defaultValue: HapticFeedbackType.disabled,
       ),
     );

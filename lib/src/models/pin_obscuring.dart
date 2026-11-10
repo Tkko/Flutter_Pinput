@@ -34,6 +34,14 @@ class PinObscuring {
   final Widget? _widget;
 
   @override
+  String toString() {
+    if (_widget != null) {
+      return 'PinObscuring.widget($_widget, revealDuration: $revealDuration)';
+    }
+    return 'PinObscuring.character($_character, revealDuration: $revealDuration)';
+  }
+
+  @override
   bool operator ==(Object other) =>
       other is PinObscuring &&
       runtimeType == other.runtimeType &&

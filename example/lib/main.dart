@@ -103,6 +103,11 @@ class _PinputExampleState extends State<PinputExample> {
     const fillColor = Color.fromRGBO(243, 246, 249, 0);
     const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
 
+    final defaultDecoration = BoxDecoration(
+      borderRadius: BorderRadius.circular(19),
+      border: Border.all(color: borderColor),
+    );
+
     final defaultPinTheme = PinTheme(
       width: 56,
       height: 56,
@@ -110,10 +115,7 @@ class _PinputExampleState extends State<PinputExample> {
         fontSize: 22,
         color: Color.fromRGBO(30, 60, 87, 1),
       ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(19),
-        border: Border.all(color: borderColor),
-      ),
+      decoration: defaultDecoration,
     );
 
     /// Optionally you can use form to validate the Pinput
@@ -138,29 +140,29 @@ class _PinputExampleState extends State<PinputExample> {
                 theme: PinThemes(
                   fallback: defaultPinTheme,
                   focused: defaultPinTheme.copyWith(
-                    decoration: (defaultPinTheme.decoration as BoxDecoration)
-                        .copyWith(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: focusedBorderColor),
-                        ),
+                    decoration: defaultDecoration.copyWith(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: focusedBorderColor),
+                    ),
                   ),
                   filled: defaultPinTheme.copyWith(
-                    decoration: (defaultPinTheme.decoration as BoxDecoration)
-                        .copyWith(
-                          color: fillColor,
-                          borderRadius: BorderRadius.circular(19),
-                          border: Border.all(color: focusedBorderColor),
-                        ),
+                    decoration: defaultDecoration.copyWith(
+                      color: fillColor,
+                      borderRadius: BorderRadius.circular(19),
+                      border: Border.all(color: focusedBorderColor),
+                    ),
                   ),
-                  error: defaultPinTheme.copyBorderWith(
-                    border: Border.all(color: Colors.redAccent),
+                  error: defaultPinTheme.copyWith(
+                    decoration: defaultDecoration.copyWith(
+                      border: Border.all(color: Colors.redAccent),
+                    ),
                   ),
                 ),
                 layout: PinLayout(
                   separatorBuilder: (context, index) =>
                       const SizedBox(width: 8),
                 ),
-                hapticFeedbackType: HapticFeedbackType.lightImpact,
+                hapticFeedback: HapticFeedbackType.lightImpact,
                 onCompleted: (pin) {
                   debugPrint('onCompleted: $pin');
                 },

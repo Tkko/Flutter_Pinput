@@ -12,12 +12,10 @@ class PinAnimation {
     this._transitionBuilder,
   ]);
 
-  /// No content transition. [duration] and [curve] still animate decoration
-  /// and error layout changes.
-  const PinAnimation.none({
-    Duration duration = _PinputConstants._animationDuration,
-    Curve curve = Curves.easeIn,
-  }) : this._(_PinAnimationType.none, duration, curve);
+  /// Disables content, decoration and error-layout animations.
+  /// Cursor blinking is configured separately with [PinCursor].
+  const PinAnimation.none()
+    : this._(_PinAnimationType.none, Duration.zero, Curves.linear);
 
   /// Scales content into place.
   const PinAnimation.scale({
@@ -67,6 +65,19 @@ class PinAnimation {
   final _PinAnimationType _type;
   final Offset? _beginOffset;
   final AnimatedSwitcherTransitionBuilder? _transitionBuilder;
+
+  @override
+  String toString() {
+    final typeName = switch (_type) {
+      _PinAnimationType.none => 'none',
+      _PinAnimationType.scale => 'scale',
+      _PinAnimationType.fade => 'fade',
+      _PinAnimationType.slide => 'slide(beginOffset: $_beginOffset)',
+      _PinAnimationType.rotation => 'rotation',
+      _PinAnimationType.custom => 'custom',
+    };
+    return 'PinAnimation.$typeName(duration: $duration, curve: $curve)';
+  }
 
   @override
   bool operator ==(Object other) =>

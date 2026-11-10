@@ -183,6 +183,16 @@ void main() {
       );
       if (entry.value == null) {
         expect(transition, same(child));
+        expect(switcher.duration, Duration.zero);
+        expect(
+          tester.widget<AnimatedSize>(find.byType(AnimatedSize)).duration,
+          Duration.zero,
+        );
+        for (final container in tester.widgetList<AnimatedContainer>(
+          find.byType(AnimatedContainer),
+        )) {
+          expect(container.duration, Duration.zero);
+        }
       } else {
         expect(transition.runtimeType, entry.value);
       }
@@ -464,7 +474,7 @@ void main() {
     await tester.pumpApp(
       Pinput(
         itemBuilder: (context, state) => Text(state.value),
-        animation: const PinAnimation.none(
+        animation: const PinAnimation.scale(
           duration: Duration(seconds: 2),
           curve: Curves.linear,
         ),
@@ -490,11 +500,5 @@ void main() {
       find.byType(AnimatedContainer).first,
     );
     expect(container.decoration, decoration);
-    expect(
-      () => const PinTheme(
-        decoration: decoration,
-      ).copyBorderWith(border: Border.all()),
-      throwsAssertionError,
-    );
   });
 }

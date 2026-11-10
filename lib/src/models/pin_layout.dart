@@ -25,6 +25,10 @@ class PinLayout {
   final TextDirection? textDirection;
 
   @override
+  String toString() =>
+      'PinLayout(mainAxisAlignment: $mainAxisAlignment, crossAxisAlignment: $crossAxisAlignment, separatorBuilder: $separatorBuilder, textDirection: $textDirection)';
+
+  @override
   bool operator ==(Object other) =>
       other is PinLayout &&
       runtimeType == other.runtimeType &&

@@ -83,23 +83,29 @@ Use `inputMode` to change how it accepts input:
 A pin has six states: `default`, `focused`, `filled`, `empty`, `disabled` and `error`. Each can have its own theme, and the pin animates between them automatically. Create a base `PinTheme`, then derive the others from it:
 
 ```dart
+final defaultDecoration = BoxDecoration(
+  border: Border.all(color: const Color.fromRGBO(234, 239, 243, 1)),
+  borderRadius: BorderRadius.circular(20),
+);
+
 final defaultPinTheme = PinTheme(
   width: 56,
   height: 56,
-  textStyle: TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
-  decoration: BoxDecoration(
-    border: Border.all(color: Color.fromRGBO(234, 239, 243, 1)),
-    borderRadius: BorderRadius.circular(20),
+  textStyle: const TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
+  decoration: defaultDecoration,
+);
+
+final focusedPinTheme = defaultPinTheme.copyWith(
+  decoration: defaultDecoration.copyWith(
+    border: Border.all(color: const Color.fromRGBO(114, 178, 238, 1)),
+    borderRadius: BorderRadius.circular(8),
   ),
 );
 
-final focusedPinTheme = defaultPinTheme.copyDecorationWith(
-  border: Border.all(color: Color.fromRGBO(114, 178, 238, 1)),
-  borderRadius: BorderRadius.circular(8),
-);
-
-final filledPinTheme = defaultPinTheme.copyDecorationWith(
-  color: Color.fromRGBO(234, 239, 243, 1),
+final filledPinTheme = defaultPinTheme.copyWith(
+  decoration: defaultDecoration.copyWith(
+    color: const Color.fromRGBO(234, 239, 243, 1),
+  ),
 );
 
 return Pinput(
@@ -135,7 +141,7 @@ To make every state look the same, pass `PinThemes.all(defaultPinTheme)`. Withou
 - Set `valid` or `validating` to style the pins while the app supplies `PinValidationState.valid()` or `.validating()`. Otherwise those states don't change the look.
 - Implement `PinThemes` to share a theme as your own type, or wrap part of your app in `DefaultPinThemes(themes: ..., child: ...)` to style every `Pinput` below it that has no `theme`.
 - A state theme is used exactly as written and is not merged with `fallback`, so derive it with `copyWith`.
-- `PinTheme.decoration` accepts any `Decoration` (`BoxDecoration`, `ShapeDecoration`, …), but `copyDecorationWith` and `copyBorderWith` require a `BoxDecoration`.
+- `PinTheme<T>` and `PinThemes<T>` accept any `Decoration` (`BoxDecoration`, `ShapeDecoration`, …).
 - `PinTheme.defaults` is the built-in theme to derive from.
 
 </details>
@@ -385,7 +391,8 @@ Set the controller's value in the `verificationCompleted` callback, see [SMS aut
 | `defaultPinTheme`, `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `disabledPinTheme`, `errorPinTheme` | `theme: PinThemes(fallback:, focused:, filled:, empty:, disabled:, error:)` |
 | `preFilledWidget` | `PinTheme(placeholder: widget)` |
 | `pinContentAlignment` | `PinTheme(alignment: …)` |
-| `animationDuration`, `animationCurve`, `pinAnimationType`, `slideTransitionBeginOffset` | `animation: PinAnimation.none/scale/fade/slide/rotation(duration:, curve:)` |
+| `animationDuration`, `animationCurve`, `pinAnimationType`, `slideTransitionBeginOffset` | `animation: PinAnimation.scale/fade/slide/rotation(duration:, curve:)`, or `PinAnimation.none()` to disable content, decoration and error-layout animation |
+| `hapticFeedbackType` | `hapticFeedback` |
 | `showCursor: false` | `cursor: const PinCursor.hidden()` |
 | `showCursor: true`, `isCursorAnimationEnabled: false` | `cursor: const PinCursor.static()` |
 | `cursor: widget` | `cursor: PinCursor.blinking(child: widget)` (or `static`) |
@@ -402,7 +409,7 @@ Set the controller's value in the `verificationCompleted` callback, see [SMS aut
 | `PinItemStateType.submitted`, `.following`, `.initial` | `.filled`, `.empty`, and `PinThemes(fallback:)` |
 | `PinputValidationState` and subtypes | `PinValidationState` and subtypes |
 | `controller.length`, `.append(…)`, `.delete()` | `controller.pinLength`, `.appendPin(…)`, `.deleteLastPin()` |
-| `PinTheme.apply` | Use `copyWith` |
+| `PinTheme.apply`, `copyDecorationWith`, `copyBorderWith` | Use `copyWith(decoration: …)` |
 | `onClipboardFound`, `onAppPrivateCommand`, `enableIMEPersonalizedLearning` | Removed |
 | `smsRetriever`, `AndroidSmsAutofillMethod` | Removed, see [SMS autofill](#android) |
 | `validator`, `pinputAutovalidateMode`, `errorText`, `forceErrorState`, `showErrorWhenFocused` | Removed, see [Validation](#validation) |

@@ -90,8 +90,8 @@ void main() {
       const blue = Color(0xFF0000FF);
 
       const defaultTheme = PinTheme(decoration: BoxDecoration(color: red));
-      final focusedTheme = defaultTheme.copyDecorationWith(color: green);
-      final submittedTheme = defaultTheme.copyDecorationWith(color: blue);
+      const focusedTheme = PinTheme(decoration: BoxDecoration(color: green));
+      const submittedTheme = PinTheme(decoration: BoxDecoration(color: blue));
 
       final controller = TextEditingController(text: '1234');
       final focusNode = FocusNode();
@@ -712,7 +712,7 @@ void main() {
       const red = Color(0xFFFF0000);
       const green = Color(0xFF00FF00);
       const base = PinTheme(decoration: BoxDecoration(color: red));
-      final focused = base.copyDecorationWith(color: green);
+      const focused = PinTheme(decoration: BoxDecoration(color: green));
       await tester.pumpApp(
         Pinput(
           controller: controller,

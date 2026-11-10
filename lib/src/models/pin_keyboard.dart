@@ -39,6 +39,10 @@ class PinKeyboard {
   final Iterable<String>? autofillHints;
 
   @override
+  String toString() =>
+      'PinKeyboard(keyboardType: $keyboardType, textCapitalization: $textCapitalization, textInputAction: $textInputAction, keyboardAppearance: $keyboardAppearance, enableSuggestions: $enableSuggestions, autofillHints: $autofillHints)';
+
+  @override
   bool operator ==(Object other) =>
       other is PinKeyboard &&
       runtimeType == other.runtimeType &&
