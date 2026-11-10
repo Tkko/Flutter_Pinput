@@ -1,3 +1,20 @@
+#### 8.0.0-beta.4 · 10/11/2026
+
+- **BREAKING**: Renamed `hapticFeedbackType` to `hapticFeedback`.
+- **BREAKING**: `PinAnimation.none()` now disables content, decoration and
+  error-layout animations and no longer accepts timing parameters. Its
+  `copyWith` keeps animations disabled. Cursor blinking remains controlled
+  separately by `PinCursor`.
+- **BREAKING**: Removed `PinThemes.copyWith`; custom implementations only need
+  to implement `resolve`.
+- Fixed generic theme resolution without an explicit fallback. Built-in
+  styling is preserved, with decorations included only when compatible with
+  the theme's decoration type.
+- Fixed `PinTheme.lerp<T>` when custom decoration interpolation returns a type
+  outside `T`; the decoration now switches between the endpoints at the midpoint.
+- Clarified when `onCompleted` fires, including controller updates, and the
+  default interactive-selection behavior for read-only, obscured inputs.
+
 #### 8.0.0-beta.3 · 05/11/2026
 
 - Documentation: resized the donation badges in the README so they render at a sensible size on pub.dev

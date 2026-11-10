@@ -333,7 +333,7 @@ void main() {
       await tester.pumpApp(
         Pinput(
           controller: controller,
-          animation: const PinAnimation.none(duration: Duration.zero),
+          animation: const PinAnimation.none(),
           obscuring: const PinObscuring.character(
             '*',
             Duration(milliseconds: 500),
@@ -393,7 +393,7 @@ void main() {
       expect(error, isNotNull);
     });
 
-    test('PinThemes has value equality, copyWith and toString', () {
+    test('PinThemes has value equality and toString', () {
       const a = PinThemes(fallback: PinTheme(width: 10));
       const b = PinThemes(fallback: PinTheme(width: 10));
       const c = PinThemes(fallback: PinTheme(width: 12));
@@ -401,8 +401,6 @@ void main() {
       expect(a.hashCode, b.hashCode);
       expect(a, isNot(c));
 
-      final updated = a.copyWith(focused: const PinTheme(width: 20));
-      expect(updated, isNot(a));
       expect(a.toString(), contains('PinThemes(fallback:'));
 
       const allA = PinThemes.all(PinTheme(width: 10));
@@ -414,12 +412,8 @@ void main() {
         'PinThemes.all(PinTheme(width: 10.0, height: null, textStyle: null, margin: null, padding: null, constraints: null, decoration: null, placeholder: null, alignment: null))',
       );
 
-      final fromAll = allA.copyWith(focused: const PinTheme(width: 15));
-      expect(fromAll, isNot(allA));
-
       final resolver = PinThemes.resolveWith((item, _) => PinTheme.defaults);
       expect(resolver.toString(), 'PinThemes.resolveWith(...)');
-      expect(() => resolver.copyWith(), throwsUnsupportedError);
     });
 
     test('PinTheme toString and decoration copyWith', () {

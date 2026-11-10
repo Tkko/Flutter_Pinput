@@ -183,6 +183,20 @@ void main() {
       );
       if (entry.value == null) {
         expect(transition, same(child));
+        expect(switcher.duration, Duration.zero);
+        expect(
+          tester.widget<AnimatedSize>(find.byType(AnimatedSize)).duration,
+          Duration.zero,
+        );
+        for (final container in tester.widgetList<AnimatedContainer>(
+          find.byType(AnimatedContainer),
+        )) {
+          expect(container.duration, Duration.zero);
+        }
+        expect(
+          entry.key.copyWith(duration: const Duration(seconds: 1)),
+          const PinAnimation.none(),
+        );
       } else {
         expect(transition.runtimeType, entry.value);
       }
@@ -464,7 +478,7 @@ void main() {
     await tester.pumpApp(
       Pinput(
         itemBuilder: (context, state) => Text(state.value),
-        animation: const PinAnimation.none(
+        animation: const PinAnimation.scale(
           duration: Duration(seconds: 2),
           curve: Curves.linear,
         ),

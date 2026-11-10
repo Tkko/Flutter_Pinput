@@ -162,7 +162,7 @@ class _PinputExampleState extends State<PinputExample> {
                   separatorBuilder: (context, index) =>
                       const SizedBox(width: 8),
                 ),
-                hapticFeedbackType: HapticFeedbackType.lightImpact,
+                hapticFeedback: HapticFeedbackType.lightImpact,
                 onCompleted: (pin) {
                   debugPrint('onCompleted: $pin');
                 },

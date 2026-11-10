@@ -12,12 +12,10 @@ class PinAnimation {
     this._transitionBuilder,
   ]);
 
-  /// No content transition. [duration] and [curve] still animate decoration
-  /// and error layout changes.
-  const PinAnimation.none({
-    Duration duration = _PinputConstants._animationDuration,
-    Curve curve = Curves.easeIn,
-  }) : this._(_PinAnimationType.none, duration, curve);
+  /// Disables content, decoration and error-layout animations.
+  /// Cursor blinking is configured separately with [PinCursor].
+  const PinAnimation.none()
+    : this._(_PinAnimationType.none, Duration.zero, Curves.linear);
 
   /// Scales content into place.
   const PinAnimation.scale({
@@ -69,7 +67,9 @@ class PinAnimation {
   final AnimatedSwitcherTransitionBuilder? _transitionBuilder;
 
   /// Creates a copy of this animation with the given fields replaced.
+  /// [PinAnimation.none] remains disabled regardless of the supplied timing.
   PinAnimation copyWith({Duration? duration, Curve? curve}) {
+    if (_type == _PinAnimationType.none) return this;
     return PinAnimation._(
       _type,
       duration ?? this.duration,

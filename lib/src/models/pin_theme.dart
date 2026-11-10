@@ -268,18 +268,6 @@ abstract class PinThemes<T extends Decoration> {
   /// change the look of the pins.
   const factory PinThemes.all(PinTheme<T> theme) = _PinThemesAll<T>;
 
-  /// Creates a copy of these themes with the given fields replaced.
-  PinThemes<T> copyWith({
-    PinTheme<T>? fallback,
-    PinTheme<T>? focused,
-    PinTheme<T>? filled,
-    PinTheme<T>? empty,
-    PinTheme<T>? disabled,
-    PinTheme<T>? error,
-    PinTheme<T>? valid,
-    PinTheme<T>? validating,
-  });
-
   /// Returns the theme for [item] under the current [validation] state.
   PinTheme<T> resolve(PinItemState item, PinValidationState validation);
 }
@@ -294,22 +282,6 @@ class _PinThemesResolveWith<T extends Decoration> extends PinThemes<T> {
       _callback(item, validation);
 
   @override
-  PinThemes<T> copyWith({
-    PinTheme<T>? fallback,
-    PinTheme<T>? focused,
-    PinTheme<T>? filled,
-    PinTheme<T>? empty,
-    PinTheme<T>? disabled,
-    PinTheme<T>? error,
-    PinTheme<T>? valid,
-    PinTheme<T>? validating,
-  }) {
-    throw UnsupportedError(
-      'copyWith is not supported on PinThemes.resolveWith',
-    );
-  }
-
-  @override
   String toString() => 'PinThemes.resolveWith(...)';
 }
 
@@ -321,29 +293,6 @@ class _PinThemesAll<T extends Decoration> extends PinThemes<T> {
   @override
   PinTheme<T> resolve(PinItemState item, PinValidationState validation) =>
       _theme;
-
-  @override
-  PinThemes<T> copyWith({
-    PinTheme<T>? fallback,
-    PinTheme<T>? focused,
-    PinTheme<T>? filled,
-    PinTheme<T>? empty,
-    PinTheme<T>? disabled,
-    PinTheme<T>? error,
-    PinTheme<T>? valid,
-    PinTheme<T>? validating,
-  }) {
-    return PinThemes<T>(
-      fallback: fallback ?? _theme,
-      focused: focused,
-      filled: filled,
-      empty: empty,
-      disabled: disabled,
-      error: error,
-      valid: valid,
-      validating: validating,
-    );
-  }
 
   @override
   bool operator ==(Object other) =>
@@ -378,29 +327,6 @@ class _PinThemesNamed<T extends Decoration> extends PinThemes<T> {
   final PinTheme<T>? error;
   final PinTheme<T>? valid;
   final PinTheme<T>? validating;
-
-  @override
-  PinThemes<T> copyWith({
-    PinTheme<T>? fallback,
-    PinTheme<T>? focused,
-    PinTheme<T>? filled,
-    PinTheme<T>? empty,
-    PinTheme<T>? disabled,
-    PinTheme<T>? error,
-    PinTheme<T>? valid,
-    PinTheme<T>? validating,
-  }) {
-    return PinThemes<T>(
-      fallback: fallback ?? this.fallback,
-      focused: focused ?? this.focused,
-      filled: filled ?? this.filled,
-      empty: empty ?? this.empty,
-      disabled: disabled ?? this.disabled,
-      error: error ?? this.error,
-      valid: valid ?? this.valid,
-      validating: validating ?? this.validating,
-    );
-  }
 
   @override
   PinTheme<T> resolve(PinItemState item, PinValidationState validation) {

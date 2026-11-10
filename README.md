@@ -391,7 +391,8 @@ Set the controller's value in the `verificationCompleted` callback, see [SMS aut
 | `defaultPinTheme`, `focusedPinTheme`, `submittedPinTheme`, `followingPinTheme`, `disabledPinTheme`, `errorPinTheme` | `theme: PinThemes(fallback:, focused:, filled:, empty:, disabled:, error:)` |
 | `preFilledWidget` | `PinTheme(placeholder: widget)` |
 | `pinContentAlignment` | `PinTheme(alignment: …)` |
-| `animationDuration`, `animationCurve`, `pinAnimationType`, `slideTransitionBeginOffset` | `animation: PinAnimation.none/scale/fade/slide/rotation(duration:, curve:)` |
+| `animationDuration`, `animationCurve`, `pinAnimationType`, `slideTransitionBeginOffset` | `animation: PinAnimation.scale/fade/slide/rotation(duration:, curve:)`, or `PinAnimation.none()` to disable content, decoration and error-layout animation |
+| `hapticFeedbackType` | `hapticFeedback` |
 | `showCursor: false` | `cursor: const PinCursor.hidden()` |
 | `showCursor: true`, `isCursorAnimationEnabled: false` | `cursor: const PinCursor.static()` |
 | `cursor: widget` | `cursor: PinCursor.blinking(child: widget)` (or `static`) |

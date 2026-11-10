@@ -84,7 +84,7 @@ class _RoundedWithCustomCursorState extends State<RoundedWithCustomCursor> {
                     ),
                   ),
                 ),
-                hapticFeedbackType: HapticFeedbackType.lightImpact,
+                hapticFeedback: HapticFeedbackType.lightImpact,
                 onCompleted: (pin) {
                   debugPrint('onCompleted: $pin');
                 },

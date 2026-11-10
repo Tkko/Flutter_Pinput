@@ -542,7 +542,7 @@ class _PinputState extends State<Pinput>
           maxLines: 1,
           style: _PinputConstants._hiddenTextStyle,
           onChanged: (value) {
-            _maybeUseHaptic(widget.hapticFeedbackType);
+            _maybeUseHaptic(widget.hapticFeedback);
           },
           expands: false,
           showCursor: false,
