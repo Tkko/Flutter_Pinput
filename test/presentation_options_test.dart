@@ -193,10 +193,6 @@ void main() {
         )) {
           expect(container.duration, Duration.zero);
         }
-        expect(
-          entry.key.copyWith(duration: const Duration(seconds: 1)),
-          const PinAnimation.none(),
-        );
       } else {
         expect(transition.runtimeType, entry.value);
       }

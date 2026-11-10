@@ -66,19 +66,6 @@ class PinAnimation {
   final Offset? _beginOffset;
   final AnimatedSwitcherTransitionBuilder? _transitionBuilder;
 
-  /// Creates a copy of this animation with the given fields replaced.
-  /// [PinAnimation.none] remains disabled regardless of the supplied timing.
-  PinAnimation copyWith({Duration? duration, Curve? curve}) {
-    if (_type == _PinAnimationType.none) return this;
-    return PinAnimation._(
-      _type,
-      duration ?? this.duration,
-      curve ?? this.curve,
-      _beginOffset,
-      _transitionBuilder,
-    );
-  }
-
   @override
   String toString() {
     final typeName = switch (_type) {

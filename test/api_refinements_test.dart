@@ -484,16 +484,12 @@ void main() {
       expect(kb.toString(), contains('PinKeyboard(keyboardType:'));
     });
 
-    test('PinAnimation getters, copyWith and toString', () {
+    test('PinAnimation getters and toString', () {
       const scale = PinAnimation.scale();
       expect(scale.toString(), contains('PinAnimation.scale'));
 
       const slide = PinAnimation.slide(beginOffset: Offset(0.5, 0.5));
       expect(slide.toString(), contains('PinAnimation.slide'));
-
-      final copy = scale.copyWith(duration: const Duration(seconds: 1));
-      expect(copy.duration, const Duration(seconds: 1));
-      expect(copy.curve, scale.curve);
     });
 
     test('PinCursor copyWith and toString', () {
